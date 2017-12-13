@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean
 import org.telegram.telegrambots.ApiContextInitializer
 import org.telegram.telegrambots.TelegramBotsApi
 import org.telegram.telegrambots.bots.DefaultBotOptions
+import space.yaroslav.familybot.telegram.FamilyBot
 
 
 @SpringBootApplication

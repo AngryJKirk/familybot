@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadLocalRandom
 @Component
 class DefaultExecutor : Executor {
     override fun execute(update: Update): SendMessage? {
-        if(ThreadLocalRandom.current().nextInt(0, 20) == 14){
+        if(ThreadLocalRandom.current().nextInt(0, 5) == 3){
             val sendMessage = SendMessage(update.message.chatId, "Ну ты и пидор")
             sendMessage.replyToMessageId = update.message.messageId
             return sendMessage

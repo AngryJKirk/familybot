@@ -1,4 +1,4 @@
-package space.yaroslav.familybot
+package space.yaroslav.familybot.telegram
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.objects.Update
@@ -14,7 +14,7 @@ class FamilyBot(val config: BotConfig, val router: Router) : TelegramLongPolling
     }
 
     override fun onUpdateReceived(update: Update?) {
-        execute(router.processUpdate(update!!))
+        router.processUpdate(update!!)?.let { execute(it) }
     }
 
     override fun getBotUsername(): String {

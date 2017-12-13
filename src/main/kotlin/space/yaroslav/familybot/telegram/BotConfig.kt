@@ -1,4 +1,4 @@
-package space.yaroslav.familybot
+package space.yaroslav.familybot.telegram
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 

@@ -1,7 +1,11 @@
-package space.yaroslav.familybot
+package space.yaroslav.familybot.repos
+
+import space.yaroslav.familybot.common.Chat
+import space.yaroslav.familybot.common.Pidor
+import space.yaroslav.familybot.common.User
 
 
-interface Repository {
+interface CommonRepository {
 
     fun addUser(user: User)
 

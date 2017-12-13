@@ -1,9 +1,12 @@
-package space.yaroslav.familybot
+package space.yaroslav.familybot.repos
 
 import org.springframework.stereotype.Component
+import space.yaroslav.familybot.common.Chat
+import space.yaroslav.familybot.common.Pidor
+import space.yaroslav.familybot.common.User
 
 @Component
-class RepositoryInMemory : Repository {
+class CommonRepositoryInMemory : CommonRepository {
     private val usersStorage: MutableList<User> = ArrayList()
 
     private val chatsStorage: MutableList<Chat> = ArrayList()
