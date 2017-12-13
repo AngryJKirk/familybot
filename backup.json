@@ -1,0 +1,1 @@
+{"BLACKLIST":["java.util.HashSet",[]],"USER_ID":["java.util.HashMap",{"james_tiberius_kirk":138265855}],"ADMINS":["java.util.HashSet",[]],"USERS":["java.util.HashMap",{"138265855":["org.telegram.abilitybots.api.objects.EndUser",{"id":138265855,"firstName":"James Tiberius Kirk 🚀","lastName":null,"username":"James_Tiberius_Kirk"}]}]}
