@@ -24,6 +24,6 @@ class PidorStatsExecutor(val repository: CommonRepository) : Executor {
 
 
     override fun canExecute(message: Message): Boolean {
-        return message.text.contains("/stats")
+        return message.text?.contains("/stats") ?: false
     }
 }

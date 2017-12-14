@@ -6,7 +6,9 @@ import org.springframework.context.annotation.Bean
 import org.telegram.telegrambots.ApiContextInitializer
 import org.telegram.telegrambots.TelegramBotsApi
 import org.telegram.telegrambots.bots.DefaultBotOptions
+import org.telegram.telegrambots.logging.BotLogger
 import space.yaroslav.familybot.telegram.FamilyBot
+import java.util.logging.Level
 
 
 @SpringBootApplication
@@ -27,6 +29,7 @@ class FamilybotApplication {
 }
 
 fun main(args: Array<String>) {
+    BotLogger.setLevel(Level.ALL)
     ApiContextInitializer.init()
     val app = SpringApplication(FamilybotApplication::class.java)
     app.isWebEnvironment = false

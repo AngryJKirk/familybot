@@ -22,6 +22,6 @@ class QuoteExecutor(val quoteRepository: QuoteRepository) : Executor {
     }
 
     override fun canExecute(message: Message): Boolean {
-        return message.text.contains("/quote")
+        return message.text?.contains("/quote") ?: false
     }
 }

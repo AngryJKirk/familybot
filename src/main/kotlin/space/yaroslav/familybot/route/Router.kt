@@ -19,7 +19,12 @@ class Router(val repository: CommonRepository, val executors: List<Executor>) {
         val message = update.message ?: update.editedMessage
         register(message)
         val executor = executors
-                .find { it.canExecute(message) } ?: executors.first { it is DefaultExecutor }
+                .find { it ->
+                    val canExecute = it.canExecute(message)
+                    println("Checking ${it::class.simpleName}, result is ${canExecute}")
+                    canExecute
+                } ?: executors.first { it is HuificatorExecutor }
+
         return executor.execute(update)
     }
 

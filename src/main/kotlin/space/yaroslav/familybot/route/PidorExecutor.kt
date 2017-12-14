@@ -34,6 +34,6 @@ class PidorExecutor(val repository: CommonRepository) : Executor {
     }
 
     override fun canExecute(message: Message): Boolean {
-        return message.text.contains("/pidor")
+        return message.text?.contains("/pidor")?:false
     }
 }
