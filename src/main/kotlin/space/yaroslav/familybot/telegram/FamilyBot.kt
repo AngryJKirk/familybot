@@ -14,7 +14,7 @@ class FamilyBot(val config: BotConfig, val router: Router) : TelegramLongPolling
     }
 
     override fun onUpdateReceived(update: Update?) {
-        router.processUpdate(update!!)?.let { execute(it) }
+        router.processUpdate(update!!).invoke(this)
     }
 
     override fun getBotUsername(): String {

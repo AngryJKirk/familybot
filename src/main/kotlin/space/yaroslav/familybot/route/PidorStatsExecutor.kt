@@ -2,13 +2,15 @@ package space.yaroslav.familybot.route
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
+import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
-import space.yaroslav.familybot.repos.CommonRepository
+import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.toChat
+import space.yaroslav.familybot.repos.CommonRepository
 
 @Component
 class PidorStatsExecutor(val repository: CommonRepository) : Executor {
-    override fun execute(update: Update): SendMessage? {
+    override fun execute(update: Update):  (AbsSender) -> Unit {
         val pidorsByChat = repository.getPidorsByChat(update.message.chat.toChat())
         val groupBy = pidorsByChat
                 .groupBy { it.user }
@@ -16,12 +18,12 @@ class PidorStatsExecutor(val repository: CommonRepository) : Executor {
                 .sortedBy { it.second }
                 .map { "${it.first.getGeneralName()} был пидором ${it.second} раз" }
         val title = "<b>Список пидоров на сегодня</b>:\n"
-        return SendMessage(update.message.chatId, title + groupBy.joinToString("\n")).enableHtml(true)
+        return { it.execute(SendMessage(update.message.chatId, title + groupBy.joinToString("\n")).enableHtml(true)) }
 
     }
 
 
-    override fun canExecute(update: Update): Boolean {
-        return update.message.text.contains("/stats")
+    override fun canExecute(message: Message): Boolean {
+        return message.text.contains("/stats")
     }
 }

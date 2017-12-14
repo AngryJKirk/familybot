@@ -1,14 +1,15 @@
 package space.yaroslav.familybot.route
 
-import org.telegram.telegrambots.api.methods.send.SendMessage
+import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
+import org.telegram.telegrambots.bots.AbsSender
 
 
 interface Executor {
 
-    fun execute(update: Update): SendMessage?
+    fun execute(update: Update): (AbsSender) -> Unit
 
-    fun canExecute(update: Update): Boolean
+    fun canExecute(message: Message): Boolean
 
 
 }
