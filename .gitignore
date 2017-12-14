@@ -31,3 +31,4 @@ nbdist/
 *.iml
 out
 gen
+application.yml
