@@ -17,7 +17,7 @@ class Huificator {
             return null
         }
 
-        val wordReplaced = word.replace(nonLetters.toRegex(), "")
+        var wordReplaced = word.replace(nonLetters.toRegex(), "")
 
         if (onlyDashes.matcher(wordReplaced).matches()) {
             return null
@@ -26,6 +26,8 @@ class Huificator {
         if (wordReplaced.startsWith("ху", true) || wordReplaced.length < 5) {
             return null
         }
+
+        wordReplaced = wordReplaced.toLowerCase()
 
 
         val postfix = String(wordReplaced.toCharArray().dropWhile { !vowels.contains(it) }.toCharArray())
