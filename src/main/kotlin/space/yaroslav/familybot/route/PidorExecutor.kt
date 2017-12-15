@@ -33,7 +33,7 @@ class PidorExecutor(val repository: CommonRepository) : Executor {
             val id = ThreadLocalRandom.current().nextInt(0, users.size)
             val nextPidor = users[id]
             log.info("Pidor is rolled to $nextPidor")
-            repository.addPidor(Pidor(1, nextPidor, LocalDateTime.now()))
+            repository.addPidor(Pidor(nextPidor, LocalDateTime.now()))
             return { it.execute(SendMessage(update.message.chatId, "Пидор это @${nextPidor.nickname}")) }
         }
 

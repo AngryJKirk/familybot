@@ -1,0 +1,34 @@
+<configuration scan="true" scanPeriod="30 seconds">
+    <property name="LOGGING_LEVEL" value="${logging.level:-INFO}"/>
+    <property name="JSON_LOG_PATH" value="${logging.directory:-./logs}/application-json.log"/>
+    <property name="LOGBACK_PROPERTIES_FILE" value="${logging.propertiesFile:-./logback.properties.xml}"/>
+    <property name="LOGBACK_LOGGERS_FILE" value="${logging.loggersFile:-./logback.loggers.xml}"/>
+    <property name="STDOUT_APPENDER_NAME" value="${logging.stdoutAppenderName:-application-stdout}"/>
+
+    <include optional="true" resource="logback.properties.xml" />
+    <include optional="true" file="${LOGBACK_PROPERTIES_FILE}" />
+
+    <conversionRule conversionWord="whitespace_exception"
+                    converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
+
+    <appender name="application-stdout-2line" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>utf8</charset>
+            <pattern>%n%d{HH:mm:ss.SSS} %cyan(%-40.40logger{39}) %mdc%n%highlight(%12level) %message%n%whitespace_exception</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="application-stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>utf8</charset>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %mdc %highlight(%-5level) %cyan(%-40.40logger{39}) : %message%n%whitespace_exception</pattern>
+        </encoder>
+    </appender>
+
+    <include optional="true" resource="logback.loggers.xml" />
+    <include optional="true" file="${LOGBACK_LOGGERS_FILE}" />
+
+    <root level="INFO">
+        <appender-ref ref="${STDOUT_APPENDER_NAME}"/>
+    </root>
+</configuration>
