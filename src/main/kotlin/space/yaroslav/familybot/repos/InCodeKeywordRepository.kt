@@ -18,6 +18,6 @@ class InCodeKeywordRepository : KeywordRepository {
 
     override fun getPhrasesByKeyword(key: String): Set<String> {
         val filter = keyset.filter { it.key.contains(key) }
-        return filter.filter { it.key.contains(key) }.map { it.value }.random()
+        return filter.filter { it.key.contains(key) }.map { it.value }.random()!!
     }
 }

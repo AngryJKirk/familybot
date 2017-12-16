@@ -5,8 +5,12 @@ import java.time.LocalDateTime
 
 data class User(val id: Long, val chat: Chat, val name: String?, val nickname: String?) {
 
-    fun getGeneralName(): String {
-        return nickname?.let { "@" + it } ?: name ?: "Хуй знает кто"
+    fun getGeneralName(mention: Boolean = true): String {
+        var mentionString = ""
+        if(mention){
+            mentionString = "@"
+        }
+        return nickname?.let { mentionString + it } ?: name ?: "Хуй знает кто"
     }
 }
 

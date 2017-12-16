@@ -19,9 +19,12 @@ fun LocalDateTime.isToday(): Boolean {
     return LocalDate.now().atTime(0, 0).isBefore(this)
 }
 
-fun <T> Iterable<T>.random(): T {
+fun <T> Iterable<T>.random(): T? {
     val all = ArrayList<T>()
     iterator().forEach { all.add(it) }
+    if (all.isEmpty()) {
+        return null
+    }
     val nextInt = ThreadLocalRandom.current().nextInt(0, all.size)
     return all[nextInt]
 }
@@ -43,4 +46,17 @@ fun String?.removeEmoji(): String? {
     val unicodeOutlierMatcher = unicodeOutliers.matcher(utf8tweet)
 
     return unicodeOutlierMatcher.replaceAll(" ")
+}
+
+
+fun String?.bold(): String? {
+    if (this == null) return null
+
+    return "<b>$this</b>"
+}
+
+fun String?.italic(): String? {
+    if (this == null) return null
+
+    return "<i>$this</i>"
 }

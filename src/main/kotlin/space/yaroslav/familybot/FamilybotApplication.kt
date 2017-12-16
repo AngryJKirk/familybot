@@ -34,6 +34,6 @@ fun main(args: Array<String>) {
     BotLogger.setLevel(Level.ALL)
     ApiContextInitializer.init()
     val app = SpringApplication(FamilybotApplication::class.java)
-    app.isWebEnvironment = false
+    app.isWebEnvironment = true
     app.run()
 }
