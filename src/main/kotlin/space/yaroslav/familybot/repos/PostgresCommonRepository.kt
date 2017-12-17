@@ -9,6 +9,7 @@ import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.removeEmoji
 import java.sql.ResultSet
 import java.sql.Timestamp
+import java.time.Instant
 import java.time.ZoneOffset
 import javax.sql.DataSource
 
@@ -40,7 +41,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
                 Timestamp.from(pidor.date.toInstant(ZoneOffset.UTC)))
     }
 
-    override fun getPidorsByChat(chat: Chat): List<Pidor> {
+    override fun getPidorsByChat(chat: Chat, startDate: Instant, endDate: Instant): List<Pidor> {
         return template.query("SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE chat_id = ${chat.id}", { rs, _ -> toPidor(rs) })
     }
 

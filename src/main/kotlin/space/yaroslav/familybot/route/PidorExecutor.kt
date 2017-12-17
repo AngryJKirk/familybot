@@ -3,7 +3,6 @@ package space.yaroslav.familybot.route
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
-import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.Pidor
@@ -14,7 +13,9 @@ import java.time.LocalDateTime
 import java.util.concurrent.ThreadLocalRandom
 
 @Component
-class PidorExecutor(val repository: CommonRepository) : Executor {
+class PidorExecutor(val repository: CommonRepository) : CommandExecutor() {
+
+
     private final val log = LoggerFactory.getLogger(PidorExecutor::class.java)
 
     override fun execute(update: Update): (AbsSender) -> Unit {
@@ -36,11 +37,9 @@ class PidorExecutor(val repository: CommonRepository) : Executor {
             repository.addPidor(Pidor(nextPidor, LocalDateTime.now()))
             return { it.execute(SendMessage(update.message.chatId, "Пидор это @${nextPidor.nickname}")) }
         }
-
-
     }
 
-    override fun canExecute(message: Message): Boolean {
-        return message.text?.contains("/pidor") ?: false
+    override fun command(): Command {
+        return Command.PIDOR
     }
 }

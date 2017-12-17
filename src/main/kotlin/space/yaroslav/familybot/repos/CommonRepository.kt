@@ -3,6 +3,7 @@ package space.yaroslav.familybot.repos
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.User
+import java.time.Instant
 
 
 interface CommonRepository {
@@ -17,7 +18,8 @@ interface CommonRepository {
 
     fun addPidor(pidor: Pidor)
 
-    fun getPidorsByChat(chat: Chat): List<Pidor>
+    fun getPidorsByChat(chat: Chat, startDate: Instant = Instant.MIN,
+                        endDate: Instant = Instant.MAX): List<Pidor>
 
     fun containsUser(user: User): Boolean
 

@@ -2,13 +2,16 @@ package space.yaroslav.familybot.route
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
-import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.repos.QuoteRepository
 
 @Component
-class QuoteExecutor(val quoteRepository: QuoteRepository) : Executor {
+class QuoteExecutor(val quoteRepository: QuoteRepository) : CommandExecutor() {
+    override fun command(): Command {
+        return Command.QUOTE
+    }
+
     override fun execute(update: Update): (AbsSender) -> Unit {
         val split = update.message.text.split(" ")
         return {
@@ -21,7 +24,4 @@ class QuoteExecutor(val quoteRepository: QuoteRepository) : Executor {
         }
     }
 
-    override fun canExecute(message: Message): Boolean {
-        return message.text?.contains("/quote") ?: false
-    }
 }
