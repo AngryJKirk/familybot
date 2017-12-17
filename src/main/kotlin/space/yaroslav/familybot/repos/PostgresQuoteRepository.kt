@@ -12,7 +12,7 @@ class PostgresQuoteRepository(val template: JdbcTemplate) : QuoteRepository {
 
 
     override fun addQuote(quote: QuoteDTO) {
-        val tagList = quote.tags.split(",")
+        val tagList = quote.tags.replace(" ", "").split(",")
         val quoteIds = tagList.map { addTag(it) }
         val quoteId = addQuote(quote.quote)
         quoteIds.forEach { addQuoteToTag(it, quoteId) }
@@ -32,8 +32,8 @@ class PostgresQuoteRepository(val template: JdbcTemplate) : QuoteRepository {
         return template.queryForObject("INSERT INTO tags (tag) VALUES (lower('$tag')) ON CONFLICT(tag) DO UPDATE SET tag = lower('$tag') RETURNING id", Int::class.java)
     }
 
-    private fun addQuote(tag: String): Int {
-        return template.queryForObject("INSERT INTO quotes (quote) VALUES ('quote') RETURNING id"
+    private fun addQuote(quote: String): Int {
+        return template.queryForObject("INSERT INTO quotes (quote) VALUES ('$quote') RETURNING id"
         , Int::class.java)
     }
 

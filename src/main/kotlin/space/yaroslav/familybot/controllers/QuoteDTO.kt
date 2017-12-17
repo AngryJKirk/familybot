@@ -1,6 +1,6 @@
 package space.yaroslav.familybot.controllers
 
-class QuoteDTO{
+class QuoteDTO {
     var quote: String = ""
     var tags: String = ""
 }

@@ -13,11 +13,11 @@ class QuoteController(private val quoteRepository: QuoteRepository) {
     @PostMapping("/quote")
     fun accept(@ModelAttribute quote: QuoteDTO): String {
         quoteRepository.addQuote(quote)
-        return "/"
+        return "quote"
 
     }
 
-    @GetMapping("/")
+    @GetMapping("/quote")
     fun getPage(model: Model): String {
         model.addAttribute("quote", QuoteDTO())
         return "quote"
