@@ -12,8 +12,7 @@ class PostgresQuoteRepository(val template: JdbcTemplate) : QuoteRepository {
 
 
     override fun addQuote(quote: QuoteDTO) {
-        val tagList = quote.tags.replace(" ", "").split(",")
-        val quoteIds = tagList.map { addTag(it) }
+        val quoteIds = quote.tags.map { addTag(it) }
         val quoteId = addQuote(quote.quote)
         quoteIds.forEach { addQuoteToTag(it, quoteId) }
     }

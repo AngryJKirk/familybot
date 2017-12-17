@@ -16,7 +16,7 @@ ENV PATH $PATH:$GRADLE_HOME/bin
 WORKDIR /usr/bin/app
 
 COPY . .
-RUN gradle clean build -x test
+RUN gradle --stacktrace clean build -x test
 RUN ls -la build/libs
 EXPOSE 8080
 

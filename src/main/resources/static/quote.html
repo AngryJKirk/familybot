@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<head>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+</head>
+<body>
+
+<form id="quote" action="quote" method="post">
+    <div style="text-align: center;"><p>Цитата: <input id="quote_field" type="text" size="100"
+                                                       placeholder="Что пидору хорошо, то боту хорошо..."/></p></div>
+    <div style="text-align: center;"><p>Теги: <input id="tag_field" type="text" size="40"
+                                                     placeholder="Тег1, тег2, тег3"/></p></div>
+    <div style="text-align: center;"><p><input type="submit" value="Принять"/></p></div>
+</form>
+<script type='text/javascript'>
+    /* attach a submit handler to the form */
+    $("#quote").submit(function (event) {
+
+        /* stop form from submitting normally */
+        event.preventDefault();
+
+        /* get the action attribute from the <form action=""> element */
+        var $form = $(this),
+            url = $form.attr('action');
+
+        /* Send the data using post with element id name and name2*/
+        var quote = $('#quote_field').val();
+        var tags = $('#tag_field').val().replace(" ", "").split(",");
+        var posting2 = $.ajax({
+            type: "POST",
+            url: url,
+            // The key needs to match your method's input parameter (case-sensitive).
+            data: JSON.stringify({quote: quote,  tags: tags}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+        /* Alerts the results */
+        posting2.done(function (data, statusText, xhr) {
+            var s = xhr.status;
+            if (s === 200) {
+                alert('Ебать красавчик');
+            } else {
+                alert('Что-то ты накосячил, давай по новой');
+            }
+            $('#quote_field').val("");
+            $('#tag_field').val("");
+        });
+    });
+</script>
+
+</body>
+</html>
