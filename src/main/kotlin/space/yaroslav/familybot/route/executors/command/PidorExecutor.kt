@@ -10,7 +10,6 @@ import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.repos.ifaces.PidorDictionaryRepository
 import space.yaroslav.familybot.route.models.Command
 import java.time.Instant
-import java.time.LocalDateTime
 import java.util.concurrent.ThreadLocalRandom
 
 @Component
@@ -25,7 +24,7 @@ class PidorExecutor(val repository: CommonRepository, val dictionaryRepository: 
         val pidor = repository
                 .getPidorsByChat(chat).find { it.date.isToday() }
         val message = pidor
-                ?.let { SendMessage(update.message.chatId, "Сегодняшний пидор уже обнаружен: @${it.user.nickname}") }
+                ?.let { SendMessage(update.message.chatId, "Сегодняшний пидор уже обнаружен: ${it.user.getGeneralName(true)}") }
         if (message != null) {
             log.info("Pidor is already founded: $pidor")
             return { it.execute(message) }
@@ -47,7 +46,7 @@ class PidorExecutor(val repository: CommonRepository, val dictionaryRepository: 
                 Thread.sleep(1000)
                 it.execute(SendMessage(chatId, finisher).enableHtml(true))
                 Thread.sleep(1000)
-                it.execute(SendMessage(chatId, "@${nextPidor.nickname}")) }
+                it.execute(SendMessage(chatId, nextPidor.getGeneralName(true))) }
         }
     }
 
