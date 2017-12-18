@@ -18,8 +18,8 @@ interface CommonRepository {
 
     fun addPidor(pidor: Pidor)
 
-    fun getPidorsByChat(chat: Chat, startDate: Instant = Instant.MIN,
-                        endDate: Instant = Instant.MAX): List<Pidor>
+    fun getPidorsByChat(chat: Chat, startDate: Instant = Instant.ofEpochMilli(969652800000),
+                        endDate: Instant = Instant.now()): List<Pidor>
 
     fun containsUser(user: User): Boolean
 

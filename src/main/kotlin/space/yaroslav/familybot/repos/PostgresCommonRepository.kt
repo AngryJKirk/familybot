@@ -2,11 +2,9 @@ package space.yaroslav.familybot.repos
 
 import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.Chat
-import space.yaroslav.familybot.common.Pidor
-import space.yaroslav.familybot.common.User
-import space.yaroslav.familybot.common.removeEmoji
+import space.yaroslav.familybot.common.*
 import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.Instant
@@ -29,7 +27,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     }
 
     override fun addChat(chat: Chat) {
-        template.update("INSERT INTO chats (id, name) VALUES (${chat.id}, '${chat.name?:""}')")
+        template.update("INSERT INTO chats (id, name) VALUES (${chat.id}, '${chat.name ?: ""}')")
     }
 
     override fun getChats(): List<Chat> {
@@ -42,7 +40,8 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     }
 
     override fun getPidorsByChat(chat: Chat, startDate: Instant, endDate: Instant): List<Pidor> {
-        return template.query("SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE chat_id = ${chat.id}", { rs, _ -> toPidor(rs) })
+        return template.query("SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE chat_id = ${chat.id} AND pidor_date BETWEEN ? and ?",
+                ResultSetExtractor { it.map { toPidor(it) } }, Timestamp.from(startDate), Timestamp.from(endDate))
     }
 
     override fun containsUser(user: User): Boolean {
@@ -69,3 +68,5 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
             result.getTimestamp("pidor_date").toLocalDateTime())
 
 }
+
+

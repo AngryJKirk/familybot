@@ -20,7 +20,7 @@ apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 
 group = 'space.yaroslav'
-version = '0.0.1-SNAPSHOT'
+version = '0.1'
 sourceCompatibility = 1.8
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
@@ -39,7 +39,6 @@ dependencies {
     compile group: 'postgresql', name: 'postgresql', version: '9.1-901-1.jdbc4'
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-jdbc
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: '1.5.9.RELEASE'
-    compile("org.springframework.boot:spring-boot-starter-thymeleaf")
     compile "org.springframework.boot:spring-boot-configuration-processor"
     compile group: 'org.telegram', name: 'telegrambots', version: "${telegramBotVersion}"
     compile('org.springframework.boot:spring-boot-starter-web')
@@ -48,7 +47,4 @@ dependencies {
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
-compileJava{
-    options.compilerArgs = ["-parametes"]
-}
 compileJava.dependsOn(processResources)
