@@ -6,27 +6,30 @@ import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.random
-import space.yaroslav.familybot.repos.ifaces.KeywordRepository
+import space.yaroslav.familybot.common.toUser
+import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
 import space.yaroslav.familybot.route.executors.Executor
 import space.yaroslav.familybot.route.models.Priority
+import java.util.concurrent.ThreadLocalRandom
 
 @Component
-class KeyWordExecutor(val keyset: KeywordRepository) : Executor {
+class KeyWordExecutor(val keyset: ChatLogRepository) : Executor {
     override fun priority(): Priority {
-        return Priority.MEDIUM
+        return Priority.LOW
     }
 
     override fun execute(update: Update): (AbsSender) -> Unit {
-        val phrasesByKeyword = keyset.getPhrasesByKeyword(findKeyword(update.message.text)!!)
-        return { it.execute(SendMessage(update.message.chatId, phrasesByKeyword.random()))}
+        if (ThreadLocalRandom.current().nextInt(0, 5) == 3) {
+            val get = keyset.get(update.message.from.toUser(telegramChat = update.message.chat))
+            return { it.execute(SendMessage(update.message.chatId, get.random())
+                    .setReplyToMessageId(update.message.messageId)) }
+        } else {
+            return {}
+        }
+
     }
 
     override fun canExecute(message: Message): Boolean {
-        return findKeyword(message.text) != null
-    }
-
-    private fun findKeyword(phrase: String?): String?{
-
-        return phrase?.split(" ")?.find { keyset.getKeywords().contains(it) }
+        return true
     }
 }

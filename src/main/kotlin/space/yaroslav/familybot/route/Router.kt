@@ -6,6 +6,7 @@ import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.Chat
+import space.yaroslav.familybot.common.random
 import space.yaroslav.familybot.common.toChat
 import space.yaroslav.familybot.common.toUser
 import space.yaroslav.familybot.repos.ifaces.CommandByUser
@@ -28,11 +29,11 @@ class Router(val repository: CommonRepository, val historyRepository: HistoryRep
         register(message)
         val executor = executors
                 .sortedByDescending { it.priority().int }
-                .find { it ->
+                .filter { it ->
                     val canExecute = it.canExecute(message)
                     logger.info("Checking ${it::class.simpleName}, result is $canExecute")
                     canExecute
-                }
+                }.random()
         if(executor is CommandExecutor){
             historyRepository.add(CommandByUser(
                     message.from.toUser(telegramChat = message.chat),

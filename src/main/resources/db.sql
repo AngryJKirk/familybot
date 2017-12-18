@@ -195,3 +195,9 @@ INSERT INTO commands (command) VALUES
   ('/stats_total'),
   ('/pidor'),
   ('/quote');
+
+CREATE TABLE IF NOT EXISTS chat_log (
+  chat_id BIGINT REFERENCES chats(id),
+  user_id BIGINT,
+  message VARCHAR(10000)
+)
