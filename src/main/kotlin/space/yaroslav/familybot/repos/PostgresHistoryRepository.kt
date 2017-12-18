@@ -23,7 +23,7 @@ class PostgresHistoryRepository(val template: JdbcTemplate) : HistoryRepository 
     }
 
     override fun get(user: User, from: Instant, to: Instant): List<CommandByUser> {
-       return template.query("SELECT * FROM history WHERE user_id = ${user.id} and user_id = ${user.chat.id} and command_date BETWEEN ? and ?",
+       return template.query("SELECT * FROM history WHERE user_id = ${user.id} and chat_id = ${user.chat.id} and command_date BETWEEN ? and ?",
                 ResultSetExtractor { it.map { it.toCommandByUser(user) } }, Timestamp.from(from), Timestamp.from(to))
     }
 

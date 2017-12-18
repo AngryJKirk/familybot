@@ -8,8 +8,7 @@ import space.yaroslav.familybot.common.*
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import java.sql.ResultSet
 import java.sql.Timestamp
-import java.time.Instant
-import java.time.ZoneOffset
+import java.time.*
 import javax.sql.DataSource
 
 @Component
@@ -37,7 +36,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
 
     override fun addPidor(pidor: Pidor) {
         template.update("INSERT INTO pidors (id, pidor_date) VALUES (${pidor.user.id}, ?)",
-                Timestamp.from(pidor.date.toInstant(ZoneOffset.UTC)))
+                Timestamp.from(pidor.date))
     }
 
     override fun getPidorsByChat(chat: Chat, startDate: Instant, endDate: Instant): List<Pidor> {

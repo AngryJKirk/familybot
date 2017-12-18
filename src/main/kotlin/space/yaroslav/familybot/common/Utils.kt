@@ -4,8 +4,10 @@ import space.yaroslav.familybot.repos.ifaces.CommandByUser
 import space.yaroslav.familybot.route.models.Command
 import java.nio.charset.Charset
 import java.sql.ResultSet
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.concurrent.ThreadLocalRandom
 import java.util.regex.Pattern
 
@@ -18,8 +20,8 @@ fun org.telegram.telegrambots.api.objects.User.toUser(chat: Chat? = null, telegr
     return User(this.id.toLong(), internalChat!!, format, this.userName)
 }
 
-fun LocalDateTime.isToday(): Boolean {
-    return LocalDate.now().atTime(0, 0).isBefore(this)
+fun Instant.isToday(): Boolean {
+    return LocalDate.now().atTime(0, 0).isBefore(LocalDateTime.ofInstant(this, ZoneId.of("UTC")))
 }
 
 fun <T> Iterable<T>.random(): T? {
@@ -98,7 +100,7 @@ fun ResultSet.toChat(): Chat = Chat(
 
 fun ResultSet.toPidor(): Pidor = Pidor(
         this.toUser(),
-        this.getTimestamp("pidor_date").toLocalDateTime())
+        this.getTimestamp("pidor_date").toInstant())
 
 fun ResultSet.toCommandByUser(user: User?): CommandByUser {
     val userInternal = user ?: this.toUser()
