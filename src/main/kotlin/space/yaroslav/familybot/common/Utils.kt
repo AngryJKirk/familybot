@@ -48,7 +48,7 @@ fun String?.removeEmoji(): String? {
     )
     val unicodeOutlierMatcher = unicodeOutliers.matcher(utf8tweet)
 
-    return unicodeOutlierMatcher.replaceAll(" ")
+    return unicodeOutlierMatcher.replaceAll("")
 }
 
 
