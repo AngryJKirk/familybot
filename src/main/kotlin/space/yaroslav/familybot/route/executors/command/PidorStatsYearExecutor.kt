@@ -5,7 +5,7 @@ import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.bold
-import space.yaroslav.familybot.common.formatPidors
+import space.yaroslav.familybot.common.formatTopList
 import space.yaroslav.familybot.common.toChat
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.route.models.Command
@@ -25,7 +25,7 @@ class PidorStatsYearExecutor(val repository: CommonRepository) : CommandExecutor
         val pidorsByChat = repository.getPidorsByChat(update.message.chat.toChat(),
                 startDate = LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
                         .toInstant(ZoneOffset.UTC))
-        val formatPidors = formatPidors(pidorsByChat)
+        val formatPidors = formatTopList(pidorsByChat.map { it.user })
         val title = "Топ пидоров за год:\n".bold()
         return { it.execute(SendMessage(update.message.chatId, title + formatPidors.joinToString("\n")).enableHtml(true)) }
     }

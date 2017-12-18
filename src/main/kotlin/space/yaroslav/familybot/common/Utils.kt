@@ -1,5 +1,7 @@
 package space.yaroslav.familybot.common
 
+import space.yaroslav.familybot.repos.ifaces.CommandByUser
+import space.yaroslav.familybot.route.models.Command
 import java.nio.charset.Charset
 import java.sql.ResultSet
 import java.time.LocalDate
@@ -76,15 +78,36 @@ fun <T> ResultSet.map(action: (ResultSet) -> T): List<T> {
     return result
 }
 
-fun formatPidors(pidors: List<Pidor>): List<String> {
-    fun format(index: Int, pidorStats: Pair<User, Int>): String {
-        val generalName = pidorStats.first.name ?: pidorStats.first.nickname
+fun formatTopList(pidors: List<User>): List<String> {
+    fun format(index: Int, stats: Pair<User, Int>): String {
+        val generalName = stats.first.name ?: stats.first.nickname
         val i = "${index + 1}.".bold()
-        val stat = "${pidorStats.second} раз(а)".italic()
+        val stat = "${stats.second} раз(а)".italic()
         return "$i $generalName — $stat"
     }
-    return pidors.groupBy { it.user }
+    return pidors.groupBy { it }
             .map { it.key to it.value.size }
             .sortedByDescending { it.second }
             .mapIndexed { index, pair -> format(index, pair) }
+}
+
+fun ResultSet.toUser(): User = User(
+        this.getLong("id"),
+        Chat(this.getLong("chat_id"), ""),
+        this.getString("name"),
+        this.getString("username"))
+
+fun ResultSet.toChat(): Chat = Chat(
+        this.getLong("id"),
+        this.getString("name")
+)
+
+fun ResultSet.toPidor(): Pidor = Pidor(
+        this.toUser(),
+        this.getTimestamp("pidor_date").toLocalDateTime())
+
+fun ResultSet.toCommandByUser(user: User?): CommandByUser {
+    val userInternal = user ?: this.toUser()
+    return CommandByUser(userInternal, Command.values().find { it.id == this.getInt("command_id") }!!,
+            this.getTimestamp("command_date").toInstant())
 }

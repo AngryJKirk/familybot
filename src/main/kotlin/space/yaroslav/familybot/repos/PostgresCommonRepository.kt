@@ -24,7 +24,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     }
 
     override fun getUsers(chat: Chat): List<User> {
-        return template.query("SELECT * FROM users WHERE chat_id = ${chat.id}", { rs, _ -> toUser(rs) })
+        return template.query("SELECT * FROM users WHERE chat_id = ${chat.id}", { rs, _ -> rs.toUser() })
     }
 
     override fun addChat(chat: Chat) {
@@ -32,7 +32,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     }
 
     override fun getChats(): List<Chat> {
-        return template.query("SELECT * FROM chats", { rs, _ -> toChat(rs) })
+        return template.query("SELECT * FROM chats", { rs, _ -> rs.toChat() })
     }
 
     override fun addPidor(pidor: Pidor) {
@@ -42,31 +42,17 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
 
     override fun getPidorsByChat(chat: Chat, startDate: Instant, endDate: Instant): List<Pidor> {
         return template.query("SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE chat_id = ${chat.id} AND pidor_date BETWEEN ? and ?",
-                ResultSetExtractor { it.map { toPidor(it) } }, Timestamp.from(startDate), Timestamp.from(endDate))
+                ResultSetExtractor { it.map { it.toPidor() } }, Timestamp.from(startDate), Timestamp.from(endDate))
     }
 
     override fun containsUser(user: User): Boolean {
-        return template.query("SELECT * FROM users WHERE id = ${user.id}", { rs, _ -> toUser(rs) }).isNotEmpty()
+        return template.query("SELECT * FROM users WHERE id = ${user.id}", { rs, _ -> rs.toUser() }).isNotEmpty()
     }
 
     override fun containsChat(chat: Chat): Boolean {
-        return template.query("SELECT * FROM chats WHERE id = ${chat.id}", { rs, _ -> toChat(rs) }).isNotEmpty()
+        return template.query("SELECT * FROM chats WHERE id = ${chat.id}", { rs, _ -> rs.toChat() }).isNotEmpty()
     }
 
-    fun toUser(result: ResultSet): User = User(
-            result.getLong("id"),
-            Chat(result.getLong("chat_id"), ""),
-            result.getString("name"),
-            result.getString("username"))
-
-    fun toChat(result: ResultSet): Chat = Chat(
-            result.getLong("id"),
-            result.getString("name")
-    )
-
-    fun toPidor(result: ResultSet): Pidor = Pidor(
-            toUser(result),
-            result.getTimestamp("pidor_date").toLocalDateTime())
 
 }
 

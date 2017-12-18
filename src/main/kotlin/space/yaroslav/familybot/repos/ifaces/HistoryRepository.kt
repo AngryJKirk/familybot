@@ -11,6 +11,8 @@ interface HistoryRepository {
 
     fun get(user: User, from: Instant = Instant.now().minusSeconds(300),
             to: Instant = Instant.now()): List<CommandByUser>
+
+    fun getAll(): List<CommandByUser>
 }
 
 data class CommandByUser(val user: User, val command: Command, val date: Instant)
