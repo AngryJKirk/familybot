@@ -19,8 +19,8 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     val template = JdbcTemplate(datasource)
 
     override fun addUser(user: User) {
-        template.update("INSERT INTO users (id, chat_id, name, username) " +
-                "VALUES (${user.id}, ${user.chat.id}, '${user.name.removeEmoji()}', '${user.nickname}')")
+        template.update("INSERT INTO users (id, chat_id, name, username) VALUES (?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET name = EXCLUDED.name, username = EXCLUDED.username",
+                user.id, user.chat.id, user.name.removeEmoji(), user.nickname)
     }
 
     override fun getUsers(chat: Chat): List<User> {

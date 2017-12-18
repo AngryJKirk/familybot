@@ -6,8 +6,6 @@ import java.nio.charset.Charset
 import java.sql.ResultSet
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.Month
 import java.util.concurrent.ThreadLocalRandom
 import java.util.regex.Pattern
 
@@ -16,16 +14,12 @@ fun org.telegram.telegrambots.api.objects.Chat.toChat(): Chat = Chat(this.id, th
 
 fun org.telegram.telegrambots.api.objects.User.toUser(chat: Chat? = null, telegramChat: org.telegram.telegrambots.api.objects.Chat? = null): User {
     val internalChat = telegramChat?.toChat() ?: chat
-    val format = this.firstName ?: "" + " " + (this.lastName ?: "")
+    val format = (this.firstName ?: "") + " " + (this.lastName ?: "")
     return User(this.id.toLong(), internalChat!!, format, this.userName)
 }
 
 fun LocalDateTime.isToday(): Boolean {
     return LocalDate.now().atTime(0, 0).isBefore(this)
-}
-
-fun LocalDateTime.startOfYear(): LocalDateTime{
-    return LocalDateTime.of(LocalDate.of(LocalDate.now().year, Month.JANUARY, 1), LocalTime.MIDNIGHT)
 }
 
 fun <T> Iterable<T>.random(): T? {

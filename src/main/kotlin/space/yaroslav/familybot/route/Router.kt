@@ -6,7 +6,6 @@ import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.Chat
-import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.toChat
 import space.yaroslav.familybot.common.toUser
 import space.yaroslav.familybot.repos.ifaces.CommandByUser
@@ -49,13 +48,7 @@ class Router(val repository: CommonRepository, val historyRepository: HistoryRep
         message.from
                 .takeIf { !it.bot }
                 ?.toUser(telegramChat = message.chat)
-                ?.let(this::registerUser)
-    }
-
-    private fun registerUser(user: User) {
-        if (!repository.containsUser(user)) {
-            repository.addUser(user)
-        }
+                ?.let(repository::addUser)
     }
 
     private fun registerChat(chat: Chat) {
