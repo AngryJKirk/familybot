@@ -23,7 +23,7 @@ class Router(val repository: CommonRepository, val historyRepository: HistoryRep
 
     private final val logger = LoggerFactory.getLogger(Router::class.java)
     fun processUpdate(update: Update): (AbsSender) -> Unit {
-        if(!update.message.chat.isSuperGroupChat){
+        if (!update.message.chat.isSuperGroupChat) {
             return {}
         }
         val message = update.message ?: update.editedMessage
@@ -35,8 +35,8 @@ class Router(val repository: CommonRepository, val historyRepository: HistoryRep
                     val canExecute = it.canExecute(message)
                     logger.info("Checking ${it::class.simpleName}, result is $canExecute")
                     canExecute
-                }?: executors.filter { it.priority() == Priority.LOW }.random()
-        if(executor is CommandExecutor){
+                } ?: executors.filter { it.priority() == Priority.LOW }.random()
+        if (executor is CommandExecutor) {
             historyRepository.add(CommandByUser(
                     message.from.toUser(telegramChat = message.chat),
                     executor.command(),
