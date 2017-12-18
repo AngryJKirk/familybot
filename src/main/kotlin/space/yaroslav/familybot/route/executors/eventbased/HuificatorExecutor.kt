@@ -32,7 +32,7 @@ class HuificatorExecutor : Executor {
     }
 
     override fun canExecute(message: Message): Boolean {
-        return true
+        return false
     }
 
 

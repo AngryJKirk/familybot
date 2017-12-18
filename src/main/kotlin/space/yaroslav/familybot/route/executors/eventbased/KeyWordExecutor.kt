@@ -30,6 +30,6 @@ class KeyWordExecutor(val keyset: ChatLogRepository) : Executor {
     }
 
     override fun canExecute(message: Message): Boolean {
-        return true
+        return false
     }
 }

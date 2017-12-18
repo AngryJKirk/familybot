@@ -183,9 +183,9 @@ CREATE TABLE IF NOT EXISTS commands (
 );
 
 CREATE TABLE IF NOT EXISTS history (
-  command_id BIGINT REFERENCES commands (id),
-  user_id    BIGINT REFERENCES users (id),
-  chat_id    BIGINT REFERENCES chats (id),
+  command_id   BIGINT REFERENCES commands (id),
+  user_id      BIGINT REFERENCES users (id),
+  chat_id      BIGINT REFERENCES chats (id),
   command_date TIMESTAMP
 );
 
@@ -197,7 +197,43 @@ INSERT INTO commands (command) VALUES
   ('/quote');
 
 CREATE TABLE IF NOT EXISTS chat_log (
-  chat_id BIGINT REFERENCES chats(id),
+  chat_id BIGINT REFERENCES chats (id),
   user_id BIGINT,
   message VARCHAR(10000)
-)
+);
+
+CREATE TABLE IF NOT EXISTS pidor_dictionary_start (
+  start VARCHAR(500)
+);
+
+
+CREATE TABLE IF NOT EXISTS pidor_dictionary_middle (
+  middle VARCHAR(500)
+);
+
+
+CREATE TABLE IF NOT EXISTS pidor_dictionary_finisher (
+  finisher VARCHAR(500)
+);
+
+
+INSERT INTO pidor_dictionary_start (start) VALUES
+  ('Загоняем всех пидоров в вольер'),
+  ('Все пидоры в одном помещении'),
+  ('Я собрал всех пидоров сегодня вместе'),
+  ('Собрание в церки святого пидора начинается'),
+  ('Вы, не совсем натуралы. Я бы даже сказал совсем НЕ натуралы.');
+INSERT INTO pidor_dictionary_middle (middle) VALUES
+  ('Ищем самого возбужденного'),
+  ('Главный сегодня только один'),
+  ('Город засыпает, просыпается главный пидор'),
+  ('Архипидору не скрыться'),
+  ('У одного задок сегодня послабее');
+INSERT INTO pidor_dictionary_finisher (finisher) VALUES
+  ('ХОБАНА! Вижу блеск в глазах…'),
+  ('Воу-воу, полегче…'),
+  ('Глину месить, это тебе не в тапки ссать…'),
+  ('ТЫ ЧО ДЫРЯВЫЙ'),
+  ('Поппенгаген открыт для всех желающих у…');
+
+

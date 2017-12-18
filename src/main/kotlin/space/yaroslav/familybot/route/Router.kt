@@ -14,6 +14,7 @@ import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.repos.ifaces.HistoryRepository
 import space.yaroslav.familybot.route.executors.Executor
 import space.yaroslav.familybot.route.executors.command.CommandExecutor
+import space.yaroslav.familybot.route.models.Priority
 import java.time.Instant
 
 
@@ -29,11 +30,12 @@ class Router(val repository: CommonRepository, val historyRepository: HistoryRep
         register(message)
         val executor = executors
                 .sortedByDescending { it.priority().int }
-                .filter { it ->
+                .filter { it.priority().int >= 0 }
+                .find { it ->
                     val canExecute = it.canExecute(message)
                     logger.info("Checking ${it::class.simpleName}, result is $canExecute")
                     canExecute
-                }.random()
+                }?: executors.filter { it.priority() == Priority.LOW }.random()
         if(executor is CommandExecutor){
             historyRepository.add(CommandByUser(
                     message.from.toUser(telegramChat = message.chat),

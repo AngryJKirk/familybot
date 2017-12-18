@@ -7,14 +7,16 @@ import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.isToday
+import space.yaroslav.familybot.common.random
 import space.yaroslav.familybot.common.toChat
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
+import space.yaroslav.familybot.repos.ifaces.PidorDictionaryRepository
 import space.yaroslav.familybot.route.models.Command
 import java.time.LocalDateTime
 import java.util.concurrent.ThreadLocalRandom
 
 @Component
-class PidorExecutor(val repository: CommonRepository) : CommandExecutor() {
+class PidorExecutor(val repository: CommonRepository, val dictionaryRepository: PidorDictionaryRepository) : CommandExecutor() {
 
 
     private final val log = LoggerFactory.getLogger(PidorExecutor::class.java)
@@ -36,7 +38,18 @@ class PidorExecutor(val repository: CommonRepository) : CommandExecutor() {
             val nextPidor = users[id]
             log.info("Pidor is rolled to $nextPidor")
             repository.addPidor(Pidor(nextPidor, LocalDateTime.now()))
-            return { it.execute(SendMessage(update.message.chatId, "Пидор это @${nextPidor.nickname}")) }
+            val start = dictionaryRepository.getStart().random()
+            val middle = dictionaryRepository.getMiddle().random()
+            val finisher = dictionaryRepository.getFinish().random()
+            return {
+                val chatId = update.message.chatId
+                it.execute(SendMessage(chatId, start))
+                Thread.sleep(1000)
+                it.execute(SendMessage(chatId, middle))
+                Thread.sleep(1000)
+                it.execute(SendMessage(chatId, finisher))
+                Thread.sleep(1000)
+                it.execute(SendMessage(chatId, "@${nextPidor.nickname}")) }
         }
     }
 
