@@ -9,11 +9,16 @@ import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.toChat
 import space.yaroslav.familybot.common.toUser
-import space.yaroslav.familybot.repos.CommonRepository
+import space.yaroslav.familybot.repos.ifaces.CommandByUser
+import space.yaroslav.familybot.repos.ifaces.CommonRepository
+import space.yaroslav.familybot.repos.ifaces.HistoryRepository
+import space.yaroslav.familybot.route.executors.Executor
+import space.yaroslav.familybot.route.executors.command.CommandExecutor
+import java.time.Instant
 
 
 @Component
-class Router(val repository: CommonRepository, val executors: List<Executor>) {
+class Router(val repository: CommonRepository, val historyRepository: HistoryRepository, val executors: List<Executor>) {
 
     private final val logger = LoggerFactory.getLogger(Router::class.java)
     fun processUpdate(update: Update): (AbsSender) -> Unit {
@@ -23,13 +28,19 @@ class Router(val repository: CommonRepository, val executors: List<Executor>) {
         val message = update.message ?: update.editedMessage
         register(message)
         val executor = executors
+                .sortedByDescending { it.priority().int }
                 .find { it ->
                     val canExecute = it.canExecute(message)
-                    logger.info("Checking ${it::class.simpleName}, result is ${canExecute}")
+                    logger.info("Checking ${it::class.simpleName}, result is $canExecute")
                     canExecute
-                } ?: executors.first { it is HuificatorExecutor }
-
-        return executor.execute(update)
+                }
+        if(executor is CommandExecutor){
+            historyRepository.add(CommandByUser(
+                    message.from.toUser(telegramChat = message.chat),
+                    executor.command(),
+                    Instant.now()))
+        }
+        return executor!!.execute(update)
     }
 
 

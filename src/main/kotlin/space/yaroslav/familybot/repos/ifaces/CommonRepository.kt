@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.repos
+package space.yaroslav.familybot.repos.ifaces
 
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.Pidor

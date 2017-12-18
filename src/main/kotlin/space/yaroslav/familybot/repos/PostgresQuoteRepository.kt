@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.random
 import space.yaroslav.familybot.controllers.QuoteDTO
+import space.yaroslav.familybot.repos.ifaces.QuoteRepository
 
 @Component
 @Primary

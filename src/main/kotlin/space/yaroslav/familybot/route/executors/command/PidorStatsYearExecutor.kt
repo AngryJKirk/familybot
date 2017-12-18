@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.route
+package space.yaroslav.familybot.route.executors.command
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
@@ -7,7 +7,8 @@ import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.bold
 import space.yaroslav.familybot.common.formatPidors
 import space.yaroslav.familybot.common.toChat
-import space.yaroslav.familybot.repos.CommonRepository
+import space.yaroslav.familybot.repos.ifaces.CommonRepository
+import space.yaroslav.familybot.route.models.Command
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime

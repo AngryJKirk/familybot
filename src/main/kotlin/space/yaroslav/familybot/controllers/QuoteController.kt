@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
-import space.yaroslav.familybot.repos.QuoteRepository
+import space.yaroslav.familybot.repos.ifaces.QuoteRepository
 
 @Controller
 class QuoteController(private val quoteRepository: QuoteRepository) {

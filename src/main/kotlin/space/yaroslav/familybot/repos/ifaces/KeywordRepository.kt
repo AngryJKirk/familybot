@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.repos
+package space.yaroslav.familybot.repos.ifaces
 
 
 interface KeywordRepository {

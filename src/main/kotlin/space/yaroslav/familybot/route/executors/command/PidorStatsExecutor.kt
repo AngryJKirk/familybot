@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.route
+package space.yaroslav.familybot.route.executors.command
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
@@ -8,7 +8,8 @@ import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.bold
 import space.yaroslav.familybot.common.italic
 import space.yaroslav.familybot.common.toChat
-import space.yaroslav.familybot.repos.CommonRepository
+import space.yaroslav.familybot.repos.ifaces.CommonRepository
+import space.yaroslav.familybot.route.models.Command
 
 @Component
 class PidorStatsExecutor(val repository: CommonRepository) : CommandExecutor() {

@@ -87,5 +87,4 @@ fun formatPidors(pidors: List<Pidor>): List<String> {
             .map { it.key to it.value.size }
             .sortedByDescending { it.second }
             .mapIndexed { index, pair -> format(index, pair) }
-
 }

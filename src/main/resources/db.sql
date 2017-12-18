@@ -174,4 +174,23 @@ INSERT INTO tags2quotes (tag_id, quote_id) VALUES
   (9, 26),
   (9, 27),
   (9, 28);
-COMMIT 
+COMMIT;
+
+
+CREATE TABLE IF NOT EXISTS commands (
+  id      SERIAL PRIMARY KEY,
+  command VARCHAR(50) UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS history (
+  command_id BIGINT REFERENCES commands (id),
+  user_id    BIGINT REFERENCES users (id),
+  command_date TIMESTAMP
+);
+
+INSERT INTO commands (command) VALUES
+  ('/stats_month'),
+  ('/stats_year'),
+  ('/stats_total'),
+  ('/pidor'),
+  ('/quote');

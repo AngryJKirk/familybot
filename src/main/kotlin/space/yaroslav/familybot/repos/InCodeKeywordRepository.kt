@@ -2,6 +2,7 @@ package space.yaroslav.familybot.repos
 
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.random
+import space.yaroslav.familybot.repos.ifaces.KeywordRepository
 
 
 @Component
