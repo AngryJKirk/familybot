@@ -185,6 +185,7 @@ CREATE TABLE IF NOT EXISTS commands (
 CREATE TABLE IF NOT EXISTS history (
   command_id BIGINT REFERENCES commands (id),
   user_id    BIGINT REFERENCES users (id),
+  chat_id    BIGINT REFERENCES chats (id),
   command_date TIMESTAMP
 );
 

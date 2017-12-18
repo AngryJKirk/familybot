@@ -14,7 +14,7 @@ fun org.telegram.telegrambots.api.objects.Chat.toChat(): Chat = Chat(this.id, th
 
 fun org.telegram.telegrambots.api.objects.User.toUser(chat: Chat? = null, telegramChat: org.telegram.telegrambots.api.objects.Chat? = null): User {
     val internalChat = telegramChat?.toChat() ?: chat
-    val format = (this.firstName ?: "") + " " + (this.lastName ?: "")
+    val format = (this.firstName?.let { it + " " } ?: "") + (this.lastName ?: "")
     return User(this.id.toLong(), internalChat!!, format, this.userName)
 }
 

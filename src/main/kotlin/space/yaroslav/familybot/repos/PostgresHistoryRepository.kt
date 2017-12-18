@@ -18,12 +18,12 @@ class PostgresHistoryRepository(val template: JdbcTemplate) : HistoryRepository 
     }
 
     override fun add(commandByUser: CommandByUser) {
-        template.update("INSERT INTO history (command_id, user_id, command_date) VALUES (?, ?, ?)",
-                commandByUser.command.id, commandByUser.user.id, Timestamp.from(commandByUser.date))
+        template.update("INSERT INTO history (command_id, user_id, chat_id, command_date) VALUES (?, ?, ?, ?)",
+                commandByUser.command.id, commandByUser.user.id, commandByUser.user.chat.id, Timestamp.from(commandByUser.date))
     }
 
     override fun get(user: User, from: Instant, to: Instant): List<CommandByUser> {
-       return template.query("SELECT * FROM history WHERE user_id = ${user.id} and command_date BETWEEN ? and ?",
+       return template.query("SELECT * FROM history WHERE user_id = ${user.id} and user_id = ${user.chat.id} and command_date BETWEEN ? and ?",
                 ResultSetExtractor { it.map { it.toCommandByUser(user) } }, Timestamp.from(from), Timestamp.from(to))
     }
 
