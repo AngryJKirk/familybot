@@ -194,11 +194,12 @@ INSERT INTO commands (command) VALUES
   ('/stats_year'),
   ('/stats_total'),
   ('/pidor'),
-  ('/quote');
+  ('/quote'),
+  ('/command_stats');
 
 CREATE TABLE IF NOT EXISTS chat_log (
   chat_id BIGINT REFERENCES chats (id),
-  user_id BIGINT,
+  user_id BIGINT REFERENCES users (id),
   message VARCHAR(10000)
 );
 
@@ -235,5 +236,7 @@ INSERT INTO pidor_dictionary_finisher (finisher) VALUES
   ('Глину месить, это тебе не в тапки ссать…'),
   ('ТЫ ЧО ДЫРЯВЫЙ'),
   ('Поппенгаген открыт для всех желающих у…');
+
+
 
 

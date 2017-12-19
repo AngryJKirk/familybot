@@ -21,8 +21,11 @@ class KeyWordExecutor(val keyset: ChatLogRepository) : Executor {
     override fun execute(update: Update): (AbsSender) -> Unit {
         if (ThreadLocalRandom.current().nextInt(0, 5) == 3) {
             val get = keyset.get(update.message.from.toUser(telegramChat = update.message.chat))
-            return { it.execute(SendMessage(update.message.chatId, get.random())
-                    .setReplyToMessageId(update.message.messageId)) }
+            if (get.size < 100) return {}
+            return {
+                it.execute(SendMessage(update.message.chatId, get.random())
+                        .setReplyToMessageId(update.message.messageId))
+            }
         } else {
             return {}
         }

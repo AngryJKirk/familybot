@@ -9,6 +9,7 @@ import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.random
 import space.yaroslav.familybot.common.toChat
 import space.yaroslav.familybot.common.toUser
+import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
 import space.yaroslav.familybot.repos.ifaces.CommandByUser
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.repos.ifaces.HistoryRepository
@@ -19,7 +20,10 @@ import java.time.Instant
 
 
 @Component
-class Router(val repository: CommonRepository, val historyRepository: HistoryRepository, val executors: List<Executor>) {
+class Router(val repository: CommonRepository,
+             val historyRepository: HistoryRepository,
+             val executors: List<Executor>,
+             val chatLogRepository: ChatLogRepository) {
 
     private final val logger = LoggerFactory.getLogger(Router::class.java)
     fun processUpdate(update: Update): (AbsSender) -> Unit {
@@ -28,14 +32,21 @@ class Router(val repository: CommonRepository, val historyRepository: HistoryRep
         }
         val message = update.message ?: update.editedMessage
         register(message)
-        val executor = executors
+        var executor = executors
                 .sortedByDescending { it.priority().int }
                 .filter { it.priority().int >= 0 }
                 .find { it ->
                     val canExecute = it.canExecute(message)
                     logger.info("Checking ${it::class.simpleName}, result is $canExecute")
                     canExecute
-                } ?: executors.filter { it.priority() == Priority.LOW }.random()
+                }
+        if (executor == null) {
+            val text = update.message?.text
+            if (text != null && text.split(" ").size >= 3) {
+                chatLogRepository.add(update.message.from.toUser(telegramChat = update.message.chat), text)
+            }
+            executor = executors.filter { it.priority() == Priority.LOW }.random()
+        }
         if (executor is CommandExecutor) {
             historyRepository.add(CommandByUser(
                     message.from.toUser(telegramChat = message.chat),

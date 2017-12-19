@@ -24,7 +24,7 @@ class AntiDdosExecutor(val repository: HistoryRepository) : Executor {
         return commandsByUser.filterValues { it.size >= 5 }.keys
                 .contains(Command
                         .values()
-                        .find { message.text.contains(it.command, true) })
+                        .find { message.text?.contains(it.command, true)?: false })
 
     }
 
