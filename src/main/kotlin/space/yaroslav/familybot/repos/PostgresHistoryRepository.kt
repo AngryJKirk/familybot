@@ -3,6 +3,7 @@ package space.yaroslav.familybot.repos
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
+import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.map
 import space.yaroslav.familybot.common.toCommandByUser
@@ -13,8 +14,8 @@ import java.time.Instant
 
 @Component
 class PostgresHistoryRepository(val template: JdbcTemplate) : HistoryRepository {
-    override fun getAll(): List<CommandByUser> {
-        return template.query("SELECT * FROM history INNER JOIN users u ON history.user_id = u.id", {rs, _-> rs.toCommandByUser(null)})
+    override fun getAll(chat: Chat): List<CommandByUser> {
+        return template.query("SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ${chat.id}", {rs, _-> rs.toCommandByUser(null)})
     }
 
     override fun add(commandByUser: CommandByUser) {
