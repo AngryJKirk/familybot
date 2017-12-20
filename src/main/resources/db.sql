@@ -5,13 +5,13 @@ CREATE TABLE IF NOT EXISTS chats (
 
 CREATE TABLE IF NOT EXISTS users (
   id       BIGINT PRIMARY KEY,
-  chat_id  BIGINT REFERENCES chats (id),
   name     VARCHAR(100),
   username VARCHAR(100)
 );
 
 CREATE TABLE IF NOT EXISTS pidors (
   id         BIGINT REFERENCES users (id),
+  chat_id    BIGINT REFERENCES chats (id),
   pidor_date TIMESTAMP
 );
 
@@ -238,5 +238,8 @@ INSERT INTO pidor_dictionary_finisher (finisher) VALUES
   ('Поппенгаген открыт для всех желающих у…');
 
 
-
+CREATE TABLE users2chats (
+  chat_id BIGINT REFERENCES chats (id),
+  user_id BIGINT REFERENCES users (id)
+);
 

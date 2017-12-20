@@ -18,12 +18,14 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     val template = JdbcTemplate(datasource)
 
     override fun addUser(user: User) {
-        template.update("INSERT INTO users (id, chat_id, name, username) VALUES (?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET name = EXCLUDED.name, username = EXCLUDED.username",
-                user.id, user.chat.id, user.name.removeEmoji(), user.nickname)
+        template.update("INSERT INTO users (id, name, username) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET name = EXCLUDED.name, username = EXCLUDED.username",
+                user.id, user.name.removeEmoji(), user.nickname)
+        template.update("INSERT INTO users2chats (chat_id, user_id) VALUES (?, ?) ON CONFLICT DO NOTHING",
+                user.chat.id, user.id)
     }
 
     override fun getUsers(chat: Chat): List<User> {
-        return template.query("SELECT * FROM users WHERE chat_id = ${chat.id}", { rs, _ -> rs.toUser() })
+        return template.query("SELECT * FROM users INNER JOIN users2chats u ON users.id = u.user_id WHERE u.chat_id = ${chat.id}", { rs, _ -> rs.toUser() })
     }
 
     override fun addChat(chat: Chat) {
@@ -35,12 +37,12 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     }
 
     override fun addPidor(pidor: Pidor) {
-        template.update("INSERT INTO pidors (id, pidor_date) VALUES (${pidor.user.id}, ?)",
+        template.update("INSERT INTO pidors (id, pidor_date, chat_id) VALUES (${pidor.user.id}, ?, ${pidor.user.chat.id})",
                 Timestamp.from(pidor.date))
     }
 
     override fun getPidorsByChat(chat: Chat, startDate: Instant, endDate: Instant): List<Pidor> {
-        return template.query("SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE chat_id = ${chat.id} AND pidor_date BETWEEN ? and ?",
+        return template.query("SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE pidors.chat_id = ${chat.id} AND pidor_date BETWEEN ? and ?",
                 ResultSetExtractor { it.map { it.toPidor() } }, Timestamp.from(startDate), Timestamp.from(endDate))
     }
 
