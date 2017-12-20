@@ -35,25 +35,28 @@ class Router(val repository: CommonRepository,
         var executor = executors
                 .sortedByDescending { it.priority().int }
                 .filter { it.priority().int >= 0 }
-                .find { it ->
-                    val canExecute = it.canExecute(message)
-                    logger.info("Checking ${it::class.simpleName}, result is $canExecute")
-                    canExecute
-                }
+                .find { it.canExecute(message) }
+        logger.info("Executor to apply: ${executor?.javaClass?.simpleName ?: "[None]"}")
         if (executor == null) {
+            logger.info("No executor found, trying to apply low priority executors")
             val text = update.message?.text
             if (text != null && text.split(" ").size >= 3) {
                 chatLogRepository.add(update.message.from.toUser(telegramChat = update.message.chat), text)
             }
             executor = executors.filter { it.priority() == Priority.LOW }.random()
+            logger.info("Low priority executor ${executor?.javaClass?.simpleName} was selected")
         }
-        if (executor is CommandExecutor) {
-            historyRepository.add(CommandByUser(
-                    message.from.toUser(telegramChat = message.chat),
-                    executor.command(),
-                    Instant.now()))
+        try {
+            return executor!!.execute(update)
+        } finally {
+            if (executor is CommandExecutor) {
+                historyRepository.add(CommandByUser(
+                        message.from.toUser(telegramChat = message.chat),
+                        executor.command(),
+                        Instant.now()))
+            }
         }
-        return executor!!.execute(update)
+
     }
 
 
