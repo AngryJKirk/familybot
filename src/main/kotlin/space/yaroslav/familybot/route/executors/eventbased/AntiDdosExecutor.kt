@@ -24,11 +24,11 @@ class AntiDdosExecutor(val repository: HistoryRepository) : Executor {
         return commandsByUser.filterValues { it.size >= 5 }.keys
                 .contains(Command
                         .values()
-                        .find { message.text?.contains(it.command, true)?: false })
+                        .find { message.text?.contains(it.command, true) ?: false })
 
     }
 
-    override fun priority(): Priority {
+    override fun priority(update: Update): Priority {
         return Priority.HIGH
     }
 }

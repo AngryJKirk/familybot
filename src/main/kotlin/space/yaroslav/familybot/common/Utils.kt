@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.common
 
+import org.telegram.telegrambots.api.objects.Update
 import space.yaroslav.familybot.repos.ifaces.CommandByUser
 import space.yaroslav.familybot.route.models.Command
 import java.nio.charset.Charset
@@ -12,7 +13,7 @@ import java.util.concurrent.ThreadLocalRandom
 import java.util.regex.Pattern
 
 
-fun org.telegram.telegrambots.api.objects.Chat.toChat(): Chat = Chat(this.id, this.firstName ?: "" + " " + this.lastName)
+fun org.telegram.telegrambots.api.objects.Chat.toChat(): Chat = Chat(this.id, this.title)
 
 fun org.telegram.telegrambots.api.objects.User.toUser(chat: Chat? = null, telegramChat: org.telegram.telegrambots.api.objects.Chat? = null): User {
     val internalChat = telegramChat?.toChat() ?: chat
@@ -107,3 +108,14 @@ fun ResultSet.toCommandByUser(user: User?): CommandByUser {
     return CommandByUser(userInternal, Command.values().find { it.id == this.getInt("command_id") }!!,
             this.getTimestamp("command_date").toInstant())
 }
+
+fun Update.toChat(): Chat{
+    return Chat(this.message.chat.id, this.message.chat.title)
+}
+
+fun Update.toUser(): User{
+    val user = this.message.from
+    val formatedName = (user.firstName?.let { it + " " } ?: "") + (user.lastName ?: "")
+    return User(user.id.toLong(), this.toChat(), formatedName, user.userName)
+}
+

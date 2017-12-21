@@ -12,7 +12,7 @@ import java.util.concurrent.ThreadLocalRandom
 
 @Component
 class HuificatorExecutor : Executor {
-    override fun priority(): Priority {
+    override fun priority(update: Update): Priority {
         return Priority.LOW
     }
 

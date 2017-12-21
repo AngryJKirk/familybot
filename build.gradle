@@ -35,6 +35,8 @@ repositories {
 
 
 dependencies {
+    // https://mvnrepository.com/artifact/com.google.guava/guava
+    compile group: 'com.google.guava', name: 'guava', version: '23.5-jre'
     // https://mvnrepository.com/artifact/postgresql/postgresql
     compile group: 'postgresql', name: 'postgresql', version: '9.1-901-1.jdbc4'
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-jdbc

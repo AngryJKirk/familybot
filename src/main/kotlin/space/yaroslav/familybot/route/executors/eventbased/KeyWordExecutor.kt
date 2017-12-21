@@ -5,10 +5,7 @@ import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
-import space.yaroslav.familybot.common.ConfigType
-import space.yaroslav.familybot.common.KeywordConfig
-import space.yaroslav.familybot.common.random
-import space.yaroslav.familybot.common.toUser
+import space.yaroslav.familybot.common.*
 import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
 import space.yaroslav.familybot.repos.ifaces.ConfigRepository
 import space.yaroslav.familybot.route.executors.Executor
@@ -18,21 +15,21 @@ import java.util.concurrent.ThreadLocalRandom
 @Component
 class KeyWordExecutor(val keyset: ChatLogRepository,
                       val configRepository: ConfigRepository) : Executor {
-    override fun priority(): Priority {
-        return if(getConfig().rageMode){
+    override fun priority(update: Update): Priority {
+        return if (getConfig(update.toChat()).rageMode) {
             Priority.HIGH
-        } else{
+        } else {
             Priority.LOW
         }
     }
 
     override fun execute(update: Update): (AbsSender) -> Unit {
-        val config: KeywordConfig = configRepository.get(ConfigType.KEYWORD) as KeywordConfig
+        val config: KeywordConfig = getConfig(update.toChat())
         if (config.randomPower == 0 || ThreadLocalRandom.current().nextInt(0, config.randomPower) == 0) {
-            val get = keyset.get(update.message.from.toUser(telegramChat = update.message.chat))
+            val get = keyset.get(update.toUser())
             if (get.size < 100) return {}
             return {
-                val message = if (config.rageMode){
+                val message = if (config.rageMode) {
                     rageModeFormat(get.random()!!)
                 } else {
                     get.random()
@@ -48,14 +45,14 @@ class KeyWordExecutor(val keyset: ChatLogRepository,
     }
 
     override fun canExecute(message: Message): Boolean {
-        return getConfig().rageMode
+        return getConfig(message.chat.toChat()).rageMode
     }
 
-    private fun rageModeFormat(string: String): String{
+    private fun rageModeFormat(string: String): String {
         return string.toUpperCase() + "!!!!"
     }
 
-    private fun getConfig(): KeywordConfig{
-        return configRepository.get(ConfigType.KEYWORD) as KeywordConfig
+    private fun getConfig(chat: Chat): KeywordConfig {
+        return configRepository.get(ConfigType.KEYWORD, chat) as KeywordConfig
     }
 }

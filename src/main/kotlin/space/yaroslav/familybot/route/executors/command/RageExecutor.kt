@@ -5,7 +5,9 @@ import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.KeywordConfig
+import space.yaroslav.familybot.common.toChat
 import space.yaroslav.familybot.common.toUser
+import space.yaroslav.familybot.repos.ifaces.CommandByUser
 import space.yaroslav.familybot.repos.ifaces.ConfigRepository
 import space.yaroslav.familybot.repos.ifaces.HistoryRepository
 import space.yaroslav.familybot.route.models.Command
@@ -21,14 +23,24 @@ class RageExecutor(val historyRepository: HistoryRepository,
     }
 
     override fun execute(update: Update): (AbsSender) -> Unit {
-        val commands = historyRepository.get(update.message.from.toUser(telegramChat = update.message.chat),
+        val chat = update.toChat()
+        val commands = historyRepository.get(update.toUser(),
                 from = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant())
-        if (commands.map { it.command }.contains(command())) {
-            return { it.execute(SendMessage(update.message.chatId, "Да похуй мне на тебя, чертила")) }
+        if (isCooldown(commands)) {
+            return {
+                it.execute(SendMessage(update.message.chatId, "Да похуй мне на тебя, чертила"))
+            }
         }
-        configRepository.set(KeywordConfig(0, true, Instant.now().plus(1, ChronoUnit.MINUTES)))
-        return {it.execute(SendMessage(update.message.chatId, "НУ ВЫ ОХУЕВШИЕ"))
+        configRepository.set(KeywordConfig(0, true, Instant.now().plus(1, ChronoUnit.MINUTES), chat))
+        return {
+            it.execute(SendMessage(update.message.chatId, "НУ ВЫ ОХУЕВШИЕ"))
         }
+    }
+
+    private fun isCooldown(commands: List<CommandByUser>): Boolean {
+        return commands
+                .map { it.command }
+                .contains(command())
     }
 
 }

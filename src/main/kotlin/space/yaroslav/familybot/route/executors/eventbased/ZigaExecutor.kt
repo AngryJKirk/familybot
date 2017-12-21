@@ -10,7 +10,7 @@ import space.yaroslav.familybot.route.models.Priority
 
 @Component
 class ZigaExecutor : Executor {
-    override fun priority(): Priority {
+    override fun priority(update: Update): Priority {
         return Priority.MEDIUM
     }
 

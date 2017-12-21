@@ -1,19 +1,34 @@
 package space.yaroslav.familybot.repos
 
+import com.google.common.base.Suppliers
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader
 import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.random
 import space.yaroslav.familybot.controllers.QuoteDTO
 import space.yaroslav.familybot.repos.ifaces.QuoteRepository
+import java.util.concurrent.TimeUnit
 
 @Component
 @Primary
 class PostgresQuoteRepository(val template: JdbcTemplate) : QuoteRepository {
 
 
+    private val quoteCache = Suppliers.memoizeWithExpiration(
+            { template.query("SELECT * FROM quotes", { rs, _ -> rs.getString("quote") }).random()!! },
+            5,
+            TimeUnit.MINUTES)
+
+    private val byTagCache = CacheBuilder.newBuilder().expireAfterWrite(3, TimeUnit.MINUTES).build(
+            CacheLoader.from({ tag: String? -> template.query("SELECT * FROM quotes INNER JOIN tags2quotes t2q ON quotes.id = t2q.quote_id " +
+                    "WHERE t2q.tag_id = (SELECT id from tags WHERE LOWER(tag) = lower('$tag'))",
+                    { rs, _ -> rs.getString("quote") })})
+    )
+
     override fun getTags(): List<String> {
-        return template.queryForList("SELECT tag from tags", String::class.java)
+        return template.queryForList("SELECT tag FROM tags", String::class.java)
     }
 
 
@@ -24,13 +39,11 @@ class PostgresQuoteRepository(val template: JdbcTemplate) : QuoteRepository {
     }
 
     override fun getByTag(tag: String): String? {
-        return template.query("SELECT * FROM quotes INNER JOIN tags2quotes t2q ON quotes.id = t2q.quote_id " +
-                "WHERE t2q.tag_id = (SELECT id from tags WHERE LOWER(tag) = lower('$tag'))",
-                { rs, _ -> rs.getString("quote") }).random()
+        return byTagCache.get(tag).random()
     }
 
     override fun getRandom(): String {
-        return template.query("SELECT * FROM quotes", { rs, _ -> rs.getString("quote") }).random()!!
+        return quoteCache.get()
     }
 
     private fun addTag(tag: String): Int {
@@ -39,10 +52,10 @@ class PostgresQuoteRepository(val template: JdbcTemplate) : QuoteRepository {
 
     private fun addQuote(quote: String): Int {
         return template.queryForObject("INSERT INTO quotes (quote) VALUES ('$quote') RETURNING id"
-        , Int::class.java)
+                , Int::class.java)
     }
 
-    private fun addQuoteToTag(tagId : Int, quoteId: Int){
+    private fun addQuoteToTag(tagId: Int, quoteId: Int) {
         template.update("INSERT INTO tags2quotes (tag_id, quote_id) VALUES ($tagId, $quoteId)")
     }
 }

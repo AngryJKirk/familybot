@@ -15,7 +15,10 @@ import javax.sql.DataSource
 @Primary
 class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
 
-    val template = JdbcTemplate(datasource)
+    private val template = JdbcTemplate(datasource)
+    private val chatCache: Set<Chat> = HashSet()
+    private val userCache: Set<User> = HashSet()
+
 
     override fun addUser(user: User) {
         template.update("INSERT INTO users (id, name, username) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET name = EXCLUDED.name, username = EXCLUDED.username",
@@ -47,11 +50,25 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     }
 
     override fun containsUser(user: User): Boolean {
-        return template.query("SELECT * FROM users WHERE id = ${user.id}", { rs, _ -> rs.toUser() }).isNotEmpty()
+        if (userCache.contains(user)) {
+            return true
+        }
+        val exist = template.query("SELECT * FROM users WHERE id = ${user.id}", { rs, _ -> rs.toUser() }).isNotEmpty()
+        if (exist) {
+            userCache.plus(user)
+        }
+        return exist
     }
 
     override fun containsChat(chat: Chat): Boolean {
-        return template.query("SELECT * FROM chats WHERE id = ${chat.id}", { rs, _ -> rs.toChat() }).isNotEmpty()
+        if (chatCache.contains(chat)) {
+            return true
+        }
+        val exist = template.query("SELECT * FROM chats WHERE id = ${chat.id}", { rs, _ -> rs.toChat() }).isNotEmpty()
+        if (exist) {
+            chatCache.plus(chat)
+        }
+        return exist
     }
 
 

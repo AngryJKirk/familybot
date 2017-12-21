@@ -46,7 +46,8 @@ class PidorExecutor(val repository: CommonRepository, val dictionaryRepository: 
                 Thread.sleep(1000)
                 it.execute(SendMessage(chatId, finisher).enableHtml(true))
                 Thread.sleep(1000)
-                it.execute(SendMessage(chatId, nextPidor.getGeneralName(true))) }
+                it.execute(SendMessage(chatId, nextPidor.getGeneralName(true)))
+            }
         }
     }
 

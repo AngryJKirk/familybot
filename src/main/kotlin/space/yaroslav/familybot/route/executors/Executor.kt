@@ -12,6 +12,6 @@ interface Executor {
 
     fun canExecute(message: Message): Boolean
 
-    fun priority(): Priority
+    fun priority(update: Update): Priority
 
 }
