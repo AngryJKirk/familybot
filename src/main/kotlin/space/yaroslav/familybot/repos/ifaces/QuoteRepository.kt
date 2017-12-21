@@ -10,4 +10,8 @@ interface QuoteRepository {
     fun getRandom(): String
 
     fun addQuote(quote: QuoteDTO)
+
+    fun getTags(): List<String>
+
+
 }

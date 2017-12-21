@@ -3,6 +3,7 @@ package space.yaroslav.familybot.controllers
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import space.yaroslav.familybot.repos.ifaces.QuoteRepository
@@ -33,6 +34,11 @@ class QuoteController(private val quoteRepository: QuoteRepository) {
             return "Цитату введи, долбоеб"
         }
         return null
+    }
+
+    @GetMapping
+    fun tagList(): List<String>{
+       return quoteRepository.getTags()
     }
 }
 

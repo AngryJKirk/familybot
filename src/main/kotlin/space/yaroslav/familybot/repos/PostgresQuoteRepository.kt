@@ -12,6 +12,11 @@ import space.yaroslav.familybot.repos.ifaces.QuoteRepository
 class PostgresQuoteRepository(val template: JdbcTemplate) : QuoteRepository {
 
 
+    override fun getTags(): List<String> {
+        return template.queryForList("SELECT tag from tags", String::class.java)
+    }
+
+
     override fun addQuote(quote: QuoteDTO) {
         val quoteIds = quote.tags.map { addTag(it) }
         val quoteId = addQuote(quote.quote)
@@ -29,7 +34,7 @@ class PostgresQuoteRepository(val template: JdbcTemplate) : QuoteRepository {
     }
 
     private fun addTag(tag: String): Int {
-        return template.queryForObject("INSERT INTO tags (tag) VALUES (lower('$tag')) ON CONFLICT(tag) DO UPDATE SET tag = lower('$tag') RETURNING id", Int::class.java)
+        return template.queryForObject("INSERT INTO tags (tag, chat_id) VALUES (lower('$tag'), -1001094220065) ON CONFLICT(tag) DO UPDATE SET tag = lower('$tag') RETURNING id", Int::class.java)
     }
 
     private fun addQuote(quote: String): Int {

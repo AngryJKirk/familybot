@@ -22,11 +22,9 @@ CREATE TABLE IF NOT EXISTS quotes (
 
 CREATE TABLE IF NOT EXISTS tags (
   id  SERIAL PRIMARY KEY,
-  tag VARCHAR(100) NOT NULL
+  tag VARCHAR(100) NOT NULL UNIQUE ,
+  chat_id BIGINT REFERENCES chats(id)
 );
-
-CREATE UNIQUE INDEX title_idx
-  ON tags (tag);
 
 CREATE TABLE IF NOT EXISTS tags2quotes (
   tag_id   INT REFERENCES tags (id),
