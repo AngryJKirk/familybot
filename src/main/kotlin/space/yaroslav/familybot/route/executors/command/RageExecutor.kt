@@ -4,20 +4,18 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
-import space.yaroslav.familybot.common.KeywordConfig
 import space.yaroslav.familybot.common.toChat
 import space.yaroslav.familybot.common.toUser
 import space.yaroslav.familybot.repos.ifaces.CommandByUser
-import space.yaroslav.familybot.repos.ifaces.ConfigRepository
 import space.yaroslav.familybot.repos.ifaces.HistoryRepository
+import space.yaroslav.familybot.repos.ifaces.RagemodeRepository
 import space.yaroslav.familybot.route.models.Command
-import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
 @Component
 class RageExecutor(val historyRepository: HistoryRepository,
-                   val configRepository: ConfigRepository) : CommandExecutor() {
+                   val configRepository: RagemodeRepository) : CommandExecutor() {
     override fun command(): Command {
         return Command.RAGE
     }
@@ -31,7 +29,7 @@ class RageExecutor(val historyRepository: HistoryRepository,
                 it.execute(SendMessage(update.message.chatId, "Да похуй мне на тебя, чертила"))
             }
         }
-        configRepository.set(KeywordConfig(0, true, Instant.now().plus(1, ChronoUnit.MINUTES), chat))
+        configRepository.enable(10, 20, chat)
         return {
             it.execute(SendMessage(update.message.chatId, "НУ ВЫ ОХУЕВШИЕ"))
         }

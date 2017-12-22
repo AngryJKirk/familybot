@@ -14,7 +14,20 @@ data class User(val id: Long, val chat: Chat, val name: String?, val nickname: S
     }
 }
 
-data class Chat(val id: Long, val name: String?)
+class Chat(val id: Long, val name: String?){
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Chat) return false
+
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
+}
 
 data class Pidor(val user: User, val date: Instant)
 
