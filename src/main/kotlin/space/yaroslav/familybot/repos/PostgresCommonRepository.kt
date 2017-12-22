@@ -16,8 +16,8 @@ import javax.sql.DataSource
 class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
 
     private val template = JdbcTemplate(datasource)
-    private val chatCache: Set<Chat> = HashSet()
-    private val userCache: Set<User> = HashSet()
+    private val chatCache: MutableSet<Chat> = HashSet()
+    private val userCache: MutableSet<User> = HashSet()
 
 
     override fun addUser(user: User) {
@@ -55,7 +55,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
         }
         val exist = template.query("SELECT * FROM users WHERE id = ${user.id}", { rs, _ -> rs.toUser() }).isNotEmpty()
         if (exist) {
-            userCache.plus(user)
+            userCache.add(user)
         }
         return exist
     }
@@ -66,7 +66,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
         }
         val exist = template.query("SELECT * FROM chats WHERE id = ${chat.id}", { rs, _ -> rs.toChat() }).isNotEmpty()
         if (exist) {
-            chatCache.plus(chat)
+            chatCache.add(chat)
         }
         return exist
     }
