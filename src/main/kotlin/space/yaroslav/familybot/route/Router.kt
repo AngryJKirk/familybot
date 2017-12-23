@@ -28,7 +28,7 @@ class Router(val repository: CommonRepository,
 
     fun processUpdate(update: Update): (AbsSender) -> Unit {
 
-        if (!update.message.chat.isSuperGroupChat) {
+        if (update.message?.chat?.isSuperGroupChat == false) {
             return {}
         }
         val message = update.message ?: update.editedMessage

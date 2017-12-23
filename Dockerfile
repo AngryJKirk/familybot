@@ -19,6 +19,6 @@ WORKDIR /usr/bin/app
 COPY . .
 RUN gradle --stacktrace clean build -x test
 RUN ls -la build/libs
-EXPOSE 8080
+EXPOSE 8080 8085
 
 CMD ["gradle", "bootRun"]

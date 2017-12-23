@@ -25,14 +25,8 @@ fun Instant.isToday(): Boolean {
     return LocalDate.now().atTime(0, 0).isBefore(LocalDateTime.ofInstant(this, ZoneId.of("UTC")))
 }
 
-fun <T> Iterable<T>.random(): T? {
-    val all = ArrayList<T>()
-    iterator().forEach { all.add(it) }
-    if (all.isEmpty()) {
-        return null
-    }
-    val nextInt = ThreadLocalRandom.current().nextInt(0, all.size)
-    return all[nextInt]
+fun <T> List<T>.random(): T? {
+    return this[ThreadLocalRandom.current().nextInt(0, this.size)]
 }
 
 fun String?.removeEmoji(): String? {

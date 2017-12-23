@@ -50,3 +50,16 @@ dependencies {
 }
 
 compileJava.dependsOn(processResources)
+
+
+bootRun {
+    jvmArgs = ["-Xmx1024m",
+               "-Dcom.sun.management.jmxremote",
+               "-Djava.rmi.server.hostname=yaroslav.space",
+               "-Dcom.sun.management.jmxremote.local.only=false",
+               "-Dcom.sun.management.jmxremote.rmi.port=8085",
+               "-Dcom.sun.management.jmxremote.port=8085",
+               "-Dcom.sun.management.jmxremote.authenticate=false",
+               "-Dcom.sun.management.jmxremote.ssl=false"
+                ]
+}

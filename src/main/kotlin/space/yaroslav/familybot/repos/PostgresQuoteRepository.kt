@@ -17,7 +17,7 @@ class PostgresQuoteRepository(val template: JdbcTemplate) : QuoteRepository {
 
 
     private val quoteCache = Suppliers.memoizeWithExpiration(
-            { template.query("SELECT * FROM quotes", { rs, _ -> rs.getString("quote") }).random()!! },
+            { template.query("SELECT * FROM quotes", { rs, _ -> rs.getString("quote") }) },
             5,
             TimeUnit.MINUTES)
 
@@ -43,7 +43,7 @@ class PostgresQuoteRepository(val template: JdbcTemplate) : QuoteRepository {
     }
 
     override fun getRandom(): String {
-        return quoteCache.get()
+        return quoteCache.get().random()!!
     }
 
     private fun addTag(tag: String): Int {
