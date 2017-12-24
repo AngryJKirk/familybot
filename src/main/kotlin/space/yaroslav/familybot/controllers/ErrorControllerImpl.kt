@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController
 class ErrorControllerImpl : ErrorController {
 
     @RequestMapping(value = PATH)
-    fun error(): ResponseEntity<String> {
-        return ResponseEntity.badRequest().body("Что-то ты сделал не так, пидор")
+    fun error(): ResponseEntity<Response> {
+        return ResponseEntity.badRequest().body(Response("Что-то ты сделал не так, пидор"))
     }
 
 
