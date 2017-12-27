@@ -46,7 +46,7 @@ class Router(val repository: CommonRepository,
 
             executor = selectExecutorLowPriority(update)
 
-            logger.info("Low priority executor ${executor?.javaClass?.simpleName} was selected")
+            logger.info("Low priority executor ${executor.javaClass.simpleName} was selected")
         }
         try {
             return executor.execute(update)
