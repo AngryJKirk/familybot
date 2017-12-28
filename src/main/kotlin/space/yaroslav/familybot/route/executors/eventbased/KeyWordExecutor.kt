@@ -30,9 +30,9 @@ class KeyWordExecutor(val keyset: ChatLogRepository,
         val rageModEnabled = configRepository.isEnabled(chat)
         if (rageModEnabled || ThreadLocalRandom.current().nextInt(0, 5) == 0) {
             val messages = keyset.get(update.toUser())
-            if (messages.size < 100) return {}
+//            if (messages.size < 100) return {}
             val message = if (rageModEnabled) {
-                rageModeFormat(keyset.getSingle(chat))
+                rageModeFormat(messages.random()!!)
             } else {
                 messages.random()!!
             }
