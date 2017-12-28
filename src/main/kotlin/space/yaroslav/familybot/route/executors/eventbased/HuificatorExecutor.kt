@@ -23,7 +23,7 @@ class HuificatorExecutor : Executor {
         val message = update.message
         val text = message?.text
 
-        if (text != null && ThreadLocalRandom.current().nextInt(0, 5) == 3) {
+        if (text != null && ThreadLocalRandom.current().nextInt(0, 10) == 0) {
             val huifyed = huificator.huify(text.split(" ").last()) ?: return { }
             val sendMessage = SendMessage(message.chatId, huifyed)
             return { it -> it.execute(sendMessage) }
