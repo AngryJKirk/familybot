@@ -10,7 +10,6 @@ import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.repos.ifaces.PidorDictionaryRepository
 import space.yaroslav.familybot.route.models.Command
 import java.time.Instant
-import java.util.concurrent.ThreadLocalRandom
 
 @Component
 class PidorExecutor(val repository: CommonRepository, val dictionaryRepository: PidorDictionaryRepository) : CommandExecutor() {
@@ -31,8 +30,8 @@ class PidorExecutor(val repository: CommonRepository, val dictionaryRepository: 
         } else {
             log.info("Pidor is not found, initiating search procedure")
             val users = repository.getUsers(chat)
-            val id = ThreadLocalRandom.current().nextInt(0, users.size)
-            val nextPidor = users[id]
+            log.info("Users to roll: {}", users)
+            val nextPidor = users.random()!!
             log.info("Pidor is rolled to $nextPidor")
             repository.addPidor(Pidor(nextPidor, Instant.now()))
             val start = dictionaryRepository.getStart().random().bold()
