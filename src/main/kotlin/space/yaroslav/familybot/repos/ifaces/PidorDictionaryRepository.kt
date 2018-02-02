@@ -9,4 +9,6 @@ interface PidorDictionaryRepository {
 
     fun getFinish(): List<String>
 
+    fun getLeaderBoardPhrase(pidorPosition: Int): List<String>
+
 }

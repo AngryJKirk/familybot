@@ -5,10 +5,7 @@ import space.yaroslav.familybot.repos.ifaces.CommandByUser
 import space.yaroslav.familybot.route.models.Command
 import java.nio.charset.Charset
 import java.sql.ResultSet
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.*
 import java.util.concurrent.ThreadLocalRandom
 import java.util.regex.Pattern
 
@@ -27,6 +24,10 @@ fun Instant.isToday(): Boolean {
 
 fun <T> List<T>.random(): T? {
     return this[ThreadLocalRandom.current().nextInt(0, this.size)]
+}
+
+fun <T> Set<T>.random(): T? {
+    return this.toList().random()
 }
 
 fun String?.removeEmoji(): String? {
@@ -59,6 +60,34 @@ fun String?.italic(): String? {
     if (this == null) return null
 
     return "<i>$this</i>"
+}
+val monthMap = mapOf(
+        Month.JANUARY to "январь",
+        Month.FEBRUARY to "февраль",
+        Month.MARCH to "март",
+        Month.APRIL to "апрель",
+        Month.MAY to "май",
+        Month.JUNE to "июнь",
+        Month.JULY to "июль",
+        Month.AUGUST to "август",
+        Month.SEPTEMBER to "сентябрь",
+        Month.OCTOBER to "октябрь",
+        Month.NOVEMBER to "ноябрь",
+        Month.DECEMBER to "декабрь"
+)
+fun Month.toRussian(): String {
+    return monthMap[this]!!
+}
+
+fun String?.dropLastDelimiter(): String? {
+    if(this == null){
+        return null
+    }
+    return if(!this.last().isLetterOrDigit()){
+        this.dropLast(1)
+    } else {
+        this
+    }
 }
 
 fun <T> ResultSet.map(action: (ResultSet) -> T): List<T> {

@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        kotlinVersion = '1.1.61'
+        kotlinVersion = '1.2.21'
         springBootVersion = '1.5.9.RELEASE'
         telegramBotVersion = '3.5'
     }

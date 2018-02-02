@@ -8,7 +8,8 @@ enum class Command(val command: String, val id: Int) {
     PIDOR("/pidor", 4),
     QUOTE("/quote", 5),
     COMMAND_STATS("/command_stats", 6),
-    RAGE("/rage", 7);
+    RAGE("/rage", 7),
+    LEADERBOARD("/leaderboard", 8);
 
 
 
