@@ -18,10 +18,11 @@ class PidorStatsYearExecutor(val repository: CommonRepository) : CommandExecutor
     }
 
     override fun execute(update: Update): (AbsSender) -> Unit {
+        val now = LocalDate.now()
         val pidorsByChat = repository.getPidorsByChat(update.message.chat.toChat(),
-                startDate = LocalDateTime.of(LocalDate.of(LocalDate.now().year, Month.JANUARY, 1), LocalTime.MIDNIGHT).toInstant(ZoneOffset.UTC))
+                startDate = LocalDateTime.of(LocalDate.of(now.year, Month.JANUARY, 1), LocalTime.MIDNIGHT).toInstant(ZoneOffset.UTC))
         val formatPidors = formatTopList(pidorsByChat.map { it.user })
-        val title = "Топ пидоров за год:\n".bold()
+        val title = "Топ пидоров за ${now.year}:\n".bold()
         return { it.execute(SendMessage(update.message.chatId, title + formatPidors.joinToString("\n")).enableHtml(true)) }
     }
 }
