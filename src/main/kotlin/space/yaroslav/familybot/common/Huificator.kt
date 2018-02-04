@@ -5,11 +5,11 @@ import java.util.regex.Pattern
 class Huificator {
 
 
-    val vowels = "оеаяуюыи"
-    val rules = mapOf('о' to "е", 'а' to "я", 'у' to "ю", 'ы' to "и")
-    val nonLetters = Pattern.compile("[^a-я]+")
-    val onlyDashes = Pattern.compile("^-*$")
-    val english = Pattern.compile(".*[A-Z,a-z]+.*")
+    private val vowels = "ёэоеаяуюыи"
+    private val rules = mapOf('о' to "е", 'а' to "я", 'у' to "ю", 'ы' to "и", 'э' to "е")
+    private val nonLetters = Pattern.compile("[^a-я]+")
+    private val onlyDashes = Pattern.compile("^-*$")
+    private val english = Pattern.compile(".*[A-Z,a-z]+.*")
 
     fun huify(word: String): String? {
 
