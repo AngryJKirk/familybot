@@ -7,6 +7,7 @@ import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.*
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.repos.ifaces.PidorDictionaryRepository
+import space.yaroslav.familybot.repos.ifaces.Pluralization
 import space.yaroslav.familybot.route.models.Command
 import java.time.Instant
 import java.time.LocalDateTime
@@ -44,7 +45,8 @@ class TopPidorsByMonthsExecutor(val commonRepository: CommonRepository,
                 .asIterable()
                 .reversed()
                 .map { "${it.key.month.toRussian().capitalize()}, ${it.key.year}:\n".italic() + "${it.value.user.name.dropLastDelimiter()}, "+
-                        "${it.value.position} ${pidorDictionaryRepository.getLeaderBoardPhrase(it.value.position).random()} из " +
+                        "${it.value.position} " +
+                        "${pidorDictionaryRepository.getLeaderBoardPhrase(Pluralization.PluralizationCalc.getPlur(it.value.position)).random()} из " +
                         "${it.value.position}"}
 
         val message = "Ими гордится школа:\n".bold()
@@ -72,6 +74,8 @@ class TopPidorsByMonthsExecutor(val commonRepository: CommonRepository,
                 .maxBy { it.value.size }!!
         return PidorStat(pidor.key, pidors.filter { it.user == pidor.key }.count())
     }
+
+
 
     }
 
