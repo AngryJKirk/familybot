@@ -7,4 +7,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 class BotConfig{
     var token: String? = null
     var botname: String? = null
+    var developer: String? = null
 }

@@ -30,7 +30,7 @@ class PidorExecutor(val repository: CommonRepository, val dictionaryRepository: 
             return { it.execute(message) }
         } else {
             log.info("Pidor is not found, initiating search procedure")
-            val users = repository.getUsers(chat)
+            val users = repository.getUsers(chat, activeOnly = true)
             log.info("Users to roll: {}", users)
             val nextPidor = users.random()!!
             log.info("Pidor is rolled to $nextPidor")

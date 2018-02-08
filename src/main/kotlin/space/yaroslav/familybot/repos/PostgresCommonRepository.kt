@@ -6,9 +6,8 @@ import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.*
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
-import java.sql.ResultSet
 import java.sql.Timestamp
-import java.time.*
+import java.time.Instant
 import javax.sql.DataSource
 
 @Component
@@ -21,14 +20,18 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
 
 
     override fun addUser(user: User) {
-        template.update("INSERT INTO users (id, name, username) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET name = EXCLUDED.name, username = EXCLUDED.username",
+        template.update("INSERT INTO users (id, name, username) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET name = EXCLUDED.name, username = EXCLUDED.username, active = TRUE ",
                 user.id, user.name.removeEmoji(), user.nickname)
         template.update("INSERT INTO users2chats (chat_id, user_id) VALUES (?, ?) ON CONFLICT DO NOTHING",
                 user.chat.id, user.id)
     }
 
-    override fun getUsers(chat: Chat): List<User> {
-        return template.query("SELECT * FROM users INNER JOIN users2chats u ON users.id = u.user_id WHERE u.chat_id = ${chat.id}", { rs, _ -> rs.toUser() })
+    override fun getUsers(chat: Chat, activeOnly: Boolean): List<User> {
+        var select = "SELECT * FROM users INNER JOIN users2chats u ON users.id = u.user_id WHERE u.chat_id = ${chat.id}"
+        if(activeOnly){
+            select += "and active = true"
+        }
+        return template.query(select, { rs, _ -> rs.toUser() })
     }
 
     override fun addChat(chat: Chat) {
@@ -70,6 +73,11 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
         }
         return exist
     }
+
+    override fun changeUserActiveStatus(user: User, status: Boolean) {
+        template.update("UPDATE users SET active = $status WHERE id = ${user.id}")
+    }
+
 
 
 }

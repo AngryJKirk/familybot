@@ -21,9 +21,9 @@ CREATE TABLE IF NOT EXISTS quotes (
 );
 
 CREATE TABLE IF NOT EXISTS tags (
-  id  SERIAL PRIMARY KEY,
-  tag VARCHAR(100) NOT NULL UNIQUE ,
-  chat_id BIGINT REFERENCES chats(id)
+  id      SERIAL PRIMARY KEY,
+  tag     VARCHAR(100) NOT NULL UNIQUE,
+  chat_id BIGINT REFERENCES chats (id)
 );
 
 CREATE TABLE IF NOT EXISTS tags2quotes (
@@ -242,10 +242,10 @@ CREATE TABLE users2chats (
   PRIMARY KEY (chat_id, user_id)
 );
 
-CREATE TABLE pidor_leaderboard_dictionary(
-  message VARCHAR(40),
+CREATE TABLE pidor_leaderboard_dictionary (
+  message    VARCHAR(40),
   range_from INT,
-  range_to INT,
+  range_to   INT,
   PRIMARY KEY (message, range_from, range_to)
 );
 
@@ -320,3 +320,58 @@ INSERT INTO pidor_leaderboard_dictionary (message, range_from, range_to) VALUES
   ('девственных лесов Камбоджи', 25, 30),
   ('девственный лес Камбоджи', 31, 31),
   ('девственных леса Камбоджи', 32, 34);
+
+
+CREATE TABLE IF NOT EXISTS pidor_leaderboard_dictionary_plurs (
+  id          INT PRIMARY KEY,
+  description VARCHAR(50)
+);
+
+CREATE TABLE IF NOT EXISTS pidor_leaderboard_dictionary_v2 (
+  message VARCHAR(200) PRIMARY KEY,
+  plur_id INT REFERENCES pidor_leaderboard_dictionary_plurs (id)
+);
+
+INSERT INTO pidor_leaderboard_dictionary_plurs (id, description) VALUES
+  (1, 'One'),
+  (2, 'Few'),
+  (3, 'Many');
+
+INSERT INTO pidor_leaderboard_dictionary_v2 (message, plur_id) VALUES
+  ('пробитая жёпка', 1),
+  ('пробитых жёпки', 2),
+  ('пробитых жёпок', 3);
+
+INSERT INTO pidor_leaderboard_dictionary_v2 (message, plur_id) VALUES
+  ('шебуршание в дупле', 1),
+  ('шебуршания в дупле', 2),
+  ('шебуршаний в дупле', 3);
+
+INSERT INTO pidor_leaderboard_dictionary_v2 (message, plur_id) VALUES
+  ('прожаренная сосиска на заднем дворе', 1),
+  ('прожаренные сосиски на заднем дворе', 2),
+  ('прожаренных сосисок на заднем дворе', 3);
+
+
+INSERT INTO pidor_leaderboard_dictionary_v2 (message, plur_id) VALUES
+  ('разгруженный вагон с углём', 1),
+  ('разгруженных вагона с углём', 2),
+  ('разгруженных вагонов с углём', 3);
+
+INSERT INTO pidor_leaderboard_dictionary_v2 (message, plur_id) VALUES
+  ('прочищенный дымоход', 1),
+  ('прочищенных дымохода', 2),
+  ('прочищенных дымоходов', 3);
+
+
+INSERT INTO pidor_leaderboard_dictionary_v2 (message, plur_id) VALUES
+  ('волосатый мотороллер', 1),
+  ('волосатых мотороллера', 2),
+  ('волосатых мотороллеров', 3);
+
+INSERT INTO pidor_leaderboard_dictionary_v2 (message, plur_id) VALUES
+  ('девственный лес Камбоджи', 1),
+  ('девственных леса Камбоджи', 2),
+  ('девственных лесов Камбоджи', 3);
+
+ALTER TABLE users add COLUMN active BOOLEAN DEFAULT TRUE

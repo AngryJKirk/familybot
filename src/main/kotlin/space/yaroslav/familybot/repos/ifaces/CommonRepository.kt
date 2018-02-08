@@ -10,7 +10,7 @@ interface CommonRepository {
 
     fun addUser(user: User)
 
-    fun getUsers(chat: Chat): List<User>
+    fun getUsers(chat: Chat, activeOnly: Boolean = false): List<User>
 
     fun addChat(chat: Chat)
 
@@ -24,4 +24,6 @@ interface CommonRepository {
     fun containsUser(user: User): Boolean
 
     fun containsChat(chat: Chat): Boolean
+
+    fun changeUserActiveStatus(user: User, status: Boolean)
 }

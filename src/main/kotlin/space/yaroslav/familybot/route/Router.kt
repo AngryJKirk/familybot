@@ -46,7 +46,7 @@ class Router(val repository: CommonRepository,
 
             executor = selectExecutorLowPriority(update)
 
-            logger.info("Low priority executor ${executor?.javaClass?.simpleName} was selected")
+            logger.info("Low priority executor ${executor.javaClass.simpleName} was selected")
         }
         try {
             return executor.execute(update)
@@ -91,9 +91,12 @@ class Router(val repository: CommonRepository,
             repository.addChat(chat)
         }
 
-        if (!message.from.bot) {
+        if (message.leftChatMember != null) {
+            repository.changeUserActiveStatus(message.leftChatMember.toUser(chat = chat), false)
+        } else if (message.newChatMembers?.isNotEmpty() == true) {
+            message.newChatMembers.forEach { repository.addUser(it.toUser(chat = chat)) }
+        } else if (!message.from.bot) {
             repository.addUser(message.from.toUser(chat = chat))
         }
     }
-
 }

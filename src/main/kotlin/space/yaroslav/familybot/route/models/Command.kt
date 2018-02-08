@@ -9,7 +9,8 @@ enum class Command(val command: String, val id: Int) {
     QUOTE("/quote", 5),
     COMMAND_STATS("/command_stats", 6),
     RAGE("/rage", 7),
-    LEADERBOARD("/leaderboard", 8);
+    LEADERBOARD("/leaderboard", 8),
+    HELP("/help", 9);
 
 
 

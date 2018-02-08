@@ -1,0 +1,26 @@
+
+settings:
+          botname: {name}
+          token: {token}
+          developer: {name}
+spring:
+  datasource:
+    url: {url}
+    driver-class-name: "org.postgresql.Driver"
+    password: {password}
+    username: {user}
+
+---
+settings:
+          botname: {name}
+          token: {token}
+          developer: {name}
+spring:
+  datasource:
+    url: {url}
+    driver-class-name: "org.postgresql.Driver"
+    password: {password}
+    username: {user}
+  profiles: production
+
+
