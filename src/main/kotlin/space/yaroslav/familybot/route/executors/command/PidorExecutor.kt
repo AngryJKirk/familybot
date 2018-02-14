@@ -42,11 +42,11 @@ class PidorExecutor(val repository: CommonRepository, val dictionaryRepository: 
             return {
                 val chatId = update.message.chatId
                 it.execute(SendMessage(chatId, start).enableHtml(true))
-                Thread.sleep(1000)
+                Thread.sleep(3000)
                 it.execute(SendMessage(chatId, middle).enableHtml(true))
-                Thread.sleep(1000)
+                Thread.sleep(3000)
                 it.execute(SendMessage(chatId, finisher).enableHtml(true))
-                Thread.sleep(1000)
+                Thread.sleep(3000)
                 it.execute(SendMessage(chatId, nextPidor.getGeneralName(true)))
                 if (isEndOfMonth()) {
                     val competitors = detectPidorCompetition(pidorsByChat, newPidor)
