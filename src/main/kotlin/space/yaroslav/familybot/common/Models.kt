@@ -27,6 +27,12 @@ class Chat(val id: Long, val name: String?){
     override fun hashCode(): Int {
         return id.hashCode()
     }
+
+    override fun toString(): String {
+        return "Chat(id=$id, name=$name)"
+    }
+
+
 }
 
 data class Pidor(val user: User, val date: Instant)

@@ -133,6 +133,9 @@ fun ResultSet.toCommandByUser(user: User?): CommandByUser {
 }
 
 fun Update.toChat(): Chat{
+    if(this.message == null){
+        throw RuntimeException("Cant process ${this}")
+    }
     return Chat(this.message.chat.id, this.message.chat.title)
 }
 
