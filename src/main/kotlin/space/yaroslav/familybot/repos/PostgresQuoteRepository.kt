@@ -6,7 +6,7 @@ import com.google.common.cache.CacheLoader
 import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.random
+import space.yaroslav.familybot.common.utils.random
 import space.yaroslav.familybot.controllers.QuoteDTO
 import space.yaroslav.familybot.repos.ifaces.QuoteRepository
 import java.util.concurrent.TimeUnit

@@ -14,26 +14,7 @@ data class User(val id: Long, val chat: Chat, val name: String?, val nickname: S
     }
 }
 
-class Chat(val id: Long, val name: String?){
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Chat) return false
-
-        if (id != other.id) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
-
-    override fun toString(): String {
-        return "Chat(id=$id, name=$name)"
-    }
-
-
-}
+data class Chat(val id: Long, val name: String?)
 
 data class Pidor(val user: User, val date: Instant)
 

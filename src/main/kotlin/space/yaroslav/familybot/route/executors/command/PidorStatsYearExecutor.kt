@@ -4,9 +4,9 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
-import space.yaroslav.familybot.common.bold
-import space.yaroslav.familybot.common.formatTopList
-import space.yaroslav.familybot.common.toChat
+import space.yaroslav.familybot.common.utils.bold
+import space.yaroslav.familybot.common.utils.formatTopList
+import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.route.models.Command
 import java.time.*
@@ -21,7 +21,9 @@ class PidorStatsYearExecutor(val repository: CommonRepository) : CommandExecutor
         val now = LocalDate.now()
         val pidorsByChat = repository.getPidorsByChat(update.message.chat.toChat(),
                 startDate = LocalDateTime.of(LocalDate.of(now.year, Month.JANUARY, 1), LocalTime.MIDNIGHT).toInstant(ZoneOffset.UTC))
-        val formatPidors = formatTopList(pidorsByChat.map { it.user })
+        val formatPidors = pidorsByChat
+                .map { it.user }
+                .formatTopList()
         val title = "Топ пидоров за ${now.year} год:\n".bold()
         return { it.execute(SendMessage(update.message.chatId, title + formatPidors.joinToString("\n")).enableHtml(true)) }
     }

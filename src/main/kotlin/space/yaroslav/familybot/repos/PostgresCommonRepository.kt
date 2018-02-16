@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.*
+import space.yaroslav.familybot.common.utils.*
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import java.sql.Timestamp
 import java.time.Instant

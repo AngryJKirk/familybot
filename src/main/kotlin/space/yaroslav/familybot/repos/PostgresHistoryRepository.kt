@@ -5,8 +5,8 @@ import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
-import space.yaroslav.familybot.common.map
-import space.yaroslav.familybot.common.toCommandByUser
+import space.yaroslav.familybot.common.utils.map
+import space.yaroslav.familybot.common.utils.toCommandByUser
 import space.yaroslav.familybot.repos.ifaces.CommandByUser
 import space.yaroslav.familybot.repos.ifaces.HistoryRepository
 import java.sql.Timestamp

@@ -5,9 +5,9 @@ import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.User
-import space.yaroslav.familybot.common.bold
-import space.yaroslav.familybot.common.italic
-import space.yaroslav.familybot.common.toChat
+import space.yaroslav.familybot.common.utils.bold
+import space.yaroslav.familybot.common.utils.italic
+import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.route.models.Command
 

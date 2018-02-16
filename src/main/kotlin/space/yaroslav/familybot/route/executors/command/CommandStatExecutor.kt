@@ -4,9 +4,9 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
-import space.yaroslav.familybot.common.bold
-import space.yaroslav.familybot.common.formatTopList
-import space.yaroslav.familybot.common.toChat
+import space.yaroslav.familybot.common.utils.bold
+import space.yaroslav.familybot.common.utils.formatTopList
+import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.CommandByUser
 import space.yaroslav.familybot.repos.ifaces.HistoryRepository
 import space.yaroslav.familybot.route.models.Command
@@ -32,7 +32,7 @@ class CommandStatExecutor(val repository: HistoryRepository) : CommandExecutor()
     }
 
     private fun format(it: Map.Entry<Command, List<CommandByUser>>) =
-            "Команда " + "${it.key.command}:".bold() + "\n" + formatTopList(it.value.map { it.user }).joinToString("\n")
+            "Команда " + "${it.key.command}:".bold() + "\n" + it.value.map { it.user }.formatTopList().joinToString("\n")
 
 
 }

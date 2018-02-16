@@ -5,9 +5,9 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
-import space.yaroslav.familybot.common.random
-import space.yaroslav.familybot.common.toChat
-import space.yaroslav.familybot.common.toUser
+import space.yaroslav.familybot.common.utils.random
+import space.yaroslav.familybot.common.utils.toChat
+import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
 import space.yaroslav.familybot.repos.ifaces.CommandByUser
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
