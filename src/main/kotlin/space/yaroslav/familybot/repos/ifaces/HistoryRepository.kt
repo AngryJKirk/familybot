@@ -1,8 +1,8 @@
 package space.yaroslav.familybot.repos.ifaces
 
 import space.yaroslav.familybot.common.Chat
+import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.User
-import space.yaroslav.familybot.route.models.Command
 import java.time.Instant
 
 
@@ -15,5 +15,3 @@ interface HistoryRepository {
 
     fun getAll(chat: Chat): List<CommandByUser>
 }
-
-data class CommandByUser(val user: User, val command: Command, val date: Instant)
