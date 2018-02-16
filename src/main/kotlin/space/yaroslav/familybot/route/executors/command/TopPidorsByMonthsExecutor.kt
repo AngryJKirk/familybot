@@ -8,7 +8,6 @@ import space.yaroslav.familybot.common.*
 import space.yaroslav.familybot.common.utils.*
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.repos.ifaces.PidorDictionaryRepository
-import space.yaroslav.familybot.repos.ifaces.Pluralization
 import space.yaroslav.familybot.route.models.Command
 import java.time.Instant
 import java.time.LocalDateTime
