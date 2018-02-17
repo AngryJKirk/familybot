@@ -1,9 +1,9 @@
 package space.yaroslav.familybot.common.utils
 
 import space.yaroslav.familybot.common.Chat
+import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.User
-import space.yaroslav.familybot.repos.ifaces.CommandByUser
 import space.yaroslav.familybot.route.models.Command
 import java.sql.ResultSet
 

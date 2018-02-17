@@ -10,7 +10,10 @@ enum class Command(val command: String, val id: Int) {
     COMMAND_STATS("/command_stats", 6),
     RAGE("/rage", 7),
     LEADERBOARD("/leaderboard", 8),
-    HELP("/help", 9);
+    HELP("/help", 9),
+    SETTINGS("/settings", 10),
+    ANSWER("/answer", 11),
+    QUOTE_BY_TAG("/quotebytag", 12);
 
 
 

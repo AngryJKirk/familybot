@@ -9,10 +9,16 @@ import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.italic
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
+import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.models.Command
+import space.yaroslav.familybot.route.models.FunctionId
 
 @Component
-class PidorStatsExecutor(val repository: CommonRepository) : CommandExecutor() {
+class PidorStatsExecutor(val repository: CommonRepository) : CommandExecutor(), Configurable {
+
+    override fun getFunctionId(): FunctionId {
+        return FunctionId.PIDOR
+    }
 
     override fun execute(update: Update): (AbsSender) -> Unit {
         val chat = update.message.chat.toChat()

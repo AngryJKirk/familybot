@@ -2,8 +2,8 @@ package space.yaroslav.familybot.repos
 
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
+import space.yaroslav.familybot.common.Pluralization
 import space.yaroslav.familybot.repos.ifaces.PidorDictionaryRepository
-import space.yaroslav.familybot.repos.ifaces.Pluralization
 
 @Component
 class PidorDictionaryRepositoryImpl(val template: JdbcTemplate) : PidorDictionaryRepository {

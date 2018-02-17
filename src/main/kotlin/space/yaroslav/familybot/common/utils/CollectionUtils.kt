@@ -18,6 +18,12 @@ fun List<User>.formatTopList(): List<String> {
 }
 
 fun <T> List<T>.random(): T? {
+    if (this.isEmpty()) {
+        return null
+    }
+    if (this.size == 1) {
+        return this[0]
+    }
     return this[ThreadLocalRandom.current().nextInt(0, this.size)]
 }
 

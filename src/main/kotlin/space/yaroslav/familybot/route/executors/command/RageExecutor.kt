@@ -4,18 +4,24 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
+import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
-import space.yaroslav.familybot.repos.ifaces.CommandByUser
 import space.yaroslav.familybot.repos.ifaces.HistoryRepository
 import space.yaroslav.familybot.repos.ifaces.RagemodeRepository
+import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.models.Command
+import space.yaroslav.familybot.route.models.FunctionId
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
 @Component
 class RageExecutor(val historyRepository: HistoryRepository,
-                   val configRepository: RagemodeRepository) : CommandExecutor() {
+                   val configRepository: RagemodeRepository) : CommandExecutor(), Configurable {
+    override fun getFunctionId(): FunctionId {
+        return FunctionId.RAGE
+    }
+
     override fun command(): Command {
         return Command.RAGE
     }

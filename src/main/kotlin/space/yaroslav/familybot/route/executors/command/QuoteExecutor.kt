@@ -14,14 +14,8 @@ class QuoteExecutor(val quoteRepository: QuoteRepository) : CommandExecutor() {
     }
 
     override fun execute(update: Update): (AbsSender) -> Unit {
-        val split = update.message.text.split(" ")
         return {
-            it.execute(
-                    if (split.size > 1) {
-                        (SendMessage(update.message.chatId, quoteRepository.getByTag(split[1]) ?: "Такого тега нет, идите нахуй"))
-                    } else {
-                        SendMessage(update.message.chatId, quoteRepository.getRandom())
-                    })
+            it.execute(SendMessage(update.message.chatId, quoteRepository.getRandom()))
         }
     }
 

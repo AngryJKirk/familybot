@@ -5,7 +5,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import space.yaroslav.familybot.common.Huificator
-import space.yaroslav.familybot.repos.ifaces.Pluralization
+import space.yaroslav.familybot.common.Pluralization
 
 
 @RunWith(JUnit4::class)

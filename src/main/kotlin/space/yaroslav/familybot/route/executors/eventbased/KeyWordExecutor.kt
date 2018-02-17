@@ -11,12 +11,18 @@ import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
 import space.yaroslav.familybot.repos.ifaces.RagemodeRepository
 import space.yaroslav.familybot.route.executors.Executor
+import space.yaroslav.familybot.route.executors.Configurable
+import space.yaroslav.familybot.route.models.FunctionId
 import space.yaroslav.familybot.route.models.Priority
 import java.util.concurrent.ThreadLocalRandom
 
 @Component
 class KeyWordExecutor(val keyset: ChatLogRepository,
-                      val configRepository: RagemodeRepository) : Executor {
+                      val configRepository: RagemodeRepository) : Executor, Configurable {
+    override fun getFunctionId(): FunctionId {
+        return FunctionId.CHATTING
+    }
+
     override fun priority(update: Update): Priority {
         return if (configRepository.isEnabled(update.toChat())) {
             Priority.HIGH

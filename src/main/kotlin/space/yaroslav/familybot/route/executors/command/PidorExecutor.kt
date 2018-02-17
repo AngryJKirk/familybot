@@ -5,7 +5,8 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
-import space.yaroslav.familybot.common.*
+import space.yaroslav.familybot.common.Pidor
+import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.isToday
 import space.yaroslav.familybot.common.utils.random
@@ -13,11 +14,17 @@ import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.repos.ifaces.PidorDictionaryRepository
 import space.yaroslav.familybot.route.models.Command
+import space.yaroslav.familybot.route.executors.Configurable
+import space.yaroslav.familybot.route.models.FunctionId
 import java.time.Instant
 import java.time.LocalDateTime
 
 @Component
-class PidorExecutor(val repository: CommonRepository, val dictionaryRepository: PidorDictionaryRepository) : CommandExecutor() {
+class PidorExecutor(val repository: CommonRepository,
+                    val dictionaryRepository: PidorDictionaryRepository) : CommandExecutor(), Configurable {
+    override fun getFunctionId(): FunctionId {
+        return FunctionId.PIDOR
+    }
 
 
     private final val log = LoggerFactory.getLogger(PidorExecutor::class.java)

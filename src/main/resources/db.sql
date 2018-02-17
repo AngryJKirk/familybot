@@ -295,4 +295,26 @@ INSERT INTO pidor_leaderboard_dictionary_v2 (message, plur_id) VALUES
   ('девственных леса Камбоджи', 2),
   ('девственных лесов Камбоджи', 3);
 
-ALTER TABLE users add COLUMN active BOOLEAN DEFAULT TRUE
+ALTER TABLE users
+  ADD COLUMN active BOOLEAN DEFAULT TRUE;
+
+
+CREATE TABLE IF NOT EXISTS functions (
+  function_id INTEGER PRIMARY KEY,
+  description VARCHAR(200)
+);
+
+INSERT INTO functions (function_id, description) VALUES
+  (1, 'Хуификация'),
+  (2, 'Общение'),
+  (3, 'Пидор дня'),
+  (4, 'Рейдж');
+
+
+CREATE TABLE IF NOT EXISTS function_settings (
+  function_id INTEGER NOT NULL REFERENCES functions (function_id),
+  chat_id     BIGINT REFERENCES chats (id),
+  active      BOOLEAN NOT NULL DEFAULT TRUE,
+  date_from   TIMESTAMP        DEFAULT CURRENT_TIMESTAMP
+);
+

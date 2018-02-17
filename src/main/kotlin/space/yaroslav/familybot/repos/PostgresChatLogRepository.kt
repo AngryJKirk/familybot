@@ -14,4 +14,6 @@ class PostgresChatLogRepository(val template: JdbcTemplate) : ChatLogRepository 
     override fun get(user: User): List<String> {
         return template.queryForList("SELECT message FROM chat_log where user_id = ${user.id} and chat_id = ${user.chat.id}", String::class.java).toList()
     }
+
+
 }

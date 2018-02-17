@@ -10,13 +10,20 @@ import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toRussian
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.route.models.Command
+import space.yaroslav.familybot.route.executors.Configurable
+import space.yaroslav.familybot.route.models.FunctionId
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneOffset
 
 @Component
-class PidorStatsMonthExecutor(val repository: CommonRepository) : CommandExecutor() {
+class PidorStatsMonthExecutor(val repository: CommonRepository) : CommandExecutor(), Configurable {
+
+    override fun getFunctionId(): FunctionId {
+        return FunctionId.PIDOR
+    }
+
     override fun command(): Command {
         return Command.STATS_MONTH
     }
