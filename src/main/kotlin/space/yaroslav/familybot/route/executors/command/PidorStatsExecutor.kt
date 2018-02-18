@@ -14,7 +14,7 @@ import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
 
 @Component
-class PidorStatsExecutor(val repository: CommonRepository) : CommandExecutor(), Configurable {
+class PidorStatsExecutor(val repository: CommonRepository) : CommandExecutor, Configurable {
 
     override fun getFunctionId(): FunctionId {
         return FunctionId.PIDOR

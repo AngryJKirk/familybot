@@ -13,15 +13,15 @@ import space.yaroslav.familybot.common.utils.random
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.repos.ifaces.PidorDictionaryRepository
-import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.executors.Configurable
+import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
 import java.time.Instant
 import java.time.LocalDateTime
 
 @Component
 class PidorExecutor(val repository: CommonRepository,
-                    val dictionaryRepository: PidorDictionaryRepository) : CommandExecutor(), Configurable {
+                    val dictionaryRepository: PidorDictionaryRepository) : CommandExecutor, Configurable {
     override fun getFunctionId(): FunctionId {
         return FunctionId.PIDOR
     }

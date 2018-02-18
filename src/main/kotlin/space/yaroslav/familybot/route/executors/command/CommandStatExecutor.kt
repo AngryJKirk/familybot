@@ -12,7 +12,7 @@ import space.yaroslav.familybot.repos.ifaces.HistoryRepository
 import space.yaroslav.familybot.route.models.Command
 
 @Component
-class CommandStatExecutor(val repository: HistoryRepository) : CommandExecutor() {
+class CommandStatExecutor(val repository: HistoryRepository) : CommandExecutor {
     private val title = "Статистика по командам:\n".bold()
 
     override fun command(): Command {

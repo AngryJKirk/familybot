@@ -20,7 +20,7 @@ import java.time.ZoneId
 
 @Component
 class TopPidorsByMonthsExecutor(val commonRepository: CommonRepository,
-                                val pidorDictionaryRepository: PidorDictionaryRepository) : CommandExecutor(), Configurable {
+                                val pidorDictionaryRepository: PidorDictionaryRepository) : CommandExecutor, Configurable {
 
     override fun getFunctionId(): FunctionId {
         return FunctionId.PIDOR
@@ -52,6 +52,7 @@ class TopPidorsByMonthsExecutor(val commonRepository: CommonRepository,
                 .getPidorsByChat(update.toChat())
                 .filter { it.date.isBefore(startOfMonth()) }
         val result = pidors
+                .asSequence()
                 .groupBy { map(it.date) }
                 .mapValues { monthPidors -> calculateStats(monthPidors.value) }
                 .toSortedMap()

@@ -9,10 +9,9 @@ import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
-class HelpCommandExecutor(config: BotConfig) : CommandExecutor() {
-    private final val message = """Запросы помощи и предложения направлять к разработчику: @${config.developer}
-        Для настройки бота существует команда /settings, доступная только для админов
-    """.trimMargin()
+class HelpCommandExecutor(config: BotConfig) : CommandExecutor {
+    private final val message = "Запросы помощи и предложения направлять к разработчику: @${config.developer}" +
+            "\nДля настройки бота существует команда /settings, доступная только для админов"
 
     override fun command(): Command {
         return Command.HELP

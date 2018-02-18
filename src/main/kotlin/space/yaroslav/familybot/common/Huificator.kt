@@ -2,7 +2,7 @@ package space.yaroslav.familybot.common
 
 import java.util.regex.Pattern
 
-class Huificator {
+object Huificator {
 
 
     private val vowels = "ёэоеаяуюыи"

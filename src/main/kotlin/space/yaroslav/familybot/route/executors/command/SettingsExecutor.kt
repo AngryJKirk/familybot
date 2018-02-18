@@ -16,7 +16,7 @@ import space.yaroslav.familybot.route.models.FunctionId
 const val SETTINGS_MESSAGE = "Какую настройку переключить?"
 
 @Component
-class SettingsExecutor(private val configureRepository: FunctionsConfigureRepository) : CommandExecutor() {
+class SettingsExecutor(private val configureRepository: FunctionsConfigureRepository) : CommandExecutor {
     override fun command(): Command {
         return Command.SETTINGS
     }

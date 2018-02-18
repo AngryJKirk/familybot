@@ -8,7 +8,7 @@ import space.yaroslav.familybot.repos.ifaces.QuoteRepository
 import space.yaroslav.familybot.route.models.Command
 
 @Component
-class QuoteExecutor(val quoteRepository: QuoteRepository) : CommandExecutor() {
+class QuoteExecutor(val quoteRepository: QuoteRepository) : CommandExecutor {
     override fun command(): Command {
         return Command.QUOTE
     }

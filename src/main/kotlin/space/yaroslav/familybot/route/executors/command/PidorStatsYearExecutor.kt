@@ -14,7 +14,7 @@ import space.yaroslav.familybot.route.models.FunctionId
 import java.time.*
 
 @Component
-class PidorStatsYearExecutor(val repository: CommonRepository) : CommandExecutor(), Configurable {
+class PidorStatsYearExecutor(val repository: CommonRepository) : CommandExecutor, Configurable {
     override fun getFunctionId(): FunctionId {
         return FunctionId.PIDOR
     }

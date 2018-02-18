@@ -6,7 +6,7 @@ import space.yaroslav.familybot.route.executors.Executor
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.Priority
 
-abstract class CommandExecutor : Executor {
+interface CommandExecutor : Executor {
     override fun canExecute(message: Message): Boolean {
         val text = message.text ?: ""
         val command = command().command
@@ -19,5 +19,5 @@ abstract class CommandExecutor : Executor {
         return Priority.MEDIUM
     }
 
-    abstract fun command(): Command
+    fun command(): Command
 }

@@ -14,7 +14,7 @@ import space.yaroslav.familybot.route.models.Command
 const val QUOTE_MESSAGE = "Тег?"
 
 @Component
-class QuoteByTagExecutor(val quoteRepository: QuoteRepository) : CommandExecutor() {
+class QuoteByTagExecutor(val quoteRepository: QuoteRepository) : CommandExecutor {
     override fun command(): Command {
         return Command.QUOTE_BY_TAG
     }

@@ -17,7 +17,7 @@ import java.time.temporal.ChronoUnit
 
 @Component
 class RageExecutor(val historyRepository: HistoryRepository,
-                   val configRepository: RagemodeRepository) : CommandExecutor(), Configurable {
+                   val configRepository: RagemodeRepository) : CommandExecutor, Configurable {
     override fun getFunctionId(): FunctionId {
         return FunctionId.RAGE
     }
@@ -43,8 +43,7 @@ class RageExecutor(val historyRepository: HistoryRepository,
 
     private fun isCooldown(commands: List<CommandByUser>): Boolean {
         return commands
-                .map { it.command }
-                .contains(command())
+                .find { it.command == command() } != null
     }
 
 }
