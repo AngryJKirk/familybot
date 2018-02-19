@@ -34,7 +34,7 @@ class Router(val repository: CommonRepository,
 
     fun processUpdate(update: Update): (AbsSender) -> Unit {
 
-        val message = update.message ?: update.editedMessage
+        val message = update.message ?: return {}
 
         val chat = message.chat
 
