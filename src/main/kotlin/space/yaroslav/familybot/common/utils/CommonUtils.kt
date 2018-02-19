@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.common.utils
 
+import org.telegram.telegrambots.api.objects.Chat
 import java.time.*
 
 
@@ -23,6 +24,10 @@ val monthMap = mapOf(
 )
 fun Month.toRussian(): String {
     return monthMap[this]!!
+}
+
+fun Chat.isGroup(): Boolean {
+    return this.isSuperGroupChat || this.isGroupChat
 }
 
 

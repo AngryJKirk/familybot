@@ -8,6 +8,7 @@ import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.CommandByUser
+import space.yaroslav.familybot.common.utils.isGroup
 import space.yaroslav.familybot.common.utils.random
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
@@ -38,50 +39,53 @@ class Router(val repository: CommonRepository,
 
         val chat = message.chat
 
-        if (!(chat.isGroupChat || chat.isSuperGroupChat)) {
+        if (!chat.isGroup()) {
             return {}
         }
 
         register(message)
 
-        var executor = selectExecutor(update)
+        val executor = selectExecutor(update) ?: selectLowPriority(update)
 
-        logger.info("Executor to apply: ${executor?.javaClass?.simpleName ?: "[None]"}")
+        logger.info("Executor to apply: ${executor.javaClass.simpleName}")
 
-        if (executor == null) {
-            logger.info("No executor found, trying to apply low priority executors")
-
-            logChatMessage(update)
-
-            executor = selectExecutorLowPriority(update)
-
-            logger.info("Low priority executor ${executor.javaClass.simpleName} was selected")
-        }
-        try {
-            if (isExecutorDisabled(executor, chat)) {
-                when (executor) {
-                    is CommandExecutor -> return { it ->
-                        logger.info("Skip command executor due to configuration")
-                        it.execute(SendMessage(chat.id, "Команда выключена, сорян"))
-                    }
-                    is AntiDdosExecutor -> return { it ->
-                        logger.info("Skip anti-ddos executor due to configuration")
-                        executors
-                                .filter { it is CommandExecutor }
-                                .find { it.canExecute(message) }
-                                ?.execute(update)?.invoke(it)
-                    }
-                    else -> return { _ ->
-                        logger.info("Skip event executor due to configuration")
-                    }
-                }
+        return if (isExecutorDisabled(executor, chat)) {
+            when (executor) {
+                is CommandExecutor -> disabledCommand(chat)
+                is AntiDdosExecutor -> antiDdosSkip(message, update)
+                else -> { _ -> logger.info("Skip event executor due to configuration") }
             }
-            return executor.execute(update)
-        } finally {
-            logChatCommand(executor, update)
-        }
-
+        } else {
+            executor.execute(update)
+        }.also { logChatCommand(executor, update)  }
     }
+
+    private fun selectLowPriority(update: Update): Executor {
+        logger.info("No executor found, trying to find low priority executors")
+
+        logChatMessage(update)
+
+        val executor = selectExecutorLowPriority(update)
+
+        logger.info("Low priority executor ${executor.javaClass.simpleName} was selected")
+        return executor
+    }
+
+
+    private fun antiDdosSkip(message: Message, update: Update): (AbsSender) -> Unit = { it ->
+        logger.info("Skip anti-ddos executor due to configuration")
+        executors
+                .filter { it is CommandExecutor }
+                .find { it.canExecute(message) }
+                ?.execute(update)?.invoke(it)
+    }
+
+
+    private fun disabledCommand(chat: Chat): (AbsSender) -> Unit = { it ->
+        logger.info("Skip command executor due to configuration")
+        it.execute(SendMessage(chat.id, "Команда выключена, сорян"))
+    }
+
 
     private fun isExecutorDisabled(executor: Executor?, chat: Chat): Boolean {
         return executor is Configurable && !configureRepository.isEnabled(executor.getFunctionId(), chat.toChat())
