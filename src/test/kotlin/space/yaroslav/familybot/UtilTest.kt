@@ -14,9 +14,8 @@ class UtilTest {
 
     @Test
     fun test() {
-        val huificator = Huificator()
 //        println(huificator.huify("привет"))
-        println(huificator.huify("абалдеть"))
+        println(Huificator.huify("абалдеть"))
     }
 
     @Test
