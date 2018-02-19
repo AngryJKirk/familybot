@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.common.utils
 
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow
 import space.yaroslav.familybot.common.User
 import java.util.concurrent.ThreadLocalRandom
 
@@ -29,4 +30,14 @@ fun <T> List<T>.random(): T? {
 
 fun <T> Set<T>.random(): T? {
     return this.toList().random()
+}
+
+fun List<String>.toKeyBoard(): List<KeyboardRow> {
+    return this
+            .chunked(3)
+            .map {
+                val keyRow = KeyboardRow()
+                it.forEach { keyRow.add(it) }
+                keyRow
+            }
 }

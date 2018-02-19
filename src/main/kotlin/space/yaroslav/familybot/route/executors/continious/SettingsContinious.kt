@@ -1,6 +1,7 @@
 package space.yaroslav.familybot.route.executors.continious
 
 import org.springframework.stereotype.Component
+import org.telegram.telegrambots.api.methods.groupadministration.GetChatAdministrators
 import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove
@@ -27,20 +28,27 @@ class SettingsContinious(private val configureRepository: FunctionsConfigureRepo
     }
 
     override fun execute(update: Update): (AbsSender) -> Unit {
-        val function = FunctionId
-                .values()
-                .find { it.desc == update.message.text }
-        if (function == null) {
-            return { it.execute(SendMessage(update.message.chatId, "Опять этот пидор какую-то хуйню написал")) }
-        } else {
+        return {
             val chat = update.toChat()
-            configureRepository.switch(function, chat)
-            return {
-                it.execute(SendMessage(chat.id,
-                        "Ок, новый статус: ${currentState(function, chat)}")
-                        .setReplyMarkup(ReplyKeyboardRemove()))
+            if (checkRights(it, update)) {
+                val function = FunctionId
+                        .values()
+                        .find { it.desc == update.message.text }
+                if (function == null) {
+                    it.execute(SendMessage(update.message.chatId, "Опять этот пидор какую-то хуйню написал"))
+                } else {
+                    configureRepository.switch(function, chat)
+                    it.execute(SendMessage(chat.id,
+                            "Ок, новый статус: ${currentState(function, chat)}")
+                            .setReplyMarkup(ReplyKeyboardRemove()))
+                }
+            } else {
+                it.execute(SendMessage(chat.id, "Наебать меня решил, да? " +
+                        "Папку позови, только с ним на эту тему говорить буду"))
             }
         }
+
+
     }
 
     private fun currentState(functionId: FunctionId, chat: Chat): String {
@@ -49,4 +57,11 @@ class SettingsContinious(private val configureRepository: FunctionsConfigureRepo
             false -> "ВЫКЛ"
         }
     }
+
+
+    private fun checkRights(sender: AbsSender, update: Update): Boolean {
+        val admins = sender.execute(GetChatAdministrators().setChatId(update.toChat().id))
+        return admins.find { it.user.id == update.message.from.id } != null
+    }
+
 }
