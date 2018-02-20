@@ -35,12 +35,12 @@ class Router(val repository: CommonRepository,
 
     fun processUpdate(update: Update): (AbsSender) -> Unit {
 
-        val message = update.message ?: return {}
+        val message = update.message ?: return { logger.info("Empty message was given: $update")}
 
         val chat = message.chat
 
         if (!chat.isGroup()) {
-            return {}
+            return { logger.warn("Someone try to do from outside of groups: $update")}
         }
 
         register(message)
@@ -129,7 +129,7 @@ class Router(val repository: CommonRepository,
         if (message.leftChatMember != null) {
             repository.changeUserActiveStatus(message.leftChatMember.toUser(chat = chat), false)
         } else if (message.newChatMembers?.isNotEmpty() == true) {
-            message.newChatMembers.forEach { repository.addUser(it.toUser(chat = chat)) }
+            message.newChatMembers.filter { !it.bot }.forEach { repository.addUser(it.toUser(chat = chat)) }
         } else if (!message.from.bot) {
             repository.addUser(message.from.toUser(chat = chat))
         }

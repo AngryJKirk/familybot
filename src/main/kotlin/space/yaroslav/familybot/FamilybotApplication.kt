@@ -14,7 +14,7 @@ import java.util.logging.Level
 
 @SpringBootApplication
 @EnableAutoConfiguration
-open class FamilybotApplication {
+class FamilybotApplication {
 
     @Bean
     fun botConfig(): DefaultBotOptions {

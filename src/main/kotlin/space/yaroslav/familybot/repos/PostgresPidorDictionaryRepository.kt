@@ -6,7 +6,7 @@ import space.yaroslav.familybot.common.Pluralization
 import space.yaroslav.familybot.repos.ifaces.PidorDictionaryRepository
 
 @Component
-class PidorDictionaryRepositoryImpl(val template: JdbcTemplate) : PidorDictionaryRepository {
+class PostgresPidorDictionaryRepository(val template: JdbcTemplate) : PidorDictionaryRepository {
     override fun getLeaderBoardPhrase(pluralization: Pluralization): List<String> {
         return template.query("SELECT * FROM pidor_leaderboard_dictionary_v2 WHERE plur_id = ${pluralization.code}",
                 { rs, _ -> rs.getString("message") })
