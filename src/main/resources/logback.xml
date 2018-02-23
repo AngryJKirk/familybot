@@ -3,7 +3,7 @@
     <property name="JSON_LOG_PATH" value="${logging.directory:-./logs}/application-json.log"/>
     <property name="LOGBACK_PROPERTIES_FILE" value="${logging.propertiesFile:-./logback.properties.xml}"/>
     <property name="LOGBACK_LOGGERS_FILE" value="${logging.loggersFile:-./logback.loggers.xml}"/>
-    <property name="STDOUT_APPENDER_NAME" value="${logging.stdoutAppenderName:-application-stdout}"/>
+    <property name="STDOUT_APPENDER_NAME" value="${logging.stdoutAppenderName:-application-stdout-2line}"/>
 
     <include optional="true" resource="logback.properties.xml" />
     <include optional="true" file="${LOGBACK_PROPERTIES_FILE}" />
@@ -14,7 +14,7 @@
     <appender name="application-stdout-2line" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <charset>utf8</charset>
-            <pattern>%n%d{HH:mm:ss.SSS} %cyan(%-40.40logger{39}) %mdc%n%highlight(%12level) %message%n%whitespace_exception</pattern>
+            <pattern>%n[%d{yyyy-MM-dd HH:mm:ss.SSS}] %cyan(%-40.40logger{39}) [%mdc]%n%highlight(%12level) %message%n%whitespace_exception</pattern>
         </encoder>
     </appender>
 
