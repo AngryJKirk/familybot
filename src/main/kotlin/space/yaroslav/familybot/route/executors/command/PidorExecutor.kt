@@ -16,8 +16,7 @@ import space.yaroslav.familybot.repos.ifaces.PidorDictionaryRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
-import java.time.Instant
-import java.time.LocalDateTime
+import java.time.*
 
 @Component
 class PidorExecutor(val repository: CommonRepository,
@@ -60,13 +59,17 @@ class PidorExecutor(val repository: CommonRepository,
                 Thread.sleep(3000)
                 it.execute(SendMessage(chatId, nextPidor.getGeneralName(true)))
                 if (isEndOfMonth()) {
-                    val competitors = detectPidorCompetition(pidorsByChat, newPidor)
-                    if(competitors != null){
-                        it.execute(SendMessage(chatId, "Так-так-так, у нас тут гонка заднеприводных".bold()))
+                    val now = LocalDate.now()
+                    val thisMonthPidors = repository.getPidorsByChat(update.message.chat.toChat(),
+                            startDate = LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
+                                    .toInstant(ZoneOffset.UTC))
+                    val competitors = detectPidorCompetition(thisMonthPidors)
+                    if (competitors != null) {
+                        it.execute(SendMessage(chatId, "Так-так-так, у нас тут гонка заднеприводных".bold()).enableHtml(true))
                         val oneMorePidor = competitors.random()!!
                         repository.addPidor(Pidor(oneMorePidor, Instant.now()))
                         Thread.sleep(1000)
-                        it.execute(SendMessage(chatId, "Еще один сегодняшний пидор это ".bold() + "${oneMorePidor.nickname}"))
+                        it.execute(SendMessage(chatId, "Еще один сегодняшний пидор это ".bold() + "${oneMorePidor.nickname}").enableHtml(true))
                     }
                 }
             }
@@ -82,8 +85,8 @@ class PidorExecutor(val repository: CommonRepository,
         return time.month.length(time.year % 4 == 0) == time.dayOfMonth
     }
 
-    private fun detectPidorCompetition(pidors: List<Pidor>, currentPidor: Pidor): Set<User>? {
-        val pidorsByUser = pidors.plus(currentPidor).groupBy { it.user }
+    private fun detectPidorCompetition(pidors: List<Pidor>): Set<User>? {
+        val pidorsByUser = pidors.groupBy { it.user }
         val maxCount = pidorsByUser.mapValues { it.value.size }.maxBy { it.value }!!.value
         val competitors = pidorsByUser.filterValues { it.size == maxCount }.keys
         return if (competitors.size > 1) {
