@@ -16,7 +16,6 @@ import java.time.Instant
 @Component
 class PostgresHistoryRepository(val template: JdbcTemplate) : HistoryRepository {
     override fun getAll(chat: Chat): List<CommandByUser> {
-        "".padEnd()
         return template.query("SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ?",
                 RowMapper { rs, _ -> rs.toCommandByUser(null) }, chat.id)
     }
