@@ -2,6 +2,7 @@ package space.yaroslav.familybot.repos
 
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
+import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.CommandByUser
@@ -15,7 +16,9 @@ import java.time.Instant
 @Component
 class PostgresHistoryRepository(val template: JdbcTemplate) : HistoryRepository {
     override fun getAll(chat: Chat): List<CommandByUser> {
-        return template.query("SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ${chat.id}", {rs, _-> rs.toCommandByUser(null)})
+        "".padEnd()
+        return template.query("SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ?",
+                RowMapper { rs, _ -> rs.toCommandByUser(null) }, chat.id)
     }
 
     override fun add(commandByUser: CommandByUser) {
@@ -24,8 +27,8 @@ class PostgresHistoryRepository(val template: JdbcTemplate) : HistoryRepository 
     }
 
     override fun get(user: User, from: Instant, to: Instant): List<CommandByUser> {
-       return template.query("SELECT * FROM history WHERE user_id = ${user.id} and chat_id = ${user.chat.id} and command_date BETWEEN ? and ?",
-                ResultSetExtractor { it.map { it.toCommandByUser(user) } }, Timestamp.from(from), Timestamp.from(to))
+        return template.query("SELECT * FROM history WHERE user_id = ? AND chat_id = ? AND command_date BETWEEN ? AND ?",
+                ResultSetExtractor { it.map { it.toCommandByUser(user) } }, user.id, user.chat.id, Timestamp.from(from), Timestamp.from(to))
     }
 
 

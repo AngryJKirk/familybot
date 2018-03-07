@@ -1,6 +1,7 @@
 package space.yaroslav.familybot.repos
 
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Pluralization
 import space.yaroslav.familybot.repos.ifaces.PidorDictionaryRepository
@@ -8,8 +9,8 @@ import space.yaroslav.familybot.repos.ifaces.PidorDictionaryRepository
 @Component
 class PostgresPidorDictionaryRepository(val template: JdbcTemplate) : PidorDictionaryRepository {
     override fun getLeaderBoardPhrase(pluralization: Pluralization): List<String> {
-        return template.query("SELECT * FROM pidor_leaderboard_dictionary_v2 WHERE plur_id = ${pluralization.code}",
-                { rs, _ -> rs.getString("message") })
+        return template.query("SELECT * FROM pidor_leaderboard_dictionary_v2 WHERE plur_id = ?",
+                RowMapper { rs, _ -> rs.getString("message") }, pluralization.code)
     }
 
     override fun getStart(): List<String> {

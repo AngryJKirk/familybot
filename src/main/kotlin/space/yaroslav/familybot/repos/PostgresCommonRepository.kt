@@ -4,7 +4,9 @@ import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.*
+import space.yaroslav.familybot.common.Chat
+import space.yaroslav.familybot.common.Pidor
+import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.*
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import java.sql.Timestamp
@@ -36,7 +38,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     }
 
     override fun addChat(chat: Chat) {
-        template.update("INSERT INTO chats (id, name) VALUES (${chat.id}, '${chat.name ?: ""}')")
+        template.update("INSERT INTO chats (id, name) VALUES (?, ?)", chat.id, chat.name ?: "")
     }
 
     override fun getChats(): List<Chat> {
