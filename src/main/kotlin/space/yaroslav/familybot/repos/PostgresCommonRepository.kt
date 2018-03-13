@@ -16,18 +16,17 @@ import javax.sql.DataSource
 @Component
 @Primary
 class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
-
     private val template = JdbcTemplate(datasource)
+
     private val chatCache: MutableSet<Chat> = HashSet()
     private val userCache: MutableSet<User> = HashSet()
-
-
     override fun addUser(user: User) {
         template.update("INSERT INTO users (id, name, username) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET name = EXCLUDED.name, username = EXCLUDED.username, active = TRUE ",
                 user.id, user.name.removeEmoji(), user.nickname)
         template.update("INSERT INTO users2chats (chat_id, user_id) VALUES (?, ?) ON CONFLICT DO NOTHING",
                 user.chat.id, user.id)
     }
+
 
     override fun getUsers(chat: Chat, activeOnly: Boolean): List<User> {
         var select = "SELECT * FROM users INNER JOIN users2chats u ON users.id = u.user_id WHERE u.chat_id = ${chat.id}"
@@ -48,6 +47,11 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     override fun addPidor(pidor: Pidor) {
         template.update("INSERT INTO pidors (id, pidor_date, chat_id) VALUES (${pidor.user.id}, ?, ${pidor.user.chat.id})",
                 Timestamp.from(pidor.date))
+    }
+
+    override fun removePidorRecord(user: User) {
+        template.update("DELETE FROM pidors where id = ? and pidor_date = (SELECT pidor_date from pidors where id = ? and pidor_date > date_trunc('month', current_date) LIMIT 1)",
+                user.id, user.id)
     }
 
     override fun getPidorsByChat(chat: Chat, startDate: Instant, endDate: Instant): List<Pidor> {

@@ -13,7 +13,8 @@ enum class Command(val command: String, val id: Int) {
     HELP("/help", 9),
     SETTINGS("/settings", 10),
     ANSWER("/answer", 11),
-    QUOTE_BY_TAG("/quotebytag", 12);
+    QUOTE_BY_TAG("/quotebytag", 12),
+    ROULETTE("/roulette", 13);
 
 
 

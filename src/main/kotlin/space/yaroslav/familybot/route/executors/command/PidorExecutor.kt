@@ -6,7 +6,6 @@ import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.Pidor
-import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.isToday
 import space.yaroslav.familybot.common.utils.random
@@ -16,11 +15,13 @@ import space.yaroslav.familybot.repos.ifaces.PidorDictionaryRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
-import java.time.*
+import space.yaroslav.familybot.route.services.PidorCompetitionService
+import java.time.Instant
 
 @Component
 class PidorExecutor(val repository: CommonRepository,
-                    val dictionaryRepository: PidorDictionaryRepository) : CommandExecutor, Configurable {
+                    val dictionaryRepository: PidorDictionaryRepository,
+                    val pidorCompetitionService: PidorCompetitionService) : CommandExecutor, Configurable {
     override fun getFunctionId(): FunctionId {
         return FunctionId.PIDOR
     }
@@ -30,13 +31,10 @@ class PidorExecutor(val repository: CommonRepository,
 
     override fun execute(update: Update): (AbsSender) -> Unit {
         val chat = update.message.chat.toChat()
-        log.info("Getting pidor from chat $chat")
-        val pidorsByChat = repository.getPidorsByChat(chat)
-        val pidor = pidorsByChat.find { it.date.isToday() }
-        val message = pidor
-                ?.let { SendMessage(update.message.chatId, "Сегодняшний пидор уже обнаружен: ${it.user.getGeneralName(true)}") }
+        log.info("Getting pidors from chat $chat")
+        val message = todayPidors(update)
         if (message != null) {
-            log.info("Pidor is already founded: $pidor")
+            log.info("Pidors is already founded")
             return { it.execute(message) }
         } else {
             log.info("Pidor is not found, initiating search procedure")
@@ -58,20 +56,7 @@ class PidorExecutor(val repository: CommonRepository,
                 it.execute(SendMessage(chatId, finisher).enableHtml(true))
                 Thread.sleep(3000)
                 it.execute(SendMessage(chatId, nextPidor.getGeneralName(true)))
-                if (isEndOfMonth()) {
-                    val now = LocalDate.now()
-                    val thisMonthPidors = repository.getPidorsByChat(update.message.chat.toChat(),
-                            startDate = LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
-                                    .toInstant(ZoneOffset.UTC))
-                    val competitors = detectPidorCompetition(thisMonthPidors)
-                    if (competitors != null) {
-                        it.execute(SendMessage(chatId, "Так-так-так, у нас тут гонка заднеприводных".bold()).enableHtml(true))
-                        val oneMorePidor = competitors.random()!!
-                        repository.addPidor(Pidor(oneMorePidor, Instant.now()))
-                        Thread.sleep(1000)
-                        it.execute(SendMessage(chatId, "Еще один сегодняшний пидор это ".bold() + "${oneMorePidor.nickname}").enableHtml(true))
-                    }
-                }
+                pidorCompetitionService.pidorCompetition(update)?.invoke(it)
             }
         }
     }
@@ -80,20 +65,19 @@ class PidorExecutor(val repository: CommonRepository,
         return Command.PIDOR
     }
 
-    private fun isEndOfMonth(): Boolean {
-        val time = LocalDateTime.now()
-        return time.month.length(time.year % 4 == 0) == time.dayOfMonth
-    }
+    private fun todayPidors(update: Update): SendMessage? {
+        val pidorsByChat = repository.getPidorsByChat(update.toChat())
+                .filter { it.date.isToday() }
+                .distinctBy { it.user.id }
 
-    private fun detectPidorCompetition(pidors: List<Pidor>): Set<User>? {
-        val pidorsByUser = pidors.groupBy { it.user }
-        val maxCount = pidorsByUser.mapValues { it.value.size }.maxBy { it.value }!!.value
-        val competitors = pidorsByUser.filterValues { it.size == maxCount }.keys
-        return if (competitors.size > 1) {
-            competitors
-        } else {
-            null
+        return when (pidorsByChat.size) {
+            0 -> null
+            1 -> SendMessage(update.message.chatId, "Сегодняшний пидор уже обнаружен: " +
+                    pidorsByChat.first().user.getGeneralName())
+            else -> SendMessage(update.message.chatId, "Сегодняшние пидоры уже обнаружены: " +
+                    pidorsByChat.joinToString { it.user.getGeneralName() })
         }
     }
+
 
 }

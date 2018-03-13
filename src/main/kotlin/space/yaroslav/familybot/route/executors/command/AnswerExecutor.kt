@@ -25,7 +25,6 @@ class AnswerExecutor(keywordRepository: KeywordRepository) : CommandExecutor {
                 .filter { variant -> variant.isNotEmpty() }
                 .takeIf { it.size >= 2 }
                 ?.random()
-                ?.toLowerCase()
                 ?.capitalize()
                 ?.dropLastDelimiter()
                 ?: "Ты пидор, отъебись"

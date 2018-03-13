@@ -10,9 +10,9 @@ interface CommandExecutor : Executor {
     override fun canExecute(message: Message): Boolean {
         val text = message.text ?: ""
         val command = command().command
-        return text.startsWith(command + "@") ||
+        return text.startsWith("$command@") ||
                 text == command ||
-                text.startsWith(command + " ")
+                text.startsWith("$command ")
     }
 
     override fun priority(update: Update): Priority {
