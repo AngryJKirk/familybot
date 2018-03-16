@@ -16,9 +16,8 @@ interface ContiniousConversation : CommandExecutor {
     }
 
     override fun canExecute(message: Message): Boolean {
-        return message.isReply
-                && message.replyToMessage.from.userName == botConfig.botname
-                && message.replyToMessage.text ?: "" == getDialogMessage()
+        return message.from.userName == botConfig.botname
+                && message.text ?: "" == getDialogMessage()
     }
 
     fun getDialogMessage(): String

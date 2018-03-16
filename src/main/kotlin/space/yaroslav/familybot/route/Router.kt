@@ -35,12 +35,12 @@ class Router(val repository: CommonRepository,
 
     fun processUpdate(update: Update): (AbsSender) -> Unit {
 
-        val message = update.message ?: return { logger.info("Empty message was given: $update")}
+        val message = update.message ?: update.callbackQuery?.message ?: return { logger.info("Empty message was given: $update") }
 
         val chat = message.chat
 
         if (!chat.isGroup()) {
-            return { logger.warn("Someone try to do from outside of groups: $update")}
+            return { logger.warn("Someone try to do from outside of groups: $update") }
         }
 
         register(message)
@@ -57,7 +57,7 @@ class Router(val repository: CommonRepository,
             }
         } else {
             executor.execute(update)
-        }.also { logChatCommand(executor, update)  }
+        }.also { logChatCommand(executor, update) }
     }
 
     private fun selectLowPriority(update: Update): Executor {
@@ -65,7 +65,9 @@ class Router(val repository: CommonRepository,
 
         logChatMessage(update)
 
-        val executor = selectExecutorLowPriority(update)
+        val executor = executors
+                .filter { it.priority(update) == Priority.LOW }
+                .random()!!
 
         logger.info("Low priority executor ${executor.javaClass.simpleName} was selected")
         return executor
@@ -74,10 +76,16 @@ class Router(val repository: CommonRepository,
 
     private fun antiDdosSkip(message: Message, update: Update): (AbsSender) -> Unit = { it ->
         logger.info("Skip anti-ddos executor due to configuration")
-        executors
+        val executor = executors
                 .filter { it is CommandExecutor }
                 .find { it.canExecute(message) }
-                ?.execute(update)?.invoke(it)
+        val function = if (isExecutorDisabled(executor, message.chat)) {
+            disabledCommand(message.chat)
+        } else {
+            executor?.execute(update)
+        }
+
+        function?.invoke(it)
     }
 
 
@@ -92,7 +100,7 @@ class Router(val repository: CommonRepository,
     }
 
     private fun logChatCommand(executor: Executor?, update: Update) {
-        if (executor is CommandExecutor) {
+        if (executor is CommandExecutor && executor.isLoggable()) {
             historyRepository.add(CommandByUser(
                     update.toUser(),
                     executor.command(),
@@ -100,9 +108,6 @@ class Router(val repository: CommonRepository,
         }
     }
 
-    private fun selectExecutorLowPriority(update: Update): Executor {
-        return executors.filter { it.priority(update) == Priority.LOW }.random()!!
-    }
 
     private fun logChatMessage(update: Update) {
         val text = update.message?.text
@@ -115,7 +120,7 @@ class Router(val repository: CommonRepository,
         return executors
                 .sortedByDescending { it.priority(update).int }
                 .filter { it.priority(update).int >= 0 }
-                .find { it.canExecute(update.message) }
+                .find { it.canExecute(update.message ?: update.callbackQuery.message) }
     }
 
 

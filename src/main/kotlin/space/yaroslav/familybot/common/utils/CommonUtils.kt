@@ -22,6 +22,7 @@ val monthMap = mapOf(
         Month.NOVEMBER to "ноябрь",
         Month.DECEMBER to "декабрь"
 )
+
 fun Month.toRussian(): String {
     return monthMap[this]!!
 }
@@ -29,6 +30,14 @@ fun Month.toRussian(): String {
 fun Chat.isGroup(): Boolean {
     return this.isSuperGroupChat || this.isGroupChat
 }
+
+fun Boolean.toEmoji(): String {
+    return when(this){
+        true -> "✅"
+        false -> "❌"
+    }
+}
+
 
 
 

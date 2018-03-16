@@ -16,14 +16,14 @@ fun TelegramUser.toUser(chat: Chat? = null, telegramChat: TelegramChat? = null):
 }
 
 fun Update.toChat(): Chat {
-    if (this.message == null) {
-        throw RuntimeException("Cant process ${this}")
-    }
-    return Chat(this.message.chat.id, this.message.chat.title)
+    val message = this.message
+            ?: callbackQuery.message
+            ?: throw RuntimeException("Cant process ${this}")
+    return Chat(message.chat.id, message.chat.title)
 }
 
 fun Update.toUser(): User {
-    val user = this.message.from
-    val formatedName = (user.firstName?.let { it + " " } ?: "") + (user.lastName ?: "")
+    val user = this.message?.from ?: this.callbackQuery.from
+    val formatedName = (user.firstName?.let { "$it " } ?: "") + (user.lastName ?: "")
     return User(user.id.toLong(), this.toChat(), formatedName, user.userName)
 }

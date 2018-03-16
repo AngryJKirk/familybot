@@ -19,5 +19,9 @@ interface CommandExecutor : Executor {
         return Priority.MEDIUM
     }
 
+    fun isLoggable(): Boolean {
+        return true
+    }
+
     fun command(): Command
 }

@@ -1,13 +1,14 @@
 package space.yaroslav.familybot.route.executors.continious
 
 import org.springframework.stereotype.Component
+import org.telegram.telegrambots.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.api.methods.groupadministration.GetChatAdministrators
 import org.telegram.telegrambots.api.methods.send.SendMessage
+import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageReplyMarkup
 import org.telegram.telegrambots.api.objects.Update
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove
 import org.telegram.telegrambots.bots.AbsSender
-import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.utils.toChat
+import space.yaroslav.familybot.common.utils.toEmoji
 import space.yaroslav.familybot.repos.ifaces.FunctionsConfigureRepository
 import space.yaroslav.familybot.route.executors.command.SETTINGS_MESSAGE
 import space.yaroslav.familybot.route.models.Command
@@ -30,38 +31,32 @@ class SettingsContinious(private val configureRepository: FunctionsConfigureRepo
     override fun execute(update: Update): (AbsSender) -> Unit {
         return {
             val chat = update.toChat()
+            val callbackQuery = update.callbackQuery
             if (checkRights(it, update)) {
                 val function = FunctionId
                         .values()
-                        .find { it.desc == update.message.text }
-                if (function == null) {
-                    it.execute(SendMessage(update.message.chatId, "Опять этот пидор какую-то хуйню написал"))
-                } else {
+                        .find { it.desc == callbackQuery.data }
+                if (function != null) {
                     configureRepository.switch(function, chat)
-                    it.execute(SendMessage(chat.id,
-                            "Ок, новый статус: ${currentState(function, chat)}")
-                            .setReplyMarkup(ReplyKeyboardRemove()))
+                    it.execute(AnswerCallbackQuery()
+                            .setCallbackQueryId(callbackQuery.id))
+                    it.execute(EditMessageReplyMarkup()
+                            .setChatId(callbackQuery.message.chatId)
+                            .setMessageId(callbackQuery.message.messageId)
+                            .setReplyMarkup(FunctionId.toKeyBoard { configureRepository.isEnabled(it, chat) }))
+                    it.execute(SendMessage(chat.id, "${function.desc} -> ${configureRepository.isEnabled(function, chat).toEmoji()}"))
                 }
-            } else {
-                it.execute(SendMessage(chat.id, "Наебать меня решил, да? " +
-                        "Папку позови, только с ним на эту тему говорить буду"))
+            } else{
+                it.execute(AnswerCallbackQuery().setCallbackQueryId(callbackQuery.id)
+                        .setShowAlert(true).setText("Ну ты и пидор, не для тебя ягодка росла"))
             }
         }
 
-
     }
-
-    private fun currentState(functionId: FunctionId, chat: Chat): String {
-        return when (configureRepository.isEnabled(functionId, chat)) {
-            true -> "ВКЛ"
-            false -> "ВЫКЛ"
-        }
-    }
-
 
     private fun checkRights(sender: AbsSender, update: Update): Boolean {
         val admins = sender.execute(GetChatAdministrators().setChatId(update.toChat().id))
-        return admins.find { it.user.id == update.message.from.id } != null
+        return admins.find { it.user.id == update.callbackQuery.from.id } != null
     }
 
 }
