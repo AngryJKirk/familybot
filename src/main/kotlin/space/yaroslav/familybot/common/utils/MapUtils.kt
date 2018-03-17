@@ -11,7 +11,7 @@ fun TelegramChat.toChat(): Chat = Chat(this.id, this.title)
 
 fun TelegramUser.toUser(chat: Chat? = null, telegramChat: TelegramChat? = null): User {
     val internalChat = telegramChat?.toChat() ?: chat
-    val format = (this.firstName?.let { it + " " } ?: "") + (this.lastName ?: "")
+    val format = (this.firstName?.let { "$it " } ?: "") + (this.lastName ?: "")
     return User(this.id.toLong(), internalChat!!, format, this.userName)
 }
 

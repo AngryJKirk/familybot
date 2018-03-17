@@ -35,7 +35,7 @@ object Huificator {
         return if (rules.containsKey(postfix[0])) {
             "ху" + rules[postfix[0]] + postfix.drop(1)
         } else {
-            "ху" + postfix
+            "ху$postfix"
         }
 
 

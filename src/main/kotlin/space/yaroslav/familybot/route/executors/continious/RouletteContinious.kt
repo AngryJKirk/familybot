@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.route.executors.continious
 
+import kotlinx.coroutines.experimental.launch
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
@@ -56,7 +57,7 @@ class RouletteContinious(val historyRepository: HistoryRepository,
         if (number != null && number !in 1..6) {
             return {
                 it.execute(SendMessage(chatId, "Мушку спили и в следующий раз играй по правилам"))
-                pidorRepository.addPidor(Pidor(user, Instant.now()))
+                launch {  pidorRepository.addPidor(Pidor(user, Instant.now())) }
                 it.execute(SendMessage(chatId, "В наказание твое пидорское очко уходит к остальным"))
             }
         }
@@ -64,13 +65,12 @@ class RouletteContinious(val historyRepository: HistoryRepository,
         log.info("Roulette win number is $rouletteNumber and guessed number is $number")
         return {
             if (rouletteNumber == number) {
-                pidorRepository.removePidorRecord(user)
                 it.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
                 Thread.sleep(2000)
                 it.execute(SendMessage(chatId, "Но он пока не треснул. Свое пидорское очко можешь забрать. "))
             } else {
                 it.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
-                repeat(3, { pidorRepository.addPidor(Pidor(user, Instant.now())) })
+                launch { repeat(3, { pidorRepository.addPidor(Pidor(user, Instant.now())) }) }
                 Thread.sleep(2000)
                 it.execute(SendMessage(chatId, "Сорян, но ты проиграл. Твое пидорское очко уходит в зрительный зал трижды."))
             }

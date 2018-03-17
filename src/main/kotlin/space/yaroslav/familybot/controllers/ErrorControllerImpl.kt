@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class ErrorControllerImpl : ErrorController {
 
-    @RequestMapping(value = PATH)
+    @RequestMapping(value = [PATH])
     fun error(): ResponseEntity<Response> {
         return ResponseEntity.badRequest().body(Response("Что-то ты сделал не так, пидор"))
     }
@@ -19,7 +19,6 @@ class ErrorControllerImpl : ErrorController {
     }
 
     companion object {
-
         private const val PATH = "/error"
     }
 }

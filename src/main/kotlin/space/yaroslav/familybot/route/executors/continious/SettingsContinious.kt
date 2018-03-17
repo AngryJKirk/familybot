@@ -32,31 +32,35 @@ class SettingsContinious(private val configureRepository: FunctionsConfigureRepo
         return {
             val chat = update.toChat()
             val callbackQuery = update.callbackQuery
-            if (checkRights(it, update)) {
-                val function = FunctionId
-                        .values()
-                        .find { it.desc == callbackQuery.data }
-                if (function != null) {
-                    configureRepository.switch(function, chat)
-                    it.execute(AnswerCallbackQuery()
-                            .setCallbackQueryId(callbackQuery.id))
-                    it.execute(EditMessageReplyMarkup()
-                            .setChatId(callbackQuery.message.chatId)
-                            .setMessageId(callbackQuery.message.messageId)
-                            .setReplyMarkup(FunctionId.toKeyBoard { configureRepository.isEnabled(it, chat) }))
-                    it.execute(SendMessage(chat.id, "${function.desc} -> ${configureRepository.isEnabled(function, chat).toEmoji()}"))
-                }
-            } else{
+
+            if (!checkRights(it, update)) {
                 it.execute(AnswerCallbackQuery().setCallbackQueryId(callbackQuery.id)
                         .setShowAlert(true).setText("Ну ты и пидор, не для тебя ягодка росла"))
+            }
+
+            val function = FunctionId
+                    .values()
+                    .find { it.desc == callbackQuery.data }
+
+            if (function != null) {
+                configureRepository.switch(function, chat)
+                val isEnabled = { id: FunctionId -> configureRepository.isEnabled(id, chat) }
+                it.execute(AnswerCallbackQuery()
+                        .setCallbackQueryId(callbackQuery.id))
+                it.execute(EditMessageReplyMarkup()
+                        .setChatId(callbackQuery.message.chatId)
+                        .setMessageId(callbackQuery.message.messageId)
+                        .setReplyMarkup(FunctionId.toKeyBoard(isEnabled)))
+                it.execute(SendMessage(chat.id, "${function.desc} -> ${isEnabled.invoke(function).toEmoji()}"))
             }
         }
 
     }
 
     private fun checkRights(sender: AbsSender, update: Update): Boolean {
-        val admins = sender.execute(GetChatAdministrators().setChatId(update.toChat().id))
-        return admins.find { it.user.id == update.callbackQuery.from.id } != null
+        return sender
+                .execute(GetChatAdministrators().setChatId(update.toChat().id))
+                .find { it.user.id == update.callbackQuery.from.id } != null
     }
 
 }

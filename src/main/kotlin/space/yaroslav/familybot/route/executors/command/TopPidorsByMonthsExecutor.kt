@@ -48,20 +48,16 @@ class TopPidorsByMonthsExecutor(val commonRepository: CommonRepository,
     }
 
     override fun execute(update: Update): (AbsSender) -> Unit {
-        val pidors = commonRepository
+        val result = commonRepository
                 .getPidorsByChat(update.toChat())
-                .filter { it.date.isBefore(startOfMonth()) }
-        val result = pidors
                 .asSequence()
+                .filter { it.date.isBefore(startOfMonth()) }
                 .groupBy { map(it.date) }
                 .mapValues { monthPidors -> calculateStats(monthPidors.value) }
                 .toSortedMap()
                 .asIterable()
                 .reversed()
-                .map { "${it.key.month.toRussian().capitalize()}, ${it.key.year}:\n".italic() + "${it.value.user.name.dropLastDelimiter()}, "+
-                        "${it.value.position} " +
-                        "${pidorDictionaryRepository.getLeaderBoardPhrase(Pluralization.PluralizationCalc.getPlur(it.value.position)).random()} из " +
-                        "${it.value.position}"}
+                .map(formatLeaderBoard())
 
         val message = "Ими гордится школа:\n".bold()
         return {
@@ -69,6 +65,14 @@ class TopPidorsByMonthsExecutor(val commonRepository: CommonRepository,
                     message + "\n" + result.joinToString(delimiter)).enableHtml(true))
         }
     }
+
+    private fun formatLeaderBoard(): (Map.Entry<PidorDate, PidorStat>) -> String = {
+            "${it.key.month.toRussian().capitalize()}, ${it.key.year}:\n".italic() + "${it.value.user.name.dropLastDelimiter()}, " +
+                    "${it.value.position} " +
+                    "${pidorDictionaryRepository.getLeaderBoardPhrase(Pluralization.getPlur(it.value.position)).random()} из " +
+                    "${it.value.position}"
+        }
+
 
     private fun startOfMonth(): Instant {
         val time = LocalDateTime.now()

@@ -14,11 +14,11 @@ class InCodeConfigRepository : RagemodeRepository {
 
 
     override fun enable(minutes: Int, messages: Int, chat: Chat) {
-        configs.put(chat, KeywordConfig(
+        configs[chat] = KeywordConfig(
                 rageMode = true,
                 rageModeLimit = messages,
                 ttl = Instant.now().plus(minutes.toLong(), ChronoUnit.MINUTES),
-                chat = chat))
+                chat = chat)
     }
 
     override fun isEnabled(chat: Chat): Boolean {

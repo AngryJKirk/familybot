@@ -23,13 +23,12 @@ class PidorStatsExecutor(val repository: CommonRepository) : CommandExecutor, Co
     override fun execute(update: Update): (AbsSender) -> Unit {
         val chat = update.message.chat.toChat()
         val pidorsByChat = repository.getPidorsByChat(chat)
-        val groupBy = pidorsByChat
                 .groupBy { it.user }
                 .map { it.key to it.value.size }
                 .sortedByDescending { it.second }
                 .mapIndexed { index, pair -> format(index, pair) }
         val title = "Топ пидоров за все время:\n".bold()
-        return { it.execute(SendMessage(update.message.chatId, title + groupBy.joinToString("\n")).enableHtml(true)) }
+        return { it.execute(SendMessage(update.message.chatId, title + pidorsByChat.joinToString("\n")).enableHtml(true)) }
 
     }
 
@@ -38,7 +37,6 @@ class PidorStatsExecutor(val repository: CommonRepository) : CommandExecutor, Co
     }
 
     private fun format(index: Int, pidorStats: Pair<User, Int>): String {
-
         val generalName = pidorStats.first.name ?: pidorStats.first.nickname
         val i = "${index + 1}.".bold()
         val stat = "${pidorStats.second} раз(а)".italic()

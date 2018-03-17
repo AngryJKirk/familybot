@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.route
 
+import kotlinx.coroutines.experimental.launch
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
@@ -35,7 +36,8 @@ class Router(val repository: CommonRepository,
 
     fun processUpdate(update: Update): (AbsSender) -> Unit {
 
-        val message = update.message ?: update.callbackQuery?.message ?: return { logger.info("Empty message was given: $update") }
+        val message = update.message ?: update.callbackQuery?.message
+        ?: return { logger.info("Empty message was given: $update") }
 
         val chat = message.chat
 
@@ -43,7 +45,7 @@ class Router(val repository: CommonRepository,
             return { logger.warn("Someone try to do from outside of groups: $update") }
         }
 
-        register(message)
+        launch { register(message) }
 
         val executor = selectExecutor(update) ?: selectLowPriority(update)
 
@@ -57,13 +59,13 @@ class Router(val repository: CommonRepository,
             }
         } else {
             executor.execute(update)
-        }.also { logChatCommand(executor, update) }
+        }.also { launch { logChatCommand(executor, update) } }
     }
 
     private fun selectLowPriority(update: Update): Executor {
         logger.info("No executor found, trying to find low priority executors")
 
-        logChatMessage(update)
+        launch { logChatMessage(update) }
 
         val executor = executors
                 .filter { it.priority(update) == Priority.LOW }

@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.route.executors.command
 
+import kotlinx.coroutines.experimental.launch
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
@@ -43,7 +44,7 @@ class PidorExecutor(val repository: CommonRepository,
             val nextPidor = users.random()!!
             log.info("Pidor is rolled to $nextPidor")
             val newPidor = Pidor(nextPidor, Instant.now())
-            repository.addPidor(newPidor)
+            val addPidor = launch {  repository.addPidor(newPidor) }
             val start = dictionaryRepository.getStart().random().bold()
             val middle = dictionaryRepository.getMiddle().random().bold()
             val finisher = dictionaryRepository.getFinish().random().bold()
@@ -56,7 +57,7 @@ class PidorExecutor(val repository: CommonRepository,
                 it.execute(SendMessage(chatId, finisher).enableHtml(true))
                 Thread.sleep(3000)
                 it.execute(SendMessage(chatId, nextPidor.getGeneralName(true)))
-                pidorCompetitionService.pidorCompetition(update)?.invoke(it)
+                addPidor.invokeOnCompletion { _ -> pidorCompetitionService.pidorCompetition(update)?.invoke(it) }
             }
         }
     }

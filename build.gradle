@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        kotlinVersion = '1.2.21'
+        kotlinVersion = '1.2.30'
         springBootVersion = '1.5.9.RELEASE'
         telegramBotVersion = '3.5'
     }
@@ -38,6 +38,7 @@ dependencies {
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
     compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
     testCompile('org.springframework.boot:spring-boot-starter-test')
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.5'
 }
 
 compileJava.dependsOn(processResources)
@@ -53,4 +54,9 @@ bootRun {
                "-Dcom.sun.management.jmxremote.authenticate=false",
                "-Dcom.sun.management.jmxremote.ssl=false"
                 ]
+}
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
 }

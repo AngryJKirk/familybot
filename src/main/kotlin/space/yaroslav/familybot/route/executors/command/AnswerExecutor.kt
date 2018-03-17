@@ -7,11 +7,10 @@ import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.utils.dropLastDelimiter
 import space.yaroslav.familybot.common.utils.random
 import space.yaroslav.familybot.common.utils.toChat
-import space.yaroslav.familybot.repos.ifaces.KeywordRepository
 import space.yaroslav.familybot.route.models.Command
 
 @Component
-class AnswerExecutor(keywordRepository: KeywordRepository) : CommandExecutor {
+class AnswerExecutor : CommandExecutor {
     override fun command(): Command {
         return Command.ANSWER
     }
