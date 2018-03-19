@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneOffset
 
-const val ROULETTE_MESSAGE = "Выбери число от 1 до 6 и ответь на это сообщение"
+const val ROULETTE_MESSAGE = "Выбери число от 1 до 6"
 
 @Component
 class RouletteExecutor(private val historyRepository: HistoryRepository) : CommandExecutor, Configurable {
