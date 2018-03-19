@@ -22,6 +22,7 @@ import space.yaroslav.familybot.route.executors.Executor
 import space.yaroslav.familybot.route.executors.command.CommandExecutor
 import space.yaroslav.familybot.route.executors.eventbased.AntiDdosExecutor
 import space.yaroslav.familybot.route.models.Priority
+import space.yaroslav.familybot.route.services.RawUpdateLogger
 import java.time.Instant
 
 
@@ -30,7 +31,8 @@ class Router(val repository: CommonRepository,
              val historyRepository: HistoryRepository,
              val executors: List<Executor>,
              val chatLogRepository: ChatLogRepository,
-             val configureRepository: FunctionsConfigureRepository) {
+             val configureRepository: FunctionsConfigureRepository,
+             val rawUpdateLogger: RawUpdateLogger) {
 
     private final val logger = LoggerFactory.getLogger(Router::class.java)
 
@@ -46,6 +48,7 @@ class Router(val repository: CommonRepository,
         }
 
         launch { register(message) }
+                .invokeOnCompletion { rawUpdateLogger.log(update) }
 
         val executor = selectExecutor(update) ?: selectLowPriority(update)
 
