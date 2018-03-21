@@ -16,10 +16,9 @@ class AnswerExecutor : CommandExecutor {
     }
 
     override fun execute(update: Update): (AbsSender) -> Unit {
-        val message = update
-                .message
-                .text
-                .removePrefix(command().command + " ")
+        val text = update.message.text
+        val message = text
+                .removeRange(0, text.indexOfFirst { it == ' ' })
                 .split(" или ")
                 .filter { variant -> variant.isNotEmpty() }
                 .takeIf { it.size >= 2 }
