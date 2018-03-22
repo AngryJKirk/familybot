@@ -50,8 +50,8 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     }
 
     override fun removePidorRecord(user: User) {
-        template.update("DELETE FROM pidors where id = ? and pidor_date = (SELECT pidor_date from pidors where id = ? and pidor_date > date_trunc('month', current_date) LIMIT 1)",
-                user.id, user.id)
+        template.update("DELETE FROM pidors where id = ? and chat_id = ? and pidor_date = (SELECT pidor_date from pidors where id = ? and chat_id = ? and pidor_date > date_trunc('month', current_date) LIMIT 1)",
+                user.id, user.chat.id, user.id, user.chat.id)
     }
 
     override fun getPidorsByChat(chat: Chat, startDate: Instant, endDate: Instant): List<Pidor> {

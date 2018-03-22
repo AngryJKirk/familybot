@@ -66,6 +66,7 @@ class RouletteContinious(val historyRepository: HistoryRepository,
         return {
             if (rouletteNumber == number) {
                 it.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
+                launch {  pidorRepository.removePidorRecord(user) }
                 Thread.sleep(2000)
                 it.execute(SendMessage(chatId, "Но он пока не треснул. Свое пидорское очко можешь забрать. "))
             } else {
