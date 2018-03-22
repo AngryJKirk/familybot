@@ -3,6 +3,7 @@ package space.yaroslav.familybot.repos
 import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
+import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.Pidor
@@ -45,8 +46,8 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     }
 
     override fun addPidor(pidor: Pidor) {
-        template.update("INSERT INTO pidors (id, pidor_date, chat_id) VALUES (${pidor.user.id}, ?, ${pidor.user.chat.id})",
-                Timestamp.from(pidor.date))
+        template.update("INSERT INTO pidors (id, pidor_date, chat_id) VALUES (?, ?, ?)",
+                pidor.user.id, Timestamp.from(pidor.date), pidor.user.chat.id)
     }
 
     override fun removePidorRecord(user: User) {
@@ -55,15 +56,15 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     }
 
     override fun getPidorsByChat(chat: Chat, startDate: Instant, endDate: Instant): List<Pidor> {
-        return template.query("SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE pidors.chat_id = ${chat.id} AND pidor_date BETWEEN ? and ?",
-                ResultSetExtractor { it.map { it.toPidor() } }, Timestamp.from(startDate), Timestamp.from(endDate))
+        return template.query("SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE pidors.chat_id = ? AND pidor_date BETWEEN ? and ?",
+                ResultSetExtractor { it.map { it.toPidor() } }, chat.id, Timestamp.from(startDate), Timestamp.from(endDate))
     }
 
     override fun containsUser(user: User): Boolean {
         if (userCache.contains(user)) {
             return true
         }
-        val exist = template.query("SELECT * FROM users WHERE id = ${user.id}", { rs, _ -> rs.toUser() }).isNotEmpty()
+        val exist = template.query("SELECT * FROM users WHERE id = ?", RowMapper { rs, _ -> rs.toUser() }, user.id).isNotEmpty()
         if (exist) {
             userCache.add(user)
         }
@@ -74,7 +75,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
         if (chatCache.contains(chat)) {
             return true
         }
-        val exist = template.query("SELECT * FROM chats WHERE id = ${chat.id}", { rs, _ -> rs.toChat() }).isNotEmpty()
+        val exist = template.query("SELECT * FROM chats WHERE id = ?", RowMapper { rs, _ -> rs.toChat() }, chat.id).isNotEmpty()
         if (exist) {
             chatCache.add(chat)
         }
@@ -82,7 +83,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     }
 
     override fun changeUserActiveStatus(user: User, status: Boolean) {
-        template.update("UPDATE users SET active = $status WHERE id = ${user.id}")
+        template.update("UPDATE users SET active = ? WHERE id = ?", status, user.id)
     }
 
 
