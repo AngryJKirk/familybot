@@ -10,7 +10,11 @@ import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.random
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
-import java.time.*
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
 
 @Service
 class PidorCompetitionService(val repository: CommonRepository) {
@@ -29,7 +33,7 @@ class PidorCompetitionService(val repository: CommonRepository) {
                     val oneMorePidor = competitors.random()!!
                     repository.addPidor(Pidor(oneMorePidor, Instant.now()))
                     Thread.sleep(1000)
-                    it.execute(SendMessage(chatId, "Еще один сегодняшний пидор это ".bold() + "${oneMorePidor.nickname}").enableHtml(true))
+                    it.execute(SendMessage(chatId, "Еще один сегодняшний пидор это ".bold() + oneMorePidor.getGeneralName()).enableHtml(true))
                 }
             }
         }

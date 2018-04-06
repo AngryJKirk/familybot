@@ -4,7 +4,6 @@ import java.util.regex.Pattern
 
 object Huificator {
 
-
     private val vowels = "ёэоеаяуюыи"
     private val rules = mapOf('о' to "е", 'а' to "я", 'у' to "ю", 'ы' to "и", 'э' to "е")
     private val nonLetters = Pattern.compile("[^a-я]+")
@@ -29,7 +28,6 @@ object Huificator {
 
         wordReplaced = wordReplaced.toLowerCase()
 
-
         val postfix = String(wordReplaced.toCharArray().dropWhile { !vowels.contains(it) }.toCharArray())
 
         return if (rules.containsKey(postfix[0])) {
@@ -37,7 +35,5 @@ object Huificator {
         } else {
             "ху$postfix"
         }
-
-
     }
 }

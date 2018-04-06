@@ -10,7 +10,6 @@ import org.telegram.telegrambots.exceptions.TelegramApiRequestException
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.route.Router
 
-
 @Component
 class FamilyBot(val config: BotConfig, val router: Router) : TelegramLongPollingBot() {
 
