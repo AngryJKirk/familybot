@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException
+import space.yaroslav.familybot.common.utils.checkDestinationBot
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.route.Router
 
@@ -20,15 +21,17 @@ class FamilyBot(val config: BotConfig, val router: Router) : TelegramLongPolling
     }
 
     override fun onUpdateReceived(update: Update?) {
-        val toUser = update!!.toUser()
-        MDC.put("chat", "${toUser.chat.name}:${toUser.chat.id}")
-        MDC.put("user", "${toUser.name}:${toUser.id}")
-        try {
-            router.processUpdate(update).invoke(this).also { launch { MDC.clear() } }
-        } catch (e: TelegramApiRequestException) {
-            log.error("Telegram error: {}, {}, {}", e.apiResponse, e.errorCode, e.parameters, e)
-        } catch (e: Exception) {
-            log.error("Unexpected error", e)
+        if (!update!!.hasEditedMessage() && update.checkDestinationBot(config.botname)) {
+            val toUser = update.toUser()
+            MDC.put("chat", "${toUser.chat.name}:${toUser.chat.id}")
+            MDC.put("user", "${toUser.name}:${toUser.id}")
+            try {
+                router.processUpdate(update).invoke(this).also { launch { MDC.clear() } }
+            } catch (e: TelegramApiRequestException) {
+                log.error("Telegram error: {}, {}, {}", e.apiResponse, e.errorCode, e.parameters, e)
+            } catch (e: Exception) {
+                log.error("Unexpected error", e)
+            }
         }
     }
 
