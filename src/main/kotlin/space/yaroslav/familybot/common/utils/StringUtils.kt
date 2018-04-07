@@ -1,14 +1,15 @@
 package space.yaroslav.familybot.common.utils
 
+import space.yaroslav.familybot.route.models.Command
 import java.nio.charset.Charset
 import java.util.regex.Pattern
 
 
 fun String?.dropLastDelimiter(): String? {
-    if(this.isNullOrEmpty()){
+    if (this.isNullOrEmpty()) {
         return this
     }
-    return if(this!!.lastOrNull()?.isLetterOrDigit() != true){
+    return if (this!!.lastOrNull()?.isLetterOrDigit() != true) {
         this.dropLast(1)
     } else {
         this
@@ -44,4 +45,12 @@ fun String?.removeEmoji(): String? {
     val unicodeOutlierMatcher = unicodeOutliers.matcher(utf8tweet)
 
     return unicodeOutlierMatcher.replaceAll("")
+}
+
+fun String?.parseCommand(): Command? {
+    var first = this?.split(" ")?.get(0)
+    if (first?.contains("@") == true) {
+        first = first.dropLastWhile { it == '@' }
+    }
+    return Command.values().find { it.command == first }
 }
