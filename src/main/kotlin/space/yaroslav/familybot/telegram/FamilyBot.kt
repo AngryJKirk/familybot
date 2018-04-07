@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException
+import space.yaroslav.familybot.common.utils.checkDestinationBot
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.route.Router
 
@@ -20,8 +21,8 @@ class FamilyBot(val config: BotConfig, val router: Router) : TelegramLongPolling
     }
 
     override fun onUpdateReceived(update: Update?) {
-        if (!update!!.hasEditedMessage()) {
-            val toUser = update!!.toUser()
+        if (!update!!.hasEditedMessage() && update.checkDestinationBot(config.botname)) {
+            val toUser = update.toUser()
             MDC.put("chat", "${toUser.chat.name}:${toUser.chat.id}")
             MDC.put("user", "${toUser.name}:${toUser.id}")
             try {

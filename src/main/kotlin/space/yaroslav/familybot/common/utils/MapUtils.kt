@@ -27,3 +27,9 @@ fun Update.toUser(): User {
     val formatedName = (user.firstName?.let { "$it " } ?: "") + (user.lastName ?: "")
     return User(user.id.toLong(), this.toChat(), formatedName, user.userName)
 }
+
+fun Update.checkDestinationBot(botName: String?): Boolean {
+    val destinationPattern = Regex(pattern = """\/[a-zA-Z]*[@]([a-zA-Z0-9]*).*""")
+    val destinationName: String = destinationPattern.matchEntire(this.message.text)?.groups?.get(1)?.value?.toUpperCase() ?: return true
+    return botName!!.toUpperCase() == destinationName
+}
