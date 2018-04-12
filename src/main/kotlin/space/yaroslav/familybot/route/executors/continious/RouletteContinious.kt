@@ -15,7 +15,11 @@ import space.yaroslav.familybot.route.executors.command.ROULETTE_MESSAGE
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.services.PidorCompetitionService
 import space.yaroslav.familybot.telegram.BotConfig
-import java.time.*
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
 import java.util.concurrent.ThreadLocalRandom
 
 @Component
@@ -54,7 +58,7 @@ class RouletteContinious(val historyRepository: HistoryRepository,
             }
         }
         val number = update.message.text.split(" ")[0].toIntOrNull()
-        if (number != null && number !in 1..6) {
+        if (number !in 1..6) {
             return {
                 it.execute(SendMessage(chatId, "Мушку спили и в следующий раз играй по правилам"))
                 launch {  pidorRepository.addPidor(Pidor(user, Instant.now())) }
