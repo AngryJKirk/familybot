@@ -62,6 +62,7 @@ class RouletteContinious(val historyRepository: HistoryRepository,
             return {
                 it.execute(SendMessage(chatId, "Мушку спили и в следующий раз играй по правилам"))
                 launch {  pidorRepository.addPidor(Pidor(user, Instant.now())) }
+                Thread.sleep(1000)
                 it.execute(SendMessage(chatId, "В наказание твое пидорское очко уходит к остальным"))
             }
         }
@@ -70,7 +71,7 @@ class RouletteContinious(val historyRepository: HistoryRepository,
         return {
             if (rouletteNumber == number) {
                 it.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
-                launch {  pidorRepository.removePidorRecord(user) }
+                launch {  repeat(5, {pidorRepository.removePidorRecord(user) }) }
                 Thread.sleep(2000)
                 it.execute(SendMessage(chatId, "Но он пока не треснул. Свое пидорское очко можешь забрать. "))
             } else {
