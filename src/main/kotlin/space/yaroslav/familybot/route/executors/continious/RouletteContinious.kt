@@ -78,7 +78,7 @@ class RouletteContinious(val historyRepository: HistoryRepository,
                 it.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
                 launch { repeat(3, { pidorRepository.addPidor(Pidor(user, Instant.now())) }) }
                 Thread.sleep(2000)
-                it.execute(SendMessage(chatId, "Сорян, но ты проиграл. Твое пидорское очко уходит в зрительный зал трижды."))
+                it.execute(SendMessage(chatId, "Сорян, но ты проиграл. Твое пидорское очко уходит в зрительный зал трижды. Правильный ответ был $rouletteNumber."))
             }
             Thread.sleep(2000)
             pidorCompetitionService.pidorCompetition(update)?.invoke(it)
