@@ -36,22 +36,22 @@ class SettingsContinious(private val configureRepository: FunctionsConfigureRepo
             if (!checkRights(it, update)) {
                 it.execute(AnswerCallbackQuery().setCallbackQueryId(callbackQuery.id)
                         .setShowAlert(true).setText("Ну ты и пидор, не для тебя ягодка росла"))
-            }
+            } else {
+                val function = FunctionId
+                        .values()
+                        .find { it.desc == callbackQuery.data }
 
-            val function = FunctionId
-                    .values()
-                    .find { it.desc == callbackQuery.data }
-
-            if (function != null) {
-                configureRepository.switch(function, chat)
-                val isEnabled = { id: FunctionId -> configureRepository.isEnabled(id, chat) }
-                it.execute(AnswerCallbackQuery()
-                        .setCallbackQueryId(callbackQuery.id))
-                it.execute(EditMessageReplyMarkup()
-                        .setChatId(callbackQuery.message.chatId)
-                        .setMessageId(callbackQuery.message.messageId)
-                        .setReplyMarkup(FunctionId.toKeyBoard(isEnabled)))
-                it.execute(SendMessage(chat.id, "${function.desc} -> ${isEnabled.invoke(function).toEmoji()}"))
+                if (function != null) {
+                    configureRepository.switch(function, chat)
+                    val isEnabled = { id: FunctionId -> configureRepository.isEnabled(id, chat) }
+                    it.execute(AnswerCallbackQuery()
+                            .setCallbackQueryId(callbackQuery.id))
+                    it.execute(EditMessageReplyMarkup()
+                            .setChatId(callbackQuery.message.chatId)
+                            .setMessageId(callbackQuery.message.messageId)
+                            .setReplyMarkup(FunctionId.toKeyBoard(isEnabled)))
+                    it.execute(SendMessage(chat.id, "${function.desc} -> ${isEnabled.invoke(function).toEmoji()}"))
+                }
             }
         }
 

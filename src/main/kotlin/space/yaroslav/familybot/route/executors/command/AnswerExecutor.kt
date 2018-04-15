@@ -26,7 +26,8 @@ class AnswerExecutor : CommandExecutor {
                 ?.capitalize()
                 ?.dropLastDelimiter()
                 ?: "Ты пидор, отъебись"
-        return { it.execute(SendMessage(update.toChat().id, message)) }
+        return { it.execute(SendMessage(update.toChat().id, message)
+                .setReplyToMessageId(update.message.messageId)) }
     }
 }
 
