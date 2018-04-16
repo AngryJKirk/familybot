@@ -30,3 +30,5 @@ enum class Pluralization(val code: Int) {
         }
     }
 }
+
+data class CustomMessage(val id: Long, val chat: Chat, val message: String)

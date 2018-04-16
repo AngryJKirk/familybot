@@ -70,10 +70,10 @@ class Router(val repository: CommonRepository,
 
         launch { logChatMessage(update) }
 
-        val executor = executors
+        val lowExecutors = executors
                 .filter { it.priority(update) == Priority.LOW }
-                .random()!!
 
+        val executor = lowExecutors.find { it.canExecute(update.message) } ?: lowExecutors.random()!!
         logger.info("Low priority executor ${executor.javaClass.simpleName} was selected")
         return executor
     }

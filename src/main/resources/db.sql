@@ -320,10 +320,18 @@ CREATE TABLE IF NOT EXISTS function_settings (
 
 CREATE TABLE IF NOT EXISTS raw_chat_log
 (
-  chat_id    BIGINT         NOT NULL REFERENCES chats (id),
-  user_id    BIGINT         NOT NULL REFERENCES users (id),
+  chat_id    BIGINT    NOT NULL REFERENCES chats (id),
+  user_id    BIGINT    NOT NULL REFERENCES users (id),
   message    VARCHAR(30000),
-  raw_update JSON NOT NULL,
-  date       TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP
+  raw_update JSON      NOT NULL,
+  date       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS custom_message_delivery
+(
+  id           SERIAL         NOT NULL PRIMARY KEY,
+  chat_id      BIGINT         NOT NULL REFERENCES chats (id),
+  message      VARCHAR(20000) NOT NULL,
+  is_delivered BOOLEAN DEFAULT FALSE
+)
 
