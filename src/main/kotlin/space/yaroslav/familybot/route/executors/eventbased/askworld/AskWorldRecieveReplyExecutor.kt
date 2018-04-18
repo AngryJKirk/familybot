@@ -7,6 +7,8 @@ import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.AskWorldReply
+import space.yaroslav.familybot.common.utils.bold
+import space.yaroslav.familybot.common.utils.italic
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
@@ -43,11 +45,13 @@ class AskWorldRecieveReplyExecutor(val askWorldRepository: AskWorldRepository,
         )
         val id = askWorldRepository.addReply(askWorldReply)
         return {
-            it.execute(SendMessage(update.message.chatId, "Принято"))
             try {
-                it.execute(SendMessage(question.chat.id, "Ответ из чата ${update.toChat().name} от ${user.getGeneralName()}: $reply"))
+                it.execute(SendMessage(question.chat.id, "Ответ из чата ${update.toChat().name.bold()} " +
+                        "от ${user.getGeneralName()}: ${reply.italic()}"))
                 askWorldRepository.addReplyDeliver(askWorldReply.copy(id = id))
+                it.execute(SendMessage(update.message.chatId, "Принято и отправлено"))
             } catch (e: Exception) {
+                it.execute(SendMessage(update.message.chatId, "Принято"))
                 log.info("Could not send reply instantly", e)
             }
         }
