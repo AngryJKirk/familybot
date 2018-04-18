@@ -28,7 +28,7 @@ class AskWorldSendReplyExecutor(val askWorldRepository: AskWorldRepository) : Ex
             replyToDeliver.forEach {
                 val message = SendMessage(update.toChat().id, "Ответ из чата ${it.chat.name} от ${it.user.getGeneralName()}: ${it.message}")
                 sender.execute(message)
-                Thread.sleep(1000)//todo format
+                Thread.sleep(1000)
                 askWorldRepository.addReplyDeliver(it)
             }
         }

@@ -55,10 +55,10 @@ class AskWorldInitialExecutor(val askWorldRepository: AskWorldRepository,
         val chat = update.toChat()
         val user = update.toUser()
 
-        if (historyRepository.get(user, from = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()).isNotEmpty()) {
+        if (historyRepository.get(user, from = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()).any { it.command == Command.ASK_WORLD }) {
             return { it.execute(SendMessage(chat.id, "Не более вопроса в день от пользователя").setReplyToMessageId(update.message.messageId)) }
         }
-        if (historyRepository.getAll(chat).size >= 5) {
+        if (historyRepository.getAll(chat).filter { it.command == Command.ASK_WORLD  }.size >= 5) {
             return { it.execute(SendMessage(chat.id, "Не более 5 вопросов в день от чата").setReplyToMessageId(update.message.messageId)) }
         }
 
