@@ -70,7 +70,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
                 RowMapper { rs, _ -> rs.toAskWorldReply() }, askWorldQuestion.id)
     }
 
-    override fun findQuestionByMessageId(messageId: Int, chat: Chat): AskWorldQuestion {
+    override fun findQuestionByMessageId(messageId: Long, chat: Chat): AskWorldQuestion {
         return template.query("""SELECT
                           ask_world_questions.id,
                           ask_world_questions.question,
@@ -150,8 +150,9 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
                 Timestamp.from(date))
     }
 
-    override fun addReply(reply: AskWorldReply) {
-        template.update("INSERT into ask_world_replies (question_id, reply, chat_id, user_id, date) VALUES (?, ?, ?, ?, ?)",
+    override fun addReply(reply: AskWorldReply): Long {
+        return template.queryForObject("INSERT into ask_world_replies (question_id, reply, chat_id, user_id, date) VALUES (?, ?, ?, ?, ?) returning id",
+                RowMapper { rs, _ -> rs.getLong("id") },
                 reply.questionId, reply.message, reply.chat.id, reply.user.id, Timestamp.from(reply.date))
     }
 

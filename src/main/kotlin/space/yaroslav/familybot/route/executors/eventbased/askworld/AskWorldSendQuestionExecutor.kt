@@ -6,6 +6,8 @@ import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
+import space.yaroslav.familybot.common.utils.bold
+import space.yaroslav.familybot.common.utils.italic
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
 import space.yaroslav.familybot.route.executors.Configurable
@@ -32,10 +34,11 @@ class AskWorldSendQuestionExecutor(val askWorldRepository: AskWorldRepository) :
         return { sender ->
             questions
                     .forEach {
-                        val message = SendMessage(chat.id, "Вопрос из чата ${it.chat.name}: ${it.message}")
+                        val message = SendMessage(chat.id, "Вопрос из чата ${it.chat.name.bold()}: ${it.message.italic()}")
+                                .enableHtml(true)
                         try {
                             val result = sender.execute(message)
-                            askWorldRepository.addQuestionDeliver(it.copy(messageId = result.messageId), chat)
+                            askWorldRepository.addQuestionDeliver(it.copy(messageId = result.messageId + chat.id), chat)
                         } catch (e: Exception){
                             log.warn("Could not send question to chat", e)
                         }

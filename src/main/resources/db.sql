@@ -364,7 +364,7 @@ CREATE TABLE IF NOT EXISTS ask_world_questions_delivery
 
 CREATE TABLE IF NOT EXISTS ask_world_replies_delivery
 (
-  id      INTEGER REFERENCES ask_world_questions (id),
+  id      INTEGER REFERENCES ask_world_replies (id),
   date    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -15,7 +15,7 @@ interface AskWorldRepository {
 
     fun getQuestionsFromDate(date: Instant = Instant.now().minusSeconds(60*60)): List<AskWorldQuestion>
 
-    fun addReply(reply: AskWorldReply)
+    fun addReply(reply: AskWorldReply): Long
 
     fun isReplied(askWorldQuestion: AskWorldQuestion, chat: Chat, user: User): Boolean
 
@@ -29,7 +29,7 @@ interface AskWorldRepository {
 
     fun findQuestionByText(message: String, date: Instant): List<AskWorldQuestion>
 
-    fun findQuestionByMessageId(messageId: Int, chat: Chat): AskWorldQuestion
+    fun findQuestionByMessageId(messageId: Long, chat: Chat): AskWorldQuestion
 
     fun getReplies(askWorldQuestion: AskWorldQuestion): List<AskWorldReply>
 

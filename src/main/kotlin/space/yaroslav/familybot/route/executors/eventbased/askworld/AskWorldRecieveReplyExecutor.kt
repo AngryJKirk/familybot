@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.route.executors.eventbased.askworld
 
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Message
@@ -19,6 +20,7 @@ import java.time.Instant
 @Component
 class AskWorldRecieveReplyExecutor(val askWorldRepository: AskWorldRepository,
                                    val botConfig: BotConfig) : Executor, Configurable {
+    private val log = LoggerFactory.getLogger(AskWorldRecieveReplyExecutor::class.java)
     override fun getFunctionId(): FunctionId {
         return FunctionId.ASK_WORLD
     }
@@ -27,19 +29,28 @@ class AskWorldRecieveReplyExecutor(val askWorldRepository: AskWorldRepository,
         val reply = update.message.text
         val chat = update.toChat()
         val user = update.toUser()
-        val question = askWorldRepository.findQuestionByMessageId(update.message.replyToMessage.messageId, chat)
+        val question = askWorldRepository.findQuestionByMessageId(update.message.replyToMessage.messageId + chat.id, chat)
 
         if (askWorldRepository.isReplied(question, chat, user)) {
             return { it.execute(SendMessage(chat.id, "Отвечать можно только раз").setReplyToMessageId(update.message.messageId)) }
         }
-        askWorldRepository.addReply(AskWorldReply(null,
+        val askWorldReply = AskWorldReply(null,
                 question.id!!,
                 reply,
                 user,
                 chat,
                 Instant.now()
-        ))
-        return { it.execute(SendMessage(update.message.chatId, "Принято")) }
+        )
+        val id = askWorldRepository.addReply(askWorldReply)
+        return {
+            it.execute(SendMessage(update.message.chatId, "Принято"))
+            try {
+                it.execute(SendMessage(question.chat.id, "Ответ из чата ${update.toChat().name} от ${user.getGeneralName()}: $reply"))
+                askWorldRepository.addReplyDeliver(askWorldReply.copy(id = id))
+            } catch (e: Exception) {
+                log.info("Could not send reply instantly", e)
+            }
+        }
     }
 
     override fun canExecute(message: Message): Boolean {

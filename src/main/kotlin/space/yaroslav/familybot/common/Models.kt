@@ -37,7 +37,7 @@ data class AskWorldQuestion(
         val user: User,
         val chat: Chat,
         val date: Instant,
-        val messageId: Int?
+        val messageId: Long?
 )
 
 data class AskWorldReply(

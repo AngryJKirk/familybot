@@ -5,6 +5,8 @@ import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
+import space.yaroslav.familybot.common.utils.bold
+import space.yaroslav.familybot.common.utils.italic
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
 import space.yaroslav.familybot.route.executors.Configurable
@@ -26,7 +28,8 @@ class AskWorldSendReplyExecutor(val askWorldRepository: AskWorldRepository) : Ex
 
         return { sender ->
             replyToDeliver.forEach {
-                val message = SendMessage(update.toChat().id, "Ответ из чата ${it.chat.name} от ${it.user.getGeneralName()}: ${it.message}")
+                val message = SendMessage(update.toChat().id, "Ответ из чата ${it.chat.name.bold()} от ${it.user.getGeneralName()}: ${it.message.italic()}")
+                        .enableHtml(true)
                 sender.execute(message)
                 Thread.sleep(1000)
                 askWorldRepository.addReplyDeliver(it)
