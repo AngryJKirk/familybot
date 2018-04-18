@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.route.executors.eventbased.askworld
 
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Message
@@ -14,6 +15,9 @@ import space.yaroslav.familybot.route.models.Priority
 
 @Component
 class AskWorldSendQuestionExecutor(val askWorldRepository: AskWorldRepository) : Executor, Configurable {
+
+    private val log = LoggerFactory.getLogger(AskWorldSendQuestionExecutor::class.java)
+
     override fun getFunctionId(): FunctionId {
         return FunctionId.ASK_WORLD
     }
@@ -29,8 +33,13 @@ class AskWorldSendQuestionExecutor(val askWorldRepository: AskWorldRepository) :
             questions
                     .forEach {
                         val message = SendMessage(chat.id, "Вопрос из чата ${it.chat.name}: ${it.message}")
-                        val result = sender.execute(message)
-                        askWorldRepository.addQuestionDeliver(it.copy(messageId = result.messageId), chat)
+                        try {
+                            val result = sender.execute(message)
+                            askWorldRepository.addQuestionDeliver(it.copy(messageId = result.messageId), chat)
+                        } catch (e: Exception){
+                            log.warn("Could not send question to chat", e)
+                        }
+
                     }
         }
     }
