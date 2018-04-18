@@ -8,7 +8,6 @@ import space.yaroslav.familybot.common.AskWorldQuestion
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
-import space.yaroslav.familybot.repos.ifaces.HistoryRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
@@ -19,7 +18,6 @@ import java.time.temporal.ChronoUnit
 
 @Component
 class AskWorldInitialExecutor(val askWorldRepository: AskWorldRepository,
-                              val historyRepository: HistoryRepository,
                               val botConfig: BotConfig) : CommandExecutor, Configurable {
 
     override fun getFunctionId(): FunctionId {
@@ -53,17 +51,16 @@ class AskWorldInitialExecutor(val askWorldRepository: AskWorldRepository,
         }
 
         val chat = update.toChat()
-        val user = update.toUser()
-
-        if (historyRepository.get(user, from = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()).any { it.command == Command.ASK_WORLD }) {
-            return { it.execute(SendMessage(chat.id, "Не более вопроса в день от пользователя").setReplyToMessageId(update.message.messageId)) }
-        }
-        if (historyRepository.getAll(chat).filter { it.command == Command.ASK_WORLD  }.size >= 5) {
+        if (askWorldRepository.getQuestionsFromChat(chat, date = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()).size >= 5) {
             return { it.execute(SendMessage(chat.id, "Не более 5 вопросов в день от чата").setReplyToMessageId(update.message.messageId)) }
         }
 
+        if (askWorldRepository.getQuestionsFromUser(chat, update.toUser()).isNotEmpty()) {
+            return { it.execute(SendMessage(chat.id, "Не более вопроса в день от пользователя").setReplyToMessageId(update.message.messageId)) }
+        }
+
         askWorldRepository.addQuestion(
-                AskWorldQuestion(null, message, user, chat, Instant.now(), null))
+                AskWorldQuestion(null, message, update.toUser(), chat, Instant.now(), null))
         return { it.execute(SendMessage(chatId, "Принято")) }
     }
 }
