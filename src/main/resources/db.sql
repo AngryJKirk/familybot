@@ -333,5 +333,40 @@ CREATE TABLE IF NOT EXISTS custom_message_delivery
   chat_id      BIGINT         NOT NULL REFERENCES chats (id),
   message      VARCHAR(20000) NOT NULL,
   is_delivered BOOLEAN DEFAULT FALSE
-)
+);
+
+CREATE TABLE IF NOT EXISTS ask_world_questions
+(
+  id       SERIAL PRIMARY KEY,
+  question VARCHAR(2000) NOT NULL,
+  chat_id  BIGINT        NOT NULL REFERENCES chats (id),
+  user_id  BIGINT        NOT NULL REFERENCES users (id),
+  date     TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS ask_world_replies
+(
+  id           SERIAL PRIMARY KEY,
+  question_id INTEGER REFERENCES ask_world_questions (id),
+  reply        VARCHAR(2000) NOT NULL,
+  chat_id      BIGINT        NOT NULL REFERENCES chats (id),
+  user_id      BIGINT        NOT NULL REFERENCES users (id),
+  date         TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS ask_world_questions_delivery
+(
+  id         INTEGER REFERENCES ask_world_questions (id),
+  chat_id    BIGINT REFERENCES chats (id),
+  date       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  message_id BIGINT    NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS ask_world_replies_delivery
+(
+  id      INTEGER REFERENCES ask_world_questions (id),
+  date    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
 

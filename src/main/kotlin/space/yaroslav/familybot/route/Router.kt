@@ -72,8 +72,12 @@ class Router(val repository: CommonRepository,
 
         val lowExecutors = executors
                 .filter { it.priority(update) == Priority.LOW }
+                .filterNot { isExecutorDisabled(it, update.message.chat) }
 
-        val executor = lowExecutors.find { it.canExecute(update.message) } ?: lowExecutors.random()!!
+        val executor = lowExecutors
+                .find { it.canExecute(update.message) }
+                ?: lowExecutors.random()!!
+
         logger.info("Low priority executor ${executor.javaClass.simpleName} was selected")
         return executor
     }
@@ -132,9 +136,7 @@ class Router(val repository: CommonRepository,
     private fun register(message: Message) {
         val chat = message.chat.toChat()
 
-        if (!repository.containsChat(chat)) {
-            repository.addChat(chat)
-        }
+        repository.addChat(chat)
 
         if (message.leftChatMember != null) {
             repository.changeUserActiveStatus(message.leftChatMember.toUser(chat = chat), false)

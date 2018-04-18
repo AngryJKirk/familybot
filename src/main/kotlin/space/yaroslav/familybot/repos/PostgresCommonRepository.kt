@@ -8,7 +8,11 @@ import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.User
-import space.yaroslav.familybot.common.utils.*
+import space.yaroslav.familybot.common.utils.map
+import space.yaroslav.familybot.common.utils.removeEmoji
+import space.yaroslav.familybot.common.utils.toChat
+import space.yaroslav.familybot.common.utils.toPidor
+import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import java.sql.Timestamp
 import java.time.Instant
@@ -38,7 +42,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     }
 
     override fun addChat(chat: Chat) {
-        template.update("INSERT INTO chats (id, name) VALUES (?, ?)", chat.id, chat.name ?: "")
+        template.update("INSERT INTO chats (id, name) VALUES (?, ?) ON CONFLICT(id) DO UPDATE SET name = EXCLUDED.name", chat.id, chat.name ?: "")
     }
 
     override fun getChats(): List<Chat> {
