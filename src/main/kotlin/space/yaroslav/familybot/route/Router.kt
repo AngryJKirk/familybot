@@ -53,7 +53,7 @@ class Router(val repository: CommonRepository,
         launch { register(message) }
                 .invokeOnCompletion { rawUpdateLogger.log(update) }
 
-        val executor = selectExecutor(update) ?: selectLowPriority(update)
+        val executor = selectExecutor(update) ?: selectRandom(update)
 
         logger.info("Executor to apply: ${executor.javaClass.simpleName}")
 
@@ -68,20 +68,13 @@ class Router(val repository: CommonRepository,
         }.also { launch { logChatCommand(executor, update) } }
     }
 
-    private fun selectLowPriority(update: Update): Executor {
-        logger.info("No executor found, trying to find low priority executors")
+    private fun selectRandom(update: Update): Executor {
+        logger.info("No executor found, trying to find random priority executors")
 
         launch { logChatMessage(update) }
+        val executor = executors.filter { it.priority(update) == Priority.RANDOM }.random()!!
 
-        val lowExecutors = executors
-                .filter { it.priority(update) == Priority.LOW }
-                .filterNot { isExecutorDisabled(it, update.message.chat) }
-
-        val executor = lowExecutors
-                .find { it.canExecute(update.message) }
-                ?: lowExecutors.random()!!
-
-        logger.info("Low priority executor ${executor.javaClass.simpleName} was selected")
+        logger.info("Random priority executor ${executor.javaClass.simpleName} was selected")
         return executor
     }
 
@@ -131,7 +124,7 @@ class Router(val repository: CommonRepository,
     private fun selectExecutor(update: Update): Executor? {
         return executors
                 .sortedByDescending { it.priority(update).int }
-                .filter { it.priority(update).int >= 0 }
+                .filter { it.priority(update).int > Priority.RANDOM.int }
                 .find { it.canExecute(update.message ?: update.callbackQuery.message) }
     }
 

@@ -19,7 +19,7 @@ class HuificatorExecutor : Executor, Configurable {
     }
 
     override fun priority(update: Update): Priority {
-        return Priority.LOW
+        return Priority.RANDOM
     }
 
     override fun execute(update: Update): (AbsSender) -> Unit {

@@ -28,7 +28,7 @@ class KeyWordExecutor(val keyset: ChatLogRepository,
         return if (configRepository.isEnabled(update.toChat())) {
             Priority.HIGH
         } else {
-            Priority.LOW
+            Priority.RANDOM
         }
     }
 
