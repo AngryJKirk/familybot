@@ -36,12 +36,12 @@ class KeyWordExecutor(val keyset: ChatLogRepository,
         val chat = update.toChat()
         val rageModEnabled = configRepository.isEnabled(chat)
         if (rageModEnabled || ThreadLocalRandom.current().nextInt(0, 5) == 0) {
-            val messages = keyset.get(update.toUser())
-            if (messages.size < 200) return {}
+            val string = keyset.get(update.toUser()).takeIf { it.size > 300 }?.random()
+                    ?: getSmallMessage(keyset.getAll())
             val message = if (rageModEnabled) {
-                rageModeFormat(messages.random()!!)
+                rageModeFormat(string)
             } else {
-                messages.random()!!
+                string
             }
             return {
                 it.execute(SendMessage(chat.id, message)
@@ -63,6 +63,14 @@ class KeyWordExecutor(val keyset: ChatLogRepository,
             message = message.dropLast(1)
         }
         return message.toUpperCase() + "!!!!"
+    }
+
+    private fun getSmallMessage(messages: List<String>): String {
+        var message: String?
+        do {
+            message = messages.random()
+        } while (message!!.split(" ").size > 5)
+        return message
     }
 
 }

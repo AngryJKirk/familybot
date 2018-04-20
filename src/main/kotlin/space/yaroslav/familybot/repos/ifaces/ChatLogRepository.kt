@@ -9,5 +9,6 @@ interface ChatLogRepository{
 
     fun get(user: User): List<String>
 
+    fun getAll(): List<String>
 
 }
