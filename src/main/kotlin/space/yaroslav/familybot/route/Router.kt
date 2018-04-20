@@ -44,7 +44,10 @@ class Router(val repository: CommonRepository,
         val chat = message.chat
 
         if (!chat.isGroup()) {
-            return { logger.warn("Someone try to do from outside of groups: $update") }
+            return {
+                logger.warn("Someone try to do from outside of groups: $update")
+                it.execute(SendMessage(chat.id, "Добавь в группу, долбоеб"))
+            }
         }
 
         launch { register(message) }
