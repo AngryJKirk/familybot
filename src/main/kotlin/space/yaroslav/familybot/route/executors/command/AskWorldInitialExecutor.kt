@@ -1,13 +1,19 @@
 package space.yaroslav.familybot.route.executors.command
 
+import kotlinx.coroutines.experimental.launch
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.AskWorldQuestion
+import space.yaroslav.familybot.common.utils.bold
+import space.yaroslav.familybot.common.utils.italic
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
+import space.yaroslav.familybot.repos.ifaces.CommonRepository
+import space.yaroslav.familybot.repos.ifaces.FunctionsConfigureRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
@@ -18,8 +24,10 @@ import java.time.temporal.ChronoUnit
 
 @Component
 class AskWorldInitialExecutor(val askWorldRepository: AskWorldRepository,
+                              val commonRepository: CommonRepository,
+                              val configureRepository: FunctionsConfigureRepository,
                               val botConfig: BotConfig) : CommandExecutor, Configurable {
-
+    private val log = LoggerFactory.getLogger(AskWorldInitialExecutor::class.java)
     override fun getFunctionId(): FunctionId {
         return FunctionId.ASK_WORLD
     }
@@ -59,8 +67,22 @@ class AskWorldInitialExecutor(val askWorldRepository: AskWorldRepository,
             return { it.execute(SendMessage(chat.id, "Не более вопроса в день от пользователя").setReplyToMessageId(update.message.messageId)) }
         }
 
-        askWorldRepository.addQuestion(
-                AskWorldQuestion(null, message, update.toUser(), chat, Instant.now(), null))
-        return { it.execute(SendMessage(chatId, "Принято")) }
+        val question = AskWorldQuestion(null, message, update.toUser(), chat, Instant.now(), null)
+        val id = askWorldRepository.addQuestion(question)
+        return {sender ->
+            sender.execute(SendMessage(chatId, "Принято"))
+            commonRepository.getChats()
+                    .filterNot { it == chat }
+                    .filter { configureRepository.isEnabled(getFunctionId(), it) }
+                    .forEach {
+                try {
+                    val result = sender.execute(SendMessage(it.id, "Вопрос из чата ${chat.name.bold()}: ${question.message.italic()}")
+                            .enableHtml(true))
+                    launch { askWorldRepository.addQuestionDeliver(question.copy(id = id, messageId = result.messageId + it.id), it) }
+                } catch (e: Exception) {
+                    log.warn("Could not send question $id to $it")
+                }
+            }
+        }
     }
 }

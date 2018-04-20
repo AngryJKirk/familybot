@@ -11,7 +11,7 @@ import java.time.temporal.ChronoUnit
 
 interface AskWorldRepository {
 
-    fun addQuestion(question: AskWorldQuestion)
+    fun addQuestion(question: AskWorldQuestion): Long
 
     fun getQuestionsFromDate(date: Instant = Instant.now().minusSeconds(60*60)): List<AskWorldQuestion>
 

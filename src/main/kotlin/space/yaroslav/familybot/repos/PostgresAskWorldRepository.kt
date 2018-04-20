@@ -127,8 +127,9 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
                 reply.id).isNotEmpty()
     }
 
-    override fun addQuestion(question: AskWorldQuestion) {
-        template.update("INSERT into ask_world_questions (question, chat_id, user_id, date) VALUES (?, ?, ?, ?)",
+    override fun addQuestion(question: AskWorldQuestion): Long {
+        return template.queryForObject("INSERT into ask_world_questions (question, chat_id, user_id, date) VALUES (?, ?, ?, ?) returning id",
+                RowMapper { rs, _ -> rs.getLong("id") },
                 question.message, question.chat.id, question.user.id, Timestamp.from(question.date))
     }
 

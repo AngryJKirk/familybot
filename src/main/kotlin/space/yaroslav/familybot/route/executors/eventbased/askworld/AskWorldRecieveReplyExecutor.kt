@@ -46,8 +46,9 @@ class AskWorldRecieveReplyExecutor(val askWorldRepository: AskWorldRepository,
         val id = askWorldRepository.addReply(askWorldReply)
         return {
             try {
+                val message = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
                 it.execute(SendMessage(question.chat.id, "Ответ из чата ${update.toChat().name.bold()} " +
-                        "от ${user.getGeneralName()}: ${reply.italic()}"))
+                        "от ${user.getGeneralName()} на вопрос \"$message\": ${reply.italic()}").enableHtml(true))
                 askWorldRepository.addReplyDeliver(askWorldReply.copy(id = id))
                 it.execute(SendMessage(update.message.chatId, "Принято и отправлено"))
             } catch (e: Exception) {

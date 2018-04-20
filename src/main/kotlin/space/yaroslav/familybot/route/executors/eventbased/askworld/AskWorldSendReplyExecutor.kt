@@ -25,10 +25,13 @@ class AskWorldSendReplyExecutor(val askWorldRepository: AskWorldRepository) : Ex
                 .getQuestionsFromChat(update.message.chat.toChat())
                 .flatMap { askWorldRepository.getReplies(it) }
                 .filterNot { askWorldRepository.isReplyDelivered(it) }
-
+        val chat = update.toChat()
+        val question = askWorldRepository.findQuestionByMessageId(update.message.replyToMessage.messageId + chat.id, chat)
         return { sender ->
             replyToDeliver.forEach {
-                val message = SendMessage(update.toChat().id, "Ответ из чата ${it.chat.name.bold()} от ${it.user.getGeneralName()}: ${it.message.italic()}")
+                val questionMessage = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
+                val message = SendMessage(update.toChat().id, "Ответ из чата ${it.chat.name.bold()} от ${it.user.getGeneralName()} " +
+                        "на вопрсос \"$questionMessage\" : ${it.message.italic()}")
                         .enableHtml(true)
                 sender.execute(message)
                 Thread.sleep(1000)
