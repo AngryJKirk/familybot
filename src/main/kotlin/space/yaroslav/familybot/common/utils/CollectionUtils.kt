@@ -6,13 +6,13 @@ import java.util.concurrent.ThreadLocalRandom
 
 
 fun List<User>.formatTopList(): List<String> {
-    fun format(index: Int, stats: Pair<User, Int>): String {
-        val generalName = stats.first.name ?: stats.first.nickname
+    fun format(index: Int, stats: Pair<String?, Int>): String {
         val i = "${index + 1}.".bold()
         val stat = "${stats.second} раз(а)".italic()
-        return "$i $generalName — $stat"
+        return "$i ${stats.first} — $stat"
     }
-    return this.groupBy { it }
+    return this.groupBy { it.id to it.getGeneralName(false) }
+            .mapKeys { it.key.second }
             .map { it.key to it.value.size }
             .sortedByDescending { it.second }
             .mapIndexed { index, pair -> format(index, pair) }

@@ -21,6 +21,7 @@ import javax.sql.DataSource
 @Component
 @Primary
 class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
+
     private val template = JdbcTemplate(datasource)
 
     private val chatCache: MutableSet<Chat> = HashSet()
@@ -89,6 +90,12 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     override fun changeUserActiveStatus(user: User, status: Boolean) {
         template.update("UPDATE users SET active = ? WHERE id = ?", status, user.id)
     }
+
+    override fun getAllPidors(startDate: Instant, endDate: Instant): List<Pidor> {
+        return template.query("SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE pidor_date BETWEEN ? and ?",
+                ResultSetExtractor { it.map { it.toPidor() } }, Timestamp.from(startDate), Timestamp.from(endDate))
+    }
+
 
 
 
