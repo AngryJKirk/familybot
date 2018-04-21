@@ -346,12 +346,12 @@ CREATE TABLE IF NOT EXISTS ask_world_questions
 
 CREATE TABLE IF NOT EXISTS ask_world_replies
 (
-  id           SERIAL PRIMARY KEY,
+  id          SERIAL PRIMARY KEY,
   question_id INTEGER REFERENCES ask_world_questions (id),
-  reply        VARCHAR(2000) NOT NULL,
-  chat_id      BIGINT        NOT NULL REFERENCES chats (id),
-  user_id      BIGINT        NOT NULL REFERENCES users (id),
-  date         TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP
+  reply       VARCHAR(2000) NOT NULL,
+  chat_id     BIGINT        NOT NULL REFERENCES chats (id),
+  user_id     BIGINT        NOT NULL REFERENCES users (id),
+  date        TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS ask_world_questions_delivery
@@ -364,9 +364,12 @@ CREATE TABLE IF NOT EXISTS ask_world_questions_delivery
 
 CREATE TABLE IF NOT EXISTS ask_world_replies_delivery
 (
-  id      INTEGER REFERENCES ask_world_replies (id),
-  date    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  id   INTEGER REFERENCES ask_world_replies (id),
+  date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER table chats
+  add column active boolean default true
 
 
 

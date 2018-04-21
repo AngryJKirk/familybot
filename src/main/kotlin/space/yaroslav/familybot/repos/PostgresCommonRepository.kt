@@ -22,6 +22,7 @@ import javax.sql.DataSource
 @Primary
 class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
 
+
     private val template = JdbcTemplate(datasource)
 
     private val chatCache: MutableSet<Chat> = HashSet()
@@ -43,11 +44,11 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     }
 
     override fun addChat(chat: Chat) {
-        template.update("INSERT INTO chats (id, name) VALUES (?, ?) ON CONFLICT(id) DO UPDATE SET name = EXCLUDED.name", chat.id, chat.name ?: "")
+        template.update("INSERT INTO chats (id, name) VALUES (?, ?) ON CONFLICT(id) DO UPDATE SET name = EXCLUDED.name, active = true", chat.id, chat.name ?: "")
     }
 
     override fun getChats(): List<Chat> {
-        return template.query("SELECT * FROM chats", { rs, _ -> rs.toChat() })
+        return template.query("SELECT * FROM chats where active = true ", { rs, _ -> rs.toChat() })
     }
 
     override fun addPidor(pidor: Pidor) {
@@ -96,8 +97,9 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
                 ResultSetExtractor { it.map { it.toPidor() } }, Timestamp.from(startDate), Timestamp.from(endDate))
     }
 
-
-
+    override fun changeChatActiveStatus(chat: Chat, status: Boolean) {
+        template.update("update chats set active = ? where id = ?", status, chat.id)
+    }
 
 }
 

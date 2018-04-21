@@ -23,6 +23,7 @@ import space.yaroslav.familybot.route.executors.command.CommandExecutor
 import space.yaroslav.familybot.route.executors.eventbased.AntiDdosExecutor
 import space.yaroslav.familybot.route.models.Priority
 import space.yaroslav.familybot.route.services.RawUpdateLogger
+import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 
 
@@ -32,7 +33,8 @@ class Router(val repository: CommonRepository,
              val executors: List<Executor>,
              val chatLogRepository: ChatLogRepository,
              val configureRepository: FunctionsConfigureRepository,
-             val rawUpdateLogger: RawUpdateLogger) {
+             val rawUpdateLogger: RawUpdateLogger,
+             val botConfig: BotConfig) {
 
     private final val logger = LoggerFactory.getLogger(Router::class.java)
 
@@ -133,13 +135,30 @@ class Router(val repository: CommonRepository,
         val chat = message.chat.toChat()
 
         repository.addChat(chat)
+        val leftChatMember = message.leftChatMember
+        val newChatMembers = message.newChatMembers
 
-        if (message.leftChatMember != null) {
-            repository.changeUserActiveStatus(message.leftChatMember.toUser(chat = chat), false)
-        } else if (message.newChatMembers?.isNotEmpty() == true) {
-            message.newChatMembers.filter { !it.bot }.forEach { repository.addUser(it.toUser(chat = chat)) }
-        } else if (!message.from.bot) {
-            repository.addUser(message.from.toUser(chat = chat))
+        when {
+            leftChatMember != null -> {
+                if (leftChatMember.bot && leftChatMember.userName == botConfig.botname) {
+                    logger.error("Бота выпизлнули из $chat")
+                    repository.changeChatActiveStatus(chat, false)
+                } else {
+                    repository.changeUserActiveStatus(leftChatMember.toUser(chat = chat), false)
+                }
+            }
+            newChatMembers?.isNotEmpty() == true -> {
+                if (newChatMembers.any { it.bot && it.userName == botConfig.botname }) {
+                    logger.info("Бота добавили в чат $chat")
+                    repository.changeChatActiveStatus(chat, true)
+                } else {
+                    newChatMembers.filter { !it.bot }.forEach { repository.addUser(it.toUser(chat = chat)) }
+                }
+
+            }
+            message.from.bot.not() -> {
+                repository.addUser(message.from.toUser(chat = chat))
+            }
         }
     }
 }
