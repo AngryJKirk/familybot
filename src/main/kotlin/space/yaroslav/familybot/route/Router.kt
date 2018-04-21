@@ -54,6 +54,9 @@ class Router(val repository: CommonRepository,
         launch { register(message) }
                 .invokeOnCompletion { rawUpdateLogger.log(update) }
 
+        if (update.hasEditedMessage()) {
+            return {}
+        }
         val executor = selectExecutor(update) ?: selectRandom(update)
 
         logger.info("Executor to apply: ${executor.javaClass.simpleName}")
