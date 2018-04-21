@@ -17,7 +17,8 @@ fun TelegramUser.toUser(chat: Chat? = null, telegramChat: TelegramChat? = null):
 
 fun Update.toChat(): Chat {
     val message = this.message
-            ?: callbackQuery.message
+            ?: callbackQuery?.message
+            ?: editedMessage
             ?: throw RuntimeException("Cant process ${this}")
     return Chat(message.chat.id, message.chat.title)
 }
