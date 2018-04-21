@@ -7,6 +7,6 @@ import java.time.Instant
 
 interface RawChatLogRepository {
 
-    fun add(chat: Chat, user: User, message: String?, rawUpdate: String, date: Instant)
+    fun add(chat: Chat, user: User, message: String?, fileId: String?, rawUpdate: String, date: Instant)
 
 }

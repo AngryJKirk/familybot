@@ -171,3 +171,6 @@ CREATE TABLE IF NOT EXISTS ask_world_replies_delivery
   date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+alter table raw_chat_log
+  add column file_id varchar(500) default null 
+

@@ -17,7 +17,11 @@ class RawUpdateLogger(val rawChatLogRepository: RawChatLogRepository) {
         val rawMessage = when {
             update.hasMessage() -> update.message
             update.hasEditedMessage() -> update.editedMessage
-            update.hasCallbackQuery() -> update.callbackQuery.message
+            else -> null
+        }
+        val fileId = when {
+            rawMessage?.hasPhoto() ?: false -> rawMessage?.photo?.joinToString { it.filePath ?: it.fileId }
+            rawMessage?.hasDocument() ?: false -> rawMessage?.document?.fileId
             else -> null
         }
         val text = rawMessage?.text
@@ -26,6 +30,6 @@ class RawUpdateLogger(val rawChatLogRepository: RawChatLogRepository) {
                 ?.toLong()
                 ?.let { Instant.ofEpochSecond(it) }
                 ?: Instant.now()
-        rawChatLogRepository.add(update.toChat(), update.toUser(), text, rawUpdate, date)
+        rawChatLogRepository.add(update.toChat(), update.toUser(), text, fileId, rawUpdate, date)
     }
 }
