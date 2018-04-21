@@ -40,8 +40,10 @@ class Router(val repository: CommonRepository,
 
     fun processUpdate(update: Update): (AbsSender) -> Unit {
 
-        val message = update.message ?: update.callbackQuery?.message
-        ?: return { logger.info("Empty message was given: $update") }
+        val message = update.message
+                ?: update.callbackQuery?.message
+                ?: update.editedMessage
+                ?: return { logger.info("Empty message was given: $update") }
 
         val chat = message.chat
 
