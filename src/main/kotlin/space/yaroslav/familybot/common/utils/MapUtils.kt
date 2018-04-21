@@ -23,7 +23,7 @@ fun Update.toChat(): Chat {
 }
 
 fun Update.toUser(): User {
-    val user = this.message?.from ?: this.callbackQuery.from
+    val user = this.message?.from ?: this.callbackQuery?.from ?: this.editedMessage.from
     val formatedName = (user.firstName?.let { "$it " } ?: "") + (user.lastName ?: "")
     return User(user.id.toLong(), this.toChat(), formatedName, user.userName)
 }

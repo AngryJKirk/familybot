@@ -11,7 +11,7 @@ fun List<User>.formatTopList(): List<String> {
         val stat = "${stats.second} раз(а)".italic()
         return "$i ${stats.first} — $stat"
     }
-    return this.groupBy { it.id to it.getGeneralName(false) }
+    return this.groupBy { it.id to (it.name ?: it.nickname) }
             .mapKeys { it.key.second }
             .map { it.key to it.value.size }
             .sortedByDescending { it.second }
