@@ -9,7 +9,6 @@ import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.map
-import space.yaroslav.familybot.common.utils.removeEmoji
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toPidor
 import space.yaroslav.familybot.common.utils.toUser
@@ -30,7 +29,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     private val userCache: MutableSet<User> = HashSet()
     override fun addUser(user: User) {
         template.update("INSERT INTO users (id, name, username) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET name = EXCLUDED.name, username = EXCLUDED.username ",
-                user.id, user.name.removeEmoji(), user.nickname)
+                user.id, user.name, user.nickname)
         template.update("INSERT INTO users2chats (chat_id, user_id) VALUES (?, ?) ON CONFLICT(chat_id, user_id) DO UPDATE SET active = true ",
                 user.chat.id, user.id)
     }
