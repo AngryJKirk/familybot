@@ -141,20 +141,22 @@ class Router(val repository: CommonRepository,
         when {
             leftChatMember != null -> {
                 if (leftChatMember.bot && leftChatMember.userName == botConfig.botname) {
-                    logger.error("Бота выпизлнули из $chat")
+                    logger.info("Bot was removed from $chat")
                     repository.changeChatActiveStatus(chat, false)
+                    repository.disableUsersInChat(chat)
                 } else {
-                    repository.changeUserActiveStatus(leftChatMember.toUser(chat = chat), false)
+                    logger.info("User $leftChatMember has left")
+                    repository.changeUserActiveStatusNew(leftChatMember.toUser(chat = chat), false)
                 }
             }
             newChatMembers?.isNotEmpty() == true -> {
                 if (newChatMembers.any { it.bot && it.userName == botConfig.botname }) {
-                    logger.info("Бота добавили в чат $chat")
+                    logger.info("Bot was added to $chat")
                     repository.changeChatActiveStatus(chat, true)
                 } else {
+                    logger.info("New users was added: $newChatMembers")
                     newChatMembers.filter { !it.bot }.forEach { repository.addUser(it.toUser(chat = chat)) }
                 }
-
             }
             message.from.bot.not() -> {
                 repository.addUser(message.from.toUser(chat = chat))

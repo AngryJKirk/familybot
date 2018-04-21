@@ -23,28 +23,30 @@ import javax.sql.DataSource
 class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
 
 
+
     private val template = JdbcTemplate(datasource)
 
     private val chatCache: MutableSet<Chat> = HashSet()
     private val userCache: MutableSet<User> = HashSet()
     override fun addUser(user: User) {
-        template.update("INSERT INTO users (id, name, username) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET name = EXCLUDED.name, username = EXCLUDED.username, active = TRUE ",
+        template.update("INSERT INTO users (id, name, username) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET name = EXCLUDED.name, username = EXCLUDED.username ",
                 user.id, user.name.removeEmoji(), user.nickname)
-        template.update("INSERT INTO users2chats (chat_id, user_id) VALUES (?, ?) ON CONFLICT DO NOTHING",
+        template.update("INSERT INTO users2chats (chat_id, user_id) VALUES (?, ?) ON CONFLICT(chat_id, user_id) DO UPDATE SET active = true ",
                 user.chat.id, user.id)
     }
 
 
     override fun getUsers(chat: Chat, activeOnly: Boolean): List<User> {
         var select = "SELECT * FROM users INNER JOIN users2chats u ON users.id = u.user_id WHERE u.chat_id = ${chat.id}"
-        if(activeOnly){
-            select += "and active = true"
+        if (activeOnly) {
+            select += "and u.active = true"
         }
         return template.query(select, { rs, _ -> rs.toUser() })
     }
 
     override fun addChat(chat: Chat) {
-        template.update("INSERT INTO chats (id, name) VALUES (?, ?) ON CONFLICT(id) DO UPDATE SET name = EXCLUDED.name, active = true", chat.id, chat.name ?: "")
+        template.update("INSERT INTO chats (id, name) VALUES (?, ?) ON CONFLICT(id) DO UPDATE SET name = EXCLUDED.name, active = true", chat.id, chat.name
+                ?: "")
     }
 
     override fun getChats(): List<Chat> {
@@ -99,6 +101,14 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
 
     override fun changeChatActiveStatus(chat: Chat, status: Boolean) {
         template.update("update chats set active = ? where id = ?", status, chat.id)
+    }
+
+    override fun changeUserActiveStatusNew(user: User, status: Boolean) {
+        template.update("update users2chats set active = ? where chat_id = ? and user_id = ?", status, user.chat.id, user.id)
+    }
+
+    override fun disableUsersInChat(chat: Chat) {
+        template.update("update users2chats set active = false where chat_id = ?", chat.id)
     }
 
 }

@@ -31,6 +31,10 @@ interface CommonRepository {
 
     fun changeChatActiveStatus(chat: Chat, status: Boolean)
 
+    fun changeUserActiveStatusNew(user: User, status: Boolean)
+
+    fun disableUsersInChat(chat: Chat)
+
     fun getAllPidors(startDate: Instant = Instant.ofEpochMilli(969652800000),
                      endDate: Instant = Instant.now()): List<Pidor>
 }
