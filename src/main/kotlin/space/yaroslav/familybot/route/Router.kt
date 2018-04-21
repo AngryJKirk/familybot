@@ -12,6 +12,7 @@ import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.utils.isGroup
 import space.yaroslav.familybot.common.utils.random
 import space.yaroslav.familybot.common.utils.toChat
+import space.yaroslav.familybot.common.utils.toMessage
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
@@ -40,11 +41,7 @@ class Router(val repository: CommonRepository,
 
     fun processUpdate(update: Update): (AbsSender) -> Unit {
 
-        val message = update.message
-                ?: update.callbackQuery?.message
-                ?: update.editedMessage
-                ?: return { logger.info("Empty message was given: $update") }
-
+        val message = update.toMessage()
         val chat = message.chat
 
         if (!chat.isGroup()) {
@@ -129,7 +126,7 @@ class Router(val repository: CommonRepository,
         return executors
                 .sortedByDescending { it.priority(update).int }
                 .filter { it.priority(update).int > Priority.RANDOM.int }
-                .find { it.canExecute(update.message ?: update.callbackQuery.message) }
+                .find { it.canExecute(update.toMessage()) }
     }
 
 

@@ -25,7 +25,6 @@ class QuoteContinious(val quoteRepository: QuoteRepository,
 
     override fun execute(update: Update): (AbsSender) -> Unit {
         return {
-            launch {  }
             val callbackQuery = update.callbackQuery
             it.execute(AnswerCallbackQuery().setCallbackQueryId(callbackQuery.id))
             it.execute((SendMessage(callbackQuery.message.chatId,

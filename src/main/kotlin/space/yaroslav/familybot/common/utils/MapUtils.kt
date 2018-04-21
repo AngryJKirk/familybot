@@ -1,6 +1,7 @@
 package space.yaroslav.familybot.common.utils
 
 
+import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
@@ -16,15 +17,21 @@ fun TelegramUser.toUser(chat: Chat? = null, telegramChat: TelegramChat? = null):
 }
 
 fun Update.toChat(): Chat {
-    val message = this.message
-            ?: callbackQuery?.message
-            ?: editedMessage
-            ?: throw RuntimeException("Cant process ${this}")
+    val message = this.toMessage()
     return Chat(message.chat.id, message.chat.title)
 }
 
 fun Update.toUser(): User {
-    val user = this.message?.from ?: this.callbackQuery?.from ?: this.editedMessage.from
+    val user = this.toMessage().from
     val formatedName = (user.firstName?.let { "$it " } ?: "") + (user.lastName ?: "")
     return User(user.id.toLong(), this.toChat(), formatedName, user.userName)
+}
+
+fun Update.toMessage(): Message {
+    return when {
+        this.hasMessage() -> this.message
+        this.hasCallbackQuery() -> this.callbackQuery.message
+        this.hasEditedMessage() -> this.editedMessage
+        else -> throw RuntimeException("Cant process ${this}")
+    }
 }
