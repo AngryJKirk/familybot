@@ -12,7 +12,6 @@ import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.utils.isGroup
 import space.yaroslav.familybot.common.utils.random
 import space.yaroslav.familybot.common.utils.toChat
-import space.yaroslav.familybot.common.utils.toMessage
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
@@ -41,7 +40,10 @@ class Router(val repository: CommonRepository,
 
     fun processUpdate(update: Update): (AbsSender) -> Unit {
 
-        val message = update.toMessage()
+        val message = update.message
+                ?: update.editedMessage
+                ?: update.callbackQuery.message
+
         val chat = message.chat
 
         if (!chat.isGroup()) {
@@ -82,7 +84,6 @@ class Router(val repository: CommonRepository,
         return executor
     }
 
-
     private fun antiDdosSkip(message: Message, update: Update): (AbsSender) -> Unit = { it ->
         logger.info("Skip anti-ddos executor due to configuration")
         val executor = executors
@@ -96,7 +97,6 @@ class Router(val repository: CommonRepository,
 
         function?.invoke(it)
     }
-
 
     private fun disabledCommand(chat: Chat): (AbsSender) -> Unit = { it ->
         logger.info("Skip command executor due to configuration")
@@ -117,7 +117,6 @@ class Router(val repository: CommonRepository,
         }
     }
 
-
     private fun logChatMessage(update: Update) {
         val text = update.message?.text
         if (text != null && text.split(" ").size >= 3) {
@@ -129,7 +128,7 @@ class Router(val repository: CommonRepository,
         return executors
                 .sortedByDescending { it.priority(update).int }
                 .filter { it.priority(update).int > Priority.RANDOM.int }
-                .find { it.canExecute(update.toMessage()) }
+                .find { it.canExecute(update.message ?: update.editedMessage ?: update.callbackQuery.message) }
     }
 
 

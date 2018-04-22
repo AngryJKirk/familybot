@@ -1,7 +1,6 @@
 package space.yaroslav.familybot.common.utils
 
 
-import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
@@ -17,21 +16,24 @@ fun TelegramUser.toUser(chat: Chat? = null, telegramChat: TelegramChat? = null):
 }
 
 fun Update.toChat(): Chat {
-    val message = this.toMessage()
-    return Chat(message.chat.id, message.chat.title)
+    return when {
+        this.hasMessage() -> Chat(message.chat.id, message.chat.title)
+        this.hasEditedMessage() -> Chat(editedMessage.chat.id, editedMessage.chat.title)
+        else -> Chat(this.callbackQuery.message.chat.id, this.callbackQuery.message.chat.title)
+    }
 }
 
 fun Update.toUser(): User {
-    val user = this.toMessage().from
+    val user = this.from()
     val formatedName = (user.firstName?.let { "$it " } ?: "") + (user.lastName ?: "")
     return User(user.id.toLong(), this.toChat(), formatedName, user.userName)
 }
 
-fun Update.toMessage(): Message {
+fun Update.from(): org.telegram.telegrambots.api.objects.User {
     return when {
-        this.hasMessage() -> this.message
-        this.hasCallbackQuery() -> this.callbackQuery.message
-        this.hasEditedMessage() -> this.editedMessage
+        this.hasMessage() -> this.message.from
+        this.hasEditedMessage() -> this.editedMessage.from
+        this.hasCallbackQuery() -> this.callbackQuery.from
         else -> throw RuntimeException("Cant process ${this}")
     }
 }

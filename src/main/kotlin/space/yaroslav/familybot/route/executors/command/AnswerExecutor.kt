@@ -18,16 +18,18 @@ class AnswerExecutor : CommandExecutor {
     override fun execute(update: Update): (AbsSender) -> Unit {
         val text = update.message.text
         val message = text
-                .removeRange(0, text.indexOfFirst { it == ' ' })
+                .removeRange(0, text.indexOfFirst { it == ' ' }.takeIf { it >= 0 } ?: 0)
                 .split(" или ")
                 .filter { variant -> variant.isNotEmpty() }
                 .takeIf { it.size >= 2 }
                 ?.random()
                 ?.capitalize()
                 ?.dropLastDelimiter()
-                ?: "Ты пидор, отъебись"
-        return { it.execute(SendMessage(update.toChat().id, message)
-                .setReplyToMessageId(update.message.messageId)) }
+                ?: "Ты пидор, отъебись, читай как надо использовать команду"
+        return {
+            it.execute(SendMessage(update.toChat().id, message)
+                    .setReplyToMessageId(update.message.messageId))
+        }
     }
 }
 

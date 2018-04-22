@@ -19,6 +19,11 @@ class RawUpdateLogger(val rawChatLogRepository: RawChatLogRepository) {
             update.hasEditedMessage() -> update.editedMessage
             else -> null
         }
+
+        if (rawMessage?.from?.bot == true) {
+            return
+        }
+
         val fileId = when {
             rawMessage?.hasPhoto() ?: false -> rawMessage?.photo?.joinToString { it.filePath ?: it.fileId }
             rawMessage?.hasDocument() ?: false -> rawMessage?.document?.fileId
