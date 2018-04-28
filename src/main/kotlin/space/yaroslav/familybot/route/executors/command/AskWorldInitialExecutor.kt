@@ -80,7 +80,7 @@ class AskWorldInitialExecutor(val askWorldRepository: AskWorldRepository,
                             .enableHtml(true))
                     launch { askWorldRepository.addQuestionDeliver(question.copy(id = id, messageId = result.messageId + it.id), it) }
                 } catch (e: Exception) {
-                    log.warn("Could not send question $id to $it")
+                    log.warn("Could not send question $id to $it due to error: [${e.message}]")
                 }
             }
         }
