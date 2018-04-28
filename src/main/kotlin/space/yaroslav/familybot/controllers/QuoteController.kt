@@ -23,7 +23,7 @@ class QuoteController(private val quoteRepository: QuoteRepository) {
             ResponseEntity.ok(Response("Ебать красавчик"))
         } catch (e: DuplicateKeyException) {
             ResponseEntity.badRequest()
-                    .body(Response("Такая цитата уже есть блять"))
+                .body(Response("Такая цитата уже есть блять"))
         }
     }
 
@@ -38,10 +38,9 @@ class QuoteController(private val quoteRepository: QuoteRepository) {
     }
 
     @GetMapping
-    fun tagList(): List<String>{
-       return quoteRepository.getTags()
+    fun tagList(): List<String> {
+        return quoteRepository.getTags()
     }
 }
-
 
 data class Response(@JsonProperty("message") val message: String)

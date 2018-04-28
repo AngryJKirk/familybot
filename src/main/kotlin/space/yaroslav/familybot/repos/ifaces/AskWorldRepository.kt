@@ -8,12 +8,11 @@ import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
-
 interface AskWorldRepository {
 
     fun addQuestion(question: AskWorldQuestion): Long
 
-    fun getQuestionsFromDate(date: Instant = Instant.now().minusSeconds(60*60)): List<AskWorldQuestion>
+    fun getQuestionsFromDate(date: Instant = Instant.now().minusSeconds(60 * 60)): List<AskWorldQuestion>
 
     fun addReply(reply: AskWorldReply): Long
 
@@ -33,8 +32,11 @@ interface AskWorldRepository {
 
     fun getReplies(askWorldQuestion: AskWorldQuestion): List<AskWorldReply>
 
-    fun getQuestionsFromChat(chat: Chat, date: Instant = Instant.now().minusSeconds(60*60)): List<AskWorldQuestion>
+    fun getQuestionsFromChat(chat: Chat, date: Instant = Instant.now().minusSeconds(60 * 60)): List<AskWorldQuestion>
 
-    fun getQuestionsFromUser(chat: Chat, user: User, date: Instant = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()): List<AskWorldQuestion>
-
+    fun getQuestionsFromUser(
+        chat: Chat,
+        user: User,
+        date: Instant = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
+    ): List<AskWorldQuestion>
 }

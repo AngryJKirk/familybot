@@ -11,24 +11,40 @@ import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
-import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.Month
+import java.time.ZoneOffset
 
 @Component
 class PidorStatsYearExecutor(val repository: CommonRepository) : CommandExecutor, Configurable {
     override fun getFunctionId(): FunctionId {
         return FunctionId.PIDOR
     }
+
     override fun command(): Command {
         return Command.STATS_YEAR
     }
 
     override fun execute(update: Update): (AbsSender) -> Unit {
         val now = LocalDate.now()
-        val pidorsByChat = repository.getPidorsByChat(update.message.chat.toChat(),
-                startDate = LocalDateTime.of(LocalDate.of(now.year, Month.JANUARY, 1), LocalTime.MIDNIGHT).toInstant(ZoneOffset.UTC))
-                .map { it.user }
-                .formatTopList()
+        val pidorsByChat = repository.getPidorsByChat(
+            update.message.chat.toChat(),
+            startDate = LocalDateTime.of(LocalDate.of(now.year, Month.JANUARY, 1), LocalTime.MIDNIGHT).toInstant(
+                ZoneOffset.UTC
+            )
+        )
+            .map { it.user }
+            .formatTopList()
         val title = "Топ пидоров за ${now.year} год:\n".bold()
-        return { it.execute(SendMessage(update.message.chatId, title + pidorsByChat.joinToString("\n")).enableHtml(true)) }
+        return {
+            it.execute(
+                SendMessage(
+                    update.message.chatId,
+                    title + pidorsByChat.joinToString("\n")
+                ).enableHtml(true)
+            )
+        }
     }
 }

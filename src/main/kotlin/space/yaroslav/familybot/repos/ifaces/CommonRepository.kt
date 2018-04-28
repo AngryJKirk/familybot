@@ -5,7 +5,6 @@ import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.User
 import java.time.Instant
 
-
 interface CommonRepository {
 
     fun addUser(user: User)
@@ -20,8 +19,10 @@ interface CommonRepository {
 
     fun removePidorRecord(user: User)
 
-    fun getPidorsByChat(chat: Chat, startDate: Instant = Instant.ofEpochMilli(969652800000),
-                        endDate: Instant = Instant.now()): List<Pidor>
+    fun getPidorsByChat(
+        chat: Chat, startDate: Instant = Instant.ofEpochMilli(969652800000),
+        endDate: Instant = Instant.now()
+    ): List<Pidor>
 
     fun containsUser(user: User): Boolean
 
@@ -35,6 +36,8 @@ interface CommonRepository {
 
     fun disableUsersInChat(chat: Chat)
 
-    fun getAllPidors(startDate: Instant = Instant.ofEpochMilli(969652800000),
-                     endDate: Instant = Instant.now()): List<Pidor>
+    fun getAllPidors(
+        startDate: Instant = Instant.ofEpochMilli(969652800000),
+        endDate: Instant = Instant.now()
+    ): List<Pidor>
 }

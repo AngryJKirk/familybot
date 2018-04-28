@@ -19,20 +19,17 @@ class CommandStatExecutor(val repository: HistoryRepository) : CommandExecutor {
         return Command.COMMAND_STATS
     }
 
-
     override fun execute(update: Update): (AbsSender) -> Unit {
         val all = repository.getAll(update.message.chat.toChat()).groupBy { it.command }
 
         val topList = all
-                .filterNot { it.key == command() }
-                .map { format(it) }
-                .joinToString("\n")
+            .filterNot { it.key == command() }
+            .map { format(it) }
+            .joinToString("\n")
 
         return { it.execute(SendMessage(update.message.chatId, title + topList).enableHtml(true)) }
     }
 
     private fun format(it: Map.Entry<Command, List<CommandByUser>>) =
-            "Команда " + "${it.key.command}:".bold() + "\n" + it.value.map { it.user }.formatTopList().joinToString("\n")
-
-
+        "Команда " + "${it.key.command}:".bold() + "\n" + it.value.map { it.user }.formatTopList().joinToString("\n")
 }

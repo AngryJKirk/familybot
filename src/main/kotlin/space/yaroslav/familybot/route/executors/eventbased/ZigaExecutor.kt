@@ -19,14 +19,17 @@ class ZigaExecutor : Executor {
 
     override fun execute(update: Update): (AbsSender) -> Unit {
         return {
-            it.sendSticker(SendSticker()
+            it.sendSticker(
+                SendSticker()
                     .setChatId(update.message.chatId)
                     .setReplyToMessageId(update.message.messageId)
-                    .setSticker(if (update.message.sticker?.fileId == zigaRightId) {
-                        zigaLeftId
-                    } else {
-                        zigaRightId
-                    })
+                    .setSticker(
+                        if (update.message.sticker?.fileId == zigaRightId) {
+                            zigaLeftId
+                        } else {
+                            zigaRightId
+                        }
+                    )
             )
         }
     }

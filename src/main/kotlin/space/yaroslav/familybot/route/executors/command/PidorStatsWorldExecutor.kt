@@ -27,10 +27,22 @@ class PidorStatsWorldExecutor(val repository: CommonRepository) : CommandExecuto
     }
 
     override fun execute(update: Update): (AbsSender) -> Unit {
-        val pidorsByChat = repository.getAllPidors(startDate = LocalDateTime.of(LocalDate.of(2000, Month.JANUARY, 1), LocalTime.MIDNIGHT).toInstant(ZoneOffset.UTC))
-                .map { it.user }
-                .formatTopList()
+        val pidorsByChat = repository.getAllPidors(
+            startDate = LocalDateTime.of(
+                LocalDate.of(2000, Month.JANUARY, 1),
+                LocalTime.MIDNIGHT
+            ).toInstant(ZoneOffset.UTC)
+        )
+            .map { it.user }
+            .formatTopList()
         val title = "Топ пидоров всего мира за все время:\n".bold()
-        return { it.execute(SendMessage(update.message.chatId, title + pidorsByChat.joinToString("\n")).enableHtml(true)) }
+        return {
+            it.execute(
+                SendMessage(
+                    update.message.chatId,
+                    title + pidorsByChat.joinToString("\n")
+                ).enableHtml(true)
+            )
+        }
     }
 }

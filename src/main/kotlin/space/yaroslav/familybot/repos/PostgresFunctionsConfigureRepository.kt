@@ -11,11 +11,14 @@ import space.yaroslav.familybot.route.models.FunctionId
 class PostgresFunctionsConfigureRepository(val jdbcTemplate: JdbcTemplate) : FunctionsConfigureRepository {
     override fun isEnabled(id: FunctionId, chat: Chat): Boolean {
         return jdbcTemplate.query("SELECT active FROM function_settings WHERE function_id = ? AND chat_id = ? ORDER BY date_from DESC LIMIT 1",
-                RowMapper { rs, _ -> rs.getBoolean("active") }, id.id, chat.id).firstOrNull() ?: true
+            RowMapper { rs, _ -> rs.getBoolean("active") }, id.id, chat.id
+        ).firstOrNull() ?: true
     }
 
     override fun switch(id: FunctionId, chat: Chat) {
-        jdbcTemplate.update("INSERT INTO function_settings (function_id, chat_id, active) VALUES (?, ?, ?)",
-                id.id, chat.id, !isEnabled(id, chat))
+        jdbcTemplate.update(
+            "INSERT INTO function_settings (function_id, chat_id, active) VALUES (?, ?, ?)",
+            id.id, chat.id, !isEnabled(id, chat)
+        )
     }
 }

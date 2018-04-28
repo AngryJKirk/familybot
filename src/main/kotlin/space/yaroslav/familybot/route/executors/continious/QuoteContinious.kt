@@ -1,6 +1,5 @@
 package space.yaroslav.familybot.route.executors.continious
 
-import kotlinx.coroutines.experimental.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.api.methods.send.SendMessage
@@ -12,8 +11,10 @@ import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
-class QuoteContinious(val quoteRepository: QuoteRepository,
-                      override val botConfig: BotConfig) : ContiniousConversation {
+class QuoteContinious(
+    val quoteRepository: QuoteRepository,
+    override val botConfig: BotConfig
+) : ContiniousConversation {
 
     override fun command(): Command {
         return Command.QUOTE_BY_TAG
@@ -27,8 +28,12 @@ class QuoteContinious(val quoteRepository: QuoteRepository,
         return {
             val callbackQuery = update.callbackQuery
             it.execute(AnswerCallbackQuery().setCallbackQueryId(callbackQuery.id))
-            it.execute((SendMessage(callbackQuery.message.chatId,
-                    quoteRepository.getByTag(callbackQuery.data) ?: "Такого тега нет, идите нахуй")))
+            it.execute(
+                (SendMessage(
+                    callbackQuery.message.chatId,
+                    quoteRepository.getByTag(callbackQuery.data) ?: "Такого тега нет, идите нахуй"
+                ))
+            )
         }
     }
 }

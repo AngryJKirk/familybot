@@ -10,7 +10,8 @@ import space.yaroslav.familybot.repos.ifaces.PidorDictionaryRepository
 class PostgresPidorDictionaryRepository(val template: JdbcTemplate) : PidorDictionaryRepository {
     override fun getLeaderBoardPhrase(pluralization: Pluralization): List<String> {
         return template.query("SELECT * FROM pidor_leaderboard_dictionary_v2 WHERE plur_id = ?",
-                RowMapper { rs, _ -> rs.getString("message") }, pluralization.code)
+            RowMapper { rs, _ -> rs.getString("message") }, pluralization.code
+        )
     }
 
     override fun getStart(): List<String> {

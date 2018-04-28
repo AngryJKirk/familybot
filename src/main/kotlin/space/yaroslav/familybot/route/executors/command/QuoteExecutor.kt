@@ -18,5 +18,4 @@ class QuoteExecutor(val quoteRepository: QuoteRepository) : CommandExecutor {
             it.execute(SendMessage(update.message.chatId, quoteRepository.getRandom()))
         }
     }
-
 }

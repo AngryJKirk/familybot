@@ -30,8 +30,10 @@ class RouletteExecutor(private val historyRepository: HistoryRepository) : Comma
 
     override fun execute(update: Update): (AbsSender) -> Unit {
         val now = LocalDate.now()
-        val commands = historyRepository.get(update.toUser(), LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
-                .toInstant(ZoneOffset.UTC))
+        val commands = historyRepository.get(
+            update.toUser(), LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
+                .toInstant(ZoneOffset.UTC)
+        )
         if (commands.filter { it.command == command() }.size > 1) {
             return {
                 it.execute(SendMessage(update.message.chatId, "Ты уже крутил рулетку."))
@@ -39,9 +41,13 @@ class RouletteExecutor(private val historyRepository: HistoryRepository) : Comma
                 it.execute(SendMessage(update.message.chatId, "Пидор."))
             }
         }
-        return { it.execute(SendMessage(update.message.chatId, ROULETTE_MESSAGE)
-                .setReplyMarkup(ForceReplyKeyboard().setSelective(true))
-                .setReplyToMessageId(update.message.messageId)) }
+        return {
+            it.execute(
+                SendMessage(update.message.chatId, ROULETTE_MESSAGE)
+                    .setReplyMarkup(ForceReplyKeyboard().setSelective(true))
+                    .setReplyToMessageId(update.message.messageId)
+            )
+        }
     }
 
     override fun isLoggable(): Boolean {

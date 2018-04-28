@@ -17,7 +17,6 @@ class HelpCommandExecutor(config: BotConfig) : CommandExecutor {
         return Command.HELP
     }
 
-
     override fun execute(update: Update): (AbsSender) -> Unit {
         return {
             it.execute(SendMessage(update.toChat().id, message))

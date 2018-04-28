@@ -23,10 +23,12 @@ import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
 @Component
-class AskWorldInitialExecutor(val askWorldRepository: AskWorldRepository,
-                              val commonRepository: CommonRepository,
-                              val configureRepository: FunctionsConfigureRepository,
-                              val botConfig: BotConfig) : CommandExecutor, Configurable {
+class AskWorldInitialExecutor(
+    val askWorldRepository: AskWorldRepository,
+    val commonRepository: CommonRepository,
+    val configureRepository: FunctionsConfigureRepository,
+    val botConfig: BotConfig
+) : CommandExecutor, Configurable {
     private val log = LoggerFactory.getLogger(AskWorldInitialExecutor::class.java)
     override fun getFunctionId(): FunctionId {
         return FunctionId.ASK_WORLD
@@ -50,39 +52,69 @@ class AskWorldInitialExecutor(val askWorldRepository: AskWorldRepository,
     override fun execute(update: Update): (AbsSender) -> Unit {
         val chatId = update.message.chatId
         val message = update.message
-                ?.text
-                ?.removePrefix(command().command)
-                ?.removePrefix("@${botConfig.botname}")
-                ?.takeIf { it.isNotEmpty() } ?: return {
-            it.execute(SendMessage(chatId,
-                    helpMessage))
+            ?.text
+            ?.removePrefix(command().command)
+            ?.removePrefix("@${botConfig.botname}")
+            ?.takeIf { it.isNotEmpty() } ?: return {
+            it.execute(
+                SendMessage(
+                    chatId,
+                    helpMessage
+                )
+            )
         }
 
         val chat = update.toChat()
-        if (askWorldRepository.getQuestionsFromChat(chat, date = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()).size >= 5) {
-            return { it.execute(SendMessage(chat.id, "Не более 5 вопросов в день от чата").setReplyToMessageId(update.message.messageId)) }
+        if (askWorldRepository.getQuestionsFromChat(
+                chat,
+                date = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
+            ).size >= 5
+        ) {
+            return {
+                it.execute(
+                    SendMessage(
+                        chat.id,
+                        "Не более 5 вопросов в день от чата"
+                    ).setReplyToMessageId(update.message.messageId)
+                )
+            }
         }
 
         if (askWorldRepository.getQuestionsFromUser(chat, update.toUser()).isNotEmpty()) {
-            return { it.execute(SendMessage(chat.id, "Не более вопроса в день от пользователя").setReplyToMessageId(update.message.messageId)) }
+            return {
+                it.execute(
+                    SendMessage(chat.id, "Не более вопроса в день от пользователя").setReplyToMessageId(
+                        update.message.messageId
+                    )
+                )
+            }
         }
 
         val question = AskWorldQuestion(null, message, update.toUser(), chat, Instant.now(), null)
         val id = askWorldRepository.addQuestion(question)
-        return {sender ->
+        return { sender ->
             sender.execute(SendMessage(chatId, "Принято"))
             commonRepository.getChats()
-                    .filterNot { it == chat }
-                    .filter { configureRepository.isEnabled(getFunctionId(), it) }
-                    .forEach {
-                try {
-                    val result = sender.execute(SendMessage(it.id, "Вопрос из чата ${chat.name.bold()}: ${question.message.italic()}")
-                            .enableHtml(true))
-                    launch { askWorldRepository.addQuestionDeliver(question.copy(id = id, messageId = result.messageId + it.id), it) }
-                } catch (e: Exception) {
-                    log.warn("Could not send question $id to $it due to error: [${e.message}]")
+                .filterNot { it == chat }
+                .filter { configureRepository.isEnabled(getFunctionId(), it) }
+                .forEach {
+                    try {
+                        val result = sender.execute(
+                            SendMessage(it.id, "Вопрос из чата ${chat.name.bold()}: ${question.message.italic()}")
+                                .enableHtml(true)
+                        )
+                        launch {
+                            askWorldRepository.addQuestionDeliver(
+                                question.copy(
+                                    id = id,
+                                    messageId = result.messageId + it.id
+                                ), it
+                            )
+                        }
+                    } catch (e: Exception) {
+                        log.warn("Could not send question $id to $it due to error: [${e.message}]")
+                    }
                 }
-            }
         }
     }
 }

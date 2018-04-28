@@ -23,13 +23,19 @@ class PidorStatsExecutor(val repository: CommonRepository) : CommandExecutor, Co
     override fun execute(update: Update): (AbsSender) -> Unit {
         val chat = update.message.chat.toChat()
         val pidorsByChat = repository.getPidorsByChat(chat)
-                .groupBy { it.user }
-                .map { it.key to it.value.size }
-                .sortedByDescending { it.second }
-                .mapIndexed { index, pair -> format(index, pair) }
+            .groupBy { it.user }
+            .map { it.key to it.value.size }
+            .sortedByDescending { it.second }
+            .mapIndexed { index, pair -> format(index, pair) }
         val title = "Топ пидоров за все время:\n".bold()
-        return { it.execute(SendMessage(update.message.chatId, title + pidorsByChat.joinToString("\n")).enableHtml(true)) }
-
+        return {
+            it.execute(
+                SendMessage(
+                    update.message.chatId,
+                    title + pidorsByChat.joinToString("\n")
+                ).enableHtml(true)
+            )
+        }
     }
 
     override fun command(): Command {

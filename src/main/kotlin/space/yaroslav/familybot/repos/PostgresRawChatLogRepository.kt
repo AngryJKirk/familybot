@@ -12,7 +12,9 @@ import java.time.Instant
 class PostgresRawChatLogRepository(val template: JdbcTemplate) : RawChatLogRepository {
 
     override fun add(chat: Chat, user: User, message: String?, fileId: String?, rawUpdate: String, date: Instant) {
-        template.update("INSERT INTO raw_chat_log (chat_id, user_id, message, raw_update, date, file_id) VALUES (?, ?, ?, ?::JSON, ?, ?)",
-                chat.id, user.id, message, rawUpdate, Timestamp.from(date), fileId)
+        template.update(
+            "INSERT INTO raw_chat_log (chat_id, user_id, message, raw_update, date, file_id) VALUES (?, ?, ?, ?::JSON, ?, ?)",
+            chat.id, user.id, message, rawUpdate, Timestamp.from(date), fileId
+        )
     }
 }

@@ -17,8 +17,10 @@ import space.yaroslav.familybot.route.models.Priority
 import java.util.concurrent.ThreadLocalRandom
 
 @Component
-class KeyWordExecutor(val keyset: ChatLogRepository,
-                      val configRepository: RagemodeRepository) : Executor, Configurable {
+class KeyWordExecutor(
+    val keyset: ChatLogRepository,
+    val configRepository: RagemodeRepository
+) : Executor, Configurable {
 
     override fun getFunctionId(): FunctionId {
         return FunctionId.CHATTING
@@ -37,15 +39,17 @@ class KeyWordExecutor(val keyset: ChatLogRepository,
         val rageModEnabled = configRepository.isEnabled(chat)
         if (rageModEnabled || ThreadLocalRandom.current().nextInt(0, 5) == 0) {
             val string = keyset.get(update.toUser()).takeIf { it.size > 300 }?.random()
-                    ?: getSmallMessage(keyset.getAll())
+                ?: getSmallMessage(keyset.getAll())
             val message = if (rageModEnabled) {
                 rageModeFormat(string)
             } else {
                 string
             }
             return {
-                it.execute(SendMessage(chat.id, message)
-                        .setReplyToMessageId(update.message.messageId))
+                it.execute(
+                    SendMessage(chat.id, message)
+                        .setReplyToMessageId(update.message.messageId)
+                )
                 configRepository.decrement(chat)
             }
         } else {
@@ -72,5 +76,4 @@ class KeyWordExecutor(val keyset: ChatLogRepository,
         } while (message!!.split(" ").size > 5)
         return message
     }
-
 }

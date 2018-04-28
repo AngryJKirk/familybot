@@ -35,6 +35,4 @@ class FamilyBot(val config: BotConfig, val router: Router) : TelegramLongPolling
     override fun getBotUsername(): String {
         return config.botname!!
     }
-
-
 }

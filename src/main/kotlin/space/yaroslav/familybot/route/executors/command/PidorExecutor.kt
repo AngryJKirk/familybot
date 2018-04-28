@@ -20,13 +20,14 @@ import space.yaroslav.familybot.route.services.PidorCompetitionService
 import java.time.Instant
 
 @Component
-class PidorExecutor(val repository: CommonRepository,
-                    val dictionaryRepository: PidorDictionaryRepository,
-                    val pidorCompetitionService: PidorCompetitionService) : CommandExecutor, Configurable {
+class PidorExecutor(
+    val repository: CommonRepository,
+    val dictionaryRepository: PidorDictionaryRepository,
+    val pidorCompetitionService: PidorCompetitionService
+) : CommandExecutor, Configurable {
     override fun getFunctionId(): FunctionId {
         return FunctionId.PIDOR
     }
-
 
     private final val log = LoggerFactory.getLogger(PidorExecutor::class.java)
 
@@ -44,7 +45,7 @@ class PidorExecutor(val repository: CommonRepository,
             val nextPidor = users.random()!!
             log.info("Pidor is rolled to $nextPidor")
             val newPidor = Pidor(nextPidor, Instant.now())
-            val addPidor = launch {  repository.addPidor(newPidor) }
+            val addPidor = launch { repository.addPidor(newPidor) }
             val start = dictionaryRepository.getStart().random().bold()
             val middle = dictionaryRepository.getMiddle().random().bold()
             val finisher = dictionaryRepository.getFinish().random().bold()
@@ -68,17 +69,17 @@ class PidorExecutor(val repository: CommonRepository,
 
     private fun todayPidors(update: Update): SendMessage? {
         val pidorsByChat = repository.getPidorsByChat(update.toChat())
-                .filter { it.date.isToday() }
-                .distinctBy { it.user.id }
+            .filter { it.date.isToday() }
+            .distinctBy { it.user.id }
 
         return when (pidorsByChat.size) {
             0 -> null
-            1 -> SendMessage(update.message.chatId, "Сегодняшний пидор уже обнаружен: " +
-                    pidorsByChat.first().user.getGeneralName())
+            1 -> SendMessage(
+                update.message.chatId, "Сегодняшний пидор уже обнаружен: " +
+                    pidorsByChat.first().user.getGeneralName()
+            )
             else -> SendMessage(update.message.chatId, "Сегодняшние пидоры уже обнаружены: " +
-                    pidorsByChat.joinToString { it.user.getGeneralName() })
+                pidorsByChat.joinToString { it.user.getGeneralName() })
         }
     }
-
-
 }

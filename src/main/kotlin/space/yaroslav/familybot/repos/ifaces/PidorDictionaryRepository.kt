@@ -2,7 +2,6 @@ package space.yaroslav.familybot.repos.ifaces
 
 import space.yaroslav.familybot.common.Pluralization
 
-
 interface PidorDictionaryRepository {
 
     fun getStart(): List<String>
@@ -12,5 +11,4 @@ interface PidorDictionaryRepository {
     fun getFinish(): List<String>
 
     fun getLeaderBoardPhrase(pluralization: Pluralization): List<String>
-
 }

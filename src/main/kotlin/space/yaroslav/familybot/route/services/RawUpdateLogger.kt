@@ -31,10 +31,10 @@ class RawUpdateLogger(val rawChatLogRepository: RawChatLogRepository) {
         }
         val text = rawMessage?.text
         val date = rawMessage
-                ?.date
-                ?.toLong()
-                ?.let { Instant.ofEpochSecond(it) }
-                ?: Instant.now()
+            ?.date
+            ?.toLong()
+            ?.let { Instant.ofEpochSecond(it) }
+            ?: Instant.now()
         rawChatLogRepository.add(update.toChat(), update.toUser(), text, fileId, rawUpdate, date)
     }
 }

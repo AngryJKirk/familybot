@@ -11,8 +11,8 @@ interface CommandExecutor : Executor {
         val text = message.text ?: ""
         val command = command().command
         return text.startsWith("$command@") ||
-                text == command ||
-                text.startsWith("$command ")
+            text == command ||
+            text.startsWith("$command ")
     }
 
     override fun priority(update: Update): Priority {

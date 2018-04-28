@@ -5,7 +5,6 @@ import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.route.models.Priority
 
-
 interface Executor {
 
     fun execute(update: Update): (AbsSender) -> Unit
@@ -13,5 +12,4 @@ interface Executor {
     fun canExecute(message: Message): Boolean
 
     fun priority(update: Update): Priority
-
 }

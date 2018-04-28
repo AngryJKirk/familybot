@@ -7,10 +7,8 @@ import org.junit.runners.JUnit4
 import space.yaroslav.familybot.common.Huificator
 import space.yaroslav.familybot.common.Pluralization
 
-
 @RunWith(JUnit4::class)
 class UtilTest {
-
 
     @Test
     fun test() {

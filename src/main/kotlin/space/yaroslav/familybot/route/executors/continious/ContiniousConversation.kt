@@ -6,7 +6,6 @@ import space.yaroslav.familybot.route.executors.command.CommandExecutor
 import space.yaroslav.familybot.route.models.Priority
 import space.yaroslav.familybot.telegram.BotConfig
 
-
 interface ContiniousConversation : CommandExecutor {
 
     val botConfig: BotConfig
@@ -17,7 +16,7 @@ interface ContiniousConversation : CommandExecutor {
 
     override fun canExecute(message: Message): Boolean {
         return message.from.userName == botConfig.botname
-                && message.text ?: "" == getDialogMessage()
+            && message.text ?: "" == getDialogMessage()
     }
 
     fun getDialogMessage(): String

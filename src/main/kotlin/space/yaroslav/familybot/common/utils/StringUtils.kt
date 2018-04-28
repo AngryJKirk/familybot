@@ -2,7 +2,6 @@ package space.yaroslav.familybot.common.utils
 
 import space.yaroslav.familybot.route.models.Command
 
-
 fun String?.dropLastDelimiter(): String? {
     if (this.isNullOrEmpty()) {
         return this

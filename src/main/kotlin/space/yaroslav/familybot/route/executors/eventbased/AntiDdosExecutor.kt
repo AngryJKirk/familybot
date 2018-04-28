@@ -17,8 +17,10 @@ import space.yaroslav.familybot.route.models.Priority
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
-class AntiDdosExecutor(val repository: HistoryRepository,
-                       val config: BotConfig) : Executor, Configurable {
+class AntiDdosExecutor(
+    val repository: HistoryRepository,
+    val config: BotConfig
+) : Executor, Configurable {
     override fun getFunctionId(): FunctionId {
         return FunctionId.ANTIDDOS
     }
@@ -28,10 +30,12 @@ class AntiDdosExecutor(val repository: HistoryRepository,
     override fun execute(update: Update): (AbsSender) -> Unit {
         return when {
             update.hasCallbackQuery() -> { it ->
-                it.execute(AnswerCallbackQuery()
+                it.execute(
+                    AnswerCallbackQuery()
                         .setCallbackQueryId(update.callbackQuery.id)
                         .setShowAlert(true)
-                        .setText(message))
+                        .setText(message)
+                )
             }
             update.hasMessage() -> { it -> it.execute(SendMessage(update.message.chatId, message)) }
             else -> { _ -> }
@@ -40,14 +44,12 @@ class AntiDdosExecutor(val repository: HistoryRepository,
 
     override fun canExecute(message: Message): Boolean {
         return repository
-                .get(selectUser(message).toUser(telegramChat = message.chat))
-                .groupBy { it.command }
-                .filterValues { it.size >= 5 }
-                .keys
-                .contains(getText(message).parseCommand())
-
+            .get(selectUser(message).toUser(telegramChat = message.chat))
+            .groupBy { it.command }
+            .filterValues { it.size >= 5 }
+            .keys
+            .contains(getText(message).parseCommand())
     }
-
 
     override fun priority(update: Update): Priority {
         return Priority.HIGH
@@ -69,5 +71,4 @@ class AntiDdosExecutor(val repository: HistoryRepository,
             message.text
         }
     }
-
 }

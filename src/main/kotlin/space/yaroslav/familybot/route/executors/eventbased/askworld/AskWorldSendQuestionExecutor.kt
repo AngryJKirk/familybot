@@ -27,33 +27,32 @@ class AskWorldSendQuestionExecutor(val askWorldRepository: AskWorldRepository) :
     override fun execute(update: Update): (AbsSender) -> Unit {
         val chat = update.toChat()
         val questions = askWorldRepository
-                .getQuestionsFromDate()
-                .filterNot { it.chat.id == update.message.chatId }
-                .filterNot { askWorldRepository.isQuestionDelivered(it, chat) }
+            .getQuestionsFromDate()
+            .filterNot { it.chat.id == update.message.chatId }
+            .filterNot { askWorldRepository.isQuestionDelivered(it, chat) }
 
         return { sender ->
             questions
-                    .forEach {
-                        val message = SendMessage(chat.id, "Вопрос из чата ${it.chat.name.bold()}: ${it.message.italic()}")
-                                .enableHtml(true)
-                        try {
-                            val result = sender.execute(message)
-                            askWorldRepository.addQuestionDeliver(it.copy(messageId = result.messageId + chat.id), chat)
-                        } catch (e: Exception){
-                            log.warn("Could not send question to chat", e)
-                        }
-
+                .forEach {
+                    val message = SendMessage(chat.id, "Вопрос из чата ${it.chat.name.bold()}: ${it.message.italic()}")
+                        .enableHtml(true)
+                    try {
+                        val result = sender.execute(message)
+                        askWorldRepository.addQuestionDeliver(it.copy(messageId = result.messageId + chat.id), chat)
+                    } catch (e: Exception) {
+                        log.warn("Could not send question to chat", e)
                     }
+
+                }
         }
     }
 
     override fun canExecute(message: Message): Boolean {
         return askWorldRepository
-                .getQuestionsFromDate()
-                .filterNot { it.chat.id == message.chat.id }
-                .filterNot { askWorldRepository.isQuestionDelivered(it, message.chat.toChat()) }
-                .isNotEmpty()
-
+            .getQuestionsFromDate()
+            .filterNot { it.chat.id == message.chat.id }
+            .filterNot { askWorldRepository.isQuestionDelivered(it, message.chat.toChat()) }
+            .isNotEmpty()
     }
 
     override fun priority(update: Update): Priority {

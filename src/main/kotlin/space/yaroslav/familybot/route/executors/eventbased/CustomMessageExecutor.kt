@@ -21,12 +21,12 @@ class CustomMessageExecutor(val repository: CustomMessageDeliveryRepository) : E
             if (repository.hasNewMessages(chat)) {
                 launch {
                     newMessages
-                            .await()
-                            .forEach {
-                                Thread.sleep(2000)
-                                sender.execute(SendMessage(it.chat.id, it.message))
-                                repository.markAsDelivered(it)
-                            }
+                        .await()
+                        .forEach {
+                            Thread.sleep(2000)
+                            sender.execute(SendMessage(it.chat.id, it.message))
+                            repository.markAsDelivered(it)
+                        }
                 }
             }
         }

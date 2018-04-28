@@ -23,10 +23,12 @@ import java.time.ZoneOffset
 import java.util.concurrent.ThreadLocalRandom
 
 @Component
-class RouletteContinious(val historyRepository: HistoryRepository,
-                         override val botConfig: BotConfig,
-                         val pidorRepository: CommonRepository,
-                         val pidorCompetitionService: PidorCompetitionService) : ContiniousConversation {
+class RouletteContinious(
+    val historyRepository: HistoryRepository,
+    override val botConfig: BotConfig,
+    val pidorRepository: CommonRepository,
+    val pidorCompetitionService: PidorCompetitionService
+) : ContiniousConversation {
 
     private val log = LoggerFactory.getLogger(RouletteContinious::class.java)
 
@@ -40,16 +42,18 @@ class RouletteContinious(val historyRepository: HistoryRepository,
 
     override fun canExecute(message: Message): Boolean {
         return message.isReply
-                && message.replyToMessage.from.userName == botConfig.botname
-                && message.replyToMessage.text ?: "" == getDialogMessage()
+            && message.replyToMessage.from.userName == botConfig.botname
+            && message.replyToMessage.text ?: "" == getDialogMessage()
     }
 
     override fun execute(update: Update): (AbsSender) -> Unit {
         val now = LocalDate.now()
         val user = update.toUser()
         val chatId = update.message.chatId
-        val commands = historyRepository.get(user, LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
-                .toInstant(ZoneOffset.UTC))
+        val commands = historyRepository.get(
+            user, LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
+                .toInstant(ZoneOffset.UTC)
+        )
         if (commands.any { it.command == command() }) {
             return {
                 it.execute(SendMessage(chatId, "Ты уже крутил рулетку."))
@@ -61,7 +65,7 @@ class RouletteContinious(val historyRepository: HistoryRepository,
         if (number !in 1..6) {
             return {
                 it.execute(SendMessage(chatId, "Мушку спили и в следующий раз играй по правилам"))
-                launch {  pidorRepository.addPidor(Pidor(user, Instant.now())) }
+                launch { pidorRepository.addPidor(Pidor(user, Instant.now())) }
                 Thread.sleep(1000)
                 it.execute(SendMessage(chatId, "В наказание твое пидорское очко уходит к остальным"))
             }
@@ -71,14 +75,19 @@ class RouletteContinious(val historyRepository: HistoryRepository,
         return {
             if (rouletteNumber == number) {
                 it.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
-                launch {  repeat(5, {pidorRepository.removePidorRecord(user) }) }
+                launch { repeat(5, { pidorRepository.removePidorRecord(user) }) }
                 Thread.sleep(2000)
                 it.execute(SendMessage(chatId, "Но он пока не треснул. Свое пидорское очко можешь забрать. "))
             } else {
                 it.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
                 launch { repeat(3, { pidorRepository.addPidor(Pidor(user, Instant.now())) }) }
                 Thread.sleep(2000)
-                it.execute(SendMessage(chatId, "Сорян, но ты проиграл. Твое пидорское очко уходит в зрительный зал трижды. Правильный ответ был $rouletteNumber."))
+                it.execute(
+                    SendMessage(
+                        chatId,
+                        "Сорян, но ты проиграл. Твое пидорское очко уходит в зрительный зал трижды. Правильный ответ был $rouletteNumber."
+                    )
+                )
             }
             Thread.sleep(2000)
             pidorCompetitionService.pidorCompetition(update)?.invoke(it)

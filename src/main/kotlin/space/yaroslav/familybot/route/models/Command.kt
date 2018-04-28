@@ -1,6 +1,5 @@
 package space.yaroslav.familybot.route.models
 
-
 enum class Command(val command: String, val id: Int) {
     STATS_MONTH("/stats_month", 1),
     STATS_YEAR("/stats_year", 2),
@@ -17,8 +16,5 @@ enum class Command(val command: String, val id: Int) {
     ROULETTE("/roulette", 13),
     ASK_WORLD("/ask_world", 14),
     STATS_WORLD("/stats_world", 15);
-
-
-
 }
 

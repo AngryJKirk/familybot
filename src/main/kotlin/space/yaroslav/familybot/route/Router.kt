@@ -26,23 +26,24 @@ import space.yaroslav.familybot.route.services.RawUpdateLogger
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 
-
 @Component
-class Router(val repository: CommonRepository,
-             val historyRepository: HistoryRepository,
-             val executors: List<Executor>,
-             val chatLogRepository: ChatLogRepository,
-             val configureRepository: FunctionsConfigureRepository,
-             val rawUpdateLogger: RawUpdateLogger,
-             val botConfig: BotConfig) {
+class Router(
+    val repository: CommonRepository,
+    val historyRepository: HistoryRepository,
+    val executors: List<Executor>,
+    val chatLogRepository: ChatLogRepository,
+    val configureRepository: FunctionsConfigureRepository,
+    val rawUpdateLogger: RawUpdateLogger,
+    val botConfig: BotConfig
+) {
 
     private final val logger = LoggerFactory.getLogger(Router::class.java)
 
     fun processUpdate(update: Update): (AbsSender) -> Unit {
 
         val message = update.message
-                ?: update.editedMessage
-                ?: update.callbackQuery.message
+            ?: update.editedMessage
+            ?: update.callbackQuery.message
 
         val chat = message.chat
 
@@ -54,7 +55,7 @@ class Router(val repository: CommonRepository,
         }
 
         launch { register(message) }
-                .invokeOnCompletion { rawUpdateLogger.log(update) }
+            .invokeOnCompletion { rawUpdateLogger.log(update) }
 
         if (update.hasEditedMessage()) {
             return {}
@@ -87,8 +88,8 @@ class Router(val repository: CommonRepository,
     private fun antiDdosSkip(message: Message, update: Update): (AbsSender) -> Unit = { it ->
         logger.info("Skip anti-ddos executor due to configuration")
         val executor = executors
-                .filter { it is CommandExecutor }
-                .find { it.canExecute(message) }
+            .filter { it is CommandExecutor }
+            .find { it.canExecute(message) }
         val function = if (isExecutorDisabled(executor, message.chat)) {
             disabledCommand(message.chat)
         } else {
@@ -103,17 +104,19 @@ class Router(val repository: CommonRepository,
         it.execute(SendMessage(chat.id, "Команда выключена, сорян"))
     }
 
-
     private fun isExecutorDisabled(executor: Executor?, chat: Chat): Boolean {
         return executor is Configurable && !configureRepository.isEnabled(executor.getFunctionId(), chat.toChat())
     }
 
     private fun logChatCommand(executor: Executor?, update: Update) {
         if (executor is CommandExecutor && executor.isLoggable()) {
-            historyRepository.add(CommandByUser(
+            historyRepository.add(
+                CommandByUser(
                     update.toUser(),
                     executor.command(),
-                    Instant.now()))
+                    Instant.now()
+                )
+            )
         }
     }
 
@@ -126,11 +129,10 @@ class Router(val repository: CommonRepository,
 
     private fun selectExecutor(update: Update): Executor? {
         return executors
-                .sortedByDescending { it.priority(update).int }
-                .filter { it.priority(update).int > Priority.RANDOM.int }
-                .find { it.canExecute(update.message ?: update.editedMessage ?: update.callbackQuery.message) }
+            .sortedByDescending { it.priority(update).int }
+            .filter { it.priority(update).int > Priority.RANDOM.int }
+            .find { it.canExecute(update.message ?: update.editedMessage ?: update.callbackQuery.message) }
     }
-
 
     private fun register(message: Message) {
         val chat = message.chat.toChat()

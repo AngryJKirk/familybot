@@ -1,6 +1,5 @@
 package space.yaroslav.familybot.common.utils
 
-
 import org.telegram.telegrambots.api.objects.Update
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User

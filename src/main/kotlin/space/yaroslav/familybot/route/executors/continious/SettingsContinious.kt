@@ -16,9 +16,10 @@ import space.yaroslav.familybot.route.models.FunctionId
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
-class SettingsContinious(private val configureRepository: FunctionsConfigureRepository,
-                         override val botConfig: BotConfig) : ContiniousConversation {
-
+class SettingsContinious(
+    private val configureRepository: FunctionsConfigureRepository,
+    override val botConfig: BotConfig
+) : ContiniousConversation {
 
     override fun command(): Command {
         return Command.SETTINGS
@@ -34,33 +35,37 @@ class SettingsContinious(private val configureRepository: FunctionsConfigureRepo
             val callbackQuery = update.callbackQuery
 
             if (!checkRights(it, update)) {
-                it.execute(AnswerCallbackQuery().setCallbackQueryId(callbackQuery.id)
-                        .setShowAlert(true).setText("Ну ты и пидор, не для тебя ягодка росла"))
+                it.execute(
+                    AnswerCallbackQuery().setCallbackQueryId(callbackQuery.id)
+                        .setShowAlert(true).setText("Ну ты и пидор, не для тебя ягодка росла")
+                )
             } else {
                 val function = FunctionId
-                        .values()
-                        .find { it.desc == callbackQuery.data }
+                    .values()
+                    .find { it.desc == callbackQuery.data }
 
                 if (function != null) {
                     configureRepository.switch(function, chat)
                     val isEnabled = { id: FunctionId -> configureRepository.isEnabled(id, chat) }
-                    it.execute(AnswerCallbackQuery()
-                            .setCallbackQueryId(callbackQuery.id))
-                    it.execute(EditMessageReplyMarkup()
+                    it.execute(
+                        AnswerCallbackQuery()
+                            .setCallbackQueryId(callbackQuery.id)
+                    )
+                    it.execute(
+                        EditMessageReplyMarkup()
                             .setChatId(callbackQuery.message.chatId)
                             .setMessageId(callbackQuery.message.messageId)
-                            .setReplyMarkup(FunctionId.toKeyBoard(isEnabled)))
+                            .setReplyMarkup(FunctionId.toKeyBoard(isEnabled))
+                    )
                     it.execute(SendMessage(chat.id, "${function.desc} -> ${isEnabled.invoke(function).toEmoji()}"))
                 }
             }
         }
-
     }
 
     private fun checkRights(sender: AbsSender, update: Update): Boolean {
         return sender
-                .execute(GetChatAdministrators().setChatId(update.toChat().id))
-                .find { it.user.id == update.callbackQuery.from.id } != null
+            .execute(GetChatAdministrators().setChatId(update.toChat().id))
+            .find { it.user.id == update.callbackQuery.from.id } != null
     }
-
 }

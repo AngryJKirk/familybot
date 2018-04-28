@@ -23,17 +23,29 @@ class PidorCompetitionService(val repository: CommonRepository) {
         val chatId = update.toChat().id
         if (isEndOfMonth()) {
             val now = LocalDate.now()
-            val thisMonthPidors = repository.getPidorsByChat(update.message.chat.toChat(),
-                    startDate = LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
-                            .toInstant(ZoneOffset.UTC))
+            val thisMonthPidors = repository.getPidorsByChat(
+                update.message.chat.toChat(),
+                startDate = LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
+                    .toInstant(ZoneOffset.UTC)
+            )
             val competitors = detectPidorCompetition(thisMonthPidors)
             if (competitors != null) {
                 return {
-                    it.execute(SendMessage(chatId, "Так-так-так, у нас тут гонка заднеприводных".bold()).enableHtml(true))
+                    it.execute(
+                        SendMessage(
+                            chatId,
+                            "Так-так-так, у нас тут гонка заднеприводных".bold()
+                        ).enableHtml(true)
+                    )
                     val oneMorePidor = competitors.random()!!
                     repository.addPidor(Pidor(oneMorePidor, Instant.now()))
                     Thread.sleep(1000)
-                    it.execute(SendMessage(chatId, "Еще один сегодняшний пидор это ".bold() + oneMorePidor.getGeneralName()).enableHtml(true))
+                    it.execute(
+                        SendMessage(
+                            chatId,
+                            "Еще один сегодняшний пидор это ".bold() + oneMorePidor.getGeneralName()
+                        ).enableHtml(true)
+                    )
                 }
             }
         }

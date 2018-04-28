@@ -11,7 +11,6 @@ import org.telegram.telegrambots.logging.BotLogger
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.util.logging.Level
 
-
 @SpringBootApplication
 @EnableAutoConfiguration
 class FamilybotApplication {

@@ -32,21 +32,21 @@ enum class Pluralization(val code: Int) {
 }
 
 data class AskWorldQuestion(
-        val id: Long?,
-        val message: String,
-        val user: User,
-        val chat: Chat,
-        val date: Instant,
-        val messageId: Long?
+    val id: Long?,
+    val message: String,
+    val user: User,
+    val chat: Chat,
+    val date: Instant,
+    val messageId: Long?
 )
 
 data class AskWorldReply(
-        val id: Long?,
-        val questionId: Long,
-        val message: String,
-        val user: User,
-        val chat: Chat,
-        val date: Instant
+    val id: Long?,
+    val questionId: Long,
+    val message: String,
+    val user: User,
+    val chat: Chat,
+    val date: Instant
 )
 
 data class CustomMessage(val id: Long, val chat: Chat, val message: String)

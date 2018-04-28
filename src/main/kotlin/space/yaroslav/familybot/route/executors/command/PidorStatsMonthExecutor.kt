@@ -30,14 +30,21 @@ class PidorStatsMonthExecutor(val repository: CommonRepository) : CommandExecuto
 
     override fun execute(update: Update): (AbsSender) -> Unit {
         val now = LocalDate.now()
-        val pidorsByChat = repository.getPidorsByChat(update.message.chat.toChat(),
-                startDate = LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
-                        .toInstant(ZoneOffset.UTC))
-                .map { it.user }
-                .formatTopList()
+        val pidorsByChat = repository.getPidorsByChat(
+            update.message.chat.toChat(),
+            startDate = LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
+                .toInstant(ZoneOffset.UTC)
+        )
+            .map { it.user }
+            .formatTopList()
         val title = "Топ пидоров за ${now.month.toRussian()}:\n".bold()
-        return { it.execute(SendMessage(update.message.chatId, title + pidorsByChat.joinToString("\n")).enableHtml(true)) }
+        return {
+            it.execute(
+                SendMessage(
+                    update.message.chatId,
+                    title + pidorsByChat.joinToString("\n")
+                ).enableHtml(true)
+            )
+        }
     }
-
-
 }

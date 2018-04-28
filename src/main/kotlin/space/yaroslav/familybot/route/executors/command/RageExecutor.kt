@@ -16,8 +16,10 @@ import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
 @Component
-class RageExecutor(val historyRepository: HistoryRepository,
-                   val configRepository: RagemodeRepository) : CommandExecutor, Configurable {
+class RageExecutor(
+    val historyRepository: HistoryRepository,
+    val configRepository: RagemodeRepository
+) : CommandExecutor, Configurable {
     override fun getFunctionId(): FunctionId {
         return FunctionId.RAGE
     }
@@ -28,8 +30,10 @@ class RageExecutor(val historyRepository: HistoryRepository,
 
     override fun execute(update: Update): (AbsSender) -> Unit {
         val chat = update.toChat()
-        val commands = historyRepository.get(update.toUser(),
-                from = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant())
+        val commands = historyRepository.get(
+            update.toUser(),
+            from = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
+        )
         if (isCooldown(commands)) {
             return {
                 it.execute(SendMessage(update.message.chatId, "Да похуй мне на тебя, чертила"))
@@ -43,7 +47,6 @@ class RageExecutor(val historyRepository: HistoryRepository,
 
     private fun isCooldown(commands: List<CommandByUser>): Boolean {
         return commands
-                .find { it.command == command() } != null
+            .find { it.command == command() } != null
     }
-
 }

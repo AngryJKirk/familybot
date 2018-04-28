@@ -38,6 +38,4 @@ class HuificatorExecutor : Executor, Configurable {
     override fun canExecute(message: Message): Boolean {
         return false
     }
-
-
 }

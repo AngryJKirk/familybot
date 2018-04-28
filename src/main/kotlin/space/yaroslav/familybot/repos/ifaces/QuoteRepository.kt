@@ -2,7 +2,6 @@ package space.yaroslav.familybot.repos.ifaces
 
 import space.yaroslav.familybot.controllers.QuoteDTO
 
-
 interface QuoteRepository {
 
     fun getByTag(tag: String): String?
@@ -12,6 +11,4 @@ interface QuoteRepository {
     fun addQuote(quote: QuoteDTO)
 
     fun getTags(): List<String>
-
-
 }

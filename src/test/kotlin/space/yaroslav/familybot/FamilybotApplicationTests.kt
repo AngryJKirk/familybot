@@ -16,8 +16,5 @@ class FamilybotApplicationTests {
 
     @Test
     fun contextLoads() {
-
     }
-
-
 }

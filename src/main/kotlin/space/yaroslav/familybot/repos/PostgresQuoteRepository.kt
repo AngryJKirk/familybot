@@ -16,22 +16,24 @@ import java.util.concurrent.TimeUnit
 @Primary
 class PostgresQuoteRepository(val template: JdbcTemplate) : QuoteRepository {
 
-
     private val quoteCache = Suppliers.memoizeWithExpiration(
-            { template.query("SELECT * FROM quotes", { rs, _ -> rs.getString("quote") }) },
-            5,
-            TimeUnit.MINUTES)
+        { template.query("SELECT * FROM quotes", { rs, _ -> rs.getString("quote") }) },
+        5,
+        TimeUnit.MINUTES
+    )
 
     private val byTagCache = CacheBuilder.newBuilder().expireAfterWrite(3, TimeUnit.MINUTES).build(
-            CacheLoader.from({ tag: String? -> template.query("SELECT * FROM quotes INNER JOIN tags2quotes t2q ON quotes.id = t2q.quote_id " +
-                    "WHERE t2q.tag_id = (SELECT id from tags WHERE LOWER(tag) = lower(?))",
-                    RowMapper { rs, _ -> rs.getString("quote") }, tag)})
+        CacheLoader.from({ tag: String? ->
+            template.query("SELECT * FROM quotes INNER JOIN tags2quotes t2q ON quotes.id = t2q.quote_id " +
+                "WHERE t2q.tag_id = (SELECT id from tags WHERE LOWER(tag) = lower(?))",
+                RowMapper { rs, _ -> rs.getString("quote") }, tag
+            )
+        })
     )
 
     override fun getTags(): List<String> {
         return template.queryForList("SELECT tag FROM tags", String::class.java)
     }
-
 
     override fun addQuote(quote: QuoteDTO) {
         val quoteIds = quote.tags.map { addTag(it) }
@@ -48,13 +50,19 @@ class PostgresQuoteRepository(val template: JdbcTemplate) : QuoteRepository {
     }
 
     private fun addTag(tag: String): Int {
-        return template.queryForObject("INSERT INTO tags (tag, chat_id) VALUES (lower(?), -1001094220065) ON CONFLICT(tag) DO UPDATE SET tag = lower(?) RETURNING id", Int::class.java,
-                tag, tag)
+        return template.queryForObject(
+            "INSERT INTO tags (tag, chat_id) VALUES (lower(?), -1001094220065) ON CONFLICT(tag) DO UPDATE SET tag = lower(?) RETURNING id",
+            Int::class.java,
+            tag,
+            tag
+        )
     }
 
     private fun addQuote(quote: String): Int {
-        return template.queryForObject("INSERT INTO quotes (quote) VALUES (?) RETURNING id"
-                , Int::class.java, quote)
+        return template.queryForObject(
+            "INSERT INTO quotes (quote) VALUES (?) RETURNING id"
+            , Int::class.java, quote
+        )
     }
 
     private fun addQuoteToTag(tagId: Int, quoteId: Int) {

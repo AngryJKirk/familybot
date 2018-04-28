@@ -10,7 +10,6 @@ import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.QuoteRepository
 import space.yaroslav.familybot.route.models.Command
 
-
 const val QUOTE_MESSAGE = "Тег?"
 
 @Component
@@ -22,13 +21,17 @@ class QuoteByTagExecutor(val quoteRepository: QuoteRepository) : CommandExecutor
     override fun execute(update: Update): (AbsSender) -> Unit {
         return {
             val rows = quoteRepository
-                    .getTags()
-                    .map { InlineKeyboardButton().setText(it.capitalize()).setCallbackData(it) }
-                    .chunked(3)
-            it.execute(SendMessage(update.toChat().id, QUOTE_MESSAGE)
+                .getTags()
+                .map { InlineKeyboardButton().setText(it.capitalize()).setCallbackData(it) }
+                .chunked(3)
+            it.execute(
+                SendMessage(update.toChat().id, QUOTE_MESSAGE)
                     .setReplyToMessageId(update.message.messageId)
-                    .setReplyMarkup(InlineKeyboardMarkup()
-                            .setKeyboard(rows)))
+                    .setReplyMarkup(
+                        InlineKeyboardMarkup()
+                            .setKeyboard(rows)
+                    )
+            )
 
         }
     }

@@ -22,17 +22,20 @@ class AskWorldSendReplyExecutor(val askWorldRepository: AskWorldRepository) : Ex
 
     override fun execute(update: Update): (AbsSender) -> Unit {
         val replyToDeliver = askWorldRepository
-                .getQuestionsFromChat(update.message.chat.toChat())
-                .flatMap { askWorldRepository.getReplies(it) }
-                .filterNot { askWorldRepository.isReplyDelivered(it) }
+            .getQuestionsFromChat(update.message.chat.toChat())
+            .flatMap { askWorldRepository.getReplies(it) }
+            .filterNot { askWorldRepository.isReplyDelivered(it) }
         val chat = update.toChat()
-        val question = askWorldRepository.findQuestionByMessageId(update.message.replyToMessage.messageId + chat.id, chat)
+        val question =
+            askWorldRepository.findQuestionByMessageId(update.message.replyToMessage.messageId + chat.id, chat)
         return { sender ->
             replyToDeliver.forEach {
-                val questionMessage = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
-                val message = SendMessage(update.toChat().id, "Ответ из чата ${it.chat.name.bold()} от ${it.user.getGeneralName()} " +
-                        "на вопрсос \"$questionMessage\" : ${it.message.italic()}")
-                        .enableHtml(true)
+                val questionMessage = question.message.takeIf { it.length < 100 } ?: question.message.take(100)+"..."
+                val message = SendMessage(
+                    update.toChat().id, "Ответ из чата ${it.chat.name.bold()} от ${it.user.getGeneralName()} " +
+                        "на вопрсос \"$questionMessage\" : ${it.message.italic()}"
+                )
+                    .enableHtml(true)
                 sender.execute(message)
                 Thread.sleep(1000)
                 askWorldRepository.addReplyDeliver(it)
@@ -40,12 +43,11 @@ class AskWorldSendReplyExecutor(val askWorldRepository: AskWorldRepository) : Ex
         }
     }
 
-
     override fun canExecute(message: Message): Boolean {
         return askWorldRepository
-                .getQuestionsFromChat(message.chat.toChat())
-                .flatMap { askWorldRepository.getReplies(it) }
-                .any { !askWorldRepository.isReplyDelivered(it) }
+            .getQuestionsFromChat(message.chat.toChat())
+            .flatMap { askWorldRepository.getReplies(it) }
+            .any { !askWorldRepository.isReplyDelivered(it) }
     }
 
     override fun priority(update: Update): Priority {

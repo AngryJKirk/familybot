@@ -20,8 +20,10 @@ import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 
 @Component
-class AskWorldRecieveReplyExecutor(val askWorldRepository: AskWorldRepository,
-                                   val botConfig: BotConfig) : Executor, Configurable {
+class AskWorldRecieveReplyExecutor(
+    val askWorldRepository: AskWorldRepository,
+    val botConfig: BotConfig
+) : Executor, Configurable {
     private val log = LoggerFactory.getLogger(AskWorldRecieveReplyExecutor::class.java)
     override fun getFunctionId(): FunctionId {
         return FunctionId.ASK_WORLD
@@ -31,24 +33,37 @@ class AskWorldRecieveReplyExecutor(val askWorldRepository: AskWorldRepository,
         val reply = update.message.text
         val chat = update.toChat()
         val user = update.toUser()
-        val question = askWorldRepository.findQuestionByMessageId(update.message.replyToMessage.messageId + chat.id, chat)
+        val question =
+            askWorldRepository.findQuestionByMessageId(update.message.replyToMessage.messageId + chat.id, chat)
 
         if (askWorldRepository.isReplied(question, chat, user)) {
-            return { it.execute(SendMessage(chat.id, "Отвечать можно только раз").setReplyToMessageId(update.message.messageId)) }
+            return {
+                it.execute(
+                    SendMessage(
+                        chat.id,
+                        "Отвечать можно только раз"
+                    ).setReplyToMessageId(update.message.messageId)
+                )
+            }
         }
-        val askWorldReply = AskWorldReply(null,
-                question.id!!,
-                reply,
-                user,
-                chat,
-                Instant.now()
+        val askWorldReply = AskWorldReply(
+            null,
+            question.id!!,
+            reply,
+            user,
+            chat,
+            Instant.now()
         )
         val id = askWorldRepository.addReply(askWorldReply)
         return {
             try {
-                val message = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
-                it.execute(SendMessage(question.chat.id, "Ответ из чата ${update.toChat().name.bold()} " +
-                        "от ${user.getGeneralName()} на вопрос \"$message\": ${reply.italic()}").enableHtml(true))
+                val message = question.message.takeIf { it.length < 100 } ?: question.message.take(100)+"..."
+                it.execute(
+                    SendMessage(
+                        question.chat.id, "Ответ из чата ${update.toChat().name.bold()} " +
+                            "от ${user.getGeneralName()} на вопрос \"$message\": ${reply.italic()}"
+                    ).enableHtml(true)
+                )
                 askWorldRepository.addReplyDeliver(askWorldReply.copy(id = id))
                 it.execute(SendMessage(update.message.chatId, "Принято и отправлено"))
             } catch (e: Exception) {
@@ -60,9 +75,9 @@ class AskWorldRecieveReplyExecutor(val askWorldRepository: AskWorldRepository,
 
     override fun canExecute(message: Message): Boolean {
         return message.replyToMessage
-                ?.takeIf { it.from.bot && it.from.userName == botConfig.botname }
-                ?.text
-                ?.startsWith("Вопрос из чата ") ?: false
+            ?.takeIf { it.from.bot && it.from.userName == botConfig.botname }
+            ?.text
+            ?.startsWith("Вопрос из чата ") ?: false
     }
 
     override fun priority(update: Update): Priority {

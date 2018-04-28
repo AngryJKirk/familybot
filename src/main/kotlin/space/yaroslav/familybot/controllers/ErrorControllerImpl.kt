@@ -13,7 +13,6 @@ class ErrorControllerImpl : ErrorController {
         return ResponseEntity.badRequest().body(Response("Что-то ты сделал не так, пидор"))
     }
 
-
     override fun getErrorPath(): String {
         return PATH
     }
