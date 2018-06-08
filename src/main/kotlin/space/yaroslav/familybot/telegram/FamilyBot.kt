@@ -20,15 +20,17 @@ class FamilyBot(val config: BotConfig, val router: Router) : TelegramLongPolling
     }
 
     override fun onUpdateReceived(update: Update?) {
-        val toUser = update!!.toUser()
-        MDC.put("chat", "${toUser.chat.name}:${toUser.chat.id}")
-        MDC.put("user", "${toUser.name}:${toUser.id}")
-        try {
-            router.processUpdate(update).invoke(this).also { launch { MDC.clear() } }
-        } catch (e: TelegramApiRequestException) {
-            log.error("Telegram error: {}, {}, {}", e.apiResponse, e.errorCode, e.parameters, e)
-        } catch (e: Exception) {
-            log.error("Unexpected error", e)
+        launch {
+            val toUser = update!!.toUser()
+            MDC.put("chat", "${toUser.chat.name}:${toUser.chat.id}")
+            MDC.put("user", "${toUser.name}:${toUser.id}")
+            try {
+                router.processUpdate(update).invoke(this@FamilyBot).also { launch { MDC.clear() } }
+            } catch (e: TelegramApiRequestException) {
+                log.error("Telegram error: {}, {}, {}", e.apiResponse, e.errorCode, e.parameters, e)
+            } catch (e: Exception) {
+                log.error("Unexpected error", e)
+            }
         }
     }
 

@@ -35,6 +35,7 @@ class PidorStatsWorldExecutor(val repository: CommonRepository) : CommandExecuto
         )
             .map { it.user }
             .formatTopList()
+            .take(100)
         val title = "Топ пидоров всего мира за все время:\n".bold()
         return {
             it.execute(
