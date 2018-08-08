@@ -9,7 +9,7 @@ import org.telegram.telegrambots.api.objects.User
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.utils.parseCommand
 import space.yaroslav.familybot.common.utils.toUser
-import space.yaroslav.familybot.repos.ifaces.HistoryRepository
+import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.executors.Executor
 import space.yaroslav.familybot.route.models.FunctionId
@@ -18,7 +18,7 @@ import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
 class AntiDdosExecutor(
-    val repository: HistoryRepository,
+    val repositoryCommand: CommandHistoryRepository,
     val config: BotConfig
 ) : Executor, Configurable {
     override fun getFunctionId(): FunctionId {
@@ -43,7 +43,7 @@ class AntiDdosExecutor(
     }
 
     override fun canExecute(message: Message): Boolean {
-        return repository
+        return repositoryCommand
             .get(selectUser(message).toUser(telegramChat = message.chat))
             .groupBy { it.command }
             .filterValues { it.size >= 5 }

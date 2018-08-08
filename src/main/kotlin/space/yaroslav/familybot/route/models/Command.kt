@@ -15,6 +15,7 @@ enum class Command(val command: String, val id: Int) {
     QUOTE_BY_TAG("/quotebytag", 12),
     ROULETTE("/roulette", 13),
     ASK_WORLD("/ask_world", 14),
-    STATS_WORLD("/stats_world", 15);
+    STATS_WORLD("/stats_world", 15),
+    ME("/me", 16);
 }
 

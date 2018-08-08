@@ -5,5 +5,6 @@ enum class Priority(val int: Int) {
     HIGH(1),
     MEDIUM(0),
     LOW(-1),
-    RANDOM(-2)
+    VERY_LOW(-2),
+    RANDOM(-1000)
 }

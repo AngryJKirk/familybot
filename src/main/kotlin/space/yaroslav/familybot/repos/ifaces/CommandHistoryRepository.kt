@@ -5,7 +5,7 @@ import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.User
 import java.time.Instant
 
-interface HistoryRepository {
+interface CommandHistoryRepository {
 
     fun add(commandByUser: CommandByUser)
 

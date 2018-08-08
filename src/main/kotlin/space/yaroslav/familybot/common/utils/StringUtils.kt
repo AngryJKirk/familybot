@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.common.utils
 
+import space.yaroslav.familybot.common.Pluralization
 import space.yaroslav.familybot.route.models.Command
 
 fun String?.dropLastDelimiter(): String? {
@@ -31,4 +32,12 @@ fun String?.parseCommand(): Command? {
         first = first.dropLastWhile { it == '@' }
     }
     return Command.values().find { it.command == first }
+}
+
+fun pluralize(count: Int, one: String, few: String, many: String): String {
+    return when (Pluralization.getPlur(count)) {
+        Pluralization.ONE -> one
+        Pluralization.FEW -> few
+        Pluralization.MANY -> many
+    }
 }

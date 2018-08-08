@@ -7,6 +7,7 @@ import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.italic
+import space.yaroslav.familybot.common.utils.pluralize
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.route.executors.Configurable
@@ -45,7 +46,8 @@ class PidorStatsExecutor(val repository: CommonRepository) : CommandExecutor, Co
     private fun format(index: Int, pidorStats: Pair<User, Int>): String {
         val generalName = pidorStats.first.name ?: pidorStats.first.nickname
         val i = "${index + 1}.".bold()
-        val stat = "${pidorStats.second} раз(а)".italic()
+        val plurWord = pluralize(pidorStats.second, "раз", "раза", "раз")
+        val stat = "${pidorStats.second} $plurWord".italic()
         return "$i $generalName — $stat"
     }
 }

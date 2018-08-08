@@ -16,7 +16,7 @@ import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.repos.ifaces.FunctionsConfigureRepository
-import space.yaroslav.familybot.repos.ifaces.HistoryRepository
+import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.executors.Executor
 import space.yaroslav.familybot.route.executors.command.CommandExecutor
@@ -29,7 +29,7 @@ import java.time.Instant
 @Component
 class Router(
     val repository: CommonRepository,
-    val historyRepository: HistoryRepository,
+    val commandHistoryRepository: CommandHistoryRepository,
     val executors: List<Executor>,
     val chatLogRepository: ChatLogRepository,
     val configureRepository: FunctionsConfigureRepository,
@@ -110,7 +110,7 @@ class Router(
 
     private fun logChatCommand(executor: Executor?, update: Update) {
         if (executor is CommandExecutor && executor.isLoggable()) {
-            historyRepository.add(
+            commandHistoryRepository.add(
                 CommandByUser(
                     update.toUser(),
                     executor.command(),

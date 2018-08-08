@@ -7,7 +7,8 @@ import java.util.concurrent.ThreadLocalRandom
 fun List<User>.formatTopList(): List<String> {
     fun format(index: Int, stats: Pair<String?, Int>): String {
         val i = "${index + 1}.".bold()
-        val stat = "${stats.second} раз(а)".italic()
+        val plurWord = pluralize(stats.second, "раз", "раза", "раз")
+        val stat = "${stats.second} $plurWord".italic()
         return "$i ${stats.first} — $stat"
     }
     return this.groupBy { it.id to (it.name ?: it.nickname) }

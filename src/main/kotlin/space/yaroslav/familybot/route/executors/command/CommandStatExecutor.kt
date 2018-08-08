@@ -8,11 +8,11 @@ import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.formatTopList
 import space.yaroslav.familybot.common.utils.toChat
-import space.yaroslav.familybot.repos.ifaces.HistoryRepository
+import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.route.models.Command
 
 @Component
-class CommandStatExecutor(val repository: HistoryRepository) : CommandExecutor {
+class CommandStatExecutor(val repositoryCommand: CommandHistoryRepository) : CommandExecutor {
     private val title = "Статистика по командам:\n".bold()
 
     override fun command(): Command {
@@ -20,7 +20,7 @@ class CommandStatExecutor(val repository: HistoryRepository) : CommandExecutor {
     }
 
     override fun execute(update: Update): (AbsSender) -> Unit {
-        val all = repository.getAll(update.message.chat.toChat()).groupBy { it.command }
+        val all = repositoryCommand.getAll(update.message.chat.toChat()).groupBy { it.command }
 
         val topList = all
             .filterNot { it.key == command() }

@@ -9,12 +9,12 @@ import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.map
 import space.yaroslav.familybot.common.utils.toCommandByUser
-import space.yaroslav.familybot.repos.ifaces.HistoryRepository
+import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import java.sql.Timestamp
 import java.time.Instant
 
 @Component
-class PostgresHistoryRepository(val template: JdbcTemplate) : HistoryRepository {
+class PostgresCommandHistoryRepository(val template: JdbcTemplate) : CommandHistoryRepository {
     override fun getAll(chat: Chat): List<CommandByUser> {
         return template.query("SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ?",
             RowMapper { rs, _ -> rs.toCommandByUser(null) }, chat.id

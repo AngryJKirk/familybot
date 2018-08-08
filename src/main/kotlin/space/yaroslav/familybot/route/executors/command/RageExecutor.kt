@@ -7,7 +7,7 @@ import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
-import space.yaroslav.familybot.repos.ifaces.HistoryRepository
+import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.repos.ifaces.RagemodeRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.models.Command
@@ -17,7 +17,7 @@ import java.time.temporal.ChronoUnit
 
 @Component
 class RageExecutor(
-    val historyRepository: HistoryRepository,
+    val commandHistoryRepository: CommandHistoryRepository,
     val configRepository: RagemodeRepository
 ) : CommandExecutor, Configurable {
     override fun getFunctionId(): FunctionId {
@@ -30,7 +30,7 @@ class RageExecutor(
 
     override fun execute(update: Update): (AbsSender) -> Unit {
         val chat = update.toChat()
-        val commands = historyRepository.get(
+        val commands = commandHistoryRepository.get(
             update.toUser(),
             from = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
         )

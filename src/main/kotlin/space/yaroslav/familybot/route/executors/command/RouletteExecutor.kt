@@ -6,7 +6,7 @@ import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.api.objects.replykeyboard.ForceReplyKeyboard
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.utils.toUser
-import space.yaroslav.familybot.repos.ifaces.HistoryRepository
+import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
@@ -18,7 +18,7 @@ import java.time.ZoneOffset
 const val ROULETTE_MESSAGE = "Выбери число от 1 до 6"
 
 @Component
-class RouletteExecutor(private val historyRepository: HistoryRepository) : CommandExecutor, Configurable {
+class RouletteExecutor(private val commandHistoryRepository: CommandHistoryRepository) : CommandExecutor, Configurable {
 
     override fun getFunctionId(): FunctionId {
         return FunctionId.PIDOR
@@ -30,7 +30,7 @@ class RouletteExecutor(private val historyRepository: HistoryRepository) : Comma
 
     override fun execute(update: Update): (AbsSender) -> Unit {
         val now = LocalDate.now()
-        val commands = historyRepository.get(
+        val commands = commandHistoryRepository.get(
             update.toUser(), LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
                 .toInstant(ZoneOffset.UTC)
         )

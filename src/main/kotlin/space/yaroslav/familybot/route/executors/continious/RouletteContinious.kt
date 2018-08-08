@@ -10,7 +10,7 @@ import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
-import space.yaroslav.familybot.repos.ifaces.HistoryRepository
+import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.route.executors.command.ROULETTE_MESSAGE
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.services.PidorCompetitionService
@@ -24,7 +24,7 @@ import java.util.concurrent.ThreadLocalRandom
 
 @Component
 class RouletteContinious(
-    val historyRepository: HistoryRepository,
+    val commandHistoryRepository: CommandHistoryRepository,
     override val botConfig: BotConfig,
     val pidorRepository: CommonRepository,
     val pidorCompetitionService: PidorCompetitionService
@@ -50,7 +50,7 @@ class RouletteContinious(
         val now = LocalDate.now()
         val user = update.toUser()
         val chatId = update.message.chatId
-        val commands = historyRepository.get(
+        val commands = commandHistoryRepository.get(
             user, LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
                 .toInstant(ZoneOffset.UTC)
         )
