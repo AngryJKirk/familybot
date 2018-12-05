@@ -16,6 +16,7 @@ enum class Command(val command: String, val id: Int) {
     ROULETTE("/roulette", 13),
     ASK_WORLD("/ask_world", 14),
     STATS_WORLD("/stats_world", 15),
-    ME("/me", 16);
+    ME("/me", 16),
+    TOP_HISTORY("/top_history", 17)
 }
 
