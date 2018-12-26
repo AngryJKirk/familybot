@@ -45,7 +45,7 @@ class PidorExecutor(
             val nextPidor = users.random()!!
             log.info("Pidor is rolled to $nextPidor")
             val newPidor = Pidor(nextPidor, Instant.now())
-            val addPidor = launch { repository.addPidor(newPidor) }
+            val addPidor = repository.addPidor(newPidor)
             val start = dictionaryRepository.getStart().random().bold()
             val middle = dictionaryRepository.getMiddle().random().bold()
             val finisher = dictionaryRepository.getFinish().random().bold()
