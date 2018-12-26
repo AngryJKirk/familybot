@@ -24,7 +24,8 @@ class ReplyToUserExecutor(val keyset: ChatLogRepository, val botConfig: BotConfi
     override fun execute(update: Update): (AbsSender) -> Unit {
         val string = keyset.get(update.toUser()).takeIf { it.size > 300 }?.random()
             ?: getSmallMessage(keyset.getAll())
-        return { it.execute(SendMessage(update.toChat().id, string)
+        return { it.execute(
+            SendMessage(update.toChat().id, string)
             .setReplyToMessageId(update.message.messageId)) }
     }
 

@@ -22,5 +22,9 @@ spring:
     password: {password}
     username: {user}
   profiles: production
+yandex:
+  token: {token}
+  folder-id: {folder-id}
+
 
 

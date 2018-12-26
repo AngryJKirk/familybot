@@ -2,15 +2,18 @@ package space.yaroslav.familybot.route.executors.command
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
+import org.telegram.telegrambots.api.methods.send.SendVoice
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.utils.dropLastDelimiter
 import space.yaroslav.familybot.common.utils.random
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.route.models.Command
+import space.yaroslav.familybot.route.services.TextToSpeechService
+import space.yaroslav.familybot.route.services.YandexSpeechType
 
 @Component
-class AnswerExecutor : CommandExecutor {
+class AnswerExecutor(val textToSpeechService: TextToSpeechService) : CommandExecutor {
     override fun command(): Command {
         return Command.ANSWER
     }
@@ -25,12 +28,17 @@ class AnswerExecutor : CommandExecutor {
             ?.random()
             ?.capitalize()
             ?.dropLastDelimiter()
-            ?: "Ты пидор, отъебись, читай как надо использовать команду"
-        return {
-            it.execute(
-                SendMessage(update.toChat().id, message)
+            ?: return { it.execute(
+                SendMessage(update.toChat().id, "Ты пидор, отъебись, читай как надо использовать команду")
                     .setReplyToMessageId(update.message.messageId)
-            )
+            ) }
+        return {
+            val sendAudio = SendVoice()
+            sendAudio.chatId = update.toChat().id.toString()
+            val emotion = YandexSpeechType.values().toList().random()!!
+            sendAudio.setNewVoice("Test", textToSpeechService.toSpeech(message, emotion = emotion))
+            sendAudio.replyToMessageId = update.message.messageId
+            it.sendVoice(sendAudio)
         }
     }
 }
