@@ -10,10 +10,14 @@ import space.yaroslav.familybot.common.utils.formatTopList
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.route.models.Command
+import space.yaroslav.familybot.route.models.Phrase
+import space.yaroslav.familybot.route.services.dictionary.Dictionary
 
 @Component
-class CommandStatExecutor(val repositoryCommand: CommandHistoryRepository) : CommandExecutor {
-    private val title = "Статистика по командам:\n".bold()
+class CommandStatExecutor(
+    val repositoryCommand: CommandHistoryRepository,
+    val dictionary: Dictionary
+) : CommandExecutor {
 
     override fun command(): Command {
         return Command.COMMAND_STATS
@@ -27,9 +31,16 @@ class CommandStatExecutor(val repositoryCommand: CommandHistoryRepository) : Com
             .map { format(it) }
             .joinToString("\n")
 
-        return { it.execute(SendMessage(update.message.chatId, title + topList).enableHtml(true)) }
+        return {
+            it.execute(
+                SendMessage(
+                    update.message.chatId,
+                    "${dictionary.get(Phrase.STATS_BY_COMMAND)}:\n".bold() + topList
+                ).enableHtml(true)
+            )
+        }
     }
 
     private fun format(it: Map.Entry<Command, List<CommandByUser>>) =
-        "Команда " + "${it.key.command}:".bold() + "\n" + it.value.map { it.user }.formatTopList().joinToString("\n")
+        "${dictionary.get(Phrase.COMMAND)} " + "${it.key.command}:".bold() + "\n" + it.value.map { it.user }.formatTopList().joinToString("\n")
 }

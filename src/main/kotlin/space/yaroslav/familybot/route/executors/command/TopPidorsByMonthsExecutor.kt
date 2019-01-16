@@ -10,14 +10,14 @@ import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.dropLastDelimiter
 import space.yaroslav.familybot.common.utils.italic
-import space.yaroslav.familybot.common.utils.random
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toRussian
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
-import space.yaroslav.familybot.repos.ifaces.PidorDictionaryRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
+import space.yaroslav.familybot.route.models.Phrase
+import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -26,7 +26,7 @@ import java.time.ZoneId
 @Component
 class TopPidorsByMonthsExecutor(
     val commonRepository: CommonRepository,
-    val pidorDictionaryRepository: PidorDictionaryRepository
+    val dictionary: Dictionary
 ) : CommandExecutor, Configurable {
 
     override fun getFunctionId(): FunctionId {
@@ -52,7 +52,7 @@ class TopPidorsByMonthsExecutor(
             .reversed()
             .map(formatLeaderBoard())
 
-        val message = "Ими гордится школа:\n".bold()
+        val message = "${dictionary.get(Phrase.LEADERBOARD_TITLE)}:\n".bold()
         return {
             it.execute(
                 SendMessage(
@@ -66,7 +66,7 @@ class TopPidorsByMonthsExecutor(
     private fun formatLeaderBoard(): (Map.Entry<LocalDate, PidorStat>) -> String = {
         "${it.key.month.toRussian().capitalize()}, ${it.key.year}:\n".italic() + "${it.value.user.name.dropLastDelimiter()}, " +
             "${it.value.position} " +
-            "${pidorDictionaryRepository.getLeaderBoardPhrase(Pluralization.getPlur(it.value.position)).random()} из " +
+            "${getLeaderboardPhrase(Pluralization.getPlur(it.value.position))} из " +
             "${it.value.position}"
     }
 
@@ -87,6 +87,14 @@ class TopPidorsByMonthsExecutor(
             .groupBy { it.user }
             .maxBy { it.value.size }!!
         return PidorStat(pidor.key, pidors.filter { it.user == pidor.key }.count())
+    }
+
+    private fun getLeaderboardPhrase(pluralization: Pluralization): String {
+        return when (pluralization) {
+            Pluralization.ONE -> dictionary.get(Phrase.PLURALIZED_LEADERBOARD_ONE)
+            Pluralization.FEW -> dictionary.get(Phrase.PLURALIZED_LEADERBOARD_FEW)
+            Pluralization.MANY -> dictionary.get(Phrase.PLURALIZED_LEADERBOARD_MANY)
+        }
     }
 }
 

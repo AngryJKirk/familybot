@@ -10,15 +10,17 @@ import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toEmoji
 import space.yaroslav.familybot.repos.ifaces.FunctionsConfigureRepository
-import space.yaroslav.familybot.route.executors.command.SETTINGS_MESSAGE
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
+import space.yaroslav.familybot.route.models.Phrase
+import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
 class SettingsContinious(
     private val configureRepository: FunctionsConfigureRepository,
-    override val botConfig: BotConfig
+    override val botConfig: BotConfig,
+    val dictionary: Dictionary
 ) : ContiniousConversation {
 
     override fun command(): Command {
@@ -26,7 +28,7 @@ class SettingsContinious(
     }
 
     override fun getDialogMessage(): String {
-        return SETTINGS_MESSAGE
+        return dictionary.get(Phrase.WHICH_SETTING_SHOULD_CHANGE)
     }
 
     override fun execute(update: Update): (AbsSender) -> Unit {
@@ -37,7 +39,7 @@ class SettingsContinious(
             if (!checkRights(it, update)) {
                 it.execute(
                     AnswerCallbackQuery().setCallbackQueryId(callbackQuery.id)
-                        .setShowAlert(true).setText("Ну ты и пидор, не для тебя ягодка росла")
+                        .setShowAlert(true).setText(dictionary.get(Phrase.ACCESS_DENIED))
                 )
             } else {
                 val function = FunctionId

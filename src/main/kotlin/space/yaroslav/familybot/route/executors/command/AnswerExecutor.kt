@@ -9,11 +9,13 @@ import space.yaroslav.familybot.common.utils.dropLastDelimiter
 import space.yaroslav.familybot.common.utils.random
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.route.models.Command
+import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.TextToSpeechService
 import space.yaroslav.familybot.route.services.YandexSpeechType
+import space.yaroslav.familybot.route.services.dictionary.Dictionary
 
 @Component
-class AnswerExecutor(val textToSpeechService: TextToSpeechService) : CommandExecutor {
+class AnswerExecutor(val textToSpeechService: TextToSpeechService, val dictionary: Dictionary) : CommandExecutor {
     override fun command(): Command {
         return Command.ANSWER
     }
@@ -28,10 +30,12 @@ class AnswerExecutor(val textToSpeechService: TextToSpeechService) : CommandExec
             ?.random()
             ?.capitalize()
             ?.dropLastDelimiter()
-            ?: return { it.execute(
-                SendMessage(update.toChat().id, "Ты пидор, отъебись, читай как надо использовать команду")
-                    .setReplyToMessageId(update.message.messageId)
-            ) }
+            ?: return {
+                it.execute(
+                    SendMessage(update.toChat().id, dictionary.get(Phrase.BAD_COMMAND_USAGE))
+                        .setReplyToMessageId(update.message.messageId)
+                )
+            }
         return {
             val sendAudio = SendVoice()
             sendAudio.chatId = update.toChat().id.toString()

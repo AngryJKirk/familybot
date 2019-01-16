@@ -10,6 +10,8 @@ import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
+import space.yaroslav.familybot.route.models.Phrase
+import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -18,7 +20,8 @@ import java.time.ZoneOffset
 const val ROULETTE_MESSAGE = "Выбери число от 1 до 6"
 
 @Component
-class RouletteExecutor(private val commandHistoryRepository: CommandHistoryRepository) : CommandExecutor, Configurable {
+class RouletteExecutor(private val commandHistoryRepository: CommandHistoryRepository,
+    val dictionary: Dictionary) : CommandExecutor, Configurable {
 
     override fun getFunctionId(): FunctionId {
         return FunctionId.PIDOR
@@ -36,14 +39,14 @@ class RouletteExecutor(private val commandHistoryRepository: CommandHistoryRepos
         )
         if (commands.filter { it.command == command() }.size > 1) {
             return {
-                it.execute(SendMessage(update.message.chatId, "Ты уже крутил рулетку."))
+                it.execute(SendMessage(update.message.chatId, dictionary.get(Phrase.ROULETTE_ALREADY_WAS)))
                 Thread.sleep(2000)
-                it.execute(SendMessage(update.message.chatId, "Пидор."))
+                it.execute(SendMessage(update.message.chatId, dictionary.get(Phrase.PIDOR)))
             }
         }
         return {
             it.execute(
-                SendMessage(update.message.chatId, ROULETTE_MESSAGE)
+                SendMessage(update.message.chatId, dictionary.get(Phrase.ROULETTE_MESSAGE))
                     .setReplyMarkup(ForceReplyKeyboard().setSelective(true))
                     .setReplyToMessageId(update.message.messageId)
             )

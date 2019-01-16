@@ -13,13 +13,16 @@ import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.repos.ifaces.RawChatLogRepository
 import space.yaroslav.familybot.route.models.Command
+import space.yaroslav.familybot.route.models.Phrase
+import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import java.time.Instant
 
 @Component
 class MeCommandExecutor(
     val commonRepository: CommonRepository,
     val commandHistoryRepository: CommandHistoryRepository,
-    val rawChatLogRepository: RawChatLogRepository
+    val rawChatLogRepository: RawChatLogRepository,
+    val dictionary: Dictionary
 ) : CommandExecutor {
     override fun command(): Command {
         return Command.ME
@@ -43,15 +46,25 @@ class MeCommandExecutor(
 
     private fun getMessageCount(chat: Chat, user: User): String {
         val messageCount = rawChatLogRepository.getMessageCount(chat, user)
-        val word = pluralize(messageCount, "сообщение", "сообщения", "сообщений")
-        return "Ты напиздел $messageCount $word."
+        val word = pluralize(
+            messageCount,
+            dictionary.get(Phrase.PLURALIZED_MESSAGE_ONE),
+            dictionary.get(Phrase.PLURALIZED_MESSAGE_FEW),
+            dictionary.get(Phrase.PLURALIZED_MESSAGE_MANY)
+        )
+        return dictionary.get(Phrase.YOU_TALKED) + " $messageCount $word."
     }
 
     private fun getCommandCount(user: User): String {
         val commandCount =
             commandHistoryRepository.get(user, from = Instant.now().minusSeconds(60 * 60 * 24 * 3650)).size
-        val word = pluralize(commandCount, "раз", "раза", "раз")
-        return "Ты использовал команды $commandCount $word."
+        val word = pluralize(
+            commandCount,
+            dictionary.get(Phrase.PLURALIZED_COUNT_ONE),
+            dictionary.get(Phrase.PLURALIZED_COUNT_FEW),
+            dictionary.get(Phrase.PLURALIZED_COUNT_MANY)
+        )
+        return dictionary.get(Phrase.YOU_USED_COMMANDS) + " $commandCount $word."
     }
 
     private fun getPidorsCount(chat: Chat, user: User): String {
@@ -59,10 +72,15 @@ class MeCommandExecutor(
             .getPidorsByChat(chat, startDate = Instant.now().minusSeconds(60 * 60 * 24 * 3650))
             .filter { it.user.id == user.id }
             .size
-        val word = pluralize(pidorCount, "раз", "раза", "раз")
+        val word = pluralize(
+            pidorCount,
+            dictionary.get(Phrase.PLURALIZED_COUNT_ONE),
+            dictionary.get(Phrase.PLURALIZED_COUNT_FEW),
+            dictionary.get(Phrase.PLURALIZED_COUNT_MANY)
+        )
         return pidorCount
             .takeIf { it > 0 }
-            ?.let { "Ты был пидором $it $word." }
-            ?: "Ты не был пидором ни разу. Пидор."
+            ?.let { dictionary.get(Phrase.YOU_WAS_PIDOR) + " $it $word." }
+            ?: dictionary.get(Phrase.YOU_WAS_NOT_PIDOR)
     }
 }

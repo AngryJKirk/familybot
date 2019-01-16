@@ -9,8 +9,8 @@ import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.utils.toUser
-import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
+import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.route.executors.command.ROULETTE_MESSAGE
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.services.PidorCompetitionService
@@ -75,12 +75,12 @@ class RouletteContinious(
         return {
             if (rouletteNumber == number) {
                 it.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
-                launch { repeat(5, { pidorRepository.removePidorRecord(user) }) }
+                launch { repeat(5) { pidorRepository.removePidorRecord(user) } }
                 Thread.sleep(2000)
                 it.execute(SendMessage(chatId, "Но он пока не треснул. Свое пидорское очко можешь забрать. "))
             } else {
                 it.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
-                launch { repeat(3, { pidorRepository.addPidor(Pidor(user, Instant.now())) }) }
+                launch { repeat(3) { pidorRepository.addPidor(Pidor(user, Instant.now())) } }
                 Thread.sleep(2000)
                 it.execute(
                     SendMessage(

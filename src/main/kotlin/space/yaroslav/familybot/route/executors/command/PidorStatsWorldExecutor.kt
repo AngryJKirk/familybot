@@ -10,6 +10,8 @@ import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
+import space.yaroslav.familybot.route.models.Phrase
+import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -17,7 +19,8 @@ import java.time.Month
 import java.time.ZoneOffset
 
 @Component
-class PidorStatsWorldExecutor(val repository: CommonRepository) : CommandExecutor, Configurable {
+class PidorStatsWorldExecutor(val repository: CommonRepository,
+    val dictionary: Dictionary) : CommandExecutor, Configurable {
     override fun getFunctionId(): FunctionId {
         return FunctionId.PIDOR
     }
@@ -36,7 +39,7 @@ class PidorStatsWorldExecutor(val repository: CommonRepository) : CommandExecuto
             .map { it.user }
             .formatTopList()
             .take(100)
-        val title = "Топ пидоров всего мира за все время:\n".bold()
+        val title = "${dictionary.get(Phrase.PIDOR_STAT_WORLD)}:\n".bold()
         return {
             it.execute(
                 SendMessage(

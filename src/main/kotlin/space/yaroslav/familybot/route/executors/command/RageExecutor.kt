@@ -12,13 +12,16 @@ import space.yaroslav.familybot.repos.ifaces.RagemodeRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
+import space.yaroslav.familybot.route.models.Phrase
+import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
 @Component
 class RageExecutor(
     val commandHistoryRepository: CommandHistoryRepository,
-    val configRepository: RagemodeRepository
+    val configRepository: RagemodeRepository,
+    val dictionary: Dictionary
 ) : CommandExecutor, Configurable {
     override fun getFunctionId(): FunctionId {
         return FunctionId.RAGE
@@ -36,12 +39,12 @@ class RageExecutor(
         )
         if (isCooldown(commands)) {
             return {
-                it.execute(SendMessage(update.message.chatId, "Да похуй мне на тебя, чертила"))
+                it.execute(SendMessage(update.message.chatId, dictionary.get(Phrase.RAGE_DONT_CARE_ABOUT_YOU)))
             }
         }
         configRepository.enable(10, 20, chat)
         return {
-            it.execute(SendMessage(update.message.chatId, "НУ ВЫ ОХУЕВШИЕ"))
+            it.execute(SendMessage(update.message.chatId, dictionary.get(Phrase.RAGE_INITIAL)))
         }
     }
 

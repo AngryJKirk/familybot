@@ -17,6 +17,8 @@ import space.yaroslav.familybot.repos.ifaces.FunctionsConfigureRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
+import space.yaroslav.familybot.route.models.Phrase
+import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 import java.time.ZonedDateTime
@@ -27,7 +29,8 @@ class AskWorldInitialExecutor(
     val askWorldRepository: AskWorldRepository,
     val commonRepository: CommonRepository,
     val configureRepository: FunctionsConfigureRepository,
-    val botConfig: BotConfig
+    val botConfig: BotConfig,
+    val dictionary: Dictionary
 ) : CommandExecutor, Configurable {
     private val log = LoggerFactory.getLogger(AskWorldInitialExecutor::class.java)
     override fun getFunctionId(): FunctionId {
@@ -74,7 +77,7 @@ class AskWorldInitialExecutor(
                 it.execute(
                     SendMessage(
                         chat.id,
-                        "Не более 5 вопросов в день от чата"
+                        dictionary.get(Phrase.ASK_WORLD_LIMIT_BY_CHAT)
                     ).setReplyToMessageId(update.message.messageId)
                 )
             }
@@ -83,7 +86,7 @@ class AskWorldInitialExecutor(
         if (askWorldRepository.getQuestionsFromUser(chat, update.toUser()).isNotEmpty()) {
             return {
                 it.execute(
-                    SendMessage(chat.id, "Не более вопроса в день от пользователя").setReplyToMessageId(
+                    SendMessage(chat.id, dictionary.get(Phrase.ASK_WORLD_LIMIT_BY_USER)).setReplyToMessageId(
                         update.message.messageId
                     )
                 )
@@ -93,14 +96,14 @@ class AskWorldInitialExecutor(
         val question = AskWorldQuestion(null, message, update.toUser(), chat, Instant.now(), null)
         val id = askWorldRepository.addQuestion(question)
         return { sender ->
-            sender.execute(SendMessage(chatId, "Принято"))
+            sender.execute(SendMessage(chatId, dictionary.get(Phrase.DATA_CONFIRM)))
             commonRepository.getChats()
                 .filterNot { it == chat }
                 .filter { configureRepository.isEnabled(getFunctionId(), it) }
                 .forEach {
                     try {
                         val result = sender.execute(
-                            SendMessage(it.id, "Вопрос из чата ${chat.name.bold()}: ${question.message.italic()}")
+                            SendMessage(it.id, "${dictionary.get(Phrase.ASK_WORLD_QUESTION_FROM_CHAT)} ${chat.name.bold()}: ${question.message.italic()}")
                                 .enableHtml(true)
                         )
                         launch {

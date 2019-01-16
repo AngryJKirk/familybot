@@ -13,9 +13,14 @@ import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
+import space.yaroslav.familybot.route.models.Phrase
+import space.yaroslav.familybot.route.services.dictionary.Dictionary
 
 @Component
-class PidorStatsExecutor(val repository: CommonRepository) : CommandExecutor, Configurable {
+class PidorStatsExecutor(
+    val repository: CommonRepository,
+    val dictionary: Dictionary
+) : CommandExecutor, Configurable {
 
     override fun getFunctionId(): FunctionId {
         return FunctionId.PIDOR
@@ -28,7 +33,7 @@ class PidorStatsExecutor(val repository: CommonRepository) : CommandExecutor, Co
             .map { it.key to it.value.size }
             .sortedByDescending { it.second }
             .mapIndexed { index, pair -> format(index, pair) }
-        val title = "Топ пидоров за все время:\n".bold()
+        val title = "${dictionary.get(Phrase.PIDOR_STAT_ALL_TIME)}:\n".bold()
         return {
             it.execute(
                 SendMessage(
@@ -46,7 +51,11 @@ class PidorStatsExecutor(val repository: CommonRepository) : CommandExecutor, Co
     private fun format(index: Int, pidorStats: Pair<User, Int>): String {
         val generalName = pidorStats.first.name ?: pidorStats.first.nickname
         val i = "${index + 1}.".bold()
-        val plurWord = pluralize(pidorStats.second, "раз", "раза", "раз")
+        val plurWord = pluralize(
+            pidorStats.second, dictionary.get(Phrase.PLURALIZED_COUNT_ONE),
+            dictionary.get(Phrase.PLURALIZED_COUNT_FEW),
+            dictionary.get(Phrase.PLURALIZED_COUNT_MANY)
+        )
         val stat = "${pidorStats.second} $plurWord".italic()
         return "$i $generalName — $stat"
     }

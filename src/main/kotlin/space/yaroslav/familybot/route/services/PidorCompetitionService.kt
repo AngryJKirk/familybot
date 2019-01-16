@@ -10,6 +10,8 @@ import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.random
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
+import space.yaroslav.familybot.route.models.Phrase
+import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -17,7 +19,8 @@ import java.time.LocalTime
 import java.time.ZoneOffset
 
 @Service
-class PidorCompetitionService(val repository: CommonRepository) {
+class PidorCompetitionService(val repository: CommonRepository,
+    val dictionary: Dictionary) {
 
     fun pidorCompetition(update: Update): ((AbsSender) -> Unit)? {
         val chatId = update.toChat().id
@@ -34,7 +37,8 @@ class PidorCompetitionService(val repository: CommonRepository) {
                     it.execute(
                         SendMessage(
                             chatId,
-                            "Так-так-так, у нас тут гонка заднеприводных".bold()
+                            dictionary.get(Phrase.PIDOR_COMPETITION).bold()
+                            //"Так-так-так, у нас тут гонка заднеприводных".bold()
                         ).enableHtml(true)
                     )
                     val oneMorePidor = competitors.random()!!
@@ -43,7 +47,8 @@ class PidorCompetitionService(val repository: CommonRepository) {
                     it.execute(
                         SendMessage(
                             chatId,
-                            "Еще один сегодняшний пидор это ".bold() + oneMorePidor.getGeneralName()
+                            dictionary.get(Phrase.COMPETITION_ONE_MORE_PIDOR).bold() + " " + oneMorePidor.getGeneralName()
+//                            "Еще один сегодняшний пидор это ".bold() + oneMorePidor.getGeneralName()
                         ).enableHtml(true)
                     )
                 }

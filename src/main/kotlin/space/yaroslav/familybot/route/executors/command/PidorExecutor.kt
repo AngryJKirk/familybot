@@ -15,14 +15,17 @@ import space.yaroslav.familybot.repos.ifaces.PidorDictionaryRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
+import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.PidorCompetitionService
+import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import java.time.Instant
 
 @Component
 class PidorExecutor(
     val repository: CommonRepository,
     val dictionaryRepository: PidorDictionaryRepository,
-    val pidorCompetitionService: PidorCompetitionService
+    val pidorCompetitionService: PidorCompetitionService,
+    val dictionary: Dictionary
 ) : CommandExecutor, Configurable {
     override fun getFunctionId(): FunctionId {
         return FunctionId.PIDOR
@@ -45,9 +48,9 @@ class PidorExecutor(
             log.info("Pidor is rolled to $nextPidor")
             val newPidor = Pidor(nextPidor, Instant.now())
             repository.addPidor(newPidor)
-            val start = dictionaryRepository.getStart().random().bold()
-            val middle = dictionaryRepository.getMiddle().random().bold()
-            val finisher = dictionaryRepository.getFinish().random().bold()
+            val start = dictionary.get(Phrase.PIDOR_SEARCH_START).bold()
+            val middle = dictionary.get(Phrase.PIDOR_SEARCH_MIDDLE).bold()
+            val finisher = dictionary.get(Phrase.PIDOR_SEARCH_FINISHER).bold()
             return {
                 val chatId = update.message.chatId
                 it.execute(SendMessage(chatId, start).enableHtml(true))
@@ -74,10 +77,10 @@ class PidorExecutor(
         return when (pidorsByChat.size) {
             0 -> null
             1 -> SendMessage(
-                update.message.chatId, "Сегодняшний пидор уже обнаружен: " +
+                update.message.chatId, dictionary.get(Phrase.PIROR_DISCOVERED_ONE) + ": " +
                     pidorsByChat.first().user.getGeneralName()
             )
-            else -> SendMessage(update.message.chatId, "Сегодняшние пидоры уже обнаружены: " +
+            else -> SendMessage(update.message.chatId, dictionary.get(Phrase.PIROR_DISCOVERED_MANY) + ": " +
                 pidorsByChat.joinToString { it.user.getGeneralName() })
         }
     }

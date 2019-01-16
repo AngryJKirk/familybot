@@ -14,15 +14,18 @@ import space.yaroslav.familybot.common.utils.random
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
+import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.repos.ifaces.FunctionsConfigureRepository
-import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.executors.Executor
 import space.yaroslav.familybot.route.executors.command.CommandExecutor
 import space.yaroslav.familybot.route.executors.eventbased.AntiDdosExecutor
+import space.yaroslav.familybot.route.executors.pm.PrivateMessageExecutor
+import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.models.Priority
 import space.yaroslav.familybot.route.services.RawUpdateLogger
+import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 
@@ -34,7 +37,8 @@ class Router(
     val chatLogRepository: ChatLogRepository,
     val configureRepository: FunctionsConfigureRepository,
     val rawUpdateLogger: RawUpdateLogger,
-    val botConfig: BotConfig
+    val botConfig: BotConfig,
+    val dictionary: Dictionary
 ) {
 
     private final val logger = LoggerFactory.getLogger(Router::class.java)
@@ -47,20 +51,23 @@ class Router(
 
         val chat = message.chat
 
-        if (!chat.isGroup()) {
-            return {
-                logger.warn("Someone try to do from outside of groups: $update")
-                it.execute(SendMessage(chat.id, "Добавь в группу, долбоеб"))
+        val isGroup = chat.isGroup()
+        if (!isGroup) {
+            logger.warn("Someone try to do from outside of groups: $update")
+        } else {
+            launch { register(message) }
+                .invokeOnCompletion { rawUpdateLogger.log(update) }
+
+            if (update.hasEditedMessage()) {
+                return {}
             }
         }
 
-        launch { register(message) }
-            .invokeOnCompletion { rawUpdateLogger.log(update) }
-
-        if (update.hasEditedMessage()) {
-            return {}
+        val executor = if (isGroup) {
+            selectExecutor(update) ?: selectRandom(update)
+        } else {
+            selectExecutor(update, forSingleUser = true) ?: return {}
         }
-        val executor = selectExecutor(update) ?: selectRandom(update)
 
         logger.info("Executor to apply: ${executor.javaClass.simpleName}")
 
@@ -101,7 +108,7 @@ class Router(
 
     private fun disabledCommand(chat: Chat): (AbsSender) -> Unit = { it ->
         logger.info("Skip command executor due to configuration")
-        it.execute(SendMessage(chat.id, "Команда выключена, сорян"))
+        it.execute(SendMessage(chat.id, dictionary.get(Phrase.COMMAND_IS_OFF)))
     }
 
     private fun isExecutorDisabled(executor: Executor?, chat: Chat): Boolean {
@@ -127,8 +134,13 @@ class Router(
         }
     }
 
-    private fun selectExecutor(update: Update): Executor? {
-        return executors
+    private fun selectExecutor(update: Update, forSingleUser: Boolean = false): Executor? {
+        val executorsToProcess = if (forSingleUser) {
+            executors.filter { it is PrivateMessageExecutor }
+        } else {
+            executors.filterNot { it is PrivateMessageExecutor }
+        }
+        return executorsToProcess
             .sortedByDescending { it.priority(update).int }
             .filter { it.priority(update).int > Priority.RANDOM.int }
             .find { it.canExecute(update.message ?: update.editedMessage ?: update.callbackQuery.message) }

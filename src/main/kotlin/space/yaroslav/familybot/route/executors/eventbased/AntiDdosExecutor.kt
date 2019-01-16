@@ -13,21 +13,24 @@ import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.executors.Executor
 import space.yaroslav.familybot.route.models.FunctionId
+import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.models.Priority
+import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
 class AntiDdosExecutor(
     val repositoryCommand: CommandHistoryRepository,
-    val config: BotConfig
+    val config: BotConfig,
+    val dictionary: Dictionary
 ) : Executor, Configurable {
     override fun getFunctionId(): FunctionId {
         return FunctionId.ANTIDDOS
     }
 
-    private val message = "Сука, еще раз нажмешь и я те всеку"
 
     override fun execute(update: Update): (AbsSender) -> Unit {
+        val message = dictionary.get(Phrase.STOP_DDOS)
         return when {
             update.hasCallbackQuery() -> { it ->
                 it.execute(
