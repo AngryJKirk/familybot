@@ -59,7 +59,8 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
     }
 
     override fun getReplies(askWorldQuestion: AskWorldQuestion): List<AskWorldReply> {
-        return template.query("""SELECT
+        return template.query(
+            """SELECT
                           ask_world_replies.id,
                           ask_world_replies.reply,
                           ask_world_replies.chat_id,

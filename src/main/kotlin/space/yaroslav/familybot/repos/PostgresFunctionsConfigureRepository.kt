@@ -10,7 +10,8 @@ import space.yaroslav.familybot.route.models.FunctionId
 @Component
 class PostgresFunctionsConfigureRepository(val jdbcTemplate: JdbcTemplate) : FunctionsConfigureRepository {
     override fun isEnabled(id: FunctionId, chat: Chat): Boolean {
-        return jdbcTemplate.query("SELECT active FROM function_settings WHERE function_id = ? AND chat_id = ? ORDER BY date_from DESC LIMIT 1",
+        return jdbcTemplate.query(
+            "SELECT active FROM function_settings WHERE function_id = ? AND chat_id = ? ORDER BY date_from DESC LIMIT 1",
             RowMapper { rs, _ -> rs.getBoolean("active") }, id.id, chat.id
         ).firstOrNull() ?: true
     }

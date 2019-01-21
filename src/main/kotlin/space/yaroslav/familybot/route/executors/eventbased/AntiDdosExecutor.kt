@@ -28,7 +28,6 @@ class AntiDdosExecutor(
         return FunctionId.ANTIDDOS
     }
 
-
     override fun execute(update: Update): (AbsSender) -> Unit {
         val message = dictionary.get(Phrase.STOP_DDOS)
         return when {

@@ -72,7 +72,8 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     }
 
     override fun getPidorsByChat(chat: Chat, startDate: Instant, endDate: Instant): List<Pidor> {
-        return template.query("SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE pidors.chat_id = ? AND pidor_date BETWEEN ? and ?",
+        return template.query(
+            "SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE pidors.chat_id = ? AND pidor_date BETWEEN ? and ?",
             ResultSetExtractor { it.map { it.toPidor() } }, chat.id, Timestamp.from(startDate), Timestamp.from(endDate)
         )
     }
@@ -106,7 +107,8 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     }
 
     override fun getAllPidors(startDate: Instant, endDate: Instant): List<Pidor> {
-        return template.query("SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE pidor_date BETWEEN ? and ?",
+        return template.query(
+            "SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE pidor_date BETWEEN ? and ?",
             ResultSetExtractor { it.map { it.toPidor() } }, Timestamp.from(startDate), Timestamp.from(endDate)
         )
     }

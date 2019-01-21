@@ -16,7 +16,8 @@ import java.time.Instant
 @Component
 class PostgresCommandHistoryRepository(val template: JdbcTemplate) : CommandHistoryRepository {
     override fun getAll(chat: Chat): List<CommandByUser> {
-        return template.query("SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ?",
+        return template.query(
+            "SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ?",
             RowMapper { rs, _ -> rs.toCommandByUser(null) }, chat.id
         )
     }
@@ -32,7 +33,8 @@ class PostgresCommandHistoryRepository(val template: JdbcTemplate) : CommandHist
     }
 
     override fun get(user: User, from: Instant, to: Instant): List<CommandByUser> {
-        return template.query("SELECT * FROM history WHERE user_id = ? AND chat_id = ? AND command_date BETWEEN ? AND ?",
+        return template.query(
+            "SELECT * FROM history WHERE user_id = ? AND chat_id = ? AND command_date BETWEEN ? AND ?",
             ResultSetExtractor { it.map { it.toCommandByUser(user) } },
             user.id,
             user.chat.id,

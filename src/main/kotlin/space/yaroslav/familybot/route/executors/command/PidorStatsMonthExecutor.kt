@@ -20,8 +20,10 @@ import java.time.LocalTime
 import java.time.ZoneOffset
 
 @Component
-class PidorStatsMonthExecutor(val repository: CommonRepository,
-    val dictionary: Dictionary) : CommandExecutor, Configurable {
+class PidorStatsMonthExecutor(
+    val repository: CommonRepository,
+    val dictionary: Dictionary
+) : CommandExecutor, Configurable {
 
     override fun getFunctionId(): FunctionId {
         return FunctionId.PIDOR

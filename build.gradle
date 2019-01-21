@@ -56,7 +56,7 @@ bootRun {
                "-Dcom.sun.management.jmxremote.port=8085",
                "-Dcom.sun.management.jmxremote.authenticate=false",
                "-Dcom.sun.management.jmxremote.ssl=false"
-                ]
+    ]
 }
 kotlin {
     experimental {

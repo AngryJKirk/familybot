@@ -11,10 +11,11 @@ import space.yaroslav.familybot.route.models.FunctionId
 import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
 
-
 @Component
-class SettingsExecutor(private val configureRepository: FunctionsConfigureRepository,
-    val dictionary: Dictionary) : CommandExecutor {
+class SettingsExecutor(
+    private val configureRepository: FunctionsConfigureRepository,
+    val dictionary: Dictionary
+) : CommandExecutor {
     override fun command(): Command {
         return Command.SETTINGS
     }
@@ -22,9 +23,10 @@ class SettingsExecutor(private val configureRepository: FunctionsConfigureReposi
     override fun execute(update: Update): (AbsSender) -> Unit {
         val chat = update.toChat()
         return {
-            it.execute(SendMessage(chat.id, dictionary.get(Phrase.WHICH_SETTING_SHOULD_CHANGE))
-                .setReplyToMessageId(update.message.messageId)
-                .setReplyMarkup(FunctionId.toKeyBoard { configureRepository.isEnabled(it, chat) })
+            it.execute(
+                SendMessage(chat.id, dictionary.get(Phrase.WHICH_SETTING_SHOULD_CHANGE))
+                    .setReplyToMessageId(update.message.messageId)
+                    .setReplyMarkup(FunctionId.toKeyBoard { configureRepository.isEnabled(it, chat) })
             )
         }
     }

@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
 class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : PhraseDictionaryRepository {
 
     private val cache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES)
-        .build(CacheLoader.from {type: Pair<Phrase, PhraseTheme>? -> getPhrasesInternal(type)})
+        .build(CacheLoader.from { type: Pair<Phrase, PhraseTheme>? -> getPhrasesInternal(type) })
 
     override fun getPhraseTheme(chat: Chat): PhraseTheme {
         TODO()

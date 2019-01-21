@@ -42,5 +42,7 @@ class CommandStatExecutor(
     }
 
     private fun format(it: Map.Entry<Command, List<CommandByUser>>) =
-        "${dictionary.get(Phrase.COMMAND)} " + "${it.key.command}:".bold() + "\n" + it.value.map { it.user }.formatTopList().joinToString("\n")
+        "${dictionary.get(Phrase.COMMAND)} " + "${it.key.command}:".bold() + "\n" + it.value.map { it.user }.formatTopList().joinToString(
+            "\n"
+        )
 }

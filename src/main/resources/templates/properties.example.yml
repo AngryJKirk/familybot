@@ -1,8 +1,7 @@
-
 settings:
-          botname: {name}
-          token: {token}
-          developer: {name}
+  botname: {name}
+  token: {token}
+  developer: {name}
 spring:
   datasource:
     url: {url}
@@ -12,9 +11,9 @@ spring:
 
 ---
 settings:
-          botname: {name}
-          token: {token}
-          developer: {name}
+  botname: {name}
+  token: {token}
+  developer: {name}
 spring:
   datasource:
     url: {url}

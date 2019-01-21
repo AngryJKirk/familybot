@@ -69,7 +69,6 @@ enum class Phrase(val id: Int) {
     BET_EXPLAIN_SINGLE_DAY(66),
     BET_WIN_END(67),
     SUCHARA_HELLO_MESSAGE(68)
-
 }
 
 enum class PhraseTheme(val id: Int) {

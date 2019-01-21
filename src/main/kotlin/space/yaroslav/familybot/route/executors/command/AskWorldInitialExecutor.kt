@@ -103,7 +103,10 @@ class AskWorldInitialExecutor(
                 .forEach {
                     try {
                         val result = sender.execute(
-                            SendMessage(it.id, "${dictionary.get(Phrase.ASK_WORLD_QUESTION_FROM_CHAT)} ${chat.name.bold()}: ${question.message.italic()}")
+                            SendMessage(
+                                it.id,
+                                "${dictionary.get(Phrase.ASK_WORLD_QUESTION_FROM_CHAT)} ${chat.name.bold()}: ${question.message.italic()}"
+                            )
                                 .enableHtml(true)
                         )
                         launch {

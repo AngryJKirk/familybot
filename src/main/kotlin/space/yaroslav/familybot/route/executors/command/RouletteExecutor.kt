@@ -20,8 +20,10 @@ import java.time.ZoneOffset
 const val ROULETTE_MESSAGE = "Выбери число от 1 до 6"
 
 @Component
-class RouletteExecutor(private val commandHistoryRepository: CommandHistoryRepository,
-    val dictionary: Dictionary) : CommandExecutor, Configurable {
+class RouletteExecutor(
+    private val commandHistoryRepository: CommandHistoryRepository,
+    val dictionary: Dictionary
+) : CommandExecutor, Configurable {
 
     override fun getFunctionId(): FunctionId {
         return FunctionId.PIDOR
