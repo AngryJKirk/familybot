@@ -37,9 +37,21 @@ class KeyWordExecutor(
     override fun execute(update: Update): (AbsSender) -> Unit {
         val chat = update.toChat()
         val rageModEnabled = configRepository.isEnabled(chat)
-        if (rageModEnabled || ThreadLocalRandom.current().nextInt(0, 5) == 0) {
-            val string = keyset.get(update.toUser()).takeIf { it.size > 300 }?.random()
-                ?: getSmallMessage(keyset.getAll())
+        if (rageModEnabled || ThreadLocalRandom.current().nextInt(0, 10) == 0) {
+            val string = keyset.get(update.toUser()).takeIf { it.size > 300 }
+                ?.asSequence()
+                ?.filterNot { it.length > 600 }
+                ?.filterNot { it.contains("http", ignoreCase = true) }
+                ?.toList()
+                ?.random()
+                ?: keyset.getAll()
+                    .asSequence()
+                    .filterNot { it.length > 600 }
+                    .filterNot { it.contains("http", ignoreCase = true) }
+                    .filter { it.split(" ").size > 5 }
+                    .toList()
+                    .random()!!
+
             val message = if (rageModEnabled) {
                 rageModeFormat(string)
             } else {
@@ -67,13 +79,5 @@ class KeyWordExecutor(
             message = message.dropLast(1)
         }
         return message.toUpperCase() + "!!!!"
-    }
-
-    private fun getSmallMessage(messages: List<String>): String {
-        var message: String?
-        do {
-            message = messages.random()
-        } while (message!!.split(" ").size > 5)
-        return message
     }
 }

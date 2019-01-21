@@ -16,7 +16,11 @@ class PatchNoteExecutor(val botConfig: BotConfig, val commonRepository: CommonRe
     override fun execute(update: Update): (AbsSender) -> Unit {
         return { sender ->
             commonRepository.getChats().forEach { chat ->
-                sender.execute(SendMessage(chat.id, update.message.text.removePrefix(patchnotePrefix)))
+                try {
+                    sender.execute(SendMessage(chat.id, update.message.text.removePrefix(patchnotePrefix)))
+                } catch (e: Exception){
+                    commonRepository.changeChatActiveStatus(chat, false)
+                }
             }
         }
     }

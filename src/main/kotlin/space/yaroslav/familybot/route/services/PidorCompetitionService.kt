@@ -19,8 +19,10 @@ import java.time.LocalTime
 import java.time.ZoneOffset
 
 @Service
-class PidorCompetitionService(val repository: CommonRepository,
-    val dictionary: Dictionary) {
+class PidorCompetitionService(
+    val repository: CommonRepository,
+    val dictionary: Dictionary
+) {
 
     fun pidorCompetition(update: Update): ((AbsSender) -> Unit)? {
         val chatId = update.toChat().id
@@ -38,7 +40,6 @@ class PidorCompetitionService(val repository: CommonRepository,
                         SendMessage(
                             chatId,
                             dictionary.get(Phrase.PIDOR_COMPETITION).bold()
-                            //"Так-так-так, у нас тут гонка заднеприводных".bold()
                         ).enableHtml(true)
                     )
                     val oneMorePidor = competitors.random()!!
@@ -48,7 +49,6 @@ class PidorCompetitionService(val repository: CommonRepository,
                         SendMessage(
                             chatId,
                             dictionary.get(Phrase.COMPETITION_ONE_MORE_PIDOR).bold() + " " + oneMorePidor.getGeneralName()
-//                            "Еще один сегодняшний пидор это ".bold() + oneMorePidor.getGeneralName()
                         ).enableHtml(true)
                     )
                 }

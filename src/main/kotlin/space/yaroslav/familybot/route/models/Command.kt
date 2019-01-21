@@ -13,10 +13,11 @@ enum class Command(val command: String, val id: Int) {
     SETTINGS("/settings", 10),
     ANSWER("/answer", 11),
     QUOTE_BY_TAG("/quotebytag", 12),
-    ROULETTE("/roulette", 13),
+    ROULETTE("/legacy_roulette", 13),
     ASK_WORLD("/ask_world", 14),
     STATS_WORLD("/stats_world", 15),
     ME("/me", 16),
-    TOP_HISTORY("/top_history", 17)
+    TOP_HISTORY("/top_history", 17),
+    BET("/bet", 18)
 }
 

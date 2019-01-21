@@ -6,12 +6,11 @@ import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.route.models.Command
-import space.yaroslav.familybot.telegram.BotConfig
+import space.yaroslav.familybot.route.models.Phrase
+import space.yaroslav.familybot.route.services.dictionary.Dictionary
 
 @Component
-class HelpCommandExecutor(config: BotConfig) : CommandExecutor {
-    private final val message = """"Запросы помощи и предложения направлять к разработчику: @${config.developer}
-            Для настройки бота существует команда /settings, доступная только для админов. С желанием задонатить в ЛС разработчику."""
+class HelpCommandExecutor(val dictionary: Dictionary) : CommandExecutor {
 
     override fun command(): Command {
         return Command.HELP
@@ -19,7 +18,7 @@ class HelpCommandExecutor(config: BotConfig) : CommandExecutor {
 
     override fun execute(update: Update): (AbsSender) -> Unit {
         return {
-            it.execute(SendMessage(update.toChat().id, message))
+            it.execute(SendMessage(update.toChat().id, dictionary.get(Phrase.HELP_MESSAGE)).enableHtml(true))
         }
     }
 }

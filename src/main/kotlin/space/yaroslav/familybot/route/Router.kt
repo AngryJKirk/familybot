@@ -129,7 +129,12 @@ class Router(
 
     private fun logChatMessage(update: Update) {
         val text = update.message?.text
-        if (text != null && text.split(" ").size >= 3) {
+        if (update.message?.isUserMessage == true &&
+            text != null &&
+            text.split(" ").size >= 3 &&
+            text.length < 600 &&
+            text.contains("http", ignoreCase = true)
+        ) {
             chatLogRepository.add(update.toUser(), text)
         }
     }

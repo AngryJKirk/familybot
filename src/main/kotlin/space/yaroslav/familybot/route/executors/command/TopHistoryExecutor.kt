@@ -16,7 +16,11 @@ class TopHistoryExecutor(private val chatLogRepository: ChatLogRepository) : Com
     }
 
     override fun execute(update: Update): (AbsSender) -> Unit {
-        val randomStory = chatLogRepository.getAll().subList(0, 500).random()
-        return { it.execute(SendMessage(update.toChat().id, randomStory))}
+        val randomStory =
+            chatLogRepository.getAll()
+                .subList(0, 700)
+                .filter { it.contains("http", ignoreCase = true) }
+                .random()
+        return { it.execute(SendMessage(update.toChat().id, randomStory)) }
     }
 }

@@ -1,9 +1,7 @@
 package space.yaroslav.familybot.route.services.dictionary
 
-import org.springframework.stereotype.Component
 import space.yaroslav.familybot.route.models.Phrase
 
-@Component
 class DictionaryInCode : Dictionary {
     override fun get(phrase: Phrase): String {
         return when (phrase) {
@@ -57,6 +55,31 @@ class DictionaryInCode : Dictionary {
             Phrase.PIDOR_SEARCH_START -> TODO()
             Phrase.PIDOR_SEARCH_MIDDLE -> TODO()
             Phrase.PIDOR_SEARCH_FINISHER -> TODO()
+            Phrase.USER_ENTERING_CHAT -> TODO()
+            Phrase.USER_LEAVING_CHAT -> TODO()
+            Phrase.BET_INITIAL_MESSAGE -> TODO()
+            Phrase.BET_ALREADY_WAS -> TODO()
+            Phrase.BET_WIN -> TODO()
+            Phrase.BET_LOSE -> TODO()
+            Phrase.BET_ZATRAVOCHKA -> TODO()
+            Phrase.BET_BREAKING_THE_RULES_FIRST -> TODO()
+            Phrase.BET_BREAKING_THE_RULES_SECOND -> TODO()
+            Phrase.BET_EXPLAIN -> TODO()
+            Phrase.PLURALIZED_DAY_ONE -> TODO()
+            Phrase.PLURALIZED_DAY_FEW -> TODO()
+            Phrase.PLURALIZED_DAY_MANY -> TODO()
+            Phrase.PLURALIZED_NEXT_ONE -> TODO()
+            Phrase.PLURALIZED_NEXT_FEW -> TODO()
+            Phrase.PLURALIZED_NEXT_MANY -> TODO()
+            Phrase.PLURALIZED_OCHKO_ONE -> TODO()
+            Phrase.PLURALIZED_OCHKO_FEW -> TODO()
+            Phrase.PLURALIZED_OCHKO_MANY -> TODO()
+            Phrase.PLURALIZED_PIDORSKOE_ONE -> TODO()
+            Phrase.PLURALIZED_PIDORSKOE_FEW -> TODO()
+            Phrase.PLURALIZED_PIDORSKOE_MANY -> TODO()
+            Phrase.BET_EXPLAIN_SINGLE_DAY -> TODO()
+            Phrase.BET_WIN_END -> TODO()
+            Phrase.SUCHARA_HELLO_MESSAGE -> TODO()
         }
     }
 }

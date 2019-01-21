@@ -11,7 +11,6 @@ import space.yaroslav.familybot.common.utils.isToday
 import space.yaroslav.familybot.common.utils.random
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
-import space.yaroslav.familybot.repos.ifaces.PidorDictionaryRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
@@ -23,7 +22,6 @@ import java.time.Instant
 @Component
 class PidorExecutor(
     val repository: CommonRepository,
-    val dictionaryRepository: PidorDictionaryRepository,
     val pidorCompetitionService: PidorCompetitionService,
     val dictionary: Dictionary
 ) : CommandExecutor, Configurable {

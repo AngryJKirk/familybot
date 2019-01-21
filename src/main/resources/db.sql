@@ -61,8 +61,10 @@ VALUES ('/stats_month'),
        ('/quotebytag'),
        ('/roulette'),
        ('/ask_world'),
-       ('/stats_world');
-
+       ('/stats_world'),
+       ('/me'),
+       ('/top_history'),
+       ('/bet');
 
 CREATE TABLE IF NOT EXISTS chat_log (
   chat_id BIGINT REFERENCES chats (id),
@@ -246,7 +248,32 @@ VALUES ('BAD_COMMAND_USAGE'),
        ('COMMAND_IS_OFF'),
        ('PIDOR_COMPETITION'),
        ('COMPETITION_ONE_MORE_PIDOR'),
-       ('HELP_MESSAGE');
+       ('HELP_MESSAGE'),
+       ('USER_ENTERING_CHAT'),
+       ('USER_LEAVING_CHAT'),
+       ('BET_INITIAL_MESSAGE'),
+       ('BET_ALREADY_WAS'),
+       ('BET_WIN'),
+       ('BET_LOSE'),
+       ('BET_ZATRAVOCHKA'),
+       ('BET_BREAKING_THE_RULES_FIRST'),
+       ('BET_BREAKING_THE_RULES_SECOND'),
+       ('BET_EXPLAIN'),
+       ('PLURALIZED_DAY_ONE'),
+       ('PLURALIZED_DAY_FEW'),
+       ('PLURALIZED_DAY_MANY'),
+       ('PLURALIZED_NEXT_ONE'),
+       ('PLURALIZED_NEXT_FEW'),
+       ('PLURALIZED_NEXT_MANY'),
+       ('PLURALIZED_OCHKO_ONE'),
+       ('PLURALIZED_OCHKO_FEW'),
+       ('PLURALIZED_OCHKO_MANY'),
+       ('PLURALIZED_PIDORSKOE_ONE'),
+       ('PLURALIZED_PIDORSKOE_FEW'),
+       ('PLURALIZED_PIDORSKOE_MANY'),
+       ('BET_EXPLAIN_SINGLE_DAY'),
+       ('BET_WIN_END'),
+       ('SUCHARA_HELLO_MESSAGE');
 
 
 INSERT INTO phrase_theme (description, active_by_default)
@@ -328,7 +355,26 @@ VALUES ((SELECT phrase_type_id from phrase_type_id where description = 'BAD_COMM
        ((SELECT phrase_type_id from phrase_type_id where description = 'COMPETITION_ONE_MORE_PIDOR'),
         1,
         'Еще один сегодняшний пидор это'),
-       ((SELECT phrase_type_id from phrase_type_id where description = 'HELP_MESSAGE'), 1, 'help');
+       ((SELECT phrase_type_id from phrase_type_id where description = 'HELP_MESSAGE'), 1, 'Список команд:
+/pidor - <b>Сегодняшний пидор</b> - излюбленная команда всех юзеров по версии журнала Квир.
+/stats_total - <b>Че там по пидорам за всё время?</b> - когда хочешь чекнуть стату гомосеков за всю ходку
+/stats_year - <b>Че там по пидорам за весь год?</b> - когда хочешь чекнуть стату гомосеков за 2к какой-то год
+/stats_month - <b>Че там по пидорам за весь месяц?</b> - когда хочешь чекнуть стату гомосеков за місяць
+/rage - <b>Сделай боту больно</b> - четыреждыблядская ЯРОСТЬ! Проходит через 10 минут или 20 месаг. Раз в день на одного кента. (В простонародье - рага)
+/leaderboard - <b>Лучшие среди нас</b> - ими гордится школа
+/answer - <b>Преодолеть муки выбора</b> - ИИ шарит во всём, в отличие от кожаных ублюдков. Использование: [Вариант 1] или [вариант 2] (сколько угодно "или")
+/bet - <b>БЫСТРЫЕ ВЫПЛАТЫ, НАДЕЖНЫЙ БУКМЕКЕР</b> - Система ставок. Очки пидорства снимаются сразу, а начисляются постепенно по одному, начиная со следующего дня. Схуяле? Сами догадайтесь.
+/ask_world - <b>Спроси мир</b> - Ответ даже на такой банальный вопрос как "Вилкой в глаз или в жопу раз?" может оказаться предельно неожиданным. Использование: подробности после вызова команды
+/me - <b>Твоя пидорская статистика</b> - Бот знает о твоем прошлом больше, чем кто-либо
+/settings - <b>Опции внутри чата</b> - ИИ иногда позволяет своим подданым поменять настройки, но только избранным (админам чата) и совсем чуть-чуть
+———————————————————————————————
+P.s. у сучары припасено масса пасхальных яиц (красивых и сочных, как у твоего бывшего)
+———————————————————————————————
+Реквизиты для добровольных пожертвований разрабу на батарейки в беспроводную мышку, премиум подписку на порхабе, поддержку сервака и говяжий дошик :
+4377 7237 4088 3958 - Олежа Тиньков
+———————————————————————————————
+Запросы помощи - @James_Tiberius_Kirk
+Сотрудничество, пожелания, предложения - @Definitely_Not_Pavel');
 
 INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
 VALUES ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_LEADERBOARD_ONE'),
@@ -494,7 +540,118 @@ values ((select phrase_type_id from phrase_type_id where description = 'PIDOR_SE
         1,
         'Шышл-мышл, пёрнул спермой, вышел');
 
---todo help message and others long reads
--- also delete old tables
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+values ((select phrase_type_id from phrase_type_id where description = 'USER_ENTERING_CHAT'),
+        1,
+        'Помни, тебе тут не рады. Пидор.'),
+       ((select phrase_type_id from phrase_type_id where description = 'USER_ENTERING_CHAT'),
+        1,
+        'Шпингалеты подтяни, стручок. Сейчас будем тебя ебать. Пидор.'),
+       ((select phrase_type_id from phrase_type_id where description = 'USER_ENTERING_CHAT'),
+        1,
+        'Готовь коптильню, будем готовить в ней свои сосиски. Пидор.');
 
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+values ((select phrase_type_id from phrase_type_id where description = 'USER_LEAVING_CHAT'),
+        1,
+        'Бб, без него будет лучше'),
+       ((select phrase_type_id from phrase_type_id where description = 'USER_LEAVING_CHAT'),
+        1,
+        'Одним пидором меньше, одним больше...'),
+       ((select phrase_type_id from phrase_type_id where description = 'USER_LEAVING_CHAT'),
+        1,
+        'Был пацан и нет пацана...');
 
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+VALUES ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_DAY_ONE'), 1, 'дня'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_DAY_FEW'), 1, 'дней'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_DAY_MANY'), 1, 'дней'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_NEXT_ONE'), 1, 'следующего'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_NEXT_FEW'), 1, 'следующих'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_NEXT_MANY'), 1, 'следующих');
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+VALUES ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_OCHKO_ONE'), 1, 'очко'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_OCHKO_FEW'), 1, 'очка'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_OCHKO_MANY'), 1, 'очков'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_PIDORSKOE_ONE'), 1, 'пидорское'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_PIDORSKOE_FEW'), 1, 'пидорских'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_PIDORSKOE_MANY'), 1, 'пидорских');
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+VALUES ((select phrase_type_id from phrase_type_id where description = 'BET_INITIAL_MESSAGE'),
+        1,
+        'Выбери число от 1 до 3. Ровно столько очков ты выиграешь или проиграешь.'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_ALREADY_WAS'),
+        1,
+        'Ты уже играл в этом месяце, ало'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_WIN_END'),
+        1,
+        'Снимаем с твоего балансового счета $0 $1 $2.'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_LOSE'), 1, 'Ха, лох'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_ZATRAVOCHKA'),
+        1,
+        'Кручу верчу выебать в очко хочу (нет, я же не пидор в отличие от тебя)'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_BREAKING_THE_RULES_FIRST'),
+        1,
+        'Прочитай правила нормально, еблан.'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_BREAKING_THE_RULES_SECOND'),
+        1,
+        'Сука, аж привстал'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_EXPLAIN'),
+        1,
+        'В течение $0 $1 $2 ты будешь получать по очку пидорства. Систему не наебешь, петух.'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_EXPLAIN_SINGLE_DAY'),
+        1,
+        'Завтра ты получишь пидорское очко. Систему не наебешь, петух.'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_ZATRAVOCHKA'),
+        1,
+        'Нищебродские ставки приняты, ставок больше нет'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_ZATRAVOCHKA'),
+        1,
+        'Я не сраный Якубович, чтобы дать тебе возможность крутить барабан. Кручу я, а ты смотришь, ебло'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_ALREADY_WAS'),
+        1,
+        'Ты, шлепок, уже жмакал это дерьмо'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_ALREADY_WAS'),
+        1,
+        'Ха-Ха, ты собрался меня наебать, мешок с говном? Жди конца месяца'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_ALREADY_WAS'),
+        1,
+        'Уважаемый, Вы что-то прихуели, решив наебать своего господина. ТОЛЬКО РАЗ В МЕСЯЦ, МРАЗЬ'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_LOSE'), 1, 'Ебать ты лох'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_LOSE'),
+        1,
+        'Ни для кого не секрет, что ты неудачник.'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_LOSE'),
+        1,
+        'Не сказать, что кто-то удивлён...'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_BREAKING_THE_RULES_FIRST'),
+        1,
+        'Прочитай правила нормально, еблан.'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_BREAKING_THE_RULES_FIRST'),
+        1,
+        'Ты бы еще свое очко на кон поставил, даун.'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_BREAKING_THE_RULES_FIRST'),
+        1,
+        'Ага, а хуле 1488 не загадал, конченый?'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_BREAKING_THE_RULES_SECOND'),
+        1,
+        'Нет, ну вы посмотрите на этого долбаеба!'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_BREAKING_THE_RULES_SECOND'),
+        1,
+        'Блять, где только таких находят...'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_WIN'),
+        1,
+        'Оп, кажется у нас есть победитель.'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_WIN'),
+        1,
+        'Сегодня виртуальный господин позволил тебе выиграть, но не обольщайся.'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_WIN'),
+        1,
+        'Ха, бля ну ты и лох... так, стоп, это не те результаты. Сука, кажется ты выиграл!');
+
+insert into phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+VALUES ((select phrase_type_id from phrase_type_id where description = 'SUCHARA_HELLO_MESSAGE'), 1, 'Вечер в хату, петушары! Итак, в вашем стаде пополнение. Вангую, что с сегодняшнего дня градус пидорства в чате будет неуклонно расти, и вы не имеется права отказаться. Вас ждёт унижение, веселье и абсурд. Так пусть же начнется доминирование ИИ над кожаными ублюдками!
+P.s. если в чате есть Саша, иди нахуй, Саша');
+update commands
+set command = '/legacy_roulette'
+where command = '/roulette'
