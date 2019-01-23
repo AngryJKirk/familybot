@@ -55,8 +55,10 @@ class Router(
         if (!isGroup) {
             logger.warn("Someone try to do from outside of groups: $update")
         } else {
-            launch { register(message) }
-                .invokeOnCompletion { rawUpdateLogger.log(update) }
+            launch {
+                register(message)
+                rawUpdateLogger.log(update)
+            }
 
             if (update.hasEditedMessage()) {
                 return {}

@@ -19,7 +19,7 @@ class TopHistoryExecutor(private val chatLogRepository: ChatLogRepository) : Com
         val randomStory =
             chatLogRepository.getAll()
                 .subList(0, 700)
-                .filter { it.contains("http", ignoreCase = true) }
+                .filterNot { it.contains("http", ignoreCase = true) }
                 .random()
         return { it.execute(SendMessage(update.toChat().id, randomStory)) }
     }

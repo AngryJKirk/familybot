@@ -37,7 +37,7 @@ class KeyWordExecutor(
     override fun execute(update: Update): (AbsSender) -> Unit {
         val chat = update.toChat()
         val rageModEnabled = configRepository.isEnabled(chat)
-        if (rageModEnabled || ThreadLocalRandom.current().nextInt(0, 10) == 0) {
+        if (rageModEnabled || ThreadLocalRandom.current().nextInt(0, 7) == 0) {
             val string = keyset.get(update.toUser()).takeIf { it.size > 300 }
                 ?.asSequence()
                 ?.filterNot { it.length > 600 }

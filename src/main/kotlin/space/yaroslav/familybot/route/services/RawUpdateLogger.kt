@@ -13,7 +13,6 @@ class RawUpdateLogger(val rawChatLogRepository: RawChatLogRepository) {
     private final val objectMapper = ObjectMapper()
 
     fun log(update: Update) {
-        val rawUpdate = objectMapper.writeValueAsString(update)
         val rawMessage = when {
             update.hasMessage() -> update.message
             update.hasEditedMessage() -> update.editedMessage
@@ -35,6 +34,8 @@ class RawUpdateLogger(val rawChatLogRepository: RawChatLogRepository) {
             ?.toLong()
             ?.let { Instant.ofEpochSecond(it) }
             ?: Instant.now()
+
+        val rawUpdate = objectMapper.writeValueAsString(update)
         rawChatLogRepository.add(update.toChat(), update.toUser(), text, fileId, rawUpdate, date)
     }
 }
