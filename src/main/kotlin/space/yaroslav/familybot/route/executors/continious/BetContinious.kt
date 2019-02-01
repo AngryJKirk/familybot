@@ -83,7 +83,7 @@ class BetContinious(
                                     .now()
                                     .toLocalDate()
                                     .atStartOfDay()
-                                    .plusDays(number.toLong())
+                                    .plusDays(i.toLong())
                                     .toInstant(ZoneOffset.UTC)
                             )
                         )
