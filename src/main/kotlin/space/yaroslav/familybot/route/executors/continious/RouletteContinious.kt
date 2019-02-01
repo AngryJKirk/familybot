@@ -1,6 +1,7 @@
 package space.yaroslav.familybot.route.executors.continious
 
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
@@ -65,7 +66,7 @@ class RouletteContinious(
         if (number !in 1..6) {
             return {
                 it.execute(SendMessage(chatId, "Мушку спили и в следующий раз играй по правилам"))
-                launch { pidorRepository.addPidor(Pidor(user, Instant.now())) }
+                GlobalScope.launch { pidorRepository.addPidor(Pidor(user, Instant.now())) }
                 Thread.sleep(1000)
                 it.execute(SendMessage(chatId, "В наказание твое пидорское очко уходит к остальным"))
             }
@@ -75,12 +76,12 @@ class RouletteContinious(
         return {
             if (rouletteNumber == number) {
                 it.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
-                launch { repeat(5) { pidorRepository.removePidorRecord(user) } }
+                GlobalScope.launch { repeat(5) { pidorRepository.removePidorRecord(user) } }
                 Thread.sleep(2000)
                 it.execute(SendMessage(chatId, "Но он пока не треснул. Свое пидорское очко можешь забрать. "))
             } else {
                 it.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
-                launch { repeat(3) { pidorRepository.addPidor(Pidor(user, Instant.now())) } }
+                GlobalScope.launch { repeat(3) { pidorRepository.addPidor(Pidor(user, Instant.now())) } }
                 Thread.sleep(2000)
                 it.execute(
                     SendMessage(

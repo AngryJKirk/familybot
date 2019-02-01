@@ -1,6 +1,7 @@
 package space.yaroslav.familybot.route.executors.command
 
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
@@ -71,7 +72,7 @@ class AskWorldInitialExecutor(
         if (askWorldRepository.getQuestionsFromChat(
                 chat,
                 date = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
-            ).size >= 5
+            ).size >= 2
         ) {
             return {
                 it.execute(
@@ -109,7 +110,7 @@ class AskWorldInitialExecutor(
                             )
                                 .enableHtml(true)
                         )
-                        launch {
+                        GlobalScope.launch {
                             askWorldRepository.addQuestionDeliver(
                                 question.copy(
                                     id = id,
@@ -118,6 +119,7 @@ class AskWorldInitialExecutor(
                             )
                         }
                     } catch (e: Exception) {
+                        commonRepository.changeChatActiveStatus(it, false)
                         log.warn("Could not send question $id to $it due to error: [${e.message}]")
                     }
                 }

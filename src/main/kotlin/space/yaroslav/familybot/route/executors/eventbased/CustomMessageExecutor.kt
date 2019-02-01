@@ -1,7 +1,8 @@
 package space.yaroslav.familybot.route.executors.eventbased
 
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Message
@@ -17,9 +18,9 @@ class CustomMessageExecutor(val repository: CustomMessageDeliveryRepository) : E
     override fun execute(update: Update): (AbsSender) -> Unit {
         return { sender ->
             val chat = update.toChat()
-            val newMessages = async { repository.getNewMessages(chat) }
+            val newMessages = GlobalScope.async { repository.getNewMessages(chat) }
             if (repository.hasNewMessages(chat)) {
-                launch {
+                GlobalScope.launch {
                     newMessages
                         .await()
                         .forEach {

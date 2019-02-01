@@ -1,6 +1,7 @@
 package space.yaroslav.familybot.telegram
 
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.stereotype.Component
@@ -20,12 +21,12 @@ class FamilyBot(val config: BotConfig, val router: Router) : TelegramLongPolling
     }
 
     override fun onUpdateReceived(update: Update?) {
-        launch {
+        GlobalScope.launch {
             val toUser = update!!.toUser()
             MDC.put("chat", "${toUser.chat.name}:${toUser.chat.id}")
             MDC.put("user", "${toUser.name}:${toUser.id}")
             try {
-                router.processUpdate(update).invoke(this@FamilyBot).also { launch { MDC.clear() } }
+                router.processUpdate(update).invoke(this@FamilyBot).also { GlobalScope.launch { MDC.clear() } }
             } catch (e: TelegramApiRequestException) {
                 log.error("Telegram error: {}, {}, {}", e.apiResponse, e.errorCode, e.parameters, e)
             } catch (e: Exception) {

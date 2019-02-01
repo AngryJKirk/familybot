@@ -1,6 +1,7 @@
 package space.yaroslav.familybot.route.executors.continious
 
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Message
@@ -65,14 +66,14 @@ class BetContinious(
         return {
             if (result) {
                 it.execute(SendMessage(chatId, dictionary.get(Phrase.BET_ZATRAVOCHKA)))
-                launch { repeat(number) { pidorRepository.removePidorRecord(user) } }
+                GlobalScope.launch { repeat(number) { pidorRepository.removePidorRecord(user) } }
                 Thread.sleep(2000)
                 it.execute(SendMessage(chatId, dictionary.get(Phrase.BET_WIN)))
                 Thread.sleep(2000)
                 it.execute(SendMessage(chatId, winEndPhrase(number)))
             } else {
                 it.execute(SendMessage(chatId, dictionary.get(Phrase.BET_ZATRAVOCHKA)))
-                launch {
+                GlobalScope.launch {
                     var i: Int = number
                     while (i != 0) {
                         pidorRepository.addPidor(

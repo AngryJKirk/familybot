@@ -1,6 +1,7 @@
 package space.yaroslav.familybot.route
 
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
@@ -55,7 +56,7 @@ class Router(
         if (!isGroup) {
             logger.warn("Someone try to do from outside of groups: $update")
         } else {
-            launch {
+            GlobalScope.launch {
                 register(message)
                 rawUpdateLogger.log(update)
             }
@@ -81,13 +82,13 @@ class Router(
             }
         } else {
             executor.execute(update)
-        }.also { launch { logChatCommand(executor, update) } }
+        }.also { GlobalScope.launch { logChatCommand(executor, update) } }
     }
 
     private fun selectRandom(update: Update): Executor {
         logger.info("No executor found, trying to find random priority executors")
 
-        launch { logChatMessage(update) }
+        GlobalScope.launch { logChatMessage(update) }
         val executor = executors.filter { it.priority(update) == Priority.RANDOM }.random()!!
 
         logger.info("Random priority executor ${executor.javaClass.simpleName} was selected")
