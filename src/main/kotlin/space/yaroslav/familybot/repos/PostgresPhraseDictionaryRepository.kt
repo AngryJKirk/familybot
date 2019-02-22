@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.repos
 
+import com.google.common.base.Suppliers
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import org.springframework.jdbc.core.JdbcTemplate
@@ -16,12 +17,18 @@ class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : Phras
     private val cache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES)
         .build(CacheLoader.from { type: Pair<Phrase, PhraseTheme>? -> getPhrasesInternal(type) })
 
+    private val themeCache = Suppliers.memoizeWithExpiration({ getThemesInternal() }, 5, TimeUnit.MINUTES)
+
     override fun getPhraseTheme(chat: Chat): PhraseTheme {
         TODO()
     }
 
     override fun getPhrases(phrase: Phrase, phraseTheme: PhraseTheme): List<String> {
         return cache[phrase to phraseTheme]
+    }
+
+    override fun getDefaultPhraseTheme(): PhraseTheme {
+        return themeCache.get().first(PhraseThemeDescription::isDefault).theme
     }
 
     private fun getPhrasesInternal(type: Pair<Phrase, PhraseTheme>?): List<String> {
@@ -32,4 +39,20 @@ class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : Phras
             type.second.id
         ).takeIf { it.isNotEmpty() } ?: getPhrases(type.first, PhraseTheme.DEFAULT)
     }
+
+    private fun getThemesInternal(): List<PhraseThemeDescription> {
+        return jdbcTemplate.query(
+            "select * from phrase_theme;"
+        ) { rs, _ ->
+            PhraseThemeDescription(
+                PhraseTheme.values().first { it.id == rs.getInt("phrase_theme_id") },
+                rs.getBoolean("active_by_default")
+            )
+        }
+    }
 }
+
+class PhraseThemeDescription(
+    val theme: PhraseTheme,
+    val isDefault: Boolean
+)

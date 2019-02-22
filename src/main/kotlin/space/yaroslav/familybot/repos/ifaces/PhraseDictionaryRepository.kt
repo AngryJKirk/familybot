@@ -8,5 +8,7 @@ interface PhraseDictionaryRepository {
 
     fun getPhraseTheme(chat: Chat): PhraseTheme
 
+    fun getDefaultPhraseTheme(): PhraseTheme
+
     fun getPhrases(phrase: Phrase, phraseTheme: PhraseTheme): List<String>
 }

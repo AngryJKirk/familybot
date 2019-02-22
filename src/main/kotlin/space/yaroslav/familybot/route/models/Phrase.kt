@@ -68,11 +68,14 @@ enum class Phrase(val id: Int) {
     PLURALIZED_PIDORSKOE_MANY(65),
     BET_EXPLAIN_SINGLE_DAY(66),
     BET_WIN_END(67),
-    SUCHARA_HELLO_MESSAGE(68)
+    SUCHARA_HELLO_MESSAGE(68),
+    ASK_WORLD_REPLY_FROM_CHAT(69);
 }
 
 enum class PhraseTheme(val id: Int) {
-    DEFAULT(1)
+    DEFAULT(1),
+    DAY_OF_DEFENDER_23_FEB(2),
+    DAY_OF_WOMAN_8_MARCH(3)
 }
 
 

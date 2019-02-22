@@ -12,10 +12,15 @@ import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.executors.Executor
 import space.yaroslav.familybot.route.models.FunctionId
+import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.models.Priority
+import space.yaroslav.familybot.route.services.dictionary.Dictionary
 
 @Component
-class AskWorldSendReplyExecutor(val askWorldRepository: AskWorldRepository) : Executor, Configurable {
+class AskWorldSendReplyExecutor(
+    val askWorldRepository: AskWorldRepository,
+    val dictionary: Dictionary
+) : Executor, Configurable {
     override fun getFunctionId(): FunctionId {
         return FunctionId.ASK_WORLD
     }
@@ -30,9 +35,9 @@ class AskWorldSendReplyExecutor(val askWorldRepository: AskWorldRepository) : Ex
             askWorldRepository.findQuestionByMessageId(update.message.replyToMessage.messageId + chat.id, chat)
         return { sender ->
             replyToDeliver.forEach {
-                val questionMessage = question.message.takeIf { it.length < 100 } ?: question.message.take(100)+"..."
+                val questionMessage = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
                 val message = SendMessage(
-                    update.toChat().id, "Ответ из чата ${it.chat.name.bold()} от ${it.user.getGeneralName()} " +
+                    update.toChat().id, "${dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${it.chat.name.bold()} от ${it.user.getGeneralName()} " +
                         "на вопрсос \"$questionMessage\" : ${it.message.italic()}"
                 )
                     .enableHtml(true)

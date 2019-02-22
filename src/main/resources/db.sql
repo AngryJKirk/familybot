@@ -1,45 +1,53 @@
-CREATE TABLE IF NOT EXISTS chats (
+CREATE TABLE IF NOT EXISTS chats
+(
   id     BIGINT PRIMARY KEY,
   name   VARCHAR(100),
   active BOOLEAN DEFAULT TRUE
 );
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS users
+(
   id       BIGINT PRIMARY KEY,
   name     VARCHAR(100),
   username VARCHAR(100)
 );
 
-CREATE TABLE IF NOT EXISTS pidors (
+CREATE TABLE IF NOT EXISTS pidors
+(
   id         BIGINT REFERENCES users (id),
   chat_id    BIGINT REFERENCES chats (id),
   pidor_date TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS quotes (
+CREATE TABLE IF NOT EXISTS quotes
+(
   id    SERIAL PRIMARY KEY,
   quote VARCHAR(10000) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS tags (
+CREATE TABLE IF NOT EXISTS tags
+(
   id      SERIAL PRIMARY KEY,
   tag     VARCHAR(100) NOT NULL UNIQUE,
   chat_id BIGINT REFERENCES chats (id)
 );
 
-CREATE TABLE IF NOT EXISTS tags2quotes (
+CREATE TABLE IF NOT EXISTS tags2quotes
+(
   tag_id   INT REFERENCES tags (id),
   quote_id INT REFERENCES quotes (id),
   PRIMARY KEY (tag_id, quote_id)
 );
 
 
-CREATE TABLE IF NOT EXISTS commands (
+CREATE TABLE IF NOT EXISTS commands
+(
   id      SERIAL PRIMARY KEY,
   command VARCHAR(50) UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS history (
+CREATE TABLE IF NOT EXISTS history
+(
   command_id   BIGINT REFERENCES commands (id),
   user_id      BIGINT REFERENCES users (id),
   chat_id      BIGINT REFERENCES chats (id),
@@ -66,26 +74,31 @@ VALUES ('/stats_month'),
        ('/top_history'),
        ('/bet');
 
-CREATE TABLE IF NOT EXISTS chat_log (
+CREATE TABLE IF NOT EXISTS chat_log
+(
   chat_id BIGINT REFERENCES chats (id),
   user_id BIGINT REFERENCES users (id),
   message VARCHAR(10000)
 );
 
-CREATE TABLE IF NOT EXISTS pidor_dictionary_start (
+CREATE TABLE IF NOT EXISTS pidor_dictionary_start
+(
   start VARCHAR(500)
 );
 
-CREATE TABLE IF NOT EXISTS pidor_dictionary_middle (
+CREATE TABLE IF NOT EXISTS pidor_dictionary_middle
+(
   middle VARCHAR(500)
 );
 
-CREATE TABLE IF NOT EXISTS pidor_dictionary_finisher (
+CREATE TABLE IF NOT EXISTS pidor_dictionary_finisher
+(
   finisher VARCHAR(500)
 );
 
 
-CREATE TABLE users2chats (
+CREATE TABLE users2chats
+(
   chat_id BIGINT REFERENCES chats (id),
   user_id BIGINT REFERENCES users (id),
   active  BOOLEAN default true,
@@ -93,17 +106,20 @@ CREATE TABLE users2chats (
 );
 
 
-CREATE TABLE IF NOT EXISTS pidor_leaderboard_dictionary_plurs (
+CREATE TABLE IF NOT EXISTS pidor_leaderboard_dictionary_plurs
+(
   id          INT PRIMARY KEY,
   description VARCHAR(50)
 );
 
-CREATE TABLE IF NOT EXISTS pidor_leaderboard_dictionary_v2 (
+CREATE TABLE IF NOT EXISTS pidor_leaderboard_dictionary_v2
+(
   message VARCHAR(200) PRIMARY KEY,
   plur_id INT REFERENCES pidor_leaderboard_dictionary_plurs (id)
 );
 
-CREATE TABLE IF NOT EXISTS functions (
+CREATE TABLE IF NOT EXISTS functions
+(
   function_id INTEGER PRIMARY KEY,
   description VARCHAR(200)
 );
@@ -116,7 +132,8 @@ VALUES (1, 'Хуификация'),
        (5, 'АнтиДДос'),
        (6, 'Вопросы миру');
 
-CREATE TABLE IF NOT EXISTS function_settings (
+CREATE TABLE IF NOT EXISTS function_settings
+(
   function_id INTEGER NOT NULL REFERENCES functions (function_id),
   chat_id     BIGINT REFERENCES chats (id),
   active      BOOLEAN NOT NULL DEFAULT TRUE,
@@ -176,7 +193,8 @@ CREATE TABLE IF NOT EXISTS ask_world_replies_delivery
 alter table raw_chat_log
   add column file_id varchar(500) default null;
 
-CREATE TABLE IF NOT EXISTS phrase_theme (
+CREATE TABLE IF NOT EXISTS phrase_theme
+(
   phrase_theme_id   SERIAL PRIMARY KEY,
   description       VARCHAR(200) NOT NULL,
   active_by_default BOOLEAN DEFAULT false
@@ -184,19 +202,22 @@ CREATE TABLE IF NOT EXISTS phrase_theme (
 CREATE UNIQUE INDEX ON phrase_theme (active_by_default)
   where active_by_default = true;
 
-CREATE TABLE IF NOT EXISTS phrase_type_id (
+CREATE TABLE IF NOT EXISTS phrase_type_id
+(
   phrase_type_id SERIAL PRIMARY KEY,
   description    VARCHAR(2000) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS phrase_dictionary (
+CREATE TABLE IF NOT EXISTS phrase_dictionary
+(
   phrase_dictionary_id SERIAL PRIMARY KEY,
   phrase_type_id       BIGINT REFERENCES phrase_type_id (phrase_type_id),
   phrase_theme_id      BIGINT REFERENCES phrase_theme (phrase_theme_id),
   phrase               VARCHAR(2000) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS phrase_chat_settings (
+CREATE TABLE IF NOT EXISTS phrase_chat_settings
+(
   chat_id        BIGINT REFERENCES chats (id),
   phrase_type_id BIGINT REFERENCES phrase_type_id (phrase_type_id),
   since          TIMESTAMP NOT NULL DEFAULT current_timestamp,
@@ -654,4 +675,140 @@ VALUES ((select phrase_type_id from phrase_type_id where description = 'SUCHARA_
 P.s. если в чате есть Саша, иди нахуй, Саша');
 update commands
 set command = '/legacy_roulette'
-where command = '/roulette'
+where command = '/roulette';
+
+
+INSERT INTO phrase_theme (description, active_by_default)
+VALUES ('DAY_OF_DEFENDER_23_FEB', false),
+       ('DAY_OF_WOMAN_8_MARCH', false);
+
+
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+VALUES ((SELECT phrase_type_id from phrase_type_id where description = 'BAD_COMMAND_USAGE'),
+        2,
+        'Ты ефрейтор, отъебись, читай как надо использовать команду'),
+
+       ((SELECT phrase_type_id from phrase_type_id where description = 'YOU_WAS_NOT_PIDOR'),
+        2,
+        'Ты не был ефрейтором ни разу. Ефрейтор.'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'YOU_WAS_PIDOR'), 2, 'Ты был ефрейтором'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'PIROR_DISCOVERED_MANY'),
+        2,
+        'Сегодняшние ефрейторы уже обнаружены'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'PIROR_DISCOVERED_ONE'),
+        2,
+        'Сегодняшний ефрейтор уже обнаружен'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR_STAT_WORLD'),
+        2,
+        'Топ ефрейторов всего мира за все время'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR_STAT_MONTH'), 2, 'Топ ефрейторов за месяц'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR_STAT_YEAR'), 2, 'Топ ефрейторов за год'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR_STAT_ALL_TIME'),
+        2,
+        'Топ ефрейторов за все время'),
+
+       ((SELECT phrase_type_id from phrase_type_id where description = 'RAGE_INITIAL'), 2, 'НУ ВЫ ОХУЕВШИЕ ДУХИ'),
+
+       ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR'), 2, 'Ефрейтор.'),
+
+       ((SELECT phrase_type_id from phrase_type_id where description = 'LEADERBOARD_TITLE'), 2, 'Ими гордится казарма'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'ACCESS_DENIED'),
+        2,
+        'Ну ты и ефрейтор, не для тебя ягодка росла'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'STOP_DDOS'),
+        2,
+        'Сука, еще раз нажмешь и я те всеку солдатской бляхой'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'COMPETITION_ONE_MORE_PIDOR'),
+        2,
+        'Еще один сегодняшний ефрейтор это');
+
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+VALUES ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_LEADERBOARD_ONE'),
+        2,
+        'симпатичный сержантик'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_LEADERBOARD_FEW'),
+        2,
+        'симпатичных сержантика'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_LEADERBOARD_MANY'),
+        2,
+        'симпатичных сержантиков'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_LEADERBOARD_ONE'),
+        2,
+        'лучший солдатик'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_LEADERBOARD_FEW'),
+        2,
+        'лучших солдатика'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_LEADERBOARD_MANY'),
+        2,
+        'лучших солдатиков'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_LEADERBOARD_ONE'),
+        2,
+        'заправленная кровать'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_LEADERBOARD_FEW'),
+        2,
+        'заправленных кровати'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_LEADERBOARD_MANY'),
+        2,
+        'заправленных кроватей');
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+values ((select phrase_type_id from phrase_type_id where description = 'PIDOR_SEARCH_START'),
+        2,
+        'РААВНЯЯЙСЬ! СМИИРНАА!'),
+       ((select phrase_type_id from phrase_type_id where description = 'PIDOR_SEARCH_MIDDLE'),
+        2,
+        'Кто-то из вас точно не защитник'),
+       ((select phrase_type_id from phrase_type_id where description = 'PIDOR_SEARCH_FINISHER'),
+        2,
+        'Не служил - не мужик');
+
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+values ((select phrase_type_id from phrase_type_id where description = 'USER_ENTERING_CHAT'),
+        2,
+        'Помни, тебе тут не рады. Салага.'),
+       ((select phrase_type_id from phrase_type_id where description = 'USER_ENTERING_CHAT'),
+        2,
+        'Шпингалеты подтяни, стручок. Сейчас будем тебя ебать, гражданский'),
+       ((select phrase_type_id from phrase_type_id where description = 'USER_ENTERING_CHAT'),
+        2,
+        'Готовь коптильню, будем готовить в ней свои сосиски, дух');
+
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+values ((select phrase_type_id from phrase_type_id where description = 'USER_LEAVING_CHAT'),
+        2,
+        'Одним ефрейтором меньше, одним больше...'),
+       ((select phrase_type_id from phrase_type_id where description = 'USER_LEAVING_CHAT'),
+        2,
+        'Куда собрался этот дух? Неужели в самоволку?');
+
+
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase) VALUES
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_PIDORSKOE_ONE'), 2, 'ефрейторское'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_PIDORSKOE_FEW'), 2, 'ефрейторских'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_PIDORSKOE_MANY'), 2, 'ефрейторских');
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+VALUES ((select phrase_type_id from phrase_type_id where description = 'BET_ZATRAVOCHKA'),
+        2,
+        'Кручу верчу выебать в очко хочу (нет, я же не ефрейтор в отличие от тебя)'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_EXPLAIN'),
+        2,
+        'В течение $0 $1 $2 ты будешь получать по очку ефрейторства. Систему не наебешь, петух.'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_EXPLAIN_SINGLE_DAY'),
+        2,
+        'Завтра ты получишь ефрейторское очко. Систему не наебешь, петух.');
+
+INSERT INTO phrase_type_id (description)
+VALUES ('ASK_WORLD_REPLY_FROM_CHAT');
+
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+VALUES ((select phrase_type_id from phrase_type_id where description = 'ASK_WORLD_REPLY_FROM_CHAT'),
+        1,
+        'Ответ из чата'),
+       ((select phrase_type_id from phrase_type_id where description = 'ASK_WORLD_REPLY_FROM_CHAT'),
+        2,
+        'Ответ из казармы'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'ASK_WORLD_QUESTION_FROM_CHAT'),
+        1,
+        'Вопрос из чата'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'ASK_WORLD_QUESTION_FROM_CHAT'),
+        2,
+        'Вопрос из казармы');

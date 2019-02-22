@@ -15,14 +15,17 @@ import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.executors.Executor
 import space.yaroslav.familybot.route.models.FunctionId
+import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.models.Priority
+import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 
 @Component
 class AskWorldRecieveReplyExecutor(
     val askWorldRepository: AskWorldRepository,
-    val botConfig: BotConfig
+    val botConfig: BotConfig,
+    val dictionary: Dictionary
 ) : Executor, Configurable {
     private val log = LoggerFactory.getLogger(AskWorldRecieveReplyExecutor::class.java)
     override fun getFunctionId(): FunctionId {
@@ -60,7 +63,7 @@ class AskWorldRecieveReplyExecutor(
                 val message = question.message.takeIf { it.length < 100 } ?: question.message.take(100)+"..."
                 it.execute(
                     SendMessage(
-                        question.chat.id, "Ответ из чата ${update.toChat().name.bold()} " +
+                        question.chat.id, "${dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${update.toChat().name.bold()} " +
                             "от ${user.getGeneralName()} на вопрос \"$message\": ${reply.italic()}"
                     ).enableHtml(true)
                 )
@@ -77,7 +80,7 @@ class AskWorldRecieveReplyExecutor(
         return message.replyToMessage
             ?.takeIf { it.from.bot && it.from.userName == botConfig.botname }
             ?.text
-            ?.startsWith("Вопрос из чата ") ?: false
+            ?.startsWith(dictionary.get(Phrase.ASK_WORLD_QUESTION_FROM_CHAT) + " ") ?: false
     }
 
     override fun priority(update: Update): Priority {
