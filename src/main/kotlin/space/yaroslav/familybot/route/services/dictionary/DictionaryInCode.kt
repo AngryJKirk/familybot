@@ -3,6 +3,10 @@ package space.yaroslav.familybot.route.services.dictionary
 import space.yaroslav.familybot.route.models.Phrase
 
 class DictionaryInCode : Dictionary {
+    override fun getAll(phrase: Phrase): List<String> {
+        TODO("not implemented")
+    }
+
     override fun get(phrase: Phrase): String {
         return when (phrase) {
             Phrase.BAD_COMMAND_USAGE -> "Ты пидор, отъебись, читай как надо использовать команду"

@@ -7,6 +7,10 @@ import space.yaroslav.familybot.route.models.Phrase
 
 @Component
 class DictionaryImpl(val dictionaryRepository: PhraseDictionaryRepository) : Dictionary {
+    override fun getAll(phrase: Phrase): List<String> {
+        return dictionaryRepository.getAllPhrases(phrase)
+    }
+
     override fun get(phrase: Phrase): String {
         return dictionaryRepository.getPhrases(phrase, dictionaryRepository.getDefaultPhraseTheme()).random()!!
     }

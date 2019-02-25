@@ -17,6 +17,9 @@ class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : Phras
     private val cache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES)
         .build(CacheLoader.from { type: Pair<Phrase, PhraseTheme>? -> getPhrasesInternal(type) })
 
+    private val cacheAllPhrases = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES)
+        .build(CacheLoader.from { type: Phrase? -> getAllPhrasesInternal(type) })
+
     private val themeCache = Suppliers.memoizeWithExpiration({ getThemesInternal() }, 5, TimeUnit.MINUTES)
 
     override fun getPhraseTheme(chat: Chat): PhraseTheme {
@@ -49,6 +52,18 @@ class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : Phras
                 rs.getBoolean("active_by_default")
             )
         }
+    }
+
+    override fun getAllPhrases(phrase: Phrase): List<String> {
+        return cacheAllPhrases.get(phrase)
+    }
+
+    private fun getAllPhrasesInternal(type: Phrase?): List<String> {
+        return jdbcTemplate.queryForList(
+            "select phrase from phrase_dictionary where phrase_type_id = ?",
+            String::class.java,
+            type!!.id
+        )
     }
 }
 

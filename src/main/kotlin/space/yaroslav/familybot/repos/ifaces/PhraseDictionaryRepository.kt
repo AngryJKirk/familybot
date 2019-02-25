@@ -11,4 +11,6 @@ interface PhraseDictionaryRepository {
     fun getDefaultPhraseTheme(): PhraseTheme
 
     fun getPhrases(phrase: Phrase, phraseTheme: PhraseTheme): List<String>
+
+    fun getAllPhrases(phrase: Phrase): List<String>
 }

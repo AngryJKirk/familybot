@@ -60,10 +60,11 @@ class AskWorldRecieveReplyExecutor(
         val id = askWorldRepository.addReply(askWorldReply)
         return {
             try {
-                val message = question.message.takeIf { it.length < 100 } ?: question.message.take(100)+"..."
+                val message = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
                 it.execute(
                     SendMessage(
-                        question.chat.id, "${dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${update.toChat().name.bold()} " +
+                        question.chat.id,
+                        "${dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${update.toChat().name.bold()} " +
                             "от ${user.getGeneralName()} на вопрос \"$message\": ${reply.italic()}"
                     ).enableHtml(true)
                 )
@@ -77,10 +78,13 @@ class AskWorldRecieveReplyExecutor(
     }
 
     override fun canExecute(message: Message): Boolean {
-        return message.replyToMessage
+        val text = message.replyToMessage
             ?.takeIf { it.from.bot && it.from.userName == botConfig.botname }
-            ?.text
-            ?.startsWith(dictionary.get(Phrase.ASK_WORLD_QUESTION_FROM_CHAT) + " ") ?: false
+            ?.text ?: return false
+
+        val allPrefixes = dictionary.getAll(Phrase.ASK_WORLD_QUESTION_FROM_CHAT)
+
+        return allPrefixes.map { "$it " }.any { text.startsWith(it) }
     }
 
     override fun priority(update: Update): Priority {
