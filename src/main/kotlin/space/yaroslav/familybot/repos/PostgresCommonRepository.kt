@@ -41,7 +41,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
         if (activeOnly) {
             select += "and u.active = true"
         }
-        return template.query(select, { rs, _ -> rs.toUser() })
+        return template.query(select) { rs, _ -> rs.toUser() }
     }
 
     override fun addChat(chat: Chat) {

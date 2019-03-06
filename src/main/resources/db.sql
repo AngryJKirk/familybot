@@ -81,41 +81,12 @@ CREATE TABLE IF NOT EXISTS chat_log
   message VARCHAR(10000)
 );
 
-CREATE TABLE IF NOT EXISTS pidor_dictionary_start
-(
-  start VARCHAR(500)
-);
-
-CREATE TABLE IF NOT EXISTS pidor_dictionary_middle
-(
-  middle VARCHAR(500)
-);
-
-CREATE TABLE IF NOT EXISTS pidor_dictionary_finisher
-(
-  finisher VARCHAR(500)
-);
-
-
 CREATE TABLE users2chats
 (
   chat_id BIGINT REFERENCES chats (id),
   user_id BIGINT REFERENCES users (id),
   active  BOOLEAN default true,
   PRIMARY KEY (chat_id, user_id)
-);
-
-
-CREATE TABLE IF NOT EXISTS pidor_leaderboard_dictionary_plurs
-(
-  id          INT PRIMARY KEY,
-  description VARCHAR(50)
-);
-
-CREATE TABLE IF NOT EXISTS pidor_leaderboard_dictionary_v2
-(
-  message VARCHAR(200) PRIMARY KEY,
-  plur_id INT REFERENCES pidor_leaderboard_dictionary_plurs (id)
 );
 
 CREATE TABLE IF NOT EXISTS functions

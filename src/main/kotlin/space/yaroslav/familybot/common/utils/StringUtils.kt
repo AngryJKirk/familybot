@@ -7,7 +7,7 @@ fun String?.dropLastDelimiter(): String? {
     if (this.isNullOrEmpty()) {
         return this
     }
-    return if (this!!.lastOrNull()?.isLetterOrDigit() != true) {
+    return if (this.lastOrNull()?.isLetterOrDigit() != true) {
         this.dropLast(1)
     } else {
         this
