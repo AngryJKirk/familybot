@@ -9,18 +9,25 @@ import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.repos.ifaces.PhraseDictionaryRepository
 import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.models.PhraseTheme
+import java.time.Instant
 import java.util.concurrent.TimeUnit
 
 @Component
 class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : PhraseDictionaryRepository {
 
-    private val cache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES)
+    private val cache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES)
         .build(CacheLoader.from { type: Pair<Phrase, PhraseTheme>? -> getPhrasesInternal(type) })
 
-    private val cacheAllPhrases = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES)
+    private val cacheAllPhrases = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES)
         .build(CacheLoader.from { type: Phrase? -> getAllPhrasesInternal(type) })
 
-    private val themeCache = Suppliers.memoizeWithExpiration({ getThemesInternal() }, 5, TimeUnit.MINUTES)
+    private val themeCache = Suppliers.memoizeWithExpiration({ getThemesInternal() }, 1, TimeUnit.MINUTES)
+
+    private val themeSettingsCache = Suppliers.memoizeWithExpiration({ getThemesSettingsInternal() }, 1, TimeUnit.MINUTES)
+
+    override fun getPhraseSettings(): List<PhraseThemeSetting> {
+        return themeSettingsCache.get()
+    }
 
     override fun getPhraseTheme(chat: Chat): PhraseTheme {
         TODO()
@@ -54,6 +61,18 @@ class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : Phras
         }
     }
 
+    private fun getThemesSettingsInternal(): List<PhraseThemeSetting> {
+        return jdbcTemplate.query(
+            "select * from phrase_theme_settings;"
+        ) { rs, _ ->
+            PhraseThemeSetting(
+                PhraseTheme.values().first { it.id == rs.getInt("phrase_theme_id") },
+                rs.getTimestamp("since").toInstant(),
+                rs.getTimestamp("till").toInstant()
+            )
+        }
+    }
+
     override fun getAllPhrases(phrase: Phrase): List<String> {
         return cacheAllPhrases.get(phrase)
     }
@@ -70,4 +89,10 @@ class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : Phras
 class PhraseThemeDescription(
     val theme: PhraseTheme,
     val isDefault: Boolean
+)
+
+class PhraseThemeSetting(
+    val theme: PhraseTheme,
+    val since: Instant,
+    val till: Instant
 )

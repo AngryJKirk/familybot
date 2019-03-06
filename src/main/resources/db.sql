@@ -187,16 +187,6 @@ CREATE TABLE IF NOT EXISTS phrase_dictionary
   phrase               VARCHAR(2000) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS phrase_chat_settings
-(
-  chat_id        BIGINT REFERENCES chats (id),
-  phrase_type_id BIGINT REFERENCES phrase_type_id (phrase_type_id),
-  since          TIMESTAMP NOT NULL DEFAULT current_timestamp,
-  till           TIMESTAMP NOT NULL,
-  is_forced      BOOLEAN   NOT NULL DEFAULT false
-
-);
-
 INSERT INTO phrase_type_id (description)
 VALUES ('BAD_COMMAND_USAGE'),
        ('ASK_WORLD_LIMIT_BY_CHAT'),
@@ -790,3 +780,11 @@ INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
 VALUES ((select phrase_type_id from phrase_type_id where description = 'TECHNICAL_ISSUE'),
         1,
         'Команда на техническом обслуживании. Обслуживание завершится в течение суток.')
+
+
+CREATE TABLE IF NOT EXISTS phrase_theme_settings
+(
+  phrase_theme_id BIGINT REFERENCES phrase_theme (phrase_theme_id),
+  since          TIMESTAMP NOT NULL,
+  till           TIMESTAMP NOT NULL
+);

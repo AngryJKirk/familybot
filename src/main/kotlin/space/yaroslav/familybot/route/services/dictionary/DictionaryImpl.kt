@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.utils.random
 import space.yaroslav.familybot.repos.ifaces.PhraseDictionaryRepository
 import space.yaroslav.familybot.route.models.Phrase
+import java.time.Instant
 
 @Component
 class DictionaryImpl(val dictionaryRepository: PhraseDictionaryRepository) : Dictionary {
@@ -12,6 +13,12 @@ class DictionaryImpl(val dictionaryRepository: PhraseDictionaryRepository) : Dic
     }
 
     override fun get(phrase: Phrase): String {
-        return dictionaryRepository.getPhrases(phrase, dictionaryRepository.getDefaultPhraseTheme()).random()!!
+        val now = Instant.now()
+        val theme = dictionaryRepository.getPhraseSettings()
+            .find { now.isAfter(it.since) and now.isBefore(it.till) }
+            ?.theme
+            ?: dictionaryRepository.getDefaultPhraseTheme()
+
+        return dictionaryRepository.getPhrases(phrase, theme).random()!!
     }
 }
