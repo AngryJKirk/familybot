@@ -85,6 +85,7 @@ class DictionaryInCode : Dictionary {
             Phrase.BET_WIN_END -> TODO()
             Phrase.SUCHARA_HELLO_MESSAGE -> TODO()
             Phrase.ASK_WORLD_REPLY_FROM_CHAT -> TODO()
+            Phrase.TECHNICAL_ISSUE -> TODO()
         }
     }
 }

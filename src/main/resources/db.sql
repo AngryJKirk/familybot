@@ -812,3 +812,10 @@ VALUES ((select phrase_type_id from phrase_type_id where description = 'ASK_WORL
        ((SELECT phrase_type_id from phrase_type_id where description = 'ASK_WORLD_QUESTION_FROM_CHAT'),
         2,
         'Вопрос из казармы');
+
+INSERT INTO phrase_type_id (description)
+VALUES ('TECHNICAL_ISSUE');
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+VALUES ((select phrase_type_id from phrase_type_id where description = 'TECHNICAL_ISSUE'),
+        1,
+        'Команда на техническом обслуживании. Обслуживание завершится в течение суток.')
