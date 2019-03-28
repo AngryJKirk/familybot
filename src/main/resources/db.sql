@@ -788,3 +788,123 @@ CREATE TABLE IF NOT EXISTS phrase_theme_settings
   since          TIMESTAMP NOT NULL,
   till           TIMESTAMP NOT NULL
 );
+
+
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+VALUES ((SELECT phrase_type_id from phrase_type_id where description = 'BAD_COMMAND_USAGE'),
+        3,
+        'Ты мясная дырка, отъебись, читай как надо использовать команду'),
+
+       ((SELECT phrase_type_id from phrase_type_id where description = 'YOU_WAS_NOT_PIDOR'),
+        3,
+        'Ты не был мясной дырой ни разу.'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'YOU_WAS_PIDOR'), 3, 'Ты была дырой в мясе'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'PIROR_DISCOVERED_MANY'),
+        3,
+        'Сегодняшние дырки в мясе уже обнаружены'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'PIROR_DISCOVERED_ONE'),
+        3,
+        'Сегодняшняя дырка в мясе уже обнаружена'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR_STAT_WORLD'),
+        3,
+        'Топ мясных дырок всего мира за все время'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR_STAT_MONTH'), 3, 'Топ мясных дырок за месяц'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR_STAT_YEAR'), 3, 'Топ мясных дырок за год'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR_STAT_ALL_TIME'),
+        3,
+        'Топ мясных дырок за все время'),
+
+       ((SELECT phrase_type_id from phrase_type_id where description = 'RAGE_INITIAL'), 3, 'НУ ВЫ ОХУЕВШИЕ ДЫРКИ'),
+
+       ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR'), 3, 'Дырка.'),
+
+       ((SELECT phrase_type_id from phrase_type_id where description = 'LEADERBOARD_TITLE'), 3, 'Ими гордятся мужья'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'ACCESS_DENIED'),
+        3,
+        'Ну ты и дырка, не для тебя ягодка росла'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'STOP_DDOS'),
+        3,
+        'Сука, еще раз нажмешь и я те маникюр обломаю'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'COMPETITION_ONE_MORE_PIDOR'),
+        3,
+        'Еще одна сегодняшняя дырка это');
+
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+VALUES ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_LEADERBOARD_ONE'),
+        3,
+        'шершавый вареник'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_LEADERBOARD_FEW'),
+        3,
+        'шершавых вареника'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_LEADERBOARD_MANY'),
+        3,
+        'шершавых вареников'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_LEADERBOARD_ONE'),
+        3,
+        'дряблая сиська'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_LEADERBOARD_FEW'),
+        3,
+        'дряблых сиськи'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_LEADERBOARD_MANY'),
+        3,
+        'дряблых сисек'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_LEADERBOARD_ONE'),
+        3,
+        'прыщавое еблище'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_LEADERBOARD_FEW'),
+        3,
+        'прыщавых еблища'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_LEADERBOARD_MANY'),
+        3,
+        'прыщавых еблищ');
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+values ((select phrase_type_id from phrase_type_id where description = 'PIDOR_SEARCH_START'),
+        3,
+        'Девочки 🙍‍♀️🙍‍♀️🙍‍♀️записываемся на ноготочки💅💃😻'),
+       ((select phrase_type_id from phrase_type_id where description = 'PIDOR_SEARCH_MIDDLE'),
+        3,
+        'осталось одно место 🙏😍☺️ '),
+       ((select phrase_type_id from phrase_type_id where description = 'PIDOR_SEARCH_FINISHER'),
+        3,
+        'Маникюрчик для главной дырки в мясе👸💅👠');
+
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+values ((select phrase_type_id from phrase_type_id where description = 'USER_ENTERING_CHAT'),
+        3,
+        'Ой, посмотрите какая красоточка'),
+       ((select phrase_type_id from phrase_type_id where description = 'USER_ENTERING_CHAT'),
+        3,
+        'Бля, ну и мымра же');
+
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+values ((select phrase_type_id from phrase_type_id where description = 'USER_LEAVING_CHAT'),
+        3,
+        'Мне эта коза никогда не нравилась'),
+       ((select phrase_type_id from phrase_type_id where description = 'USER_LEAVING_CHAT'),
+        3,
+        'Да я ее батю ебала');
+
+
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase) VALUES
+((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_PIDORSKOE_ONE'), 3, 'дырочное'),
+((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_PIDORSKOE_FEW'), 3, 'дырочных'),
+((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_PIDORSKOE_MANY'), 3, 'дырочных');
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+VALUES ((select phrase_type_id from phrase_type_id where description = 'BET_ZATRAVOCHKA'),
+        3,
+        'Кручу верчу выебать в пизду хочу (нет, я же не мясная дырка в отличие от тебя)'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_EXPLAIN'),
+        3,
+        'В течение $0 $1 $2 ты будешь получать по очку дыркости. Систему не наебешь, шлюха.'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_EXPLAIN_SINGLE_DAY'),
+        3,
+        'Завтра ты получишь дырочное очко. Систему не наебешь, шалава.');
+
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+VALUES
+       ((select phrase_type_id from phrase_type_id where description = 'ASK_WORLD_REPLY_FROM_CHAT'),
+        3,
+        'Ответ из клуба бывших жён'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'ASK_WORLD_QUESTION_FROM_CHAT'),
+        3,
+        'Вопрос из клуба бывших жён');

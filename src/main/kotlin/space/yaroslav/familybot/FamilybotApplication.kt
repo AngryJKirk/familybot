@@ -1,7 +1,6 @@
 package space.yaroslav.familybot
 
 import org.springframework.boot.SpringApplication
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Bean
 import org.telegram.telegrambots.ApiContextInitializer
@@ -12,7 +11,6 @@ import space.yaroslav.familybot.telegram.FamilyBot
 import java.util.logging.Level
 
 @SpringBootApplication
-@EnableAutoConfiguration
 class FamilybotApplication {
 
     @Bean
@@ -29,7 +27,7 @@ class FamilybotApplication {
     }
 }
 
-fun main(args: Array<String>) {
+fun main() {
     BotLogger.setLevel(Level.ALL)
     ApiContextInitializer.init()
     val app = SpringApplication(FamilybotApplication::class.java)
