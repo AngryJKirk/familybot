@@ -18,6 +18,7 @@ enum class Command(val command: String, val id: Int) {
     STATS_WORLD("/stats_world", 15),
     ME("/me", 16),
     TOP_HISTORY("/top_history", 17),
-    BET("/bet", 18)
+    BET("/bet", 18),
+    WHATS_MOOD_TODAY("/today", 19)
 }
 
