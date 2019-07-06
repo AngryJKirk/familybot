@@ -14,13 +14,17 @@ fun String?.dropLastDelimiter(): String? {
     }
 }
 
-fun String?.bold(): String? {
+fun String?.boldNullable(): String? {
     if (this == null) return null
 
     return "<b>$this</b>"
 }
 
-fun String?.italic(): String? {
+fun String.bold(): String = "<b>$this</b>"
+
+fun String.italic(): String = "<i>$this</i>"
+
+fun String?.italicNullable(): String? {
     if (this == null) return null
 
     return "<i>$this</i>"

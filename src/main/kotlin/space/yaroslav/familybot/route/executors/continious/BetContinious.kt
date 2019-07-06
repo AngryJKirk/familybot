@@ -1,14 +1,18 @@
 package space.yaroslav.familybot.route.executors.continious
 
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
+import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.Pluralization
+import space.yaroslav.familybot.common.User
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
@@ -49,61 +53,66 @@ class BetContinious(
             user, LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
                 .toInstant(ZoneOffset.UTC)
         )
-        if (commands.any { it.command == command() }) {
+        if (isBetAlreadyWas(commands)) {
             return {
-                it.execute(SendMessage(chatId, dictionary.get(Phrase.BET_ALREADY_WAS)))
+                it.send(update, dictionary.get(Phrase.BET_ALREADY_WAS))
             }
         }
-        val number = update.message.text.split(" ")[0].toIntOrNull()
+        val number = extractBetNumber(update)
         if (number == null || number !in 1..3) {
             return {
-                it.execute(SendMessage(chatId, dictionary.get(Phrase.BET_BREAKING_THE_RULES_FIRST)))
+                it.send(update, dictionary.get(Phrase.BET_BREAKING_THE_RULES_FIRST))
                 Thread.sleep(1000)
-                it.execute(SendMessage(chatId, dictionary.get(Phrase.BET_BREAKING_THE_RULES_SECOND)))
+                it.send(update, dictionary.get(Phrase.BET_BREAKING_THE_RULES_SECOND))
             }
         }
-        val result = ThreadLocalRandom.current().nextBoolean()
+        val isItWinner = ThreadLocalRandom.current().nextBoolean()
         return {
-            if (result) {
-                it.execute(SendMessage(chatId, dictionary.get(Phrase.BET_ZATRAVOCHKA)))
-                GlobalScope.launch { repeat(number) { pidorRepository.removePidorRecord(user) } }
-                Thread.sleep(2000)
-                it.execute(SendMessage(chatId, dictionary.get(Phrase.BET_WIN)))
-                Thread.sleep(2000)
-                it.execute(SendMessage(chatId, winEndPhrase(number)))
-            } else {
-                it.execute(SendMessage(chatId, dictionary.get(Phrase.BET_ZATRAVOCHKA)))
-                GlobalScope.launch {
-                    var i: Int = number
-                    while (i != 0) {
-                        pidorRepository.addPidor(
-                            Pidor(
-                                user,
-                                LocalDateTime
-                                    .now()
-                                    .toLocalDate()
-                                    .atStartOfDay()
-                                    .plusDays(i.toLong())
-                                    .toInstant(ZoneOffset.UTC)
-                            )
-                        )
-                        i--
-                    }
+            runBlocking {
+                if (isItWinner) {
+                    it.execute(SendMessage(chatId, dictionary.get(Phrase.BET_ZATRAVOCHKA)))
+                    launch { repeat(number) { pidorRepository.removePidorRecord(user) } }
+                    delay(2000)
+                    it.send(update, dictionary.get(Phrase.BET_WIN))
+                    delay(2000)
+                    it.send(update, winEndPhrase(number))
+                } else {
+                    it.send(update, dictionary.get(Phrase.BET_ZATRAVOCHKA))
+                    launch { addPidorsMultiplyTimesWithDayShift(number, user) }
+                    delay(2000)
+                    it.send(update, dictionary.get(Phrase.BET_LOSE))
+                    delay(2000)
+                    it.send(update, explainPhrase(number))
                 }
-                Thread.sleep(2000)
-                it.execute(
-                    SendMessage(
-                        chatId,
-                        dictionary.get(Phrase.BET_LOSE)
-                    )
-                )
-                Thread.sleep(2000)
-                it.execute(SendMessage(chatId, explainPhrase(number)))
+                delay(2000)
+                pidorCompetitionService.pidorCompetition(update)?.invoke(it)
             }
-            Thread.sleep(2000)
-            pidorCompetitionService.pidorCompetition(update)?.invoke(it)
         }
     }
+
+    private fun addPidorsMultiplyTimesWithDayShift(number: Int, user: User) {
+        var i: Int = number
+        while (i != 0) {
+            pidorRepository.addPidor(
+                Pidor(
+                    user,
+                    LocalDateTime
+                        .now()
+                        .toLocalDate()
+                        .atStartOfDay()
+                        .plusDays(i.toLong())
+                        .toInstant(ZoneOffset.UTC)
+                )
+            )
+            i--
+        }
+    }
+
+    private fun extractBetNumber(update: Update) =
+        update.message.text.split(" ")[0].toIntOrNull()
+
+    private fun isBetAlreadyWas(commands: List<CommandByUser>) =
+        commands.any { it.command == command() }
 
     private fun winEndPhrase(betNumber: Int): String {
         val plur = Pluralization.getPlur(betNumber)

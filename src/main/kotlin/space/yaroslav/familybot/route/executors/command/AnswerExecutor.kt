@@ -1,13 +1,15 @@
 package space.yaroslav.familybot.route.executors.command
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.methods.send.SendVoice
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.utils.dropLastDelimiter
 import space.yaroslav.familybot.common.utils.random
 import space.yaroslav.familybot.common.utils.randomNotNull
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.Phrase
@@ -24,27 +26,33 @@ class AnswerExecutor(val textToSpeechService: TextToSpeechService, val dictionar
     override fun execute(update: Update): (AbsSender) -> Unit {
         val text = update.message.text
         val message = text
-            .removeRange(0, text.indexOfFirst { it == ' ' }.takeIf { it >= 0 } ?: 0)
+            .removeRange(0, getIndexOfQuestionStart(text))
             .split(" или ")
-            .filter { variant -> variant.isNotEmpty() }
-            .takeIf { it.size >= 2 }
+            .filter(String::isNotEmpty)
+            .takeIf(this::isOptionsCountEnough)
             ?.random()
             ?.capitalize()
             ?.dropLastDelimiter()
             ?: return {
-                it.execute(
-                    SendMessage(update.toChat().id, dictionary.get(Phrase.BAD_COMMAND_USAGE))
-                        .setReplyToMessageId(update.message.messageId)
-                )
+                it.send(update, dictionary.get(Phrase.BAD_COMMAND_USAGE), replyToUpdate = true)
             }
         return {
-            val sendAudio = SendVoice()
-            sendAudio.chatId = update.toChat().id.toString()
-            val emotion = YandexSpeechType.values().toList().randomNotNull()
-            sendAudio.setNewVoice("Test", textToSpeechService.toSpeech(message, emotion = emotion))
-            sendAudio.replyToMessageId = update.message.messageId
-            it.sendVoice(sendAudio)
+            runBlocking {
+                val textToSpeech = async { textToSpeechService.toSpeech(message, emotion = randomEmotion()) }
+                val sendAudio = SendVoice().apply {
+                    chatId = update.toChat().id.toString()
+                    replyToMessageId = update.message.messageId
+                    setNewVoice("Test", textToSpeech.await())
+                }
+                it.sendVoice(sendAudio)
+            }
         }
     }
+
+    private fun randomEmotion() = YandexSpeechType.values().toList().randomNotNull()
+
+    private fun isOptionsCountEnough(options: List<String>) = options.size >= 2
+
+    private fun getIndexOfQuestionStart(text: String) = text.indexOfFirst { it == ' ' }.takeIf { it >= 0 } ?: 0
 }
 

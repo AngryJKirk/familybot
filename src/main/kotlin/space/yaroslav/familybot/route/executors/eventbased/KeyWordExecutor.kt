@@ -1,12 +1,11 @@
 package space.yaroslav.familybot.route.executors.eventbased
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
-import space.yaroslav.familybot.common.utils.random
 import space.yaroslav.familybot.common.utils.randomNotNull
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
@@ -38,31 +37,18 @@ class KeyWordExecutor(
     override fun execute(update: Update): (AbsSender) -> Unit {
         val chat = update.toChat()
         val rageModEnabled = configRepository.isEnabled(chat)
-        if (rageModEnabled || ThreadLocalRandom.current().nextInt(0, 7) == 0) {
-            val string = keyset.get(update.toUser()).takeIf { it.size > 300 }
-                ?.asSequence()
-                ?.filterNot { it.length > 600 }
-                ?.filterNot { it.contains("http", ignoreCase = true) }
-                ?.toList()
-                ?.random()
-                ?: keyset.getAll()
-                    .asSequence()
-                    .filterNot { it.length > 600 }
-                    .filterNot { it.contains("http", ignoreCase = true) }
-                    .filter { it.split(" ").size > 5 }
-                    .toList()
-                    .randomNotNull()
+        if (shouldReply(rageModEnabled)) {
+            val messages = keyset.get(update.toUser()).takeIf { it.size > 300 }
+                ?: keyset.getAll().filter { it.split(" ").size <= 10 }
 
-            val message = if (rageModEnabled) {
-                rageModeFormat(string)
-            } else {
-                string
-            }
+            val messageText = messages
+                .let(this::cleanMessages)
+                .toList()
+                .randomNotNull()
+                .let { if (rageModEnabled) rageModeFormat(it) else it }
+
             return {
-                it.execute(
-                    SendMessage(chat.id, message)
-                        .setReplyToMessageId(update.message.messageId)
-                )
+                it.send(update, messageText, replyToUpdate = true)
                 configRepository.decrement(chat)
             }
         } else {
@@ -74,11 +60,21 @@ class KeyWordExecutor(
         return configRepository.isEnabled(message.chat.toChat())
     }
 
+    private fun shouldReply(rageModEnabled: Boolean) =
+        rageModEnabled || ThreadLocalRandom.current().nextInt(0, 7) == 0
+
     private fun rageModeFormat(string: String): String {
         var message = string
         if (message.endsWith(" ")) {
             message = message.dropLast(1)
         }
         return message.toUpperCase() + "!!!!"
+    }
+
+    private fun cleanMessages(messages: List<String>): Sequence<String> {
+        return messages
+            .asSequence()
+            .filterNot { it.length > 600 }
+            .filterNot { it.contains("http", ignoreCase = true) }
     }
 }

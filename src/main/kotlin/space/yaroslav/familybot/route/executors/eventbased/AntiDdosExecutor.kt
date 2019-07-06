@@ -2,12 +2,13 @@ package space.yaroslav.familybot.route.executors.eventbased
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.AnswerCallbackQuery
-import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.api.objects.User
 import org.telegram.telegrambots.bots.AbsSender
+import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.utils.parseCommand
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.route.executors.Configurable
@@ -31,15 +32,8 @@ class AntiDdosExecutor(
     override fun execute(update: Update): (AbsSender) -> Unit {
         val message = dictionary.get(Phrase.STOP_DDOS)
         return when {
-            update.hasCallbackQuery() -> { it ->
-                it.execute(
-                    AnswerCallbackQuery()
-                        .setCallbackQueryId(update.callbackQuery.id)
-                        .setShowAlert(true)
-                        .setText(message)
-                )
-            }
-            update.hasMessage() -> { it -> it.execute(SendMessage(update.message.chatId, message)) }
+            update.hasCallbackQuery() -> callbackQueryCase(update, message)
+            update.hasMessage() -> messageCase(update, message)
             else -> { _ -> }
         }
     }
@@ -47,7 +41,7 @@ class AntiDdosExecutor(
     override fun canExecute(message: Message): Boolean {
         return repositoryCommand
             .get(selectUser(message).toUser(telegramChat = message.chat))
-            .groupBy { it.command }
+            .groupBy(CommandByUser::command)
             .filterValues { it.size >= 5 }
             .keys
             .contains(getText(message).parseCommand())
@@ -72,5 +66,22 @@ class AntiDdosExecutor(
         } else {
             message.text
         }
+    }
+
+    private fun messageCase(
+        update: Update,
+        message: String
+    ): (AbsSender) -> Unit = { it.send(update, message) }
+
+    private fun callbackQueryCase(
+        update: Update,
+        message: String
+    ): (AbsSender) -> Unit = { it ->
+        it.execute(
+            AnswerCallbackQuery()
+                .setCallbackQueryId(update.callbackQuery.id)
+                .setShowAlert(true)
+                .setText(message)
+        )
     }
 }

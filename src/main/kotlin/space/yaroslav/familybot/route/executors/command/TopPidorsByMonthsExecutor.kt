@@ -1,7 +1,6 @@
 package space.yaroslav.familybot.route.executors.command
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.Pidor
@@ -10,6 +9,7 @@ import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.dropLastDelimiter
 import space.yaroslav.familybot.common.utils.italic
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toRussian
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
@@ -55,12 +55,7 @@ class TopPidorsByMonthsExecutor(
 
         val message = "${dictionary.get(Phrase.LEADERBOARD_TITLE)}:\n".bold()
         return {
-            it.execute(
-                SendMessage(
-                    update.toChat().id,
-                    message + "\n" + result.joinToString(delimiter)
-                ).enableHtml(true)
-            )
+            it.send(update, message + "\n" + result.joinToString(delimiter), enableHtml = true)
         }
     }
 

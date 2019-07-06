@@ -1,12 +1,17 @@
 package space.yaroslav.familybot.route.executors.eventbased.askworld
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
-import space.yaroslav.familybot.common.utils.bold
+import space.yaroslav.familybot.common.AskWorldQuestion
+import space.yaroslav.familybot.common.AskWorldReply
+import space.yaroslav.familybot.common.Chat
+import space.yaroslav.familybot.common.utils.boldNullable
 import space.yaroslav.familybot.common.utils.italic
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
 import space.yaroslav.familybot.route.executors.Configurable
@@ -26,25 +31,19 @@ class AskWorldSendReplyExecutor(
     }
 
     override fun execute(update: Update): (AbsSender) -> Unit {
-        val replyToDeliver = askWorldRepository
-            .getQuestionsFromChat(update.message.chat.toChat())
-            .flatMap { askWorldRepository.getReplies(it) }
-            .filterNot { askWorldRepository.isReplyDelivered(it) }
         val chat = update.toChat()
-        val question =
-            askWorldRepository.findQuestionByMessageId(update.message.replyToMessage.messageId + chat.id, chat)
+        val replyToDeliver = getRepliesToDeliver(chat)
+        val question = askWorldRepository.findQuestionByMessageId(extractQuestionMessageId(update, chat), chat)
         return { sender ->
             replyToDeliver.forEach {
-                val questionMessage = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
-                val message = SendMessage(
-                    update.toChat().id,
-                    "${dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${it.chat.name.bold()} от ${it.user.getGeneralName()} " +
-                        "на вопрсос \"$questionMessage\" : ${it.message.italic()}"
-                )
-                    .enableHtml(true)
-                sender.execute(message)
-                Thread.sleep(1000)
-                askWorldRepository.addReplyDeliver(it)
+                GlobalScope.launch {
+                    sender.send(
+                        update,
+                        formatReplyMessageText(it, cutQuestionTextIfTooLong(question)),
+                        enableHtml = true
+                    )
+                    askWorldRepository.addReplyDeliver(it)
+                }
             }
         }
     }
@@ -52,11 +51,39 @@ class AskWorldSendReplyExecutor(
     override fun canExecute(message: Message): Boolean {
         return askWorldRepository
             .getQuestionsFromChat(message.chat.toChat())
-            .flatMap { askWorldRepository.getReplies(it) }
+            .flatMap(askWorldRepository::getReplies)
             .any { !askWorldRepository.isReplyDelivered(it) }
     }
 
     override fun priority(update: Update): Priority {
         return Priority.LOW
     }
+
+    private fun formatReplyMessageText(
+        askWorldReply: AskWorldReply,
+        questionMessage: String
+    ): String {
+        val replyFromChatPrefix = dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)
+        val boldChatName = askWorldReply.chat.name.boldNullable()
+        val userGeneralName = askWorldReply.user.getGeneralName()
+        val italicReplyText = askWorldReply.message.italic()
+
+        return "$replyFromChatPrefix $boldChatName от $userGeneralName " +
+            "на вопрсос \"$questionMessage\" : $italicReplyText"
+    }
+
+    private fun extractQuestionMessageId(
+        update: Update,
+        chat: Chat
+    ) = update.message.replyToMessage.messageId + chat.id
+
+    private fun getRepliesToDeliver(chat: Chat): List<AskWorldReply> {
+        return askWorldRepository
+            .getQuestionsFromChat(chat)
+            .flatMap(askWorldRepository::getReplies)
+            .filterNot(askWorldRepository::isReplyDelivered)
+    }
+
+    private fun cutQuestionTextIfTooLong(question: AskWorldQuestion) =
+        question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
 }

@@ -2,11 +2,11 @@ package space.yaroslav.familybot.route.executors.command
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.utils.isToday
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
@@ -42,25 +42,25 @@ class RageExecutor(
             logger.warn("Someone forced ${command()}")
             configRepository.enable(10, 20, chat)
             return {
-                it.execute(SendMessage(update.message.chatId, dictionary.get(Phrase.RAGE_INITIAL)))
+                it.send(update, dictionary.get(Phrase.RAGE_INITIAL))
             }
         }
 
         if (isFirstLaunch(chat)) {
             return {
-                it.execute(SendMessage(update.message.chatId, dictionary.get(Phrase.TECHNICAL_ISSUE)))
+                it.send(update, dictionary.get(Phrase.TECHNICAL_ISSUE))
             }
         }
 
         if (isCooldown(update)) {
             return {
-                it.execute(SendMessage(update.message.chatId, dictionary.get(Phrase.RAGE_DONT_CARE_ABOUT_YOU)))
+                it.send(update, dictionary.get(Phrase.RAGE_DONT_CARE_ABOUT_YOU))
             }
         }
 
         configRepository.enable(10, 20, chat)
         return {
-            it.execute(SendMessage(update.message.chatId, dictionary.get(Phrase.RAGE_INITIAL)))
+            it.send(update, dictionary.get(Phrase.RAGE_INITIAL))
         }
     }
 

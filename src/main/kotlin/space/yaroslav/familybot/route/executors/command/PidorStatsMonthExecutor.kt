@@ -1,11 +1,12 @@
 package space.yaroslav.familybot.route.executors.command
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
+import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.formatTopList
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toRussian
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
@@ -40,16 +41,9 @@ class PidorStatsMonthExecutor(
             startDate = LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
                 .toInstant(ZoneOffset.UTC)
         )
-            .map { it.user }
+            .map(Pidor::user)
             .formatTopList()
         val title = "${dictionary.get(Phrase.PIDOR_STAT_MONTH)} ${now.month.toRussian()}:\n".bold()
-        return {
-            it.execute(
-                SendMessage(
-                    update.message.chatId,
-                    title + pidorsByChat.joinToString("\n")
-                ).enableHtml(true)
-            )
-        }
+        return { it.send(update, title + pidorsByChat.joinToString("\n"), enableHtml = true) }
     }
 }

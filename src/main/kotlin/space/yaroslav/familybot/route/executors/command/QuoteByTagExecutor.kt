@@ -6,7 +6,7 @@ import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton
 import org.telegram.telegrambots.bots.AbsSender
-import space.yaroslav.familybot.common.utils.toChat
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.repos.ifaces.QuoteRepository
 import space.yaroslav.familybot.route.models.Command
 
@@ -24,15 +24,13 @@ class QuoteByTagExecutor(val quoteRepository: QuoteRepository) : CommandExecutor
                 .getTags()
                 .map { InlineKeyboardButton().setText(it.capitalize()).setCallbackData(it) }
                 .chunked(3)
-            it.execute(
-                SendMessage(update.toChat().id, QUOTE_MESSAGE)
-                    .setReplyToMessageId(update.message.messageId)
-                    .setReplyMarkup(
-                        InlineKeyboardMarkup()
-                            .setKeyboard(rows)
-                    )
-            )
+            it.send(update, QUOTE_MESSAGE, replyToUpdate = true, customization = customization(rows))
+        }
+    }
 
+    private fun customization(rows: List<List<InlineKeyboardButton>>): (SendMessage) -> SendMessage {
+        return { message: SendMessage ->
+            message.setReplyMarkup(InlineKeyboardMarkup().setKeyboard(rows))
         }
     }
 }

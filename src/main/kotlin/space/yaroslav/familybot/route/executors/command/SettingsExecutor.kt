@@ -4,6 +4,8 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
+import space.yaroslav.familybot.common.Chat
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.FunctionsConfigureRepository
 import space.yaroslav.familybot.route.models.Command
@@ -23,11 +25,22 @@ class SettingsExecutor(
     override fun execute(update: Update): (AbsSender) -> Unit {
         val chat = update.toChat()
         return {
-            it.execute(
-                SendMessage(chat.id, dictionary.get(Phrase.WHICH_SETTING_SHOULD_CHANGE))
-                    .setReplyToMessageId(update.message.messageId)
-                    .setReplyMarkup(FunctionId.toKeyBoard { configureRepository.isEnabled(it, chat) })
+            it.send(
+                update,
+                dictionary.get(Phrase.WHICH_SETTING_SHOULD_CHANGE),
+                replyToUpdate = true,
+                customization = customization(chat)
             )
         }
     }
+
+    private fun customization(chat: Chat) =
+        { message: SendMessage ->
+            message.setReplyMarkup(FunctionId.toKeyBoard {
+                configureRepository.isEnabled(
+                    it,
+                    chat
+                )
+            })
+        }
 }

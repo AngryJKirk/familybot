@@ -1,12 +1,12 @@
 package space.yaroslav.familybot.route.executors.command
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.pluralize
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
@@ -32,16 +32,11 @@ class MeCommandExecutor(
         val user = update.toUser()
         val chat = update.toChat()
         val pidorCount = getPidorsCount(chat, user)
-        val commandCount =
-            getCommandCount(user)
+        val commandCount = getCommandCount(user)
         val messageCount = getMessageCount(chat, user)
+        val message = setOf(pidorCount, commandCount, messageCount).joinToString("\n")
 
-        return {
-            it.execute(
-                SendMessage(chat.id, setOf(pidorCount, commandCount, messageCount).joinToString("\n"))
-                    .setReplyToMessageId(update.message.messageId)
-            )
-        }
+        return { it.send(update, message, replyToUpdate = true) }
     }
 
     private fun getMessageCount(chat: Chat, user: User): String {

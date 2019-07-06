@@ -20,6 +20,7 @@ import java.time.ZoneOffset
 const val ROULETTE_MESSAGE = "Выбери число от 1 до 6"
 
 @Component
+@Deprecated(message = "Replaced with BetExecutor")
 class RouletteExecutor(
     private val commandHistoryRepository: CommandHistoryRepository,
     val dictionary: Dictionary

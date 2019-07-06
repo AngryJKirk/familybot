@@ -1,13 +1,13 @@
 package space.yaroslav.familybot.route.executors.command
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.italic
 import space.yaroslav.familybot.common.utils.pluralize
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.route.executors.Configurable
@@ -35,12 +35,7 @@ class PidorStatsExecutor(
             .mapIndexed { index, pair -> format(index, pair) }
         val title = "${dictionary.get(Phrase.PIDOR_STAT_ALL_TIME)}:\n".bold()
         return {
-            it.execute(
-                SendMessage(
-                    update.message.chatId,
-                    title + pidorsByChat.joinToString("\n")
-                ).enableHtml(true)
-            )
+            it.send(update, title + pidorsByChat.joinToString("\n"), enableHtml = true)
         }
     }
 

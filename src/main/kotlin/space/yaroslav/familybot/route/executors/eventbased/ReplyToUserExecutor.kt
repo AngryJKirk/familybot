@@ -1,13 +1,12 @@
 package space.yaroslav.familybot.route.executors.eventbased
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.utils.random
 import space.yaroslav.familybot.common.utils.randomNotNull
-import space.yaroslav.familybot.common.utils.toChat
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
 import space.yaroslav.familybot.route.executors.Configurable
@@ -23,14 +22,8 @@ class ReplyToUserExecutor(val keyset: ChatLogRepository, val botConfig: BotConfi
     }
 
     override fun execute(update: Update): (AbsSender) -> Unit {
-        val string = keyset.get(update.toUser()).takeIf { it.size > 300 }?.random()
-            ?: getSmallMessage(keyset.getAll())
-        return {
-            it.execute(
-                SendMessage(update.toChat().id, string)
-                    .setReplyToMessageId(update.message.messageId)
-            )
-        }
+        val string = getRandomUserMessage(update) ?: getSmallRandomMessage(keyset.getAll())
+        return { it.send(update, string, replyToUpdate = true) }
     }
 
     override fun canExecute(message: Message): Boolean {
@@ -41,11 +34,14 @@ class ReplyToUserExecutor(val keyset: ChatLogRepository, val botConfig: BotConfi
         return Priority.VERY_LOW
     }
 
-    private fun getSmallMessage(messages: List<String>): String {
+    private fun getSmallRandomMessage(messages: List<String>): String {
         var message: String = messages.randomNotNull()
-        while (message.split(" ").size > 5) {
+        while (message.split(" ").size >= 10) {
             message = messages.randomNotNull()
         }
         return message
     }
+
+    private fun getRandomUserMessage(update: Update) =
+        keyset.get(update.toUser()).takeIf { it.size > 300 }?.random()
 }

@@ -14,7 +14,7 @@ enum class FunctionId(val id: Int, val desc: String) {
 
     companion object {
         fun toKeyBoard(isEnabled: (FunctionId) -> Boolean): InlineKeyboardMarkup {
-            return InlineKeyboardMarkup().setKeyboard(FunctionId.values()
+            return InlineKeyboardMarkup().setKeyboard(values()
                 .toList()
                 .map { it to isEnabled(it) }
                 .map { it.first.desc to it.second }

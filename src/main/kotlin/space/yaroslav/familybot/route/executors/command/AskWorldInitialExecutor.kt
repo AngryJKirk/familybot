@@ -1,15 +1,18 @@
 package space.yaroslav.familybot.route.executors.command
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.methods.send.SendMessage
+import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.AskWorldQuestion
-import space.yaroslav.familybot.common.utils.bold
+import space.yaroslav.familybot.common.Chat
+import space.yaroslav.familybot.common.utils.boldNullable
 import space.yaroslav.familybot.common.utils.italic
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
@@ -54,75 +57,83 @@ class AskWorldInitialExecutor(
     }
 
     override fun execute(update: Update): (AbsSender) -> Unit {
-        val chatId = update.message.chatId
+        val chat = update.toChat()
         val message = update.message
             ?.text
             ?.removePrefix(command().command)
             ?.removePrefix("@${botConfig.botname}")
-            ?.takeIf { it.isNotEmpty() } ?: return {
-            it.execute(
-                SendMessage(
-                    chatId,
-                    helpMessage
-                )
-            )
-        }
+            ?.takeIf(String::isNotEmpty) ?: return { it.send(update, helpMessage) }
 
-        val chat = update.toChat()
-        if (askWorldRepository.getQuestionsFromChat(
-                chat,
-                date = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
-            ).size >= 2
-        ) {
+        if (isLimitForChatExceed(chat)) {
             return {
-                it.execute(
-                    SendMessage(
-                        chat.id,
-                        dictionary.get(Phrase.ASK_WORLD_LIMIT_BY_CHAT)
-                    ).setReplyToMessageId(update.message.messageId)
-                )
+                it.send(update, dictionary.get(Phrase.ASK_WORLD_LIMIT_BY_CHAT), replyToUpdate = true)
             }
         }
 
-        if (askWorldRepository.getQuestionsFromUser(chat, update.toUser()).isNotEmpty()) {
+        if (isLimitForUserExceed(chat, update)) {
             return {
-                it.execute(
-                    SendMessage(chat.id, dictionary.get(Phrase.ASK_WORLD_LIMIT_BY_USER)).setReplyToMessageId(
-                        update.message.messageId
-                    )
-                )
+                it.send(update, dictionary.get(Phrase.ASK_WORLD_LIMIT_BY_USER), replyToUpdate = true)
             }
         }
 
         val question = AskWorldQuestion(null, message, update.toUser(), chat, Instant.now(), null)
-        val id = askWorldRepository.addQuestion(question)
         return { sender ->
-            sender.execute(SendMessage(chatId, dictionary.get(Phrase.DATA_CONFIRM)))
-            commonRepository.getChats()
-                .filterNot { it == chat }
-                .filter { configureRepository.isEnabled(getFunctionId(), it) }
-                .forEach {
-                    try {
-                        val result = sender.execute(
-                            SendMessage(
-                                it.id,
-                                "${dictionary.get(Phrase.ASK_WORLD_QUESTION_FROM_CHAT)} ${chat.name.bold()}: ${question.message.italic()}"
-                            )
-                                .enableHtml(true)
-                        )
-                        GlobalScope.launch {
-                            askWorldRepository.addQuestionDeliver(
-                                question.copy(
-                                    id = id,
-                                    messageId = result.messageId + it.id
-                                ), it
-                            )
-                        }
-                    } catch (e: Exception) {
-                        commonRepository.changeChatActiveStatus(it, false)
-                        log.warn("Could not send question $id to $it due to error: [${e.message}]")
+            runBlocking {
+                val questionId = async { askWorldRepository.addQuestion(question) }
+                sender.send(update, dictionary.get(Phrase.DATA_CONFIRM))
+                commonRepository.getChats()
+                    .filterNot { it == chat }
+                    .filter(this@AskWorldInitialExecutor::isEnabledInChat)
+                    .forEach { chat ->
+                        runCatching {
+                            val result = sender.send(update, formatMessage(chat, question), enableHtml = true)
+                            markQuestionDelivered(question, questionId, result, chat)
+                        }.onFailure { e -> markChatInactive(chat, questionId, e) }
                     }
-                }
+            }
         }
     }
+
+    private fun markChatInactive(
+        chat: Chat,
+        questionId: Deferred<Long>,
+        e: Throwable
+    ) {
+        commonRepository.changeChatActiveStatus(chat, false)
+        log.warn("Could not send question $questionId to $chat due to error: [${e.message}]")
+    }
+
+    private suspend fun markQuestionDelivered(
+        question: AskWorldQuestion,
+        questionId: Deferred<Long>,
+        result: Message,
+        chat: Chat
+    ) {
+        val questionWithIds = question.copy(
+            id = questionId.await(),
+            messageId = result.messageId + chat.id
+        )
+        askWorldRepository.addQuestionDeliver(questionWithIds, chat)
+    }
+
+    private fun formatMessage(chat: Chat, question: AskWorldQuestion): String {
+        val messagePrefix = dictionary.get(Phrase.ASK_WORLD_QUESTION_FROM_CHAT)
+        val boldChatName = chat.name.boldNullable()
+        val italicMessage = question.message.italic()
+        return "$messagePrefix $boldChatName: $italicMessage"
+    }
+
+    private fun isEnabledInChat(it: Chat) = configureRepository.isEnabled(getFunctionId(), it)
+
+    private fun isLimitForChatExceed(chat: Chat): Boolean {
+        return askWorldRepository.getQuestionsFromChat(
+            chat,
+            date = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
+        ).size >= 2
+    }
+
+    private fun isLimitForUserExceed(
+        chat: Chat,
+        update: Update
+    ) = askWorldRepository.getQuestionsFromUser(chat, update.toUser()).isNotEmpty()
 }

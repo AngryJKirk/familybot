@@ -26,6 +26,14 @@ fun Update.toChat(): Chat {
     }
 }
 
+fun Update.chatId(): Long {
+    return when {
+        this.hasMessage() -> message.chat.id
+        this.hasEditedMessage() -> editedMessage.chat.id
+        else -> callbackQuery.message.chat.id
+    }
+}
+
 fun Update.toUser(): User {
     val user = this.from()
     val formatedName = (user.firstName?.let { "$it " } ?: "") + (user.lastName ?: "")

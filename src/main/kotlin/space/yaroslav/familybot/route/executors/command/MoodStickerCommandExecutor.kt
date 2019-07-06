@@ -1,11 +1,16 @@
 package space.yaroslav.familybot.route.executors.command
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.methods.send.SendSticker
 import org.telegram.telegrambots.api.methods.stickers.GetStickerSet
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
+import space.yaroslav.familybot.common.CommandByUser
+import space.yaroslav.familybot.common.User
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
@@ -22,24 +27,30 @@ class MoodStickerCommandExecutor(
     override fun command() = Command.WHATS_MOOD_TODAY
 
     override fun execute(update: Update): (AbsSender) -> Unit {
-        val commandsFromUserToday = historyRepository.get(
-            update.toUser(),
-            from = LocalDate.now().atTime(0, 0).toInstant(ZoneOffset.UTC)
-        ).map { it.command }
-        val chatId = update.toChat().id
-        if (commandsFromUserToday.any { it == command() }) {
+
+        if (isInvokedToday(update.toUser())) {
             return {}
         }
 
         return {
-            val sticker = it.execute(GetStickerSet("youaretoday")).stickers.random().fileId
-            it.execute(SendMessage(chatId, "Какой ты сегодня?"))
-            Thread.sleep(1000)
-            it.sendSticker(
-                SendSticker()
-                    .setSticker(sticker)
-                    .setChatId(chatId)
-            )
+            runBlocking {
+                val sticker = async { it.execute(GetStickerSet("youaretoday")).stickers.random().fileId }
+                it.send(update, "Какой ты сегодня?")
+                delay(1000)
+                it.sendSticker(
+                    SendSticker()
+                        .setSticker(sticker.await())
+                        .setChatId(update.toChat().id)
+                )
+            }
         }
+    }
+
+    private fun isInvokedToday(user: User): Boolean {
+        val commandsFromUserToday = historyRepository.get(
+            user,
+            from = LocalDate.now().atTime(0, 0).toInstant(ZoneOffset.UTC)
+        ).map(CommandByUser::command)
+        return commandsFromUserToday.any { it == command() }
     }
 }

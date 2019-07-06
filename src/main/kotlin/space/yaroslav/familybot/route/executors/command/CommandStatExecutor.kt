@@ -1,12 +1,12 @@
 package space.yaroslav.familybot.route.executors.command
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.formatTopList
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.route.models.Command
@@ -28,16 +28,11 @@ class CommandStatExecutor(
 
         val topList = all
             .filterNot { it.key == command() }
-            .map { format(it) }
+            .map(this::format)
             .joinToString("\n")
 
         return {
-            it.execute(
-                SendMessage(
-                    update.message.chatId,
-                    "${dictionary.get(Phrase.STATS_BY_COMMAND)}:\n".bold() + topList
-                ).enableHtml(true)
-            )
+            it.send(update, "${dictionary.get(Phrase.STATS_BY_COMMAND)}:\n".bold() + topList, enableHtml = true)
         }
     }
 

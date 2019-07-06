@@ -1,10 +1,9 @@
 package space.yaroslav.familybot.route.executors.command
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
-import space.yaroslav.familybot.common.utils.toChat
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
@@ -17,8 +16,6 @@ class HelpCommandExecutor(val dictionary: Dictionary) : CommandExecutor {
     }
 
     override fun execute(update: Update): (AbsSender) -> Unit {
-        return {
-            it.execute(SendMessage(update.toChat().id, dictionary.get(Phrase.HELP_MESSAGE)).enableHtml(true))
-        }
+        return { it.send(update, dictionary.get(Phrase.HELP_MESSAGE), enableHtml = true) }
     }
 }

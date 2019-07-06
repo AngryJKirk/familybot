@@ -24,6 +24,7 @@ import java.time.ZoneOffset
 import java.util.concurrent.ThreadLocalRandom
 
 @Component
+@Deprecated(message = "Replaced with BetContinious")
 class RouletteContinious(
     val commandHistoryRepository: CommandHistoryRepository,
     override val botConfig: BotConfig,

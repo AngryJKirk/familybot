@@ -1,10 +1,11 @@
 package space.yaroslav.familybot.route.executors.command
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.api.objects.replykeyboard.ForceReplyKeyboard
 import org.telegram.telegrambots.bots.AbsSender
+import space.yaroslav.familybot.common.CommandByUser
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.route.executors.Configurable
@@ -32,19 +33,21 @@ class BetExecutor(
             update.toUser(), LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
                 .toInstant(ZoneOffset.UTC)
         )
-        if (commands.filter { it.command == command() }.size > 1) {
-            return {
-                it.execute(SendMessage(update.message.chatId, dictionary.get(Phrase.BET_ALREADY_WAS)))
-            }
+        if (isBetAlreadyWas(commands)) {
+            return { it.send(update, dictionary.get(Phrase.BET_ALREADY_WAS)) }
         }
         return {
-            it.execute(
-                SendMessage(update.message.chatId, dictionary.get(Phrase.BET_INITIAL_MESSAGE))
-                    .setReplyMarkup(ForceReplyKeyboard().setSelective(true))
-                    .setReplyToMessageId(update.message.messageId)
+            it.send(
+                update,
+                dictionary.get(Phrase.BET_INITIAL_MESSAGE),
+                replyToUpdate = true,
+                customization = { message -> message.setReplyMarkup(ForceReplyKeyboard().setSelective(true)) }
             )
         }
     }
 
     override fun isLoggable() = false
+
+    private fun isBetAlreadyWas(commands: List<CommandByUser>) =
+        commands.filter { it.command == command() }.size > 1
 }

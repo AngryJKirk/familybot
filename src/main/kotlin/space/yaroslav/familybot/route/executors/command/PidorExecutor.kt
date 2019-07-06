@@ -1,5 +1,8 @@
 package space.yaroslav.familybot.route.executors.command
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
@@ -9,6 +12,7 @@ import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.isToday
 import space.yaroslav.familybot.common.utils.randomNotNull
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.route.executors.Configurable
@@ -35,29 +39,31 @@ class PidorExecutor(
         val chat = update.message.chat.toChat()
         log.info("Getting pidors from chat $chat")
         val message = todayPidors(update)
+
         if (message != null) {
             log.info("Pidors is already founded")
             return { it.execute(message) }
-        } else {
-            log.info("Pidor is not found, initiating search procedure")
-            val users = repository.getUsers(chat, activeOnly = true)
-            log.info("Users to roll: {}", users)
-            val nextPidor = users.randomNotNull()
-            log.info("Pidor is rolled to $nextPidor")
-            val newPidor = Pidor(nextPidor, Instant.now())
-            repository.addPidor(newPidor)
-            val start = dictionary.get(Phrase.PIDOR_SEARCH_START).bold()
-            val middle = dictionary.get(Phrase.PIDOR_SEARCH_MIDDLE).bold()
-            val finisher = dictionary.get(Phrase.PIDOR_SEARCH_FINISHER).bold()
-            return {
-                val chatId = update.message.chatId
-                it.execute(SendMessage(chatId, start).enableHtml(true))
-                Thread.sleep(3000)
-                it.execute(SendMessage(chatId, middle).enableHtml(true))
-                Thread.sleep(3000)
-                it.execute(SendMessage(chatId, finisher).enableHtml(true))
-                Thread.sleep(3000)
-                it.execute(SendMessage(chatId, nextPidor.getGeneralName(true)))
+        }
+
+        log.info("Pidor is not found, initiating search procedure")
+        val users = repository.getUsers(chat, activeOnly = true)
+        log.info("Users to roll: {}", users)
+        val nextPidor = users.randomNotNull()
+        log.info("Pidor is rolled to $nextPidor")
+        val newPidor = Pidor(nextPidor, Instant.now())
+        repository.addPidor(newPidor)
+        val start = dictionary.get(Phrase.PIDOR_SEARCH_START).bold()
+        val middle = dictionary.get(Phrase.PIDOR_SEARCH_MIDDLE).bold()
+        val finisher = dictionary.get(Phrase.PIDOR_SEARCH_FINISHER).bold()
+        return {
+            GlobalScope.launch {
+                it.send(update, start, enableHtml = true)
+                delay(3000)
+                it.send(update, middle, enableHtml = true)
+                delay(3000)
+                it.send(update, finisher, enableHtml = true)
+                delay(3000)
+                it.send(update, nextPidor.getGeneralName(mention = true), enableHtml = true)
                 pidorCompetitionService.pidorCompetition(update)?.invoke(it)
             }
         }

@@ -1,5 +1,8 @@
 package space.yaroslav.familybot.route.executors.eventbased.askworld
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.api.methods.send.SendMessage
@@ -7,8 +10,9 @@ import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.AskWorldReply
-import space.yaroslav.familybot.common.utils.bold
+import space.yaroslav.familybot.common.utils.boldNullable
 import space.yaroslav.familybot.common.utils.italic
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
@@ -58,21 +62,24 @@ class AskWorldRecieveReplyExecutor(
             chat,
             Instant.now()
         )
-        val id = askWorldRepository.addReply(askWorldReply)
+
         return {
-            try {
-                val message = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
-                it.execute(
-                    SendMessage(
-                        question.chat.id,
-                        "${dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${update.toChat().name.bold()} " +
-                            "от ${user.getGeneralName()} на вопрос \"$message\": ${reply.italic()}"
-                    ).enableHtml(true)
-                )
-                askWorldRepository.addReplyDeliver(askWorldReply.copy(id = id))
-                it.execute(SendMessage(update.message.chatId, "Принято и отправлено"))
-            } catch (e: Exception) {
-                it.execute(SendMessage(update.message.chatId, "Принято"))
+            runCatching {
+                runBlocking {
+                    val id = async { askWorldRepository.addReply(askWorldReply) }
+                    val message = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
+                    it.execute(
+                        SendMessage(
+                            question.chat.id,
+                            "${dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${update.toChat().name.boldNullable()} " +
+                                "от ${user.getGeneralName()} на вопрос \"$message\": ${reply.italic()}"
+                        ).enableHtml(true)
+                    )
+                    launch { askWorldRepository.addReplyDeliver(askWorldReply.copy(id = id.await())) }
+                    it.send(update, "Принято и отправлено")
+                }
+            }.onFailure { e ->
+                it.send(update, "Принято")
                 log.info("Could not send reply instantly", e)
             }
         }

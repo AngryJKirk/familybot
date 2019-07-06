@@ -2,6 +2,7 @@ package space.yaroslav.familybot.route.services.dictionary
 
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.utils.randomNotNull
+import space.yaroslav.familybot.repos.PhraseThemeSetting
 import space.yaroslav.familybot.repos.ifaces.PhraseDictionaryRepository
 import space.yaroslav.familybot.route.models.Phrase
 import java.time.Instant
@@ -15,10 +16,15 @@ class DictionaryImpl(val dictionaryRepository: PhraseDictionaryRepository) : Dic
     override fun get(phrase: Phrase): String {
         val now = Instant.now()
         val theme = dictionaryRepository.getPhraseSettings()
-            .find { now.isAfter(it.since) and now.isBefore(it.till) }
+            .find { isCurrentSetting(now, it) }
             ?.theme
             ?: dictionaryRepository.getDefaultPhraseTheme()
 
         return dictionaryRepository.getPhrases(phrase, theme).randomNotNull()
     }
+
+    private fun isCurrentSetting(
+        now: Instant,
+        it: PhraseThemeSetting
+    ) = now.isAfter(it.since) and now.isBefore(it.till)
 }

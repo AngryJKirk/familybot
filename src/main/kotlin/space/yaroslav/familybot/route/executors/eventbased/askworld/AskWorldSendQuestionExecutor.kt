@@ -1,13 +1,16 @@
 package space.yaroslav.familybot.route.executors.eventbased.askworld
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.methods.send.SendMessage
 import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
-import space.yaroslav.familybot.common.utils.bold
+import space.yaroslav.familybot.common.AskWorldQuestion
+import space.yaroslav.familybot.common.utils.boldNullable
 import space.yaroslav.familybot.common.utils.italic
+import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
 import space.yaroslav.familybot.route.executors.Configurable
@@ -31,39 +34,46 @@ class AskWorldSendQuestionExecutor(
 
     override fun execute(update: Update): (AbsSender) -> Unit {
         val chat = update.toChat()
-        val questions = askWorldRepository
-            .getQuestionsFromDate()
-            .filterNot { it.chat.id == update.message.chatId }
-            .filterNot { askWorldRepository.isQuestionDelivered(it, chat) }
+        val questions = getQuestionList(update.message)
 
         return { sender ->
             questions
-                .forEach {
-                    val message = SendMessage(
-                        chat.id,
-                        "${dictionary.get(Phrase.ASK_WORLD_QUESTION_FROM_CHAT)} ${it.chat.name.bold()}: ${it.message.italic()}"
-                    )
-                        .enableHtml(true)
-                    try {
-                        val result = sender.execute(message)
-                        askWorldRepository.addQuestionDeliver(it.copy(messageId = result.messageId + chat.id), chat)
-                    } catch (e: Exception) {
-                        log.warn("Could not send question to chat", e)
+                .forEach { question ->
+                    GlobalScope.launch {
+                        runCatching {
+                            val result = sender.send(update, formatQuestion(question), enableHtml = true)
+                            val questionWithId = assignQuestionNewId(question, result)
+                            askWorldRepository.addQuestionDeliver(questionWithId, chat)
+                        }.onFailure { e -> log.warn("Could not send question to chat", e) }
                     }
-
                 }
         }
     }
 
-    override fun canExecute(message: Message): Boolean {
+    private fun formatQuestion(question: AskWorldQuestion): String {
+        val messagePrefix = dictionary.get(Phrase.ASK_WORLD_QUESTION_FROM_CHAT)
+        val boldChatName = question.chat.name.boldNullable()
+        val italicQuestion = question.message.italic()
+        return "$messagePrefix $boldChatName: $italicQuestion"
+    }
+
+    private fun assignQuestionNewId(
+        question: AskWorldQuestion,
+        result: Message
+    ) = question.copy(messageId = result.messageId + result.chat.id)
+
+    override fun canExecute(message: Message): Boolean = getQuestionList(message).isNotEmpty()
+
+    override fun priority(update: Update): Priority {
+        return Priority.LOW
+    }
+
+    private fun getQuestionList(
+        message: Message
+    ): List<AskWorldQuestion> {
         return askWorldRepository
             .getQuestionsFromDate()
             .filterNot { it.chat.id == message.chat.id }
             .filterNot { askWorldRepository.isQuestionDelivered(it, message.chat.toChat()) }
-            .isNotEmpty()
-    }
-
-    override fun priority(update: Update): Priority {
-        return Priority.LOW
     }
 }
