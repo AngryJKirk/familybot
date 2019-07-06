@@ -54,25 +54,26 @@ CREATE TABLE IF NOT EXISTS history
     command_date TIMESTAMP
 );
 
-INSERT INTO commands (command)
-VALUES ('/stats_month'),
-       ('/stats_year'),
-       ('/stats_total'),
-       ('/pidor'),
-       ('/quote'),
-       ('/command_stats'),
-       ('/rage'),
-       ('/leaderboard'),
-       ('/help'),
-       ('/settings'),
-       ('/answer'),
-       ('/quotebytag'),
-       ('/roulette'),
-       ('/ask_world'),
-       ('/stats_world'),
-       ('/me'),
-       ('/top_history'),
-       ('/bet');
+INSERT INTO commands (id, command)
+VALUES (1,'/stats_month'),
+       (2,'/stats_year'),
+       (3,'/stats_total'),
+       (4,'/pidor'),
+       (5,'/quote'),
+       (6,'/command_stats'),
+       (7,'/rage'),
+       (8,'/leaderboard'),
+       (9,'/help'),
+       (10,'/settings'),
+       (11,'/answer'),
+       (12,'/quotebytag'),
+       (13,'/legacy_roulette'),
+       (14,'/ask_world'),
+       (15,'/stats_world'),
+       (16,'/me'),
+       (17,'/top_history'),
+       (18,'/bet'),
+       (19,'/today');
 
 CREATE TABLE IF NOT EXISTS chat_log
 (
