@@ -18,8 +18,10 @@ import space.yaroslav.familybot.route.models.Priority
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
 
 @Component
-class AskWorldSendQuestionExecutor(val askWorldRepository: AskWorldRepository,
-    val dictionary: Dictionary) : Executor, Configurable {
+class AskWorldSendQuestionExecutor(
+    val askWorldRepository: AskWorldRepository,
+    val dictionary: Dictionary
+) : Executor, Configurable {
 
     private val log = LoggerFactory.getLogger(AskWorldSendQuestionExecutor::class.java)
 
@@ -37,7 +39,10 @@ class AskWorldSendQuestionExecutor(val askWorldRepository: AskWorldRepository,
         return { sender ->
             questions
                 .forEach {
-                    val message = SendMessage(chat.id, "${dictionary.get(Phrase.ASK_WORLD_QUESTION_FROM_CHAT)} ${it.chat.name.bold()}: ${it.message.italic()}")
+                    val message = SendMessage(
+                        chat.id,
+                        "${dictionary.get(Phrase.ASK_WORLD_QUESTION_FROM_CHAT)} ${it.chat.name.bold()}: ${it.message.italic()}"
+                    )
                         .enableHtml(true)
                     try {
                         val result = sender.execute(message)

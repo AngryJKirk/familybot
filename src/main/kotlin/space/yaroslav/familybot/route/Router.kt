@@ -11,7 +11,7 @@ import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.utils.isGroup
-import space.yaroslav.familybot.common.utils.random
+import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
@@ -25,6 +25,7 @@ import space.yaroslav.familybot.route.executors.eventbased.AntiDdosExecutor
 import space.yaroslav.familybot.route.executors.pm.PrivateMessageExecutor
 import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.models.Priority
+import space.yaroslav.familybot.route.models.higherThan
 import space.yaroslav.familybot.route.services.RawUpdateLogger
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
@@ -89,24 +90,24 @@ class Router(
         logger.info("No executor found, trying to find random priority executors")
 
         GlobalScope.launch { logChatMessage(update) }
-        val executor = executors.filter { it.priority(update) == Priority.RANDOM }.random()!!
+        val executor = executors.filter { it.priority(update) == Priority.RANDOM }.randomNotNull()
 
         logger.info("Random priority executor ${executor.javaClass.simpleName} was selected")
         return executor
     }
 
-    private fun antiDdosSkip(message: Message, update: Update): (AbsSender) -> Unit = { it ->
+    private fun antiDdosSkip(message: Message, update: Update): (AbsSender) -> Unit = marker@{ it ->
         logger.info("Skip anti-ddos executor due to configuration")
         val executor = executors
-            .filter { it is CommandExecutor }
-            .find { it.canExecute(message) }
+            .filterIsInstance<CommandExecutor>()
+            .find { it.canExecute(message) } ?: return@marker
         val function = if (isExecutorDisabled(executor, message.chat)) {
             disabledCommand(message.chat)
         } else {
-            executor?.execute(update)
+            executor.execute(update)
         }
 
-        function?.invoke(it)
+        function.invoke(it)
     }
 
     private fun disabledCommand(chat: Chat): (AbsSender) -> Unit = { it ->
@@ -114,11 +115,11 @@ class Router(
         it.execute(SendMessage(chat.id, dictionary.get(Phrase.COMMAND_IS_OFF)))
     }
 
-    private fun isExecutorDisabled(executor: Executor?, chat: Chat): Boolean {
+    private fun isExecutorDisabled(executor: Executor, chat: Chat): Boolean {
         return executor is Configurable && !configureRepository.isEnabled(executor.getFunctionId(), chat.toChat())
     }
 
-    private fun logChatCommand(executor: Executor?, update: Update) {
+    private fun logChatCommand(executor: Executor, update: Update) {
         if (executor is CommandExecutor && executor.isLoggable()) {
             commandHistoryRepository.add(
                 CommandByUser(
@@ -144,13 +145,13 @@ class Router(
 
     private fun selectExecutor(update: Update, forSingleUser: Boolean = false): Executor? {
         val executorsToProcess = if (forSingleUser) {
-            executors.filter { it is PrivateMessageExecutor }
+            executors.filterIsInstance<PrivateMessageExecutor>()
         } else {
             executors.filterNot { it is PrivateMessageExecutor }
         }
         return executorsToProcess
-            .sortedByDescending { it.priority(update).int }
-            .filter { it.priority(update).int > Priority.RANDOM.int }
+            .sortedByDescending { it.priority(update).priorityValue }
+            .filter { it.priority(update) higherThan Priority.RANDOM }
             .find { it.canExecute(update.message ?: update.editedMessage ?: update.callbackQuery.message) }
     }
 

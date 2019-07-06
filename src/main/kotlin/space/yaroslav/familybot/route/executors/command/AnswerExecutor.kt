@@ -7,6 +7,7 @@ import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.utils.dropLastDelimiter
 import space.yaroslav.familybot.common.utils.random
+import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.Phrase
@@ -39,7 +40,7 @@ class AnswerExecutor(val textToSpeechService: TextToSpeechService, val dictionar
         return {
             val sendAudio = SendVoice()
             sendAudio.chatId = update.toChat().id.toString()
-            val emotion = YandexSpeechType.values().toList().random()!!
+            val emotion = YandexSpeechType.values().toList().randomNotNull()
             sendAudio.setNewVoice("Test", textToSpeechService.toSpeech(message, emotion = emotion))
             sendAudio.replyToMessageId = update.message.messageId
             it.sendVoice(sendAudio)

@@ -19,6 +19,7 @@ import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.models.Priority
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
+import space.yaroslav.familybot.telegram.FamilyBot
 import java.time.Instant
 
 @Component
@@ -51,7 +52,7 @@ class AskWorldRecieveReplyExecutor(
         }
         val askWorldReply = AskWorldReply(
             null,
-            question.id!!,
+            question.id ?: throw FamilyBot.InternalException("Question id is missing, seems like internal logic error"),
             reply,
             user,
             chat,

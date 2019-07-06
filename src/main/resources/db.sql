@@ -1,57 +1,57 @@
 CREATE TABLE IF NOT EXISTS chats
 (
-  id     BIGINT PRIMARY KEY,
-  name   VARCHAR(100),
-  active BOOLEAN DEFAULT TRUE
+    id     BIGINT PRIMARY KEY,
+    name   VARCHAR(100),
+    active BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE IF NOT EXISTS users
 (
-  id       BIGINT PRIMARY KEY,
-  name     VARCHAR(100),
-  username VARCHAR(100)
+    id       BIGINT PRIMARY KEY,
+    name     VARCHAR(100),
+    username VARCHAR(100)
 );
 
 CREATE TABLE IF NOT EXISTS pidors
 (
-  id         BIGINT REFERENCES users (id),
-  chat_id    BIGINT REFERENCES chats (id),
-  pidor_date TIMESTAMP
+    id         BIGINT REFERENCES users (id),
+    chat_id    BIGINT REFERENCES chats (id),
+    pidor_date TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS quotes
 (
-  id    SERIAL PRIMARY KEY,
-  quote VARCHAR(10000) NOT NULL UNIQUE
+    id    SERIAL PRIMARY KEY,
+    quote VARCHAR(10000) NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS tags
 (
-  id      SERIAL PRIMARY KEY,
-  tag     VARCHAR(100) NOT NULL UNIQUE,
-  chat_id BIGINT REFERENCES chats (id)
+    id      SERIAL PRIMARY KEY,
+    tag     VARCHAR(100) NOT NULL UNIQUE,
+    chat_id BIGINT REFERENCES chats (id)
 );
 
 CREATE TABLE IF NOT EXISTS tags2quotes
 (
-  tag_id   INT REFERENCES tags (id),
-  quote_id INT REFERENCES quotes (id),
-  PRIMARY KEY (tag_id, quote_id)
+    tag_id   INT REFERENCES tags (id),
+    quote_id INT REFERENCES quotes (id),
+    PRIMARY KEY (tag_id, quote_id)
 );
 
 
 CREATE TABLE IF NOT EXISTS commands
 (
-  id      SERIAL PRIMARY KEY,
-  command VARCHAR(50) UNIQUE
+    id      SERIAL PRIMARY KEY,
+    command VARCHAR(50) UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS history
 (
-  command_id   BIGINT REFERENCES commands (id),
-  user_id      BIGINT REFERENCES users (id),
-  chat_id      BIGINT REFERENCES chats (id),
-  command_date TIMESTAMP
+    command_id   BIGINT REFERENCES commands (id),
+    user_id      BIGINT REFERENCES users (id),
+    chat_id      BIGINT REFERENCES chats (id),
+    command_date TIMESTAMP
 );
 
 INSERT INTO commands (command)
@@ -76,23 +76,23 @@ VALUES ('/stats_month'),
 
 CREATE TABLE IF NOT EXISTS chat_log
 (
-  chat_id BIGINT REFERENCES chats (id),
-  user_id BIGINT REFERENCES users (id),
-  message VARCHAR(10000)
+    chat_id BIGINT REFERENCES chats (id),
+    user_id BIGINT REFERENCES users (id),
+    message VARCHAR(10000)
 );
 
 CREATE TABLE users2chats
 (
-  chat_id BIGINT REFERENCES chats (id),
-  user_id BIGINT REFERENCES users (id),
-  active  BOOLEAN default true,
-  PRIMARY KEY (chat_id, user_id)
+    chat_id BIGINT REFERENCES chats (id),
+    user_id BIGINT REFERENCES users (id),
+    active  BOOLEAN default true,
+    PRIMARY KEY (chat_id, user_id)
 );
 
 CREATE TABLE IF NOT EXISTS functions
 (
-  function_id INTEGER PRIMARY KEY,
-  description VARCHAR(200)
+    function_id INTEGER PRIMARY KEY,
+    description VARCHAR(200)
 );
 
 INSERT INTO functions (function_id, description)
@@ -105,86 +105,86 @@ VALUES (1, 'Хуификация'),
 
 CREATE TABLE IF NOT EXISTS function_settings
 (
-  function_id INTEGER NOT NULL REFERENCES functions (function_id),
-  chat_id     BIGINT REFERENCES chats (id),
-  active      BOOLEAN NOT NULL DEFAULT TRUE,
-  date_from   TIMESTAMP        DEFAULT CURRENT_TIMESTAMP
+    function_id INTEGER NOT NULL REFERENCES functions (function_id),
+    chat_id     BIGINT REFERENCES chats (id),
+    active      BOOLEAN NOT NULL DEFAULT TRUE,
+    date_from   TIMESTAMP        DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS raw_chat_log
 (
-  chat_id    BIGINT    NOT NULL REFERENCES chats (id),
-  user_id    BIGINT    NOT NULL REFERENCES users (id),
-  message    VARCHAR(30000),
-  raw_update JSON      NOT NULL,
-  date       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    chat_id    BIGINT    NOT NULL REFERENCES chats (id),
+    user_id    BIGINT    NOT NULL REFERENCES users (id),
+    message    VARCHAR(30000),
+    raw_update JSON      NOT NULL,
+    date       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS custom_message_delivery
 (
-  id           SERIAL         NOT NULL PRIMARY KEY,
-  chat_id      BIGINT         NOT NULL REFERENCES chats (id),
-  message      VARCHAR(20000) NOT NULL,
-  is_delivered BOOLEAN DEFAULT FALSE
+    id           SERIAL         NOT NULL PRIMARY KEY,
+    chat_id      BIGINT         NOT NULL REFERENCES chats (id),
+    message      VARCHAR(20000) NOT NULL,
+    is_delivered BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS ask_world_questions
 (
-  id       SERIAL PRIMARY KEY,
-  question VARCHAR(2000) NOT NULL,
-  chat_id  BIGINT        NOT NULL REFERENCES chats (id),
-  user_id  BIGINT        NOT NULL REFERENCES users (id),
-  date     TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP
+    id       SERIAL PRIMARY KEY,
+    question VARCHAR(2000) NOT NULL,
+    chat_id  BIGINT        NOT NULL REFERENCES chats (id),
+    user_id  BIGINT        NOT NULL REFERENCES users (id),
+    date     TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS ask_world_replies
 (
-  id          SERIAL PRIMARY KEY,
-  question_id INTEGER REFERENCES ask_world_questions (id),
-  reply       VARCHAR(2000) NOT NULL,
-  chat_id     BIGINT        NOT NULL REFERENCES chats (id),
-  user_id     BIGINT        NOT NULL REFERENCES users (id),
-  date        TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP
+    id          SERIAL PRIMARY KEY,
+    question_id INTEGER REFERENCES ask_world_questions (id),
+    reply       VARCHAR(2000) NOT NULL,
+    chat_id     BIGINT        NOT NULL REFERENCES chats (id),
+    user_id     BIGINT        NOT NULL REFERENCES users (id),
+    date        TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS ask_world_questions_delivery
 (
-  id         INTEGER REFERENCES ask_world_questions (id),
-  chat_id    BIGINT REFERENCES chats (id),
-  date       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  message_id BIGINT    NOT NULL
+    id         INTEGER REFERENCES ask_world_questions (id),
+    chat_id    BIGINT REFERENCES chats (id),
+    date       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    message_id BIGINT    NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS ask_world_replies_delivery
 (
-  id   INTEGER REFERENCES ask_world_replies (id),
-  date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    id   INTEGER REFERENCES ask_world_replies (id),
+    date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 alter table raw_chat_log
-  add column file_id varchar(500) default null;
+    add column file_id varchar(500) default null;
 
 CREATE TABLE IF NOT EXISTS phrase_theme
 (
-  phrase_theme_id   SERIAL PRIMARY KEY,
-  description       VARCHAR(200) NOT NULL,
-  active_by_default BOOLEAN DEFAULT false
+    phrase_theme_id   SERIAL PRIMARY KEY,
+    description       VARCHAR(200) NOT NULL,
+    active_by_default BOOLEAN DEFAULT false
 );
 CREATE UNIQUE INDEX ON phrase_theme (active_by_default)
-  where active_by_default = true;
+    where active_by_default = true;
 
 CREATE TABLE IF NOT EXISTS phrase_type_id
 (
-  phrase_type_id SERIAL PRIMARY KEY,
-  description    VARCHAR(2000) NOT NULL UNIQUE
+    phrase_type_id SERIAL PRIMARY KEY,
+    description    VARCHAR(2000) NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS phrase_dictionary
 (
-  phrase_dictionary_id SERIAL PRIMARY KEY,
-  phrase_type_id       BIGINT REFERENCES phrase_type_id (phrase_type_id),
-  phrase_theme_id      BIGINT REFERENCES phrase_theme (phrase_theme_id),
-  phrase               VARCHAR(2000) NOT NULL
+    phrase_dictionary_id SERIAL PRIMARY KEY,
+    phrase_type_id       BIGINT REFERENCES phrase_type_id (phrase_type_id),
+    phrase_theme_id      BIGINT REFERENCES phrase_theme (phrase_theme_id),
+    phrase               VARCHAR(2000) NOT NULL
 );
 
 INSERT INTO phrase_type_id (description)
@@ -662,7 +662,8 @@ VALUES ((SELECT phrase_type_id from phrase_type_id where description = 'BAD_COMM
        ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR_STAT_WORLD'),
         2,
         'Топ ефрейторов всего мира за все время'),
-       ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR_STAT_MONTH'), 2, 'Топ ефрейторов за месяц'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR_STAT_MONTH'), 2,
+        'Топ ефрейторов за месяц'),
        ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR_STAT_YEAR'), 2, 'Топ ефрейторов за год'),
        ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR_STAT_ALL_TIME'),
         2,
@@ -742,8 +743,8 @@ values ((select phrase_type_id from phrase_type_id where description = 'USER_LEA
         'Куда собрался этот дух? Неужели в самоволку?');
 
 
-INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase) VALUES
-       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_PIDORSKOE_ONE'), 2, 'ефрейторское'),
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+VALUES ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_PIDORSKOE_ONE'), 2, 'ефрейторское'),
        ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_PIDORSKOE_FEW'), 2, 'ефрейторских'),
        ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_PIDORSKOE_MANY'), 2, 'ефрейторских');
 INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
@@ -784,9 +785,9 @@ VALUES ((select phrase_type_id from phrase_type_id where description = 'TECHNICA
 
 CREATE TABLE IF NOT EXISTS phrase_theme_settings
 (
-  phrase_theme_id BIGINT REFERENCES phrase_theme (phrase_theme_id),
-  since          TIMESTAMP NOT NULL,
-  till           TIMESTAMP NOT NULL
+    phrase_theme_id BIGINT REFERENCES phrase_theme (phrase_theme_id),
+    since           TIMESTAMP NOT NULL,
+    till            TIMESTAMP NOT NULL
 );
 
 
@@ -808,8 +809,10 @@ VALUES ((SELECT phrase_type_id from phrase_type_id where description = 'BAD_COMM
        ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR_STAT_WORLD'),
         3,
         'Топ мясных дырок всего мира за все время'),
-       ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR_STAT_MONTH'), 3, 'Топ мясных дырок за месяц'),
-       ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR_STAT_YEAR'), 3, 'Топ мясных дырок за год'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR_STAT_MONTH'), 3,
+        'Топ мясных дырок за месяц'),
+       ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR_STAT_YEAR'), 3,
+        'Топ мясных дырок за год'),
        ((SELECT phrase_type_id from phrase_type_id where description = 'PIDOR_STAT_ALL_TIME'),
         3,
         'Топ мясных дырок за все время'),
@@ -885,10 +888,10 @@ values ((select phrase_type_id from phrase_type_id where description = 'USER_LEA
         'Да я ее батю ебала');
 
 
-INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase) VALUES
-((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_PIDORSKOE_ONE'), 3, 'дырочное'),
-((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_PIDORSKOE_FEW'), 3, 'дырочных'),
-((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_PIDORSKOE_MANY'), 3, 'дырочных');
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+VALUES ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_PIDORSKOE_ONE'), 3, 'дырочное'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_PIDORSKOE_FEW'), 3, 'дырочных'),
+       ((select phrase_type_id from phrase_type_id where description = 'PLURALIZED_PIDORSKOE_MANY'), 3, 'дырочных');
 INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
 VALUES ((select phrase_type_id from phrase_type_id where description = 'BET_ZATRAVOCHKA'),
         3,
@@ -901,8 +904,7 @@ VALUES ((select phrase_type_id from phrase_type_id where description = 'BET_ZATR
         'Завтра ты получишь дырочное очко. Систему не наебешь, шалава.');
 
 INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
-VALUES
-       ((select phrase_type_id from phrase_type_id where description = 'ASK_WORLD_REPLY_FROM_CHAT'),
+VALUES ((select phrase_type_id from phrase_type_id where description = 'ASK_WORLD_REPLY_FROM_CHAT'),
         3,
         'Ответ из клуба бывших жён'),
        ((SELECT phrase_type_id from phrase_type_id where description = 'ASK_WORLD_QUESTION_FROM_CHAT'),

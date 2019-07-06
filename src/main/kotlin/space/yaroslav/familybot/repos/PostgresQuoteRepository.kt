@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.utils.random
+import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.controllers.QuoteDTO
 import space.yaroslav.familybot.repos.ifaces.QuoteRepository
 import java.util.concurrent.TimeUnit
@@ -47,7 +48,7 @@ class PostgresQuoteRepository(val template: JdbcTemplate) : QuoteRepository {
     }
 
     override fun getRandom(): String {
-        return quoteCache.get().random()!!
+        return quoteCache.get().randomNotNull()
     }
 
     private fun addTag(tag: String): Int {

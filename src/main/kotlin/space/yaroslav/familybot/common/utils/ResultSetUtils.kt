@@ -7,6 +7,7 @@ import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.route.models.Command
+import space.yaroslav.familybot.telegram.FamilyBot
 import java.sql.ResultSet
 
 fun ResultSet.toUser(): User = User(
@@ -28,8 +29,13 @@ fun ResultSet.toPidor(): Pidor = Pidor(
 
 fun ResultSet.toCommandByUser(user: User?): CommandByUser {
     val userInternal = user ?: this.toUser()
+    val command = Command
+        .values()
+        .find { it.id == this.getInt("command_id") }
+        ?: throw FamilyBot.InternalException("Command id should exist")
     return CommandByUser(
-        userInternal, Command.values().find { it.id == this.getInt("command_id") }!!,
+        userInternal,
+        command,
         this.getTimestamp("command_date").toInstant()
     )
 }

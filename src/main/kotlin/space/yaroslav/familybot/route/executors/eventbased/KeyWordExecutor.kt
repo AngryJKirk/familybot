@@ -6,6 +6,7 @@ import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.utils.random
+import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
@@ -50,7 +51,7 @@ class KeyWordExecutor(
                     .filterNot { it.contains("http", ignoreCase = true) }
                     .filter { it.split(" ").size > 5 }
                     .toList()
-                    .random()!!
+                    .randomNotNull()
 
             val message = if (rageModEnabled) {
                 rageModeFormat(string)

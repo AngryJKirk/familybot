@@ -7,11 +7,12 @@ import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.bold
-import space.yaroslav.familybot.common.utils.random
+import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
+import space.yaroslav.familybot.telegram.FamilyBot
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -42,7 +43,7 @@ class PidorCompetitionService(
                             dictionary.get(Phrase.PIDOR_COMPETITION).bold()
                         ).enableHtml(true)
                     )
-                    val oneMorePidor = competitors.random()!!
+                    val oneMorePidor = competitors.randomNotNull()
                     repository.addPidor(Pidor(oneMorePidor, Instant.now()))
                     Thread.sleep(1000)
                     it.execute(
@@ -59,8 +60,12 @@ class PidorCompetitionService(
 
     private fun detectPidorCompetition(pidors: List<Pidor>): Set<User>? {
         val pidorsByUser = pidors.groupBy { it.user }
-        val maxCount = pidorsByUser.mapValues { it.value.size }.maxBy { it.value }!!.value
-        val competitors = pidorsByUser.filterValues { it.size == maxCount }.keys
+        val maxCount = pidorsByUser
+            .mapValues { it.value.size }
+            .maxBy { it.value }
+            ?: throw FamilyBot.InternalException("List of pidors for competition should be never null")
+
+        val competitors = pidorsByUser.filterValues { it.size == maxCount.value }.keys
         return if (competitors.size > 1) {
             competitors
         } else {

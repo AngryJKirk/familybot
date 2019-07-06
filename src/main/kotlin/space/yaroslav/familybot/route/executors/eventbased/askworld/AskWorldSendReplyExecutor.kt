@@ -37,7 +37,8 @@ class AskWorldSendReplyExecutor(
             replyToDeliver.forEach {
                 val questionMessage = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
                 val message = SendMessage(
-                    update.toChat().id, "${dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${it.chat.name.bold()} от ${it.user.getGeneralName()} " +
+                    update.toChat().id,
+                    "${dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${it.chat.name.bold()} от ${it.user.getGeneralName()} " +
                         "на вопрсос \"$questionMessage\" : ${it.message.italic()}"
                 )
                     .enableHtml(true)

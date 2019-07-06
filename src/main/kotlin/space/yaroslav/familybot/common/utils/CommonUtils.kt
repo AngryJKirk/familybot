@@ -27,7 +27,7 @@ val monthMap = mapOf(
 )
 
 fun Month.toRussian(): String {
-    return monthMap[this]!!
+    return monthMap.getValue(this)
 }
 
 fun Chat.isGroup(): Boolean {

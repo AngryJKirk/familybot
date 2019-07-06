@@ -10,6 +10,7 @@ import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.toAskWorldQuestion
 import space.yaroslav.familybot.common.utils.toAskWorldReply
 import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
+import space.yaroslav.familybot.telegram.FamilyBot
 import java.sql.Timestamp
 import java.time.Instant
 
@@ -131,9 +132,12 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
     }
 
     override fun isQuestionDelivered(question: AskWorldQuestion, chat: Chat): Boolean {
+        val questionId = question.id
+            ?: throw FamilyBot.InternalException("Question id should exist, seems like internal logic error")
+
         return template.queryForList(
             "SELECT 1 from ask_world_questions_delivery where id = ? and chat_id = ?",
-            question.id!!, chat.id
+            questionId, chat.id
         ).isNotEmpty()
     }
 

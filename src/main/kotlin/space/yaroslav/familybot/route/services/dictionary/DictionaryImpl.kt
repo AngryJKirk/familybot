@@ -1,7 +1,7 @@
 package space.yaroslav.familybot.route.services.dictionary
 
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.utils.random
+import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.repos.ifaces.PhraseDictionaryRepository
 import space.yaroslav.familybot.route.models.Phrase
 import java.time.Instant
@@ -19,6 +19,6 @@ class DictionaryImpl(val dictionaryRepository: PhraseDictionaryRepository) : Dic
             ?.theme
             ?: dictionaryRepository.getDefaultPhraseTheme()
 
-        return dictionaryRepository.getPhrases(phrase, theme).random()!!
+        return dictionaryRepository.getPhrases(phrase, theme).randomNotNull()
     }
 }

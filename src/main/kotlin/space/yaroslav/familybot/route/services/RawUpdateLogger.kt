@@ -19,18 +19,18 @@ class RawUpdateLogger(val rawChatLogRepository: RawChatLogRepository) {
             else -> null
         }
 
-        if (rawMessage?.from?.bot == true) {
+        if (rawMessage == null || rawMessage.from?.bot == true) {
             return
         }
 
         val fileId = when {
-            rawMessage?.hasPhoto() ?: false -> rawMessage?.photo?.joinToString { it.filePath ?: it.fileId }
-            rawMessage?.hasDocument() ?: false -> rawMessage?.document?.fileId
+            rawMessage.hasPhoto() -> rawMessage.photo.joinToString { it.filePath ?: it.fileId }
+            rawMessage.hasDocument() -> rawMessage.document.fileId
             else -> null
         }
-        val text = rawMessage?.text
+        val text = rawMessage.text
         val date = rawMessage
-            ?.date
+            .date
             ?.toLong()
             ?.let { Instant.ofEpochSecond(it) }
             ?: Instant.now()

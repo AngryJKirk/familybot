@@ -9,6 +9,7 @@ import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.repos.ifaces.PhraseDictionaryRepository
 import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.models.PhraseTheme
+import space.yaroslav.familybot.telegram.FamilyBot
 import java.time.Instant
 import java.util.concurrent.TimeUnit
 
@@ -23,7 +24,8 @@ class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : Phras
 
     private val themeCache = Suppliers.memoizeWithExpiration({ getThemesInternal() }, 1, TimeUnit.MINUTES)
 
-    private val themeSettingsCache = Suppliers.memoizeWithExpiration({ getThemesSettingsInternal() }, 1, TimeUnit.MINUTES)
+    private val themeSettingsCache =
+        Suppliers.memoizeWithExpiration({ getThemesSettingsInternal() }, 1, TimeUnit.MINUTES)
 
     override fun getPhraseSettings(): List<PhraseThemeSetting> {
         return themeSettingsCache.get()
@@ -42,10 +44,13 @@ class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : Phras
     }
 
     private fun getPhrasesInternal(type: Pair<Phrase, PhraseTheme>?): List<String> {
+        if (type == null) {
+            throw FamilyBot.InternalException("type of phrase should not be null, seems like internal logic error")
+        }
         return jdbcTemplate.queryForList(
             "select phrase from phrase_dictionary where phrase_type_id = ? and phrase_theme_id = ?",
             String::class.java,
-            type!!.first.id,
+            type.first.id,
             type.second.id
         ).takeIf { it.isNotEmpty() } ?: getPhrases(type.first, PhraseTheme.DEFAULT)
     }
@@ -78,10 +83,13 @@ class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : Phras
     }
 
     private fun getAllPhrasesInternal(type: Phrase?): List<String> {
+        if (type == null) {
+            throw FamilyBot.InternalException("type of phrase should not be null, seems like internal logic error")
+        }
         return jdbcTemplate.queryForList(
             "select phrase from phrase_dictionary where phrase_type_id = ?",
             String::class.java,
-            type!!.id
+            type.id
         )
     }
 }

@@ -2,6 +2,7 @@ package space.yaroslav.familybot.common.utils
 
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton
 import space.yaroslav.familybot.common.User
+import space.yaroslav.familybot.telegram.FamilyBot
 import java.util.concurrent.ThreadLocalRandom
 
 fun List<User>.formatTopList(): List<String> {
@@ -16,6 +17,14 @@ fun List<User>.formatTopList(): List<String> {
         .map { it.key to it.value.size }
         .sortedByDescending { it.second }
         .mapIndexed { index, pair -> format(index, pair) }
+}
+
+fun <T> List<T>.randomNotNull(): T {
+    return random() ?: throw FamilyBot.InternalException("Array should not be empty for randomNotNull() invoke")
+}
+
+fun <T> Set<T>.randomNotNull(): T {
+    return random() ?: throw FamilyBot.InternalException("Array should not be empty for randomNotNull() invoke")
 }
 
 fun <T> List<T>.random(): T? {

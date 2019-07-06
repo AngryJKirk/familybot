@@ -18,6 +18,7 @@ import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
 import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
+import space.yaroslav.familybot.telegram.FamilyBot
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -85,7 +86,8 @@ class TopPidorsByMonthsExecutor(
     private fun calculateStats(pidors: List<Pidor>): PidorStat {
         val pidor = pidors
             .groupBy { it.user }
-            .maxBy { it.value.size }!!
+            .maxBy { it.value.size }
+            ?: throw FamilyBot.InternalException("List of pidors should be not empty to calculate stats")
         return PidorStat(pidor.key, pidors.filter { it.user == pidor.key }.count())
     }
 

@@ -31,8 +31,9 @@ class HuificatorExecutor : Executor, Configurable {
             val huifyed = Huificator.huify(text.split(" ").last()) ?: return { }
             val sendMessage = SendMessage(message.chatId, huifyed)
             return { it -> it.execute(sendMessage) }
+        } else {
+            return { }
         }
-        return { }
     }
 
     override fun canExecute(message: Message): Boolean {

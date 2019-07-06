@@ -6,6 +6,7 @@ import org.telegram.telegrambots.api.objects.Message
 import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.utils.random
+import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
@@ -41,10 +42,10 @@ class ReplyToUserExecutor(val keyset: ChatLogRepository, val botConfig: BotConfi
     }
 
     private fun getSmallMessage(messages: List<String>): String {
-        var message: String?
-        do {
-            message = messages.random()
-        } while (message!!.split(" ").size > 5)
+        var message: String = messages.randomNotNull()
+        while (message.split(" ").size > 5) {
+            message = messages.randomNotNull()
+        }
         return message
     }
 }

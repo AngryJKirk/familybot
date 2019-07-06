@@ -76,8 +76,7 @@ class RageExecutor(
     private fun isFirstLaunch(chat: Chat): Boolean {
         return commandHistoryRepository
             .getAll(chat)
-            .sortedBy { it.date }
-            .firstOrNull()
+            .minBy { it.date }
             ?.date
             ?.isToday()
             ?: true

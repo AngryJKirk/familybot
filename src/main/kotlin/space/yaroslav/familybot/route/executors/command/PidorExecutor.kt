@@ -8,7 +8,7 @@ import org.telegram.telegrambots.bots.AbsSender
 import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.isToday
-import space.yaroslav.familybot.common.utils.random
+import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.route.executors.Configurable
@@ -42,7 +42,7 @@ class PidorExecutor(
             log.info("Pidor is not found, initiating search procedure")
             val users = repository.getUsers(chat, activeOnly = true)
             log.info("Users to roll: {}", users)
-            val nextPidor = users.random()!!
+            val nextPidor = users.randomNotNull()
             log.info("Pidor is rolled to $nextPidor")
             val newPidor = Pidor(nextPidor, Instant.now())
             repository.addPidor(newPidor)
