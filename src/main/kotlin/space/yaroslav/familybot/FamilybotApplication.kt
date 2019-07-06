@@ -20,7 +20,6 @@ class FamilybotApplication {
 
     @Bean
     fun telegramBot(bot: FamilyBot): TelegramBotsApi {
-
         val telegramBotsApi = TelegramBotsApi()
         telegramBotsApi.registerBot(bot)
         return telegramBotsApi
@@ -31,6 +30,6 @@ fun main() {
     BotLogger.setLevel(Level.ALL)
     ApiContextInitializer.init()
     val app = SpringApplication(FamilybotApplication::class.java)
-    app.isWebEnvironment = true
+    app.isWebEnvironment = false
     app.run()
 }
