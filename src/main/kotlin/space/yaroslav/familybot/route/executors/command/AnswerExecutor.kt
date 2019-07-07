@@ -3,9 +3,9 @@ package space.yaroslav.familybot.route.executors.command
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.methods.send.SendVoice
-import org.telegram.telegrambots.api.objects.Update
-import org.telegram.telegrambots.bots.AbsSender
+import org.telegram.telegrambots.meta.api.methods.send.SendVoice
+import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.dropLastDelimiter
 import space.yaroslav.familybot.common.utils.random
 import space.yaroslav.familybot.common.utils.randomNotNull
@@ -42,9 +42,9 @@ class AnswerExecutor(val textToSpeechService: TextToSpeechService, val dictionar
                 val sendAudio = SendVoice().apply {
                     chatId = update.toChat().id.toString()
                     replyToMessageId = update.message.messageId
-                    setNewVoice("Test", textToSpeech.await())
+                    setVoice("Test", textToSpeech.await())
                 }
-                it.sendVoice(sendAudio)
+                it.execute(sendAudio)
             }
         }
     }

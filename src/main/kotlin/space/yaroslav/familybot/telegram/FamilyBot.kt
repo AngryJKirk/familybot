@@ -5,9 +5,9 @@ import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.objects.Update
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
-import org.telegram.telegrambots.exceptions.TelegramApiRequestException
+import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.route.Router
 

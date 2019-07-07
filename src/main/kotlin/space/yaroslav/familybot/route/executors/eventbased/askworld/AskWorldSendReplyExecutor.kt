@@ -3,9 +3,9 @@ package space.yaroslav.familybot.route.executors.eventbased.askworld
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.objects.Message
-import org.telegram.telegrambots.api.objects.Update
-import org.telegram.telegrambots.bots.AbsSender
+import org.telegram.telegrambots.meta.api.objects.Message
+import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.AskWorldQuestion
 import space.yaroslav.familybot.common.AskWorldReply
 import space.yaroslav.familybot.common.Chat

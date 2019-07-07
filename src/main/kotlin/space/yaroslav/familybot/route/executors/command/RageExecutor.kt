@@ -2,8 +2,8 @@ package space.yaroslav.familybot.route.executors.command
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.objects.Update
-import org.telegram.telegrambots.bots.AbsSender
+import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.utils.isToday
 import space.yaroslav.familybot.common.utils.send

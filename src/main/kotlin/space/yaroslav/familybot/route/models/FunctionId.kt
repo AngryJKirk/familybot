@@ -1,6 +1,6 @@
 package space.yaroslav.familybot.route.models
 
-import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import space.yaroslav.familybot.common.utils.toEmoji
 import space.yaroslav.familybot.common.utils.toInlineKeyBoard
 

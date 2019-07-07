@@ -1,4 +1,4 @@
-package space.yaroslav.familybot
+package space.yaroslav.familybot.unit
 
 import org.junit.Assert
 import org.junit.Test

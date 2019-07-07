@@ -1,6 +1,6 @@
 package space.yaroslav.familybot.common.utils
 
-import org.telegram.telegrambots.api.objects.Chat
+import org.telegram.telegrambots.meta.api.objects.Chat
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime

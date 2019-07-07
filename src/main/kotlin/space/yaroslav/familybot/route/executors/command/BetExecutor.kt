@@ -1,9 +1,9 @@
 package space.yaroslav.familybot.route.executors.command
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.objects.Update
-import org.telegram.telegrambots.api.objects.replykeyboard.ForceReplyKeyboard
-import org.telegram.telegrambots.bots.AbsSender
+import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard
+import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toUser

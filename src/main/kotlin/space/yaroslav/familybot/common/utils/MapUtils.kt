@@ -1,11 +1,11 @@
 package space.yaroslav.familybot.common.utils
 
-import org.telegram.telegrambots.api.objects.Update
+import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.telegram.FamilyBot
-import org.telegram.telegrambots.api.objects.Chat as TelegramChat
-import org.telegram.telegrambots.api.objects.User as TelegramUser
+import org.telegram.telegrambots.meta.api.objects.Chat as TelegramChat
+import org.telegram.telegrambots.meta.api.objects.User as TelegramUser
 
 fun TelegramChat.toChat(): Chat = Chat(this.id, this.title)
 
@@ -40,7 +40,7 @@ fun Update.toUser(): User {
     return User(user.id.toLong(), this.toChat(), formatedName, user.userName)
 }
 
-fun Update.from(): org.telegram.telegrambots.api.objects.User {
+fun Update.from(): org.telegram.telegrambots.meta.api.objects.User {
     return when {
         this.hasMessage() -> this.message.from
         this.hasEditedMessage() -> this.editedMessage.from

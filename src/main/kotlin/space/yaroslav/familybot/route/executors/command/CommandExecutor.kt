@@ -1,7 +1,7 @@
 package space.yaroslav.familybot.route.executors.command
 
-import org.telegram.telegrambots.api.objects.Message
-import org.telegram.telegrambots.api.objects.Update
+import org.telegram.telegrambots.meta.api.objects.Message
+import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.route.executors.Executor
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.Priority

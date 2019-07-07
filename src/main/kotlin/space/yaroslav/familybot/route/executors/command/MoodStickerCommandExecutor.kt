@@ -4,10 +4,10 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.methods.send.SendSticker
-import org.telegram.telegrambots.api.methods.stickers.GetStickerSet
-import org.telegram.telegrambots.api.objects.Update
-import org.telegram.telegrambots.bots.AbsSender
+import org.telegram.telegrambots.meta.api.methods.send.SendSticker
+import org.telegram.telegrambots.meta.api.methods.stickers.GetStickerSet
+import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.send
@@ -37,7 +37,7 @@ class MoodStickerCommandExecutor(
                 val sticker = async { it.execute(GetStickerSet("youaretoday")).stickers.random().fileId }
                 it.send(update, "Какой ты сегодня?")
                 delay(1000)
-                it.sendSticker(
+                it.execute(
                     SendSticker()
                         .setSticker(sticker.await())
                         .setChatId(update.toChat().id)

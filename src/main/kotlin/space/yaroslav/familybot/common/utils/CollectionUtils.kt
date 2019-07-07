@@ -1,6 +1,6 @@
 package space.yaroslav.familybot.common.utils
 
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.util.concurrent.ThreadLocalRandom

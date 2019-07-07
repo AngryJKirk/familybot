@@ -1,10 +1,10 @@
 package space.yaroslav.familybot.route.executors.continious
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.methods.AnswerCallbackQuery
-import org.telegram.telegrambots.api.methods.send.SendMessage
-import org.telegram.telegrambots.api.objects.Update
-import org.telegram.telegrambots.bots.AbsSender
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.repos.ifaces.QuoteRepository
 import space.yaroslav.familybot.route.executors.command.QUOTE_MESSAGE
 import space.yaroslav.familybot.route.models.Command

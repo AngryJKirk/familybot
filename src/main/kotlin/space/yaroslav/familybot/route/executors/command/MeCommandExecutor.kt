@@ -1,8 +1,8 @@
 package space.yaroslav.familybot.route.executors.command
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.objects.Update
-import org.telegram.telegrambots.bots.AbsSender
+import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.pluralize
@@ -19,10 +19,10 @@ import java.time.Instant
 
 @Component
 class MeCommandExecutor(
-    val commonRepository: CommonRepository,
-    val commandHistoryRepository: CommandHistoryRepository,
-    val rawChatLogRepository: RawChatLogRepository,
-    val dictionary: Dictionary
+    private val commonRepository: CommonRepository,
+    private val commandHistoryRepository: CommandHistoryRepository,
+    private val rawChatLogRepository: RawChatLogRepository,
+    private val dictionary: Dictionary
 ) : CommandExecutor {
     override fun command(): Command {
         return Command.ME

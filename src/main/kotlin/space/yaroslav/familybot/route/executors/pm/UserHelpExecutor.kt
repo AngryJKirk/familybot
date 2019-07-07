@@ -1,9 +1,9 @@
 package space.yaroslav.familybot.route.executors.pm
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.api.objects.Message
-import org.telegram.telegrambots.api.objects.Update
-import org.telegram.telegrambots.bots.AbsSender
+import org.telegram.telegrambots.meta.api.objects.Message
+import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.route.executors.command.HelpCommandExecutor
 import space.yaroslav.familybot.route.models.Priority
 
