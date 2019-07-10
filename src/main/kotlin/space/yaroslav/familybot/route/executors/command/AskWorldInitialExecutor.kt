@@ -5,6 +5,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -84,11 +85,11 @@ class AskWorldInitialExecutor(
                 commonRepository.getChats()
                     .filterNot { it == chat }
                     .filter(this@AskWorldInitialExecutor::isEnabledInChat)
-                    .forEach { chat ->
+                    .forEach {
                         runCatching {
-                            val result = sender.send(update, formatMessage(chat, question), enableHtml = true)
-                            markQuestionDelivered(question, questionId, result, chat)
-                        }.onFailure { e -> markChatInactive(chat, questionId, e) }
+                            val result = sender.execute(SendMessage(it.id, formatMessage(chat, question)).enableHtml(true))
+                            markQuestionDelivered(question, questionId, result, it)
+                        }.onFailure { e -> markChatInactive(it, questionId, e) }
                     }
             }
         }

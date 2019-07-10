@@ -6,8 +6,15 @@ import java.time.Instant
 data class User(val id: Long, val chat: Chat, val name: String?, val nickname: String?) {
 
     fun getGeneralName(mention: Boolean = true): String {
-        val mentionString = if (mention) "@" else ""
-        return nickname?.let { mentionString + it } ?: name ?: "Хуй знает кто"
+        return if(mention){
+            if(nickname != null) {
+                "@$nickname"
+            } else {
+                "<a href=\"tg://user?id=$id\">$name</a>"
+            }
+        } else {
+            name ?: "хуй знает кто"
+        }
     }
 }
 

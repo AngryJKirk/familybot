@@ -63,7 +63,7 @@ class PidorExecutor(
                 delay(3000)
                 it.send(update, finisher, enableHtml = true)
                 delay(3000)
-                it.send(update, nextPidor.getGeneralName(mention = true), enableHtml = true)
+                it.send(update, nextPidor.getGeneralName(), enableHtml = true)
                 pidorCompetitionService.pidorCompetition(update)?.invoke(it)
             }
         }
@@ -83,9 +83,9 @@ class PidorExecutor(
             1 -> SendMessage(
                 update.message.chatId, dictionary.get(Phrase.PIROR_DISCOVERED_ONE) + ": " +
                     pidorsByChat.first().user.getGeneralName()
-            )
+            ).enableHtml(true)
             else -> SendMessage(update.message.chatId, dictionary.get(Phrase.PIROR_DISCOVERED_MANY) + ": " +
-                pidorsByChat.joinToString { it.user.getGeneralName() })
+                pidorsByChat.joinToString { it.user.getGeneralName() }).enableHtml(true)
         }
     }
 }
