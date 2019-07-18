@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.executors
 
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.springframework.beans.factory.annotation.Autowired
 import space.yaroslav.familybot.infrastructure.UpdateBuilder
@@ -15,7 +16,7 @@ class QuoteExecutorTest : CommandExecutorTest() {
 
     override fun executeTest() {
         val update = UpdateBuilder().simpleTextMessageFromUser(quoteExecutorTest.command().command)
-        quoteExecutorTest.execute(update).invoke(testSender)
+        runBlocking { quoteExecutorTest.execute(update).invoke(testSender) }
         val actions = testSender.actions
         Assert.assertTrue("Should be exactly one action with quote", actions.size == 1)
     }

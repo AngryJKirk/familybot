@@ -42,7 +42,7 @@ class TopPidorsByMonthsExecutor(
         return Command.LEADERBOARD
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val result = commonRepository
             .getPidorsByChat(update.toChat())
             .filter { it.date.isBefore(startOfMonth()) }

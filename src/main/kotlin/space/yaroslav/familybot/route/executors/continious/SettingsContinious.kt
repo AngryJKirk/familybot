@@ -31,7 +31,7 @@ class SettingsContinious(
         return dictionary.get(Phrase.WHICH_SETTING_SHOULD_CHANGE)
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         return {
             val chat = update.toChat()
             val callbackQuery = update.callbackQuery
@@ -44,7 +44,7 @@ class SettingsContinious(
             } else {
                 val function = FunctionId
                     .values()
-                    .find { it.desc == callbackQuery.data }
+                    .find { id -> id.desc == callbackQuery.data }
 
                 if (function != null) {
                     configureRepository.switch(function, chat)

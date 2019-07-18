@@ -45,7 +45,7 @@ class Router(
 
     private final val logger = LoggerFactory.getLogger(Router::class.java)
 
-    fun processUpdate(update: Update): (AbsSender) -> Unit {
+    fun processUpdate(update: Update): suspend (AbsSender) -> Unit {
 
         val message = update.message
             ?: update.editedMessage
@@ -96,7 +96,7 @@ class Router(
         return executor
     }
 
-    private fun antiDdosSkip(message: Message, update: Update): (AbsSender) -> Unit = marker@{ it ->
+    private fun antiDdosSkip(message: Message, update: Update): suspend (AbsSender) -> Unit = marker@{ it ->
         logger.info("Skip anti-ddos executor due to configuration")
         val executor = executors
             .filterIsInstance<CommandExecutor>()
@@ -110,7 +110,7 @@ class Router(
         function.invoke(it)
     }
 
-    private fun disabledCommand(chat: Chat): (AbsSender) -> Unit = { it ->
+    private fun disabledCommand(chat: Chat): suspend (AbsSender) -> Unit = { it ->
         logger.info("Skip command executor due to configuration")
         it.execute(SendMessage(chat.id, dictionary.get(Phrase.COMMAND_IS_OFF)))
     }

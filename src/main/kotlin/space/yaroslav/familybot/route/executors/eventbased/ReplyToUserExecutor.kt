@@ -21,7 +21,7 @@ class ReplyToUserExecutor(val keyset: ChatLogRepository, val botConfig: BotConfi
         return FunctionId.CHATTING
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val string = getRandomUserMessage(update) ?: getSmallRandomMessage(keyset.getAll())
         return { it.send(update, string, replyToUpdate = true) }
     }

@@ -24,7 +24,7 @@ class QuoteContinious(
         return QUOTE_MESSAGE
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         return {
             val callbackQuery = update.callbackQuery
             it.execute(AnswerCallbackQuery().setCallbackQueryId(callbackQuery.id))

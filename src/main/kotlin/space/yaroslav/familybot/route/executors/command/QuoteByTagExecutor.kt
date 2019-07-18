@@ -18,11 +18,11 @@ class QuoteByTagExecutor(val quoteRepository: QuoteRepository) : CommandExecutor
         return Command.QUOTE_BY_TAG
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         return {
             val rows = quoteRepository
                 .getTags()
-                .map { InlineKeyboardButton().setText(it.capitalize()).setCallbackData(it) }
+                .map { tag -> InlineKeyboardButton().setText(tag.capitalize()).setCallbackData(tag) }
                 .chunked(3)
             it.send(update, QUOTE_MESSAGE, replyToUpdate = true, customization = customization(rows))
         }

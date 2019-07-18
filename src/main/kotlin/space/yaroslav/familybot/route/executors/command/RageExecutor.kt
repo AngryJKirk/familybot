@@ -36,7 +36,7 @@ class RageExecutor(
         return Command.RAGE
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val chat = update.toChat()
         if (isRageForced(update)) {
             logger.warn("Someone forced ${command()}")

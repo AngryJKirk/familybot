@@ -30,7 +30,7 @@ class AskWorldSendReplyExecutor(
         return FunctionId.ASK_WORLD
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val chat = update.toChat()
         val replyToDeliver = getRepliesToDeliver(chat)
         val question = askWorldRepository.findQuestionByMessageId(extractQuestionMessageId(update, chat), chat)

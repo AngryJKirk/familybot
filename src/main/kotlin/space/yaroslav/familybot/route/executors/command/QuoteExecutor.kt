@@ -13,7 +13,7 @@ class QuoteExecutor(val quoteRepository: QuoteRepository) : CommandExecutor {
         return Command.QUOTE
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         return { it.send(update, quoteRepository.getRandom()) }
     }
 }

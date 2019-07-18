@@ -16,7 +16,7 @@ import space.yaroslav.familybot.telegram.BotConfig
 class PatchNoteExecutor(val botConfig: BotConfig, val commonRepository: CommonRepository) : PrivateMessageExecutor {
     private val patchnotePrefix = "PATCHNOTE1488"
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         return { sender ->
             commonRepository
                 .getChats()

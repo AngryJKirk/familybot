@@ -48,7 +48,7 @@ class RouletteContinious(
             && message.replyToMessage.text ?: "" == getDialogMessage()
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val now = LocalDate.now()
         val user = update.toUser()
         val chatId = update.message.chatId

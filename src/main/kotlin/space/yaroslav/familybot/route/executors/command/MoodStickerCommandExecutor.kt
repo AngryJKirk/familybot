@@ -1,8 +1,8 @@
 package space.yaroslav.familybot.route.executors.command
 
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker
 import org.telegram.telegrambots.meta.api.methods.stickers.GetStickerSet
@@ -26,15 +26,14 @@ class MoodStickerCommandExecutor(
 ) : CommandExecutor {
     override fun command() = Command.WHATS_MOOD_TODAY
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
 
         if (isInvokedToday(update.toUser())) {
             return {}
         }
 
         return {
-            runBlocking {
-                val sticker = async { it.execute(GetStickerSet("youaretoday")).stickers.random().fileId }
+                val sticker = GlobalScope.async { it.execute(GetStickerSet("youaretoday")).stickers.random().fileId }
                 it.send(update, "Какой ты сегодня?")
                 delay(1000)
                 it.execute(
@@ -42,7 +41,6 @@ class MoodStickerCommandExecutor(
                         .setSticker(sticker.await())
                         .setChatId(update.toChat().id)
                 )
-            }
         }
     }
 

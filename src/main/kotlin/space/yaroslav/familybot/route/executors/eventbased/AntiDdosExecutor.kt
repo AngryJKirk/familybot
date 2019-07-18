@@ -29,7 +29,7 @@ class AntiDdosExecutor(
         return FunctionId.ANTIDDOS
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val message = dictionary.get(Phrase.STOP_DDOS)
         return when {
             update.hasCallbackQuery() -> callbackQueryCase(update, message)
@@ -71,12 +71,12 @@ class AntiDdosExecutor(
     private fun messageCase(
         update: Update,
         message: String
-    ): (AbsSender) -> Unit = { it.send(update, message) }
+    ): suspend (AbsSender) -> Unit = { it.send(update, message) }
 
     private fun callbackQueryCase(
         update: Update,
         message: String
-    ): (AbsSender) -> Unit = { it ->
+    ): suspend (AbsSender) -> Unit = { it ->
         it.execute(
             AnswerCallbackQuery()
                 .setCallbackQueryId(update.callbackQuery.id)

@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.executors
 
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -33,7 +34,7 @@ class ReplyToUserExecutorTest : ExecutorTest() {
 
     override fun executeTest() {
         val update = updateWithReplyToBotMessage()
-        replyToUserExecutor.execute(update).invoke(testSender)
+        runBlocking { replyToUserExecutor.execute(update).invoke(testSender) }
         Assert.assertTrue("Should be at least one action", testSender.actions.isNotEmpty())
         Assert.assertTrue("Should be reply", testSender.actions.first().replyId != null)
         Assert.assertTrue("Reply should not be empty", testSender.actions.first().text.isNotBlank())

@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.executors
 
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.springframework.beans.factory.annotation.Autowired
 import space.yaroslav.familybot.infrastructure.UpdateBuilder
@@ -16,7 +17,7 @@ class MeExecutorTest : CommandExecutorTest() {
 
     override fun executeTest() {
         val update = UpdateBuilder().simpleTextMessageFromUser(meCommandExecutor.command().command)
-        meCommandExecutor.execute(update).invoke(testSender)
+        runBlocking { meCommandExecutor.execute(update).invoke(testSender) }
         val actions = testSender.actions
         Assert.assertTrue("Should be exactly one action with stats", actions.size == 1)
     }

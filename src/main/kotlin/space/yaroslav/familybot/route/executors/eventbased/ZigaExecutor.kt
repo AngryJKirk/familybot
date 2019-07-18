@@ -17,7 +17,7 @@ class ZigaExecutor : Executor {
     private val zigaLeftId = "CAADAgADNQAD_8Q9CN0CpZZUdZygAg"
     private val zigaRightId = "CAADAgADNgAD_8Q9CIQDztfj3HHcAg"
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         return {
             it.execute(
                 SendSticker()

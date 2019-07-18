@@ -14,7 +14,7 @@ class TopHistoryExecutor(private val chatLogRepository: ChatLogRepository) : Com
         return Command.TOP_HISTORY
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val randomStory =
             chatLogRepository.getAll()
                 .subList(0, 700)

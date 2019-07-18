@@ -34,7 +34,7 @@ class PidorStatsMonthExecutor(
         return Command.STATS_MONTH
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val now = LocalDate.now()
         val pidorsByChat = repository.getPidorsByChat(
             update.message.chat.toChat(),

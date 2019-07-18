@@ -1,8 +1,8 @@
 package space.yaroslav.familybot.route.executors.command
 
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -57,7 +57,7 @@ class AskWorldInitialExecutor(
         return Command.ASK_WORLD
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val chat = update.toChat()
         val message = update.message
             ?.text
@@ -79,8 +79,7 @@ class AskWorldInitialExecutor(
 
         val question = AskWorldQuestion(null, message, update.toUser(), chat, Instant.now(), null)
         return { sender ->
-            runBlocking {
-                val questionId = async { askWorldRepository.addQuestion(question) }
+                val questionId = GlobalScope.async { askWorldRepository.addQuestion(question) }
                 sender.send(update, dictionary.get(Phrase.DATA_CONFIRM))
                 commonRepository.getChats()
                     .filterNot { it == chat }
@@ -91,7 +90,6 @@ class AskWorldInitialExecutor(
                             markQuestionDelivered(question, questionId, result, it)
                         }.onFailure { e -> markChatInactive(it, questionId, e) }
                     }
-            }
         }
     }
 

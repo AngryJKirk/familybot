@@ -28,7 +28,7 @@ class MeCommandExecutor(
         return Command.ME
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val user = update.toUser()
         val chat = update.toChat()
         val pidorCount = getPidorsCount(chat, user)

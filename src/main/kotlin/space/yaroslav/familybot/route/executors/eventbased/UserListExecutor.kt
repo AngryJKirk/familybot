@@ -13,7 +13,7 @@ import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
 class UserListExecutor(val dictionary: Dictionary, val botConfig: BotConfig) : Executor {
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val message = update.message
         val phrase = when {
             isUserLeft(message) -> Phrase.USER_LEAVING_CHAT

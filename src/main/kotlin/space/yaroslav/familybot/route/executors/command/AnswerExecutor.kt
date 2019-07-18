@@ -1,7 +1,7 @@
 package space.yaroslav.familybot.route.executors.command
 
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendVoice
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -23,7 +23,7 @@ class AnswerExecutor(val textToSpeechService: TextToSpeechService, val dictionar
         return Command.ANSWER
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val text = update.message.text
         val message = text
             .removeRange(0, getIndexOfQuestionStart(text))
@@ -37,15 +37,13 @@ class AnswerExecutor(val textToSpeechService: TextToSpeechService, val dictionar
                 it.send(update, dictionary.get(Phrase.BAD_COMMAND_USAGE), replyToUpdate = true)
             }
         return {
-            runBlocking {
-                val textToSpeech = async { textToSpeechService.toSpeech(message, emotion = randomEmotion()) }
-                val sendAudio = SendVoice().apply {
-                    chatId = update.toChat().id.toString()
-                    replyToMessageId = update.message.messageId
-                    setVoice("Test", textToSpeech.await())
-                }
-                it.execute(sendAudio)
+            val textToSpeech = GlobalScope.async { textToSpeechService.toSpeech(message, emotion = randomEmotion()) }
+            val sendAudio = SendVoice().apply {
+                chatId = update.toChat().id.toString()
+                replyToMessageId = update.message.messageId
+                setVoice("Test", textToSpeech.await())
             }
+            it.execute(sendAudio)
         }
     }
 

@@ -1,8 +1,6 @@
 package space.yaroslav.familybot.route.executors.command
 
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -35,7 +33,7 @@ class PidorExecutor(
 
     private final val log = LoggerFactory.getLogger(PidorExecutor::class.java)
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend suspend (AbsSender) -> Unit {
         val chat = update.message.chat.toChat()
         log.info("Getting pidors from chat $chat")
         val message = todayPidors(update)
@@ -55,17 +53,16 @@ class PidorExecutor(
         val start = dictionary.get(Phrase.PIDOR_SEARCH_START).bold()
         val middle = dictionary.get(Phrase.PIDOR_SEARCH_MIDDLE).bold()
         val finisher = dictionary.get(Phrase.PIDOR_SEARCH_FINISHER).bold()
+
         return {
-            GlobalScope.launch {
-                it.send(update, start, enableHtml = true)
-                delay(3000)
-                it.send(update, middle, enableHtml = true)
-                delay(3000)
-                it.send(update, finisher, enableHtml = true)
-                delay(3000)
-                it.send(update, nextPidor.getGeneralName(), enableHtml = true)
-                pidorCompetitionService.pidorCompetition(update)?.invoke(it)
-            }
+            it.send(update, start, enableHtml = true)
+            delay(3000)
+            it.send(update, middle, enableHtml = true)
+            delay(3000)
+            it.send(update, finisher, enableHtml = true)
+            delay(3000)
+            it.send(update, nextPidor.getGeneralName(), enableHtml = true)
+            pidorCompetitionService.pidorCompetition(update)?.invoke(it)
         }
     }
 

@@ -7,7 +7,7 @@ import space.yaroslav.familybot.route.models.Priority
 
 interface Executor {
 
-    fun execute(update: Update): (AbsSender) -> Unit
+    fun execute(update: Update): suspend (AbsSender) -> Unit
 
     fun canExecute(message: Message): Boolean
 

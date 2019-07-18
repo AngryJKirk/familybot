@@ -1,8 +1,8 @@
 package space.yaroslav.familybot.route.executors.eventbased.askworld
 
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -37,7 +37,7 @@ class AskWorldRecieveReplyExecutor(
         return FunctionId.ASK_WORLD
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val reply = update.message.text
         val chat = update.toChat()
         val user = update.toUser()
@@ -65,8 +65,7 @@ class AskWorldRecieveReplyExecutor(
 
         return {
             runCatching {
-                runBlocking {
-                    val id = async { askWorldRepository.addReply(askWorldReply) }
+                    val id = GlobalScope.async { askWorldRepository.addReply(askWorldReply) }
                     val message = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
                     it.execute(
                         SendMessage(
@@ -75,9 +74,8 @@ class AskWorldRecieveReplyExecutor(
                                 "от ${user.getGeneralName()} на вопрос \"$message\": ${reply.italic()}"
                         ).enableHtml(true)
                     )
-                    launch { askWorldRepository.addReplyDeliver(askWorldReply.copy(id = id.await())) }
+                    GlobalScope.launch { askWorldRepository.addReplyDeliver(askWorldReply.copy(id = id.await())) }
                     it.send(update, "Принято и отправлено")
-                }
             }.onFailure { e ->
                 it.send(update, "Принято")
                 log.info("Could not send reply instantly", e)

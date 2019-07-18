@@ -22,7 +22,7 @@ class SettingsExecutor(
         return Command.SETTINGS
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val chat = update.toChat()
         return {
             it.send(

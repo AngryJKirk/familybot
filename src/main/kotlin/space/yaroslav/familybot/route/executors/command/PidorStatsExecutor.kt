@@ -26,7 +26,7 @@ class PidorStatsExecutor(
         return FunctionId.PIDOR
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val chat = update.message.chat.toChat()
         val pidorsByChat = repository.getPidorsByChat(chat)
             .groupBy { it.user }

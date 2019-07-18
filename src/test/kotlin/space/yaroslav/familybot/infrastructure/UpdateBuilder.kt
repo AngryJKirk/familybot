@@ -77,7 +77,7 @@ class MessageBuilder(val data: MutableMap<String, Any> = HashMap()) {
 
 class ChatBuilder(val data: MutableMap<String, Any> = HashMap()) {
     init {
-        val chatId = randomIntFrom1to5()
+        val chatId = randomIntFrom1to3()
         data.putAll(
             mapOf(
                 "id" to chatId,
@@ -100,7 +100,7 @@ class ChatBuilder(val data: MutableMap<String, Any> = HashMap()) {
 
 class UserBuilder(val data: MutableMap<String, Any> = HashMap()) {
     init {
-        val userId = randomIntFrom1to5()
+        val userId = randomIntFrom1to3()
         data.putAll(
             mapOf(
                 "id" to userId,
@@ -121,5 +121,5 @@ class UserBuilder(val data: MutableMap<String, Any> = HashMap()) {
 }
 
 private fun randomInt() = ThreadLocalRandom.current().nextInt()
-private fun randomIntFrom1to5() = ThreadLocalRandom.current().nextInt(1, 5)
+private fun randomIntFrom1to3() = ThreadLocalRandom.current().nextInt(1, 3)
 

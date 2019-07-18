@@ -31,7 +31,7 @@ class PidorStatsWorldExecutor(
         return Command.STATS_WORLD
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val pidorsByChat = repository.getAllPidors(
             startDate = LocalDateTime.of(
                 LocalDate.of(2000, Month.JANUARY, 1),

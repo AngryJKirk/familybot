@@ -15,7 +15,7 @@ class HelpCommandExecutor(val dictionary: Dictionary) : CommandExecutor {
         return Command.HELP
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         return { it.send(update, dictionary.get(Phrase.HELP_MESSAGE), enableHtml = true) }
     }
 }

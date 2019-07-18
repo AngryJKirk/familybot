@@ -34,7 +34,7 @@ class RouletteExecutor(
         return Command.ROULETTE
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val now = LocalDate.now()
         val commands = commandHistoryRepository.get(
             update.toUser(), LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)

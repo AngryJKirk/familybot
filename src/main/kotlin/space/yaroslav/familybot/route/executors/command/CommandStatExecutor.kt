@@ -23,7 +23,7 @@ class CommandStatExecutor(
         return Command.COMMAND_STATS
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val all = repositoryCommand.getAll(update.message.chat.toChat()).groupBy { it.command }
 
         val topList = all

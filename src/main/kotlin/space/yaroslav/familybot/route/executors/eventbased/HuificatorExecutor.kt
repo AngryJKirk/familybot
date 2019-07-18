@@ -22,7 +22,7 @@ class HuificatorExecutor : Executor, Configurable {
         return Priority.RANDOM
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
 
         val message = update.message
         val text = message.text ?: return {}

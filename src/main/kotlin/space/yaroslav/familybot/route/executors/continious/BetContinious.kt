@@ -1,8 +1,8 @@
 package space.yaroslav.familybot.route.executors.continious
 
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
@@ -45,7 +45,7 @@ class BetContinious(
             && message.replyToMessage.text ?: "" == getDialogMessage()
     }
 
-    override fun execute(update: Update): (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val now = LocalDate.now()
         val user = update.toUser()
         val chatId = update.message.chatId
@@ -62,23 +62,22 @@ class BetContinious(
         if (number == null || number !in 1..3) {
             return {
                 it.send(update, dictionary.get(Phrase.BET_BREAKING_THE_RULES_FIRST))
-                Thread.sleep(1000)
+                delay(1000)
                 it.send(update, dictionary.get(Phrase.BET_BREAKING_THE_RULES_SECOND))
             }
         }
         val isItWinner = ThreadLocalRandom.current().nextBoolean()
         return {
-            runBlocking {
                 if (isItWinner) {
                     it.execute(SendMessage(chatId, dictionary.get(Phrase.BET_ZATRAVOCHKA)))
-                    launch { repeat(number) { pidorRepository.removePidorRecord(user) } }
+                    GlobalScope.launch { repeat(number) { pidorRepository.removePidorRecord(user) } }
                     delay(2000)
                     it.send(update, dictionary.get(Phrase.BET_WIN))
                     delay(2000)
                     it.send(update, winEndPhrase(number))
                 } else {
                     it.send(update, dictionary.get(Phrase.BET_ZATRAVOCHKA))
-                    launch { addPidorsMultiplyTimesWithDayShift(number, user) }
+                    GlobalScope.launch { addPidorsMultiplyTimesWithDayShift(number, user) }
                     delay(2000)
                     it.send(update, dictionary.get(Phrase.BET_LOSE))
                     delay(2000)
@@ -87,7 +86,6 @@ class BetContinious(
                 delay(2000)
                 pidorCompetitionService.pidorCompetition(update)?.invoke(it)
             }
-        }
     }
 
     private fun addPidorsMultiplyTimesWithDayShift(number: Int, user: User) {
