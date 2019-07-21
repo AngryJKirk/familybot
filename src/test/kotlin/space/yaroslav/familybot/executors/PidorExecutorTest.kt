@@ -24,31 +24,72 @@ class PidorExecutorTest : CommandExecutorTest() {
         val pidorsBefore =
             commonRepository.getPidorsByChat(update.toChat())
         val allPidors = commonRepository.getAllPidors()
-        
-        runBlocking { pidorExecutor.execute(update).invoke(testSender) }
-        val actions = testSender.actions
-        Assert.assertEquals("Should always be 4 messages in case of first pidor execution of day", 4, actions.size)
 
-        val pidorsAfter =
+        runBlocking { pidorExecutor.execute(update).invoke(testSender) }
+
+        val firstInvokeActions = testSender.actions
+        Assert.assertEquals(
+            "Should always be 4 messages in case of first pidor execution of day",
+            4,
+            firstInvokeActions.size
+        )
+
+        val pidorsAfterFirstInvoke =
             commonRepository.getPidorsByChat(update.toChat())
 
         Assert.assertEquals(
             "Should be exactly one more pidor after command execute",
             pidorsBefore.size + 1,
-            pidorsAfter.size
+            pidorsAfterFirstInvoke.size
         )
         Assert.assertEquals(
             "Same for all pidors in all chats",
             allPidors.size + 1,
-            pidorsAfter.size
+            pidorsAfterFirstInvoke.size
         )
 
-        val lastPidor = pidorsAfter.maxBy { it.date } ?: throw AssertionError("Should be one last pidor")
+        val lastPidorAfterFirstInvoke = pidorsAfterFirstInvoke.maxBy { it.date } ?: throw AssertionError("Should be one last pidor")
 
         Assert.assertEquals(
             "Pidor in message and in database should match",
-            actions.last().text,
-            lastPidor.user.getGeneralName(true)
+            firstInvokeActions.last().text,
+            lastPidorAfterFirstInvoke.user.getGeneralName(true)
+        )
+
+        cleanSender()
+
+        runBlocking { pidorExecutor.execute(update).invoke(testSender) }
+        val secondInvokeActions = testSender.actions
+
+        Assert.assertEquals(
+            "Should always be one message in case of second pidor execution of day",
+            1,
+            secondInvokeActions.size
+        )
+
+        val pidorsAfterSecondInvoke =
+            commonRepository.getPidorsByChat(update.toChat())
+
+        Assert.assertEquals(
+            "Should be exactly same pidors after second command execute",
+            pidorsAfterFirstInvoke.size,
+            pidorsAfterSecondInvoke.size
+        )
+        Assert.assertEquals(
+            "Same for all pidors in all chats",
+            allPidors.size + 1,
+            pidorsAfterSecondInvoke.size
+        )
+
+        val lastPidorAfterSecondInvoke = pidorsAfterSecondInvoke
+            .maxBy { it.date } ?: throw AssertionError("Should be one last pidor")
+
+        Assert.assertTrue(
+            "Pidor in message and in database should match",
+            firstInvokeActions
+                .first()
+                .text
+                .contains(lastPidorAfterSecondInvoke.user.getGeneralName(true))
         )
     }
 }

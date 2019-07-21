@@ -19,25 +19,26 @@ class UpdateBuilder(private val data: MutableMap<String, Any> = HashMap()) {
 
     private val objectMapper = ObjectMapper()
 
-    fun addMessage(messageBuilder: MessageBuilder): UpdateBuilder {
+    fun message(build: MessageBuilder.() -> MessageBuilder): UpdateBuilder {
+        val messageBuilder = build(MessageBuilder())
         data["message"] = messageBuilder.data
         data.remove("edited_message")
         return this
     }
 
-    fun addEditedMessage(messageBuilder: MessageBuilder): UpdateBuilder {
+    fun withEditedMessage(build: MessageBuilder.() -> MessageBuilder): UpdateBuilder {
+        val messageBuilder = build(MessageBuilder())
         data["edited_message"] = messageBuilder.data
         data.remove("message")
         return this
     }
 
     fun simpleTextMessageFromUser(text: String): Update {
-        return addMessage(
-            MessageBuilder()
-                .addText(text)
-                .addChat(ChatBuilder())
-                .addFrom(UserBuilder())
-        ).build()
+        return message {
+            text { text }
+            chat { ChatBuilder() }
+            from { UserBuilder() }
+        }.build()
     }
 
     fun build(): Update = objectMapper.readValue(objectMapper.writeValueAsString(data), Update::class.java)
@@ -54,23 +55,23 @@ class MessageBuilder(val data: MutableMap<String, Any> = HashMap()) {
         )
     }
 
-    fun addText(text: String): MessageBuilder {
-        data["text"] = text
+    fun text(text: () -> String): MessageBuilder {
+        data["text"] = text()
         return this
     }
 
-    fun addChat(chatBuilder: ChatBuilder): MessageBuilder {
-        data["chat"] = chatBuilder.data
+    fun chat(chat: () -> ChatBuilder): MessageBuilder {
+        data["chat"] = chat().data
         return this
     }
 
-    fun addFrom(userBuilder: UserBuilder): MessageBuilder {
-        data["from"] = userBuilder.data
+    fun from(from: () -> UserBuilder): MessageBuilder {
+        data["from"] = from().data
         return this
     }
 
-    fun addRepledMessage(messageBuilder: MessageBuilder): MessageBuilder {
-        data["reply_to_message"] = messageBuilder.data
+    fun to(messageTo: MessageBuilder.() -> MessageBuilder): MessageBuilder {
+        data["reply_to_message"] = messageTo(MessageBuilder()).data
         return this
     }
 }

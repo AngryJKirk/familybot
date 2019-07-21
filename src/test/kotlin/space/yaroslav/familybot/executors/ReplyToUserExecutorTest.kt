@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.infrastructure.ChatBuilder
-import space.yaroslav.familybot.infrastructure.MessageBuilder
 import space.yaroslav.familybot.infrastructure.UpdateBuilder
 import space.yaroslav.familybot.infrastructure.UserBuilder
 import space.yaroslav.familybot.route.executors.eventbased.ReplyToUserExecutor
@@ -41,20 +40,15 @@ class ReplyToUserExecutorTest : ExecutorTest() {
     }
 
     private fun updateWithReplyToBotMessage(): Update {
-        val chat = ChatBuilder()
+        val commonChat = ChatBuilder()
         return UpdateBuilder()
-            .addMessage(
-                MessageBuilder()
-                    .addChat(chat)
-                    .addFrom(UserBuilder())
-                    .addRepledMessage(
-                        MessageBuilder()
-                            .addFrom(
-                                UserBuilder()
-                                    .toBot(botName)
-                            )
-                            .addChat(chat)
-                    )
-            ).build()
+            .message {
+                chat { commonChat }
+                from { UserBuilder() }
+                to {
+                    chat { commonChat }
+                    from { UserBuilder().toBot(botName) }
+                }
+            }.build()
     }
 }
