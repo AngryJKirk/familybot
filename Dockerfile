@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk
+FROM openjdk:11-jdk
 
 ENV GRADLE_VERSION 5.5.1
 ENV GRADLE_SHA 222a03fcf2fcaf3691767ce9549f78ebd4a77e73f9e23a396899fb70b420cd00
@@ -18,7 +18,6 @@ WORKDIR /usr/bin/app
 
 COPY . .
 RUN gradle clean ktlintCheck build -x test
-RUN ls -la build/libs
 EXPOSE 8080 8085
 
 CMD ["gradle", "bootRun"]
