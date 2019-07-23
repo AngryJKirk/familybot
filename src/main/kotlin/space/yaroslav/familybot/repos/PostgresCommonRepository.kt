@@ -130,5 +130,3 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
         template.update("update users2chats set active = false where chat_id = ?", chat.id)
     }
 }
-
-

@@ -40,9 +40,3 @@ fun Boolean.toEmoji(): String {
         false -> "❌"
     }
 }
-
-
-
-
-
-

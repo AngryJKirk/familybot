@@ -123,4 +123,3 @@ class UserBuilder(val data: MutableMap<String, Any> = HashMap()) {
 
 private fun randomInt() = ThreadLocalRandom.current().nextInt()
 private fun randomIntFrom1to3() = ThreadLocalRandom.current().nextInt(1, 3)
-

@@ -43,9 +43,9 @@ class RouletteContinious(
     }
 
     override fun canExecute(message: Message): Boolean {
-        return message.isReply
-            && message.replyToMessage.from.userName == botConfig.botname
-            && message.replyToMessage.text ?: "" == getDialogMessage()
+        return message.isReply &&
+            message.replyToMessage.from.userName == botConfig.botname &&
+            message.replyToMessage.text ?: "" == getDialogMessage()
     }
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {

@@ -53,4 +53,3 @@ class AnswerExecutor(val textToSpeechService: TextToSpeechService, val dictionar
 
     private fun getIndexOfQuestionStart(text: String) = text.indexOfFirst { it == ' ' }.takeIf { it >= 0 } ?: 0
 }
-

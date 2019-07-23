@@ -40,9 +40,7 @@ class BetContinious(
 
     override fun command() = Command.BET
     override fun canExecute(message: Message): Boolean {
-        return message.isReply
-            && message.replyToMessage.from.userName == botConfig.botname
-            && message.replyToMessage.text ?: "" == getDialogMessage()
+        return message.isReply && message.replyToMessage.from.userName == botConfig.botname && message.replyToMessage.text ?: "" == getDialogMessage()
     }
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
@@ -68,24 +66,24 @@ class BetContinious(
         }
         val isItWinner = ThreadLocalRandom.current().nextBoolean()
         return {
-                if (isItWinner) {
-                    it.execute(SendMessage(chatId, dictionary.get(Phrase.BET_ZATRAVOCHKA)))
-                    GlobalScope.launch { repeat(number) { pidorRepository.removePidorRecord(user) } }
-                    delay(2000)
-                    it.send(update, dictionary.get(Phrase.BET_WIN))
-                    delay(2000)
-                    it.send(update, winEndPhrase(number))
-                } else {
-                    it.send(update, dictionary.get(Phrase.BET_ZATRAVOCHKA))
-                    GlobalScope.launch { addPidorsMultiplyTimesWithDayShift(number, user) }
-                    delay(2000)
-                    it.send(update, dictionary.get(Phrase.BET_LOSE))
-                    delay(2000)
-                    it.send(update, explainPhrase(number))
-                }
+            if (isItWinner) {
+                it.execute(SendMessage(chatId, dictionary.get(Phrase.BET_ZATRAVOCHKA)))
+                GlobalScope.launch { repeat(number) { pidorRepository.removePidorRecord(user) } }
                 delay(2000)
-                pidorCompetitionService.pidorCompetition(update)?.invoke(it)
+                it.send(update, dictionary.get(Phrase.BET_WIN))
+                delay(2000)
+                it.send(update, winEndPhrase(number))
+            } else {
+                it.send(update, dictionary.get(Phrase.BET_ZATRAVOCHKA))
+                GlobalScope.launch { addPidorsMultiplyTimesWithDayShift(number, user) }
+                delay(2000)
+                it.send(update, dictionary.get(Phrase.BET_LOSE))
+                delay(2000)
+                it.send(update, explainPhrase(number))
             }
+            delay(2000)
+            pidorCompetitionService.pidorCompetition(update)?.invoke(it)
+        }
     }
 
     private fun addPidorsMultiplyTimesWithDayShift(number: Int, user: User) {

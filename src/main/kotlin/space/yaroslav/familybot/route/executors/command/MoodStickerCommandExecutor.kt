@@ -33,14 +33,14 @@ class MoodStickerCommandExecutor(
         }
 
         return {
-                val sticker = GlobalScope.async { it.execute(GetStickerSet("youaretoday")).stickers.random().fileId }
-                it.send(update, "Какой ты сегодня?")
-                delay(1000)
-                it.execute(
-                    SendSticker()
-                        .setSticker(sticker.await())
-                        .setChatId(update.toChat().id)
-                )
+            val sticker = GlobalScope.async { it.execute(GetStickerSet("youaretoday")).stickers.random().fileId }
+            it.send(update, "Какой ты сегодня?")
+            delay(1000)
+            it.execute(
+                SendSticker()
+                    .setSticker(sticker.await())
+                    .setChatId(update.toChat().id)
+            )
         }
     }
 

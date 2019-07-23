@@ -65,17 +65,17 @@ class AskWorldRecieveReplyExecutor(
 
         return {
             runCatching {
-                    val id = GlobalScope.async { askWorldRepository.addReply(askWorldReply) }
-                    val message = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
-                    it.execute(
-                        SendMessage(
-                            question.chat.id,
-                            "${dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${update.toChat().name.boldNullable()} " +
-                                "от ${user.getGeneralName()} на вопрос \"$message\": ${reply.italic()}"
-                        ).enableHtml(true)
-                    )
-                    GlobalScope.launch { askWorldRepository.addReplyDeliver(askWorldReply.copy(id = id.await())) }
-                    it.send(update, "Принято и отправлено")
+                val id = GlobalScope.async { askWorldRepository.addReply(askWorldReply) }
+                val message = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
+                it.execute(
+                    SendMessage(
+                        question.chat.id,
+                        "${dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${update.toChat().name.boldNullable()} " +
+                            "от ${user.getGeneralName()} на вопрос \"$message\": ${reply.italic()}"
+                    ).enableHtml(true)
+                )
+                GlobalScope.launch { askWorldRepository.addReplyDeliver(askWorldReply.copy(id = id.await())) }
+                it.send(update, "Принято и отправлено")
             }.onFailure { e ->
                 it.send(update, "Принято")
                 log.info("Could not send reply instantly", e)

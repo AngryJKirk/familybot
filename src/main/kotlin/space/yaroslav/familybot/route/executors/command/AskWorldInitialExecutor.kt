@@ -79,17 +79,17 @@ class AskWorldInitialExecutor(
 
         val question = AskWorldQuestion(null, message, update.toUser(), chat, Instant.now(), null)
         return { sender ->
-                val questionId = GlobalScope.async { askWorldRepository.addQuestion(question) }
-                sender.send(update, dictionary.get(Phrase.DATA_CONFIRM))
-                commonRepository.getChats()
-                    .filterNot { it == chat }
-                    .filter(this@AskWorldInitialExecutor::isEnabledInChat)
-                    .forEach {
-                        runCatching {
-                            val result = sender.execute(SendMessage(it.id, formatMessage(chat, question)).enableHtml(true))
-                            markQuestionDelivered(question, questionId, result, it)
-                        }.onFailure { e -> markChatInactive(it, questionId, e) }
-                    }
+            val questionId = GlobalScope.async { askWorldRepository.addQuestion(question) }
+            sender.send(update, dictionary.get(Phrase.DATA_CONFIRM))
+            commonRepository.getChats()
+                .filterNot { it == chat }
+                .filter(this@AskWorldInitialExecutor::isEnabledInChat)
+                .forEach {
+                    runCatching {
+                        val result = sender.execute(SendMessage(it.id, formatMessage(chat, question)).enableHtml(true))
+                        markQuestionDelivered(question, questionId, result, it)
+                    }.onFailure { e -> markChatInactive(it, questionId, e) }
+                }
         }
     }
 

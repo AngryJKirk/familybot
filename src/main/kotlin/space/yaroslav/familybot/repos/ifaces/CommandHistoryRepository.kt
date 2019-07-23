@@ -10,7 +10,8 @@ interface CommandHistoryRepository {
     fun add(commandByUser: CommandByUser)
 
     fun get(
-        user: User, from: Instant = Instant.now().minusSeconds(300),
+        user: User,
+        from: Instant = Instant.now().minusSeconds(300),
         to: Instant = Instant.now()
     ): List<CommandByUser>
 

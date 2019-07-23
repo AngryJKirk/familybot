@@ -1,7 +1,7 @@
 FROM openjdk:8-jdk
 
-ENV GRADLE_VERSION 5.1.1
-ENV GRADLE_SHA 4953323605c5d7b89e97d0dc7779e275bccedefcdac090aec123375eae0cc798
+ENV GRADLE_VERSION 5.5.1
+ENV GRADLE_SHA 222a03fcf2fcaf3691767ce9549f78ebd4a77e73f9e23a396899fb70b420cd00
 ENV SPRING_PROFILES_ACTIVE production
 
 RUN cd /usr/lib \
@@ -17,7 +17,7 @@ ENV PATH $PATH:$GRADLE_HOME/bin
 WORKDIR /usr/bin/app
 
 COPY . .
-RUN gradle --stacktrace clean build -x test
+RUN gradle clean ktlintCheck build -x test
 RUN ls -la build/libs
 EXPOSE 8080 8085
 

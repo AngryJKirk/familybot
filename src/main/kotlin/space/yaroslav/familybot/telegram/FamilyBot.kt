@@ -55,4 +55,3 @@ class FamilyBot(val config: BotConfig, val router: Router) : TelegramLongPolling
 
     class InternalException(override val message: String?) : RuntimeException(message)
 }
-

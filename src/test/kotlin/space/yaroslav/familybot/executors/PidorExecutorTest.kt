@@ -48,7 +48,8 @@ class PidorExecutorTest : CommandExecutorTest() {
             pidorsAfterFirstInvoke.size
         )
 
-        val lastPidorAfterFirstInvoke = pidorsAfterFirstInvoke.maxBy { it.date } ?: throw AssertionError("Should be one last pidor")
+        val lastPidorAfterFirstInvoke =
+            pidorsAfterFirstInvoke.maxBy { it.date } ?: throw AssertionError("Should be one last pidor")
 
         Assert.assertEquals(
             "Pidor in message and in database should match",

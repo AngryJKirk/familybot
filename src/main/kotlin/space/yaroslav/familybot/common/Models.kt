@@ -6,8 +6,8 @@ import java.time.Instant
 data class User(val id: Long, val chat: Chat, val name: String?, val nickname: String?) {
 
     fun getGeneralName(mention: Boolean = true): String {
-        return if(mention){
-            if(nickname != null) {
+        return if (mention) {
+            if (nickname != null) {
                 "@$nickname"
             } else {
                 "<a href=\"tg://user?id=$id\">$name</a>"
