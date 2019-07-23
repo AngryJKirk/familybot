@@ -25,7 +25,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: "org.jlleitschuh.gradle.ktlint"
 
 group = 'space.yaroslav'
-version = '0.1'
+version = '1.0'
 sourceCompatibility = 1.8
 
 repositories {
@@ -47,9 +47,6 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.2'
 }
 
-compileJava.dependsOn(processResources)
-
-
 bootRun {
     jvmArgs = ["-Xmx1024m",
                "-Dcom.sun.management.jmxremote",
@@ -61,4 +58,3 @@ bootRun {
                "-Dcom.sun.management.jmxremote.ssl=false"
     ]
 }
-kotlin {}
