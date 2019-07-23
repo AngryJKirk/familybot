@@ -40,7 +40,7 @@ fun Update.toUser(): User {
     return User(user.id.toLong(), this.toChat(), formatedName, user.userName)
 }
 
-fun Update.from(): org.telegram.telegrambots.meta.api.objects.User {
+fun Update.from(): TelegramUser {
     return when {
         this.hasMessage() -> this.message.from
         this.hasEditedMessage() -> this.editedMessage.from
