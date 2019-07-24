@@ -18,7 +18,9 @@ buildscript {
         classpath "org.jlleitschuh.gradle:ktlint-gradle:${ktlintVersion}"
     }
 }
-
+repositories { 
+    mavenCentral()
+}
 apply plugin: 'kotlin'
 apply plugin: 'kotlin-spring'
 apply plugin: 'org.springframework.boot'
@@ -28,14 +30,9 @@ group = 'space.yaroslav'
 version = '1.0'
 sourceCompatibility = 1.8
 
-repositories {
-    mavenCentral()
-}
-
-
 dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '23.5-jre'
-    compile group: 'postgresql', name: 'postgresql', version: '9.1-901-1.jdbc4'
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: "${springBootVersion}"
     compile "org.springframework.boot:spring-boot-configuration-processor"
     compile group: 'org.telegram', name: 'telegrambots', version: "${telegramBotVersion}"
@@ -58,3 +55,4 @@ bootRun {
                "-Dcom.sun.management.jmxremote.ssl=false"
     ]
 }
+kotlin {}

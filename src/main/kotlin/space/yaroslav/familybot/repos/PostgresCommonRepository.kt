@@ -54,7 +54,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     }
 
     override fun getChats(): List<Chat> {
-        return template.query("SELECT * FROM chats where active = true ", { rs, _ -> rs.toChat() })
+        return template.query("SELECT * FROM chats where active = true ") { rs, _ -> rs.toChat() }
     }
 
     override fun addPidor(pidor: Pidor) {

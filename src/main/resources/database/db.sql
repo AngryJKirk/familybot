@@ -1148,3 +1148,22 @@ values (1, 36),
        (35, 68),
        (35, 79);
 
+create table if not exists bans_entity_types
+(
+    entity_type_id     int primary key,
+    entity_description varchar(1000) not null
+);
+
+insert into bans_entity_types (entity_type_id, entity_description)
+VALUES (1, 'Chat'),
+       (2, 'User');
+
+create table if not exists bans
+(
+    ban_uuid        uuid primary key,
+    ban_date        timestamp default current_timestamp not null,
+    ban_till_date   timestamp                           not null,
+    ban_description varchar(2000)                       not null,
+    entity_id       bigint                              not null,
+    entity_type_id  int                                 not null references bans_entity_types (entity_type_id)
+);

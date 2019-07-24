@@ -1,12 +1,27 @@
 package space.yaroslav.familybot.infrastructure
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.telegram.telegrambots.meta.api.objects.Chat
+import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.api.objects.User
 import java.time.Instant
 import java.util.UUID
 import java.util.concurrent.ThreadLocalRandom
 
-class UpdateBuilder(private val data: MutableMap<String, Any> = HashMap()) {
+interface TestModelBuilder<T> {
+    companion object {
+        val objectMapper = ObjectMapper()
+    }
+
+    val data: MutableMap<String, Any>
+
+    fun type(): Class<T>
+
+    fun build(): T = objectMapper.readValue(objectMapper.writeValueAsString(data), type())
+}
+
+class UpdateBuilder(override val data: MutableMap<String, Any> = HashMap()) : TestModelBuilder<Update> {
 
     init {
         data.putAll(
@@ -16,8 +31,6 @@ class UpdateBuilder(private val data: MutableMap<String, Any> = HashMap()) {
             )
         )
     }
-
-    private val objectMapper = ObjectMapper()
 
     fun message(build: MessageBuilder.() -> MessageBuilder): UpdateBuilder {
         val messageBuilder = build(MessageBuilder())
@@ -41,10 +54,11 @@ class UpdateBuilder(private val data: MutableMap<String, Any> = HashMap()) {
         }.build()
     }
 
-    fun build(): Update = objectMapper.readValue(objectMapper.writeValueAsString(data), Update::class.java)
+    override fun type() = Update::class.java
 }
 
-class MessageBuilder(val data: MutableMap<String, Any> = HashMap()) {
+class MessageBuilder(override val data: MutableMap<String, Any> = HashMap()) : TestModelBuilder<Message> {
+
     init {
         data.putAll(
             mapOf(
@@ -74,11 +88,14 @@ class MessageBuilder(val data: MutableMap<String, Any> = HashMap()) {
         data["reply_to_message"] = messageTo(MessageBuilder()).data
         return this
     }
+
+    override fun type() = Message::class.java
 }
 
-class ChatBuilder(val data: MutableMap<String, Any> = HashMap()) {
+class ChatBuilder(override val data: MutableMap<String, Any> = HashMap()) : TestModelBuilder<Chat> {
+
     init {
-        val chatId = randomIntFrom1to3()
+        val chatId = randomIntFrom1to3() * 10
         data.putAll(
             mapOf(
                 "id" to chatId,
@@ -97,17 +114,28 @@ class ChatBuilder(val data: MutableMap<String, Any> = HashMap()) {
         )
         return this
     }
+
+    override fun type() = Chat::class.java
 }
 
-class UserBuilder(val data: MutableMap<String, Any> = HashMap()) {
+class UserBuilder(override val data: MutableMap<String, Any> = HashMap()) : TestModelBuilder<User> {
+    override fun type() = User::class.java
+
     init {
         val userId = randomIntFrom1to3()
         data.putAll(
             mapOf(
                 "id" to userId,
-                "username" to "user$userId"
+                "username" to "user$userId",
+                "first_name" to "Test user",
+                "last_name" to "#$userId"
             )
         )
+    }
+
+    fun username(text: () -> String): UserBuilder {
+        data["username"] = text()
+        return this
     }
 
     fun toBot(name: String): UserBuilder {
