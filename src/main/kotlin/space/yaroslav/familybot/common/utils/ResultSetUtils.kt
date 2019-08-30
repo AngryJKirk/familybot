@@ -7,6 +7,7 @@ import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.route.models.Command
+import space.yaroslav.familybot.route.models.MessageContentType
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.sql.ResultSet
 
@@ -69,7 +70,8 @@ fun ResultSet.toAskWorldReply(): AskWorldReply {
             this.getString("username")
         ),
         chat,
-        this.getTimestamp("date").toInstant()
+        this.getTimestamp("date").toInstant(),
+        MessageContentType.TEXT
     )
 }
 

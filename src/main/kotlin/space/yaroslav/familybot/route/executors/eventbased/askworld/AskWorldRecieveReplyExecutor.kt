@@ -5,7 +5,15 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.methods.send.SendAnimation
+import org.telegram.telegrambots.meta.api.methods.send.SendAudio
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
+import org.telegram.telegrambots.meta.api.methods.send.SendSticker
+import org.telegram.telegrambots.meta.api.methods.send.SendVideo
+import org.telegram.telegrambots.meta.api.methods.send.SendVideoNote
+import org.telegram.telegrambots.meta.api.methods.send.SendVoice
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -19,6 +27,7 @@ import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.executors.Executor
 import space.yaroslav.familybot.route.models.FunctionId
+import space.yaroslav.familybot.route.models.MessageContentType
 import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.models.Priority
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
@@ -38,7 +47,7 @@ class AskWorldRecieveReplyExecutor(
     }
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        val reply = update.message.text
+        val reply = update.message.text ?: "" // todo
         val chat = update.toChat()
         val user = update.toUser()
         val question =
@@ -54,26 +63,69 @@ class AskWorldRecieveReplyExecutor(
                 )
             }
         }
+        val contentType = detectContentType(update.message)
         val askWorldReply = AskWorldReply(
             null,
             question.id ?: throw FamilyBot.InternalException("Question id is missing, seems like internal logic error"),
             reply,
             user,
             chat,
-            Instant.now()
+            Instant.now(),
+            contentType
         )
 
         return {
             runCatching {
                 val id = GlobalScope.async { askWorldRepository.addReply(askWorldReply) }
                 val message = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
-                it.execute(
-                    SendMessage(
-                        question.chat.id,
+                val chatIdToReply = question.chat.id
+
+                if (contentType == MessageContentType.TEXT) {
+                    it.execute(
+                        SendMessage(
+                            chatIdToReply,
+                            "${dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${update.toChat().name.boldNullable()} " +
+                                "от ${user.getGeneralName()} на вопрос \"$message\": ${reply.italic()}"
+                        ).enableHtml(true)
+                    )
+                } else {
+                    it.execute(
+                        SendMessage(
+                            chatIdToReply,
                         "${dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${update.toChat().name.boldNullable()} " +
-                            "от ${user.getGeneralName()} на вопрос \"$message\": ${reply.italic()}"
-                    ).enableHtml(true)
-                )
+                            "от ${user.getGeneralName()} на вопрос \"$message\":"
+                        ).enableHtml(true)
+                    )
+                    when (contentType) {
+                        MessageContentType.PHOTO -> it.execute(SendPhoto().setChatId(chatIdToReply).setPhoto(update.message.photo.first().fileId))
+                        MessageContentType.AUDIO -> it.execute(SendAudio().setChatId(chatIdToReply).setAudio(update.message.audio.fileId))
+                        MessageContentType.ANIMATION -> it.execute(
+                            SendAnimation().setChatId(chatIdToReply).setAnimation(
+                                update.message.animation.fileId
+                            )
+                        )
+                        MessageContentType.DOCUMENT -> it.execute(
+                            SendDocument().setChatId(chatIdToReply).setDocument(
+                                update.message.document.fileId
+                            )
+                        )
+                        MessageContentType.VOICE -> it.execute(SendVoice().setChatId(chatIdToReply).setVoice(update.message.voice.fileId))
+                        MessageContentType.VIDEO_NOTE -> it.execute(
+                            SendVideoNote().setChatId(chatIdToReply).setVideoNote(
+                                update.message.videoNote.fileId
+                            )
+                        )
+                        MessageContentType.LOCATION -> TODO()
+                        MessageContentType.STICKER -> it.execute(
+                            SendSticker().setChatId(chatIdToReply).setSticker(
+                                update.message.sticker.fileId
+                            )
+                        )
+                        MessageContentType.CONTACT -> TODO()
+                        MessageContentType.VIDEO -> it.execute(SendVideo().setChatId(chatIdToReply).setVideo(update.message.video.fileId))
+                        else -> TODO()
+                    }
+                }
                 GlobalScope.launch { askWorldRepository.addReplyDeliver(askWorldReply.copy(id = id.await())) }
                 it.send(update, "Принято и отправлено")
             }.onFailure { e ->
@@ -95,5 +147,21 @@ class AskWorldRecieveReplyExecutor(
 
     override fun priority(update: Update): Priority {
         return Priority.LOW
+    }
+
+    private fun detectContentType(message: Message): MessageContentType {
+        return when {
+            message.hasLocation() -> MessageContentType.LOCATION
+            message.hasAnimation() -> MessageContentType.ANIMATION
+            message.hasAudio() -> MessageContentType.AUDIO
+            message.hasContact() -> MessageContentType.CONTACT
+            message.hasDocument() -> MessageContentType.DOCUMENT
+            message.hasPhoto() -> MessageContentType.PHOTO
+            message.hasSticker() -> MessageContentType.STICKER
+            message.hasVideoNote() -> MessageContentType.VIDEO_NOTE
+            message.hasVideo() -> MessageContentType.VIDEO
+            message.hasVoice() -> MessageContentType.VOICE
+            else -> MessageContentType.TEXT
+        }
     }
 }

@@ -1,6 +1,7 @@
 package space.yaroslav.familybot.common
 
 import space.yaroslav.familybot.route.models.Command
+import space.yaroslav.familybot.route.models.MessageContentType
 import java.time.Instant
 
 data class User(val id: Long, val chat: Chat, val name: String?, val nickname: String?) {
@@ -53,7 +54,8 @@ data class AskWorldReply(
     val message: String,
     val user: User,
     val chat: Chat,
-    val date: Instant
+    val date: Instant,
+    val contentType: MessageContentType
 )
 
 data class CustomMessage(val id: Long, val chat: Chat, val message: String)
