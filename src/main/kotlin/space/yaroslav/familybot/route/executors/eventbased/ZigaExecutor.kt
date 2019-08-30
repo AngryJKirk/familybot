@@ -1,7 +1,10 @@
 package space.yaroslav.familybot.route.executors.eventbased
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker
+import org.telegram.telegrambots.meta.api.methods.stickers.GetStickerSet
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -14,28 +17,36 @@ class ZigaExecutor : Executor {
         return Priority.MEDIUM
     }
 
-    private val zigaLeftId = "CAADAgADNQAD_8Q9CN0CpZZUdZygAg"
-    private val zigaRightId = "CAADAgADNgAD_8Q9CIQDztfj3HHcAg"
+    private val leftEmoji = "🖐"
+    private val rightEmoji = "\uD83E\uDD1A"
+    private val stickerSetName = "FamiliGayPack"
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         return {
+            val emojiToSend = if (update.message.sticker?.emoji == leftEmoji) {
+                rightEmoji
+            } else {
+                leftEmoji
+            }
+            val stickerToSend = GlobalScope.async {
+                it
+                    .execute(GetStickerSet(stickerSetName))
+                    .stickers
+                    .find { sticker -> sticker.emoji == emojiToSend }
+            }
             it.execute(
                 SendSticker()
                     .setChatId(update.message.chatId)
                     .setReplyToMessageId(update.message.messageId)
                     .setSticker(
-                        if (update.message.sticker?.fileId == zigaRightId) {
-                            zigaLeftId
-                        } else {
-                            zigaRightId
-                        }
+                        stickerToSend.await()?.fileId
                     )
             )
         }
     }
 
     override fun canExecute(message: Message): Boolean {
-        val fileId = message.sticker?.fileId
-        return fileId == zigaLeftId || fileId == zigaRightId
+        val sticker = message.sticker
+        return (leftEmoji == sticker?.emoji || rightEmoji == sticker?.emoji) && stickerSetName == sticker.setName
     }
 }
