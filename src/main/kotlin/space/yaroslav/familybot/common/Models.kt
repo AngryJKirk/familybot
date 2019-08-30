@@ -54,8 +54,7 @@ data class AskWorldReply(
     val message: String,
     val user: User,
     val chat: Chat,
-    val date: Instant,
-    val contentType: MessageContentType
+    val date: Instant
 )
 
 data class CustomMessage(val id: Long, val chat: Chat, val message: String)

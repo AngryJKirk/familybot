@@ -24,10 +24,8 @@ class FamilyBot(val config: BotConfig, val router: Router) : TelegramLongPolling
     }
 
     override fun onUpdateReceived(update: Update?) {
-        if (update == null) {
-            throw InternalException("Update should not be null")
-        }
-        val chat = update.toChat()
+
+        val chat = update?.toChat() ?: throw InternalException("Update should not be null")
 
         val channel = channels.computeIfAbsent(chat.id) {
             Channel<Update>()
