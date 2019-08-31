@@ -13,14 +13,14 @@ abstract class CommandExecutorTest : ExecutorTest() {
 
     override fun canExecuteTest() {
         val commandExecutor = getCommandExecutor()
-        val command = commandExecutor.command().command
-        val messageWithOnlyCommand = UpdateBuilder().simpleTextMessageFromUser(command)
+        val command = commandExecutor.command()
+        val messageWithOnlyCommand = UpdateBuilder().simpleCommandFromUser(command)
         Assert.assertTrue(
             "Command executor should be able to execute only if message starts with command",
             commandExecutor.canExecute(messageWithOnlyCommand.message)
         )
         val messageWithCommandInMiddle = UpdateBuilder()
-            .simpleTextMessageFromUser(randomUUID() + command + randomUUID())
+            .simpleCommandFromUser(prefix = randomUUID(), postfix = randomUUID(), command = command)
         Assert.assertFalse(
             "Command executor should not react to command in the middle",
             commandExecutor.canExecute(messageWithCommandInMiddle.message)

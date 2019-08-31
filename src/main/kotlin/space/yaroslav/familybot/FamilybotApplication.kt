@@ -8,10 +8,8 @@ import org.springframework.scheduling.annotation.EnableScheduling
 import org.telegram.telegrambots.ApiContextInitializer
 import org.telegram.telegrambots.bots.DefaultBotOptions
 import org.telegram.telegrambots.meta.TelegramBotsApi
-import org.telegram.telegrambots.meta.logging.BotLogger
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
-import java.util.logging.Level
 
 @SpringBootApplication
 @EnableScheduling
@@ -32,7 +30,6 @@ class FamilybotApplication {
 }
 
 fun main() {
-    BotLogger.setLevel(Level.ALL)
     ApiContextInitializer.init()
     val app = SpringApplication(FamilybotApplication::class.java)
     app.isWebEnvironment = false

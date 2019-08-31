@@ -3,8 +3,10 @@ package space.yaroslav.familybot.infrastructure
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.telegram.telegrambots.meta.api.objects.Chat
 import org.telegram.telegrambots.meta.api.objects.Message
+import org.telegram.telegrambots.meta.api.objects.MessageEntity
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
+import space.yaroslav.familybot.route.models.Command
 import java.time.Instant
 import java.util.UUID
 import java.util.concurrent.ThreadLocalRandom
@@ -54,6 +56,15 @@ class UpdateBuilder(override val data: MutableMap<String, Any> = HashMap()) : Te
         }.build()
     }
 
+    fun simpleCommandFromUser(command: Command, prefix: String? = null, postfix: String? = null): Update {
+        return message {
+            command(length = command.command.length, offset = prefix?.length ?: 0)
+            text { (prefix ?: "") + command.command + (postfix ?: "") }
+            chat { ChatBuilder() }
+            from { UserBuilder() }
+        }.build()
+    }
+
     override fun type() = Update::class.java
 }
 
@@ -76,6 +87,11 @@ class MessageBuilder(override val data: MutableMap<String, Any> = HashMap()) : T
 
     fun chat(chat: () -> ChatBuilder): MessageBuilder {
         data["chat"] = chat().data
+        return this
+    }
+
+    fun command(offset: Int = 0, length: Int): MessageBuilder {
+        data["entities"] = listOf(MessageEntityBuilder(offset = offset, length = length).data)
         return this
     }
 
@@ -148,6 +164,26 @@ class UserBuilder(override val data: MutableMap<String, Any> = HashMap()) : Test
         return this
     }
 }
+
+class MessageEntityBuilder(
+    override val data: MutableMap<String, Any> = HashMap(),
+    offset: Int,
+    length: Int
+) : TestModelBuilder<MessageEntity> {
+
+    init {
+        data.putAll(
+            mapOf(
+                "type" to "bot_command",
+                "offset" to offset,
+                "length" to length
+            )
+        )
+    }
+
+    override fun type(): Class<MessageEntity> = MessageEntity::class.java
+}
+
 
 private fun randomInt() = ThreadLocalRandom.current().nextInt()
 private fun randomIntFrom1to3() = ThreadLocalRandom.current().nextInt(1, 3)

@@ -16,7 +16,7 @@ class MeExecutorTest : CommandExecutorTest() {
     override fun getCommandExecutor(): CommandExecutor = meCommandExecutor
 
     override fun executeTest() {
-        val update = UpdateBuilder().simpleTextMessageFromUser(meCommandExecutor.command().command)
+        val update = UpdateBuilder().simpleCommandFromUser(meCommandExecutor.command())
         runBlocking { meCommandExecutor.execute(update).invoke(testSender) }
         val actions = testSender.actions
         Assert.assertTrue("Should be exactly one action with stats", actions.size == 1)

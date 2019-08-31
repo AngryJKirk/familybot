@@ -1174,19 +1174,3 @@ create table if not exists message_content_type
     content_type_name        varchar(200)  not null,
     content_type_description varchar(2000) not null
 );
-
-insert into message_content_type (content_type_id, content_type_name)
-VALUES
-    (1,'PHOTO'),
-    (2,'AUDIO'),
-    (3,'ANIMATION'),
-    (4,'DOCUMENT'),
-    (5,'VOICE'),
-    (6,'VIDEO_NOTE'),
-    (7,'LOCATION'),
-    (8,'TEXT'),
-    (9,'STICKER'),
-    (10,'CONTACT');
-
-alter table ask_world_replies
-    add column content_type_id int references message_content_type (content_type_id) not null default 8

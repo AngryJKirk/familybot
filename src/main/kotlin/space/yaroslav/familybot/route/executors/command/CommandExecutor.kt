@@ -8,11 +8,12 @@ import space.yaroslav.familybot.route.models.Priority
 
 interface CommandExecutor : Executor {
     override fun canExecute(message: Message): Boolean {
-        val text = message.text ?: ""
-        val command = command().command
-        return text.startsWith("$command@") ||
-            text == command ||
-            text.startsWith("$command ")
+        val entities = message.entities ?: return false
+        return entities.any {
+            it.type == "bot_command" &&
+                it.text == command().command &&
+                it.offset == 0
+        }
     }
 
     override fun priority(update: Update): Priority {

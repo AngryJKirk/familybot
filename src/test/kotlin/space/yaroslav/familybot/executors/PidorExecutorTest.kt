@@ -20,7 +20,7 @@ class PidorExecutorTest : CommandExecutorTest() {
     override fun getCommandExecutor() = pidorExecutor
 
     override fun executeTest() {
-        val update = UpdateBuilder().simpleTextMessageFromUser(pidorExecutor.command().command)
+        val update = UpdateBuilder().simpleCommandFromUser(pidorExecutor.command())
         val pidorsBefore =
             commonRepository.getPidorsByChat(update.toChat())
         val allPidors = commonRepository.getAllPidors()

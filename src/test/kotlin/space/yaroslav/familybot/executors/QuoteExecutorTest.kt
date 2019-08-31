@@ -15,7 +15,7 @@ class QuoteExecutorTest : CommandExecutorTest() {
     override fun getCommandExecutor() = quoteExecutorTest
 
     override fun executeTest() {
-        val update = UpdateBuilder().simpleTextMessageFromUser(quoteExecutorTest.command().command)
+        val update = UpdateBuilder().simpleCommandFromUser(quoteExecutorTest.command())
         runBlocking { quoteExecutorTest.execute(update).invoke(testSender) }
         val actions = testSender.actions
         Assert.assertTrue("Should be exactly one action with quote", actions.size == 1)
