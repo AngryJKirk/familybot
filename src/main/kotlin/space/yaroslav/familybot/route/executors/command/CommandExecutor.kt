@@ -11,7 +11,8 @@ interface CommandExecutor : Executor {
         val entities = message.entities ?: return false
         return entities.any {
             it.type == "bot_command" &&
-                it.text == command().command &&
+                (it.text == command().command ||
+                    it.text.startsWith("${command().command}@")) &&
                 it.offset == 0
         }
     }

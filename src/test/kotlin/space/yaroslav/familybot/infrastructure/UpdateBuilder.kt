@@ -184,6 +184,5 @@ class MessageEntityBuilder(
     override fun type(): Class<MessageEntity> = MessageEntity::class.java
 }
 
-
 private fun randomInt() = ThreadLocalRandom.current().nextInt()
 private fun randomIntFrom1to3() = ThreadLocalRandom.current().nextInt(1, 3)
