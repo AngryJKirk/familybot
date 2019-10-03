@@ -1155,8 +1155,8 @@ create table if not exists bans_entity_types
 );
 
 insert into bans_entity_types (entity_type_id, entity_description)
-VALUES (1, 'Chat'),
-       (2, 'User');
+VALUES (1, 'User'),
+       (2, 'Chat');
 
 create table if not exists bans
 (
