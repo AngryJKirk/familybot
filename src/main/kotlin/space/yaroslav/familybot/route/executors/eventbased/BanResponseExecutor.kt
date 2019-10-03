@@ -15,15 +15,24 @@ import space.yaroslav.familybot.route.models.Priority
 import space.yaroslav.familybot.route.services.ban.Ban
 import space.yaroslav.familybot.route.services.ban.BanService
 import space.yaroslav.familybot.telegram.FamilyBot
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @Component
 class BanResponseExecutor(val banService: BanService) : Executor {
+
+    val dateTimeFormatter: DateTimeFormatter =
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault())
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val ban = banService.isChatBanned(update.toChat()) ?: banService.isUserBanned(update.toUser())
         ?: throw FamilyBot.InternalException("Some logic mistake: executor should not be chosen in case of there are no ban")
 
         return {
-            it.send(update, "Бан нахуй по причине \"${ban.description}\" до ${ban.till}", replyToUpdate = true)
+            it.send(
+                update,
+                "Бан нахуй по причине \"${ban.description}\" до ${dateTimeFormatter.format(ban.till)}",
+                replyToUpdate = true
+            )
         }
     }
 
