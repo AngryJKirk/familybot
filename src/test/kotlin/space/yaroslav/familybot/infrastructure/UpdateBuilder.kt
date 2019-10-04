@@ -7,9 +7,11 @@ import org.telegram.telegrambots.meta.api.objects.MessageEntity
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
 import space.yaroslav.familybot.route.models.Command
+import space.yaroslav.familybot.route.models.stickers.Sticker
 import java.time.Instant
 import java.util.UUID
 import java.util.concurrent.ThreadLocalRandom
+import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 
 interface TestModelBuilder<T> {
     companion object {
@@ -65,6 +67,17 @@ class UpdateBuilder(override val data: MutableMap<String, Any> = HashMap()) : Te
         }.build()
     }
 
+    fun singleStickerUpdate(sticker: Sticker): Update {
+        return message {
+            sticker {
+                StickerBuilder(
+                    stickerPack = sticker.pack.packName,
+                    emoji = sticker.stickerEmoji
+                )
+            }
+        }.build()
+    }
+
     override fun type() = Update::class.java
 }
 
@@ -102,6 +115,11 @@ class MessageBuilder(override val data: MutableMap<String, Any> = HashMap()) : T
 
     fun to(messageTo: MessageBuilder.() -> MessageBuilder): MessageBuilder {
         data["reply_to_message"] = messageTo(MessageBuilder()).data
+        return this
+    }
+
+    fun sticker(stiker: () -> StickerBuilder): MessageBuilder {
+        data["stiker"] = stiker().data
         return this
     }
 
@@ -182,6 +200,24 @@ class MessageEntityBuilder(
     }
 
     override fun type(): Class<MessageEntity> = MessageEntity::class.java
+}
+
+class StickerBuilder(
+    override val data: MutableMap<String, Any> = HashMap(),
+    stickerPack: String,
+    emoji: String
+) : TestModelBuilder<TelegramSticker> {
+    override fun type(): Class<TelegramSticker> = TelegramSticker::class.java
+
+    init {
+        data.putAll(
+            mapOf(
+                "file_id" to UUID.randomUUID().toString(),
+                "set_name" to stickerPack,
+                "emoji" to emoji
+            )
+        )
+    }
 }
 
 private fun randomInt() = ThreadLocalRandom.current().nextInt()

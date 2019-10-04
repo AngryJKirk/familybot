@@ -4,6 +4,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.springframework.beans.factory.annotation.Autowired
 import space.yaroslav.familybot.common.utils.toChat
+import space.yaroslav.familybot.infrastructure.ActionWithText
 import space.yaroslav.familybot.infrastructure.UpdateBuilder
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.route.executors.command.PidorExecutor
@@ -51,9 +52,10 @@ class PidorExecutorTest : CommandExecutorTest() {
         val lastPidorAfterFirstInvoke =
             pidorsAfterFirstInvoke.maxBy { it.date } ?: throw AssertionError("Should be one last pidor")
 
+        val action = firstInvokeActions.last()
         Assert.assertEquals(
             "Pidor in message and in database should match",
-            firstInvokeActions.last().text,
+            action.content,
             lastPidorAfterFirstInvoke.user.getGeneralName(true)
         )
 
@@ -89,7 +91,8 @@ class PidorExecutorTest : CommandExecutorTest() {
             "Pidor in message and in database should match",
             firstInvokeActions
                 .first()
-                .text
+                .let { it as ActionWithText }
+                .content
                 .contains(lastPidorAfterSecondInvoke.user.getGeneralName(true))
         )
     }

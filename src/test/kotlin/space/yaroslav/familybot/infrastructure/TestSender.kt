@@ -18,24 +18,34 @@ import org.telegram.telegrambots.meta.api.methods.stickers.UploadStickerFile
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia
 import org.telegram.telegrambots.meta.api.objects.File
 import org.telegram.telegrambots.meta.api.objects.Message
+import org.telegram.telegrambots.meta.api.objects.stickers.StickerSet
 import org.telegram.telegrambots.meta.bots.AbsSender
 import org.telegram.telegrambots.meta.updateshandlers.SentCallback
 import java.io.Serializable
 
-class TestSender(val actions: MutableList<Action> = ArrayList()) : AbsSender() {
+class TestSender(val actions: MutableList<Action<*>> = ArrayList()) : AbsSender() {
 
     override fun <T : Serializable?, Method : BotApiMethod<T>?> sendApiMethod(method: Method): T {
         if (method is SendMessage) {
-            val action = Action(
-                method.text,
+            val action = ActionWithText(
                 method.chatId,
+                isHtmlEnabled = method.isHtmlEnabled(),
                 replyId = method.replyToMessageId,
-                isHtmlEnabled = method.isHtmlEnabled()
+                content = method.text
             )
             actions.add(action)
             return Message() as T
         }
-        TODO()
+        if (method is SendSticker) {
+            val action = ActionWithSticker(
+                method.chatId,
+                replyId = method.replyToMessageId,
+                content = method.sticker
+            )
+            actions.add(action)
+            return Message() as T
+        }
+        return StickerSet() as T
     }
 
     override fun <T : Serializable?, Method : BotApiMethod<T>?, Callback : SentCallback<T>?> sendApiMethodAsync(

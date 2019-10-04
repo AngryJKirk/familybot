@@ -5,6 +5,7 @@ import org.junit.Assert
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.telegram.telegrambots.meta.api.objects.Update
+import space.yaroslav.familybot.infrastructure.ActionWithText
 import space.yaroslav.familybot.infrastructure.ChatBuilder
 import space.yaroslav.familybot.infrastructure.UpdateBuilder
 import space.yaroslav.familybot.infrastructure.UserBuilder
@@ -36,7 +37,9 @@ class ReplyToUserExecutorTest : ExecutorTest() {
         runBlocking { replyToUserExecutor.execute(update).invoke(testSender) }
         Assert.assertTrue("Should be at least one action", testSender.actions.isNotEmpty())
         Assert.assertTrue("Should be reply", testSender.actions.first().replyId != null)
-        Assert.assertTrue("Reply should not be empty", testSender.actions.first().text.isNotBlank())
+        Assert.assertTrue("Reply should not be empty", testSender.actions.first()
+            .let { it as ActionWithText }.content.isNotBlank()
+        )
     }
 
     private fun updateWithReplyToBotMessage(): Update {

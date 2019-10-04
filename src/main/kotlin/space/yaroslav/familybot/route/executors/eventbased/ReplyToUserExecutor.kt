@@ -34,6 +34,9 @@ class ReplyToUserExecutor(val keyset: ChatLogRepository, val botConfig: BotConfi
         return Priority.VERY_LOW
     }
 
+    private fun getRandomUserMessage(update: Update) =
+        keyset.get(update.toUser()).takeIf { it.size > 300 }?.random()
+
     private fun getSmallRandomMessage(messages: List<String>): String {
         var message: String = messages.randomNotNull()
         while (message.split(" ").size >= 10) {
@@ -41,7 +44,4 @@ class ReplyToUserExecutor(val keyset: ChatLogRepository, val botConfig: BotConfi
         }
         return message
     }
-
-    private fun getRandomUserMessage(update: Update) =
-        keyset.get(update.toUser()).takeIf { it.size > 300 }?.random()
 }
