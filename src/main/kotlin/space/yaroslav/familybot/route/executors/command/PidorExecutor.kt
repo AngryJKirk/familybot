@@ -16,6 +16,7 @@ import space.yaroslav.familybot.common.utils.isToday
 import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
+import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.models.Command
@@ -51,9 +52,12 @@ class PidorExecutor(
             val users = repository.getUsers(chat, activeOnly = true)
             users.map { user ->
                 GlobalScope.launch {
-                    if (!checkIsUserExistInChat(user, sender)) {
+                    val userFromChat = getUserFromChat(user, sender)
+                    if (userFromChat == null) {
                         log.warn("Some user {} had left without notification", user)
                         repository.changeUserActiveStatusNew(user, false) // TODO remove old method
+                    } else {
+                        repository.addUser(userFromChat)
                     }
                 }
             }.forEach { it.join() } // TODO make it look like good practice, not bad one
@@ -98,10 +102,15 @@ class PidorExecutor(
         }
     }
 
-    private fun checkIsUserExistInChat(user: User, absSender: AbsSender): Boolean {
+    private fun getUserFromChat(user: User, absSender: AbsSender): User? {
         val getChatMemberCall = GetChatMember()
             .setChatId(user.chat.id)
             .setUserId(user.id.toInt())
-        return runCatching { absSender.execute(getChatMemberCall) != null }.getOrElse { false }
+        return runCatching {
+            absSender.execute(getChatMemberCall)
+                .takeIf { it.status != "left" || it.status != "kicked" }
+                ?.user
+                ?.toUser(user.chat)
+        }.getOrNull()
     }
 }
