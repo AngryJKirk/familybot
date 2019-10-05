@@ -108,7 +108,7 @@ class PidorExecutor(
             .setUserId(user.id.toInt())
         return runCatching {
             absSender.execute(getChatMemberCall)
-                .takeIf { it.status != "left" || it.status != "kicked" }
+                .takeIf { it.status != "left" && it.status != "kicked" }
                 ?.user
                 ?.toUser(user.chat)
         }.getOrNull()
