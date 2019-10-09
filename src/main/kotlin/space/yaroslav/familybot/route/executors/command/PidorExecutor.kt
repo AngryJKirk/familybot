@@ -1,6 +1,7 @@
 package space.yaroslav.familybot.route.executors.command
 
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
@@ -49,24 +50,29 @@ class PidorExecutor(
         }
         return { sender ->
             log.info("Pidor is not found, initiating search procedure")
-            val users = repository.getUsers(chat, activeOnly = true)
-            users.map { user ->
-                GlobalScope.launch {
-                    val userFromChat = getUserFromChat(user, sender)
-                    if (userFromChat == null) {
-                        log.warn("Some user {} had left without notification", user)
-                        repository.changeUserActiveStatusNew(user, false) // TODO remove old method
-                    } else {
-                        repository.addUser(userFromChat)
+            val nextPidor = GlobalScope.async {
+                val users = repository.getUsers(chat, activeOnly = true)
+                users.map { user ->
+                    launch {
+                        val userFromChat = getUserFromChat(user, sender)
+                        if (userFromChat == null) {
+                            log.warn("Some user {} had left without notification", user)
+                            repository.changeUserActiveStatusNew(user, false) // TODO remove old method
+                        } else {
+                            repository.addUser(userFromChat)
+                        }
                     }
                 }
-            }.forEach { it.join() } // TODO make it look like good practice, not bad one
+                    .forEach { it.join() }
+                val actualizedUsers = repository.getUsers(chat, activeOnly = true)
+                log.info("Users to roll: {}", users)
+                val nextPidor = actualizedUsers.randomNotNull()
+                log.info("Pidor is rolled to $nextPidor")
+                val newPidor = Pidor(nextPidor, Instant.now())
+                repository.addPidor(newPidor)
+                return@async nextPidor
+            }
 
-            log.info("Users to roll: {}", users)
-            val nextPidor = users.randomNotNull()
-            log.info("Pidor is rolled to $nextPidor")
-            val newPidor = Pidor(nextPidor, Instant.now())
-            repository.addPidor(newPidor)
             val start = dictionary.get(Phrase.PIDOR_SEARCH_START).bold()
             val middle = dictionary.get(Phrase.PIDOR_SEARCH_MIDDLE).bold()
             val finisher = dictionary.get(Phrase.PIDOR_SEARCH_FINISHER).bold()
@@ -77,7 +83,7 @@ class PidorExecutor(
             delay(3000)
             sender.send(update, finisher, enableHtml = true)
             delay(3000)
-            sender.send(update, nextPidor.getGeneralName(), enableHtml = true)
+            sender.send(update, nextPidor.await().getGeneralName(), enableHtml = true)
             pidorCompetitionService.pidorCompetition(update)?.invoke(sender)
         }
     }

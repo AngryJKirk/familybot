@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.MessageEntity
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
+import org.telegram.telegrambots.meta.api.objects.stickers.StickerSet
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.stickers.Sticker
 import java.time.Instant
@@ -217,6 +218,27 @@ class StickerBuilder(
                 "emoji" to emoji
             )
         )
+    }
+}
+
+class StickerSetBuilder(
+    override val data: MutableMap<String, Any> = HashMap(),
+    name: String
+) : TestModelBuilder<StickerSet> {
+    override fun type(): Class<StickerSet> = StickerSet::class.java
+
+    init {
+        data.putAll(
+            mapOf(
+                "name" to name,
+                "stickers" to mutableListOf<MutableMap<String, Any>>()
+            )
+        )
+    }
+
+    fun withSticker(stickerBuilder: () -> StickerBuilder) {
+        val stickers = data["stickers"] as MutableList<MutableMap<String, Any>>
+        stickers.add(stickerBuilder().data)
     }
 }
 
