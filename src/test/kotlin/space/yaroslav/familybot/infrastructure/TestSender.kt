@@ -1,6 +1,7 @@
 package space.yaroslav.familybot.infrastructure
 
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod
+import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember
 import org.telegram.telegrambots.meta.api.methods.groupadministration.SetChatPhoto
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation
 import org.telegram.telegrambots.meta.api.methods.send.SendAudio
@@ -16,6 +17,7 @@ import org.telegram.telegrambots.meta.api.methods.stickers.AddStickerToSet
 import org.telegram.telegrambots.meta.api.methods.stickers.CreateNewStickerSet
 import org.telegram.telegrambots.meta.api.methods.stickers.UploadStickerFile
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia
+import org.telegram.telegrambots.meta.api.objects.ChatMember
 import org.telegram.telegrambots.meta.api.objects.File
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.stickers.StickerSet
@@ -26,6 +28,9 @@ import java.io.Serializable
 class TestSender(val actions: MutableList<Action<*>> = ArrayList()) : AbsSender() {
 
     override fun <T : Serializable?, Method : BotApiMethod<T>?> sendApiMethod(method: Method): T {
+        if(method is GetChatMember){
+            return ChatMember() as T
+        }
         if (method is SendMessage) {
             val action = ActionWithText(
                 method.chatId,

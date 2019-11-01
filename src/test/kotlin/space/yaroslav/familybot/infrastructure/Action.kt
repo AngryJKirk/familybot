@@ -10,7 +10,11 @@ sealed class Action<T>(
 )
 
 class ActionWithText(chatId: String, isHtmlEnabled: Boolean = false, replyId: Int? = null, content: String) :
-    Action<String>(chatId, isHtmlEnabled, replyId, content)
+    Action<String>(chatId, isHtmlEnabled, replyId, content) {
+    override fun toString(): String {
+        return content
+    }
+}
 
 class ActionWithSticker(chatId: String, isHtmlEnabled: Boolean = false, replyId: Int? = null, content: InputFile) :
     Action<InputFile>(chatId, isHtmlEnabled, replyId, content)
