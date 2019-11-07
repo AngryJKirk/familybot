@@ -13,6 +13,7 @@ import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
 import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
+import space.yaroslav.familybot.telegram.BotConfig
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -21,8 +22,9 @@ import java.time.ZoneOffset
 @Component
 class BetExecutor(
     private val commandHistoryRepository: CommandHistoryRepository,
-    private val dictionary: Dictionary
-) : CommandExecutor, Configurable {
+    private val dictionary: Dictionary,
+    config: BotConfig
+) : CommandExecutor(config), Configurable {
     override fun getFunctionId() = FunctionId.PIDOR
 
     override fun command() = Command.BET

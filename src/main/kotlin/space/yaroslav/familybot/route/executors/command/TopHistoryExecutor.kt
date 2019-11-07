@@ -7,9 +7,11 @@ import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
 import space.yaroslav.familybot.route.models.Command
+import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
-class TopHistoryExecutor(private val chatLogRepository: ChatLogRepository) : CommandExecutor {
+class TopHistoryExecutor(private val chatLogRepository: ChatLogRepository, config: BotConfig) :
+    CommandExecutor(config) {
     override fun command(): Command {
         return Command.TOP_HISTORY
     }

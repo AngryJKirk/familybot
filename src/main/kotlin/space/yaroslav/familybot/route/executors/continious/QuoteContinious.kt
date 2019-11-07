@@ -13,8 +13,8 @@ import space.yaroslav.familybot.telegram.BotConfig
 @Component
 class QuoteContinious(
     val quoteRepository: QuoteRepository,
-    override val botConfig: BotConfig
-) : ContiniousConversation {
+    val botConfig: BotConfig
+) : ContiniousConversation(botConfig) {
 
     override fun command(): Command {
         return Command.QUOTE_BY_TAG

@@ -16,6 +16,7 @@ import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
 import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
+import space.yaroslav.familybot.telegram.BotConfig
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
@@ -23,8 +24,9 @@ import java.time.temporal.ChronoUnit
 class RageExecutor(
     val commandHistoryRepository: CommandHistoryRepository,
     val configRepository: RagemodeRepository,
-    val dictionary: Dictionary
-) : CommandExecutor, Configurable {
+    val dictionary: Dictionary,
+    config: BotConfig
+) : CommandExecutor(config), Configurable {
 
     private val logger = LoggerFactory.getLogger(RageExecutor::class.java)
 

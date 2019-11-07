@@ -36,7 +36,7 @@ class AskWorldInitialExecutor(
     val configureRepository: FunctionsConfigureRepository,
     val botConfig: BotConfig,
     val dictionary: Dictionary
-) : CommandExecutor, Configurable {
+) : CommandExecutor(botConfig), Configurable {
     private val log = LoggerFactory.getLogger(AskWorldInitialExecutor::class.java)
     override fun getFunctionId(): FunctionId {
         return FunctionId.ASK_WORLD

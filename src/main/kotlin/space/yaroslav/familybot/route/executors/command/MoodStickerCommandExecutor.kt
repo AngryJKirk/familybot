@@ -13,14 +13,16 @@ import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.stickers.StickerPack
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
+import space.yaroslav.familybot.telegram.BotConfig
 import java.time.LocalDate
 import java.time.ZoneOffset
 
 @Component
 class MoodStickerCommandExecutor(
     val historyRepository: CommandHistoryRepository,
-    val dictionary: Dictionary
-) : CommandExecutor {
+    val dictionary: Dictionary,
+    config: BotConfig
+) : CommandExecutor(config) {
     override fun command() = Command.WHATS_MOOD_TODAY
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {

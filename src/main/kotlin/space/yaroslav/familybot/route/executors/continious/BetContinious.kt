@@ -29,12 +29,12 @@ import java.util.concurrent.ThreadLocalRandom
 
 @Component
 class BetContinious(
-    override val botConfig: BotConfig,
     private val dictionary: Dictionary,
     private val commandHistoryRepository: CommandHistoryRepository,
     private val pidorRepository: CommonRepository,
-    private val pidorCompetitionService: PidorCompetitionService
-) : ContiniousConversation {
+    private val pidorCompetitionService: PidorCompetitionService,
+    private val botConfig: BotConfig
+) : ContiniousConversation(botConfig) {
 
     override fun getDialogMessage() = dictionary.get(Phrase.BET_INITIAL_MESSAGE)
 

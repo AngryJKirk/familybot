@@ -5,15 +5,16 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.route.executors.Executor
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.Priority
+import space.yaroslav.familybot.telegram.BotConfig
 
-interface CommandExecutor : Executor {
+abstract class CommandExecutor(private val config: BotConfig) : Executor {
     override fun canExecute(message: Message): Boolean {
         val entities = message.entities ?: return false
         return entities.any {
             it.type == "bot_command" &&
-                (it.text == command().command ||
-                    it.text.startsWith("${command().command}@")) &&
-                it.offset == 0
+                it.text == command().command &&
+                it.offset == 0 &&
+                isAddressedToThisBot(message)
         }
     }
 
@@ -21,9 +22,17 @@ interface CommandExecutor : Executor {
         return Priority.MEDIUM
     }
 
-    fun isLoggable(): Boolean {
+    open fun isLoggable(): Boolean {
         return true
     }
 
-    fun command(): Command
+    abstract fun command(): Command
+
+    private fun isAddressedToThisBot(message: Message): Boolean {
+        val text = message.text
+        if (text.contains("@").not()) {
+            return true
+        }
+        return text.contains(command().command + "@${config.botname} ")
+    }
 }

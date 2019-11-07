@@ -19,9 +19,9 @@ import space.yaroslav.familybot.telegram.BotConfig
 @Component
 class SettingsContinious(
     private val configureRepository: FunctionsConfigureRepository,
-    override val botConfig: BotConfig,
-    val dictionary: Dictionary
-) : ContiniousConversation {
+    private val dictionary: Dictionary,
+    botConfig: BotConfig
+) : ContiniousConversation(botConfig) {
 
     override fun command(): Command {
         return Command.SETTINGS

@@ -9,11 +9,12 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.repos.ifaces.QuoteRepository
 import space.yaroslav.familybot.route.models.Command
+import space.yaroslav.familybot.telegram.BotConfig
 
 const val QUOTE_MESSAGE = "Тег?"
 
 @Component
-class QuoteByTagExecutor(val quoteRepository: QuoteRepository) : CommandExecutor {
+class QuoteByTagExecutor(val quoteRepository: QuoteRepository, config: BotConfig) : CommandExecutor(config) {
     override fun command(): Command {
         return Command.QUOTE_BY_TAG
     }

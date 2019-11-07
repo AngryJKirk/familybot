@@ -15,6 +15,7 @@ import space.yaroslav.familybot.repos.ifaces.RawChatLogRepository
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
+import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 
 @Component
@@ -22,8 +23,9 @@ class MeCommandExecutor(
     private val commonRepository: CommonRepository,
     private val commandHistoryRepository: CommandHistoryRepository,
     private val rawChatLogRepository: RawChatLogRepository,
-    private val dictionary: Dictionary
-) : CommandExecutor {
+    private val dictionary: Dictionary,
+    config: BotConfig
+) : CommandExecutor(config) {
     override fun command(): Command {
         return Command.ME
     }

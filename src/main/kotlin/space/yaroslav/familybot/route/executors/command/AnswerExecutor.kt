@@ -16,9 +16,14 @@ import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.TextToSpeechService
 import space.yaroslav.familybot.route.services.YandexSpeechType
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
+import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
-class AnswerExecutor(val textToSpeechService: TextToSpeechService, val dictionary: Dictionary) : CommandExecutor {
+class AnswerExecutor(
+    val textToSpeechService: TextToSpeechService,
+    val dictionary: Dictionary,
+    config: BotConfig
+) : CommandExecutor(config) {
     override fun command(): Command {
         return Command.ANSWER
     }

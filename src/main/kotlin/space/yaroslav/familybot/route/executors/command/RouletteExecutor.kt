@@ -12,6 +12,7 @@ import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
 import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
+import space.yaroslav.familybot.telegram.BotConfig
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -23,8 +24,9 @@ const val ROULETTE_MESSAGE = "Выбери число от 1 до 6"
 @Deprecated(message = "Replaced with BetExecutor")
 class RouletteExecutor(
     private val commandHistoryRepository: CommandHistoryRepository,
-    val dictionary: Dictionary
-) : CommandExecutor, Configurable {
+    val dictionary: Dictionary,
+    config: BotConfig
+) : CommandExecutor(config), Configurable {
 
     override fun getFunctionId(): FunctionId {
         return FunctionId.PIDOR

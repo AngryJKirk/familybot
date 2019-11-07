@@ -18,6 +18,7 @@ import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
 import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
+import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.time.Instant
 import java.time.LocalDate
@@ -27,8 +28,9 @@ import java.time.ZoneId
 @Component
 class TopPidorsByMonthsExecutor(
     val commonRepository: CommonRepository,
-    val dictionary: Dictionary
-) : CommandExecutor, Configurable {
+    val dictionary: Dictionary,
+    config: BotConfig
+) : CommandExecutor(config), Configurable {
 
     override fun getFunctionId(): FunctionId {
         return FunctionId.PIDOR

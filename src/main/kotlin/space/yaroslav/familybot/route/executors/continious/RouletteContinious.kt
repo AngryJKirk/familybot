@@ -26,11 +26,11 @@ import java.util.concurrent.ThreadLocalRandom
 @Component
 @Deprecated(message = "Replaced with BetContinious")
 class RouletteContinious(
-    val commandHistoryRepository: CommandHistoryRepository,
-    override val botConfig: BotConfig,
-    val pidorRepository: CommonRepository,
-    val pidorCompetitionService: PidorCompetitionService
-) : ContiniousConversation {
+    private val commandHistoryRepository: CommandHistoryRepository,
+    private val botConfig: BotConfig,
+    private val pidorRepository: CommonRepository,
+    private val pidorCompetitionService: PidorCompetitionService
+) : ContiniousConversation(botConfig) {
 
     private val log = LoggerFactory.getLogger(RouletteContinious::class.java)
 

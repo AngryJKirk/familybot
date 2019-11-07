@@ -12,12 +12,14 @@ import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
+import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
 class CommandStatExecutor(
     val repositoryCommand: CommandHistoryRepository,
-    val dictionary: Dictionary
-) : CommandExecutor {
+    val dictionary: Dictionary,
+    config: BotConfig
+) : CommandExecutor(config) {
 
     override fun command(): Command {
         return Command.COMMAND_STATS

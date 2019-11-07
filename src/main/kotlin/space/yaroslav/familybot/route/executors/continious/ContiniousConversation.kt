@@ -6,18 +6,16 @@ import space.yaroslav.familybot.route.executors.command.CommandExecutor
 import space.yaroslav.familybot.route.models.Priority
 import space.yaroslav.familybot.telegram.BotConfig
 
-interface ContiniousConversation : CommandExecutor {
-
-    val botConfig: BotConfig
+abstract class ContiniousConversation(val config: BotConfig) : CommandExecutor(config) {
 
     override fun priority(update: Update): Priority {
         return Priority.MEDIUM
     }
 
     override fun canExecute(message: Message): Boolean {
-        return message.from.userName == botConfig.botname &&
+        return message.from.userName == config.botname &&
             message.text ?: "" == getDialogMessage()
     }
 
-    fun getDialogMessage(): String
+    abstract fun getDialogMessage(): String
 }

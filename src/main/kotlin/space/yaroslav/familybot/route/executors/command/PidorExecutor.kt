@@ -25,14 +25,16 @@ import space.yaroslav.familybot.route.models.FunctionId
 import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.PidorCompetitionService
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
+import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 
 @Component
 class PidorExecutor(
     val repository: CommonRepository,
     val pidorCompetitionService: PidorCompetitionService,
-    val dictionary: Dictionary
-) : CommandExecutor, Configurable {
+    val dictionary: Dictionary,
+    config: BotConfig
+) : CommandExecutor(config), Configurable {
     override fun getFunctionId(): FunctionId {
         return FunctionId.PIDOR
     }
