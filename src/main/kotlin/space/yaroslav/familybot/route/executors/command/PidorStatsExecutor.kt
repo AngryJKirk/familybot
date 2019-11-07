@@ -19,8 +19,8 @@ import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
 class PidorStatsExecutor(
-    val repository: CommonRepository,
-    val dictionary: Dictionary,
+    private val repository: CommonRepository,
+    private val dictionary: Dictionary,
     config: BotConfig
 ) : CommandExecutor(config), Configurable {
 

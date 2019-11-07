@@ -8,7 +8,7 @@ import space.yaroslav.familybot.route.models.Phrase
 import java.time.Instant
 
 @Component
-class DictionaryImpl(val dictionaryRepository: PhraseDictionaryRepository) : Dictionary {
+class DictionaryImpl(private val dictionaryRepository: PhraseDictionaryRepository) : Dictionary {
     override fun getAll(phrase: Phrase): List<String> {
         return dictionaryRepository.getAllPhrases(phrase)
     }

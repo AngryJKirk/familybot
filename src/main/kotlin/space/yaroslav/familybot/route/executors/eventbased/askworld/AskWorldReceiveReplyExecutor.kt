@@ -39,9 +39,9 @@ import java.time.Instant
 
 @Component
 class AskWorldReceiveReplyExecutor(
-    val askWorldRepository: AskWorldRepository,
-    val botConfig: BotConfig,
-    val dictionary: Dictionary
+    private val askWorldRepository: AskWorldRepository,
+    private val botConfig: BotConfig,
+    private val dictionary: Dictionary
 ) : Executor, Configurable {
     private val log = LoggerFactory.getLogger(AskWorldReceiveReplyExecutor::class.java)
     override fun getFunctionId(): FunctionId {

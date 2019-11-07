@@ -12,7 +12,7 @@ import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
-class UserListExecutor(val dictionary: Dictionary, val botConfig: BotConfig) : Executor {
+class UserListExecutor(private val dictionary: Dictionary, private val botConfig: BotConfig) : Executor {
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val message = update.message
         val phrase = when {

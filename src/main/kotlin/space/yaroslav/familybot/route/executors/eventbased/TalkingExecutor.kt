@@ -18,8 +18,8 @@ import java.util.concurrent.ThreadLocalRandom
 
 @Component
 class TalkingExecutor(
-    val keyset: ChatLogRepository,
-    val configRepository: RagemodeRepository
+    private val keyset: ChatLogRepository,
+    private val configRepository: RagemodeRepository
 ) : Executor, Configurable {
 
     override fun getFunctionId(): FunctionId {

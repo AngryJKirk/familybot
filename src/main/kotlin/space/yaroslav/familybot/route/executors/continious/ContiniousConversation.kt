@@ -6,7 +6,7 @@ import space.yaroslav.familybot.route.executors.command.CommandExecutor
 import space.yaroslav.familybot.route.models.Priority
 import space.yaroslav.familybot.telegram.BotConfig
 
-abstract class ContiniousConversation(val config: BotConfig) : CommandExecutor(config) {
+abstract class ContiniousConversation(private val config: BotConfig) : CommandExecutor(config) {
 
     override fun priority(update: Update): Priority {
         return Priority.MEDIUM

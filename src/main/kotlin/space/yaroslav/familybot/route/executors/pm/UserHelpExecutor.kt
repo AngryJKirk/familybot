@@ -8,7 +8,7 @@ import space.yaroslav.familybot.route.executors.command.HelpCommandExecutor
 import space.yaroslav.familybot.route.models.Priority
 
 @Component
-class UserHelpExecutor(val helpExecutor: HelpCommandExecutor) : PrivateMessageExecutor {
+class UserHelpExecutor(private val helpExecutor: HelpCommandExecutor) : PrivateMessageExecutor {
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         return helpExecutor.execute(update)
     }

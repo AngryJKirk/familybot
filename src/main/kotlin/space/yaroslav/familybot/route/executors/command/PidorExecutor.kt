@@ -30,9 +30,9 @@ import java.time.Instant
 
 @Component
 class PidorExecutor(
-    val repository: CommonRepository,
-    val pidorCompetitionService: PidorCompetitionService,
-    val dictionary: Dictionary,
+    private val repository: CommonRepository,
+    private val pidorCompetitionService: PidorCompetitionService,
+    private val dictionary: Dictionary,
     config: BotConfig
 ) : CommandExecutor(config), Configurable {
     override fun getFunctionId(): FunctionId {

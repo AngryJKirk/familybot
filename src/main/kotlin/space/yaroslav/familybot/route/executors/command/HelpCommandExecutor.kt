@@ -10,7 +10,7 @@ import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
-class HelpCommandExecutor(val dictionary: Dictionary, config: BotConfig) : CommandExecutor(config) {
+class HelpCommandExecutor(private val dictionary: Dictionary, config: BotConfig) : CommandExecutor(config) {
 
     override fun command(): Command {
         return Command.HELP

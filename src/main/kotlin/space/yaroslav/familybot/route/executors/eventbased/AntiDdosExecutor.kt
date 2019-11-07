@@ -21,9 +21,9 @@ import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
 class AntiDdosExecutor(
-    val repositoryCommand: CommandHistoryRepository,
-    val config: BotConfig,
-    val dictionary: Dictionary
+    private val repositoryCommand: CommandHistoryRepository,
+    private val config: BotConfig,
+    private val dictionary: Dictionary
 ) : Executor, Configurable {
     override fun getFunctionId(): FunctionId {
         return FunctionId.ANTIDDOS

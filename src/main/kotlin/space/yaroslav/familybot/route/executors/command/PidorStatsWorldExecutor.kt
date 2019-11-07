@@ -21,8 +21,8 @@ import java.time.ZoneOffset
 
 @Component
 class PidorStatsWorldExecutor(
-    val repository: CommonRepository,
-    val dictionary: Dictionary,
+    private val repository: CommonRepository,
+    private val dictionary: Dictionary,
     config: BotConfig
 ) : CommandExecutor(config), Configurable {
     override fun getFunctionId(): FunctionId {

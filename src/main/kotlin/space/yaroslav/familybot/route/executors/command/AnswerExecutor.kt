@@ -20,8 +20,8 @@ import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
 class AnswerExecutor(
-    val textToSpeechService: TextToSpeechService,
-    val dictionary: Dictionary,
+    private val textToSpeechService: TextToSpeechService,
+    private val dictionary: Dictionary,
     config: BotConfig
 ) : CommandExecutor(config) {
     override fun command(): Command {

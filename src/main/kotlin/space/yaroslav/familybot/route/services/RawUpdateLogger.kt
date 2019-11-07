@@ -9,7 +9,7 @@ import space.yaroslav.familybot.repos.ifaces.RawChatLogRepository
 import java.time.Instant
 
 @Component
-class RawUpdateLogger(val rawChatLogRepository: RawChatLogRepository) {
+class RawUpdateLogger(private val rawChatLogRepository: RawChatLogRepository) {
     private final val objectMapper = ObjectMapper()
 
     fun log(update: Update) {

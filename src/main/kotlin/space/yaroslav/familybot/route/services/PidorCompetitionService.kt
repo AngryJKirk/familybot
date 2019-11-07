@@ -21,8 +21,8 @@ import java.time.ZoneOffset
 
 @Service
 class PidorCompetitionService(
-    val repository: CommonRepository,
-    val dictionary: Dictionary
+    private val repository: CommonRepository,
+    private val dictionary: Dictionary
 ) {
 
     fun pidorCompetition(update: Update): ((AbsSender) -> Unit)? {

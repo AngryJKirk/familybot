@@ -17,7 +17,7 @@ import space.yaroslav.familybot.telegram.BotConfig
 @Component
 class SettingsExecutor(
     private val configureRepository: FunctionsConfigureRepository,
-    val dictionary: Dictionary,
+    private val dictionary: Dictionary,
     config: BotConfig
 ) : CommandExecutor(config) {
     override fun command(): Command {

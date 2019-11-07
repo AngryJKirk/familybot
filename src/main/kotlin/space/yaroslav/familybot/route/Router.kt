@@ -33,14 +33,14 @@ import java.time.Instant
 
 @Component
 class Router(
-    val repository: CommonRepository,
-    val commandHistoryRepository: CommandHistoryRepository,
-    val executors: List<Executor>,
-    val chatLogRepository: ChatLogRepository,
-    val configureRepository: FunctionsConfigureRepository,
-    val rawUpdateLogger: RawUpdateLogger,
-    val botConfig: BotConfig,
-    val dictionary: Dictionary
+    private val repository: CommonRepository,
+    private val commandHistoryRepository: CommandHistoryRepository,
+    private val executors: List<Executor>,
+    private val chatLogRepository: ChatLogRepository,
+    private val configureRepository: FunctionsConfigureRepository,
+    private val rawUpdateLogger: RawUpdateLogger,
+    private val botConfig: BotConfig,
+    private val dictionary: Dictionary
 ) {
 
     private final val logger = LoggerFactory.getLogger(Router::class.java)

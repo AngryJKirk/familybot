@@ -16,7 +16,7 @@ import space.yaroslav.familybot.route.models.Priority
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
-class ReplyToUserExecutor(val keyset: ChatLogRepository, val botConfig: BotConfig) : Executor, Configurable {
+class ReplyToUserExecutor(private val keyset: ChatLogRepository, private val botConfig: BotConfig) : Executor, Configurable {
     override fun getFunctionId(): FunctionId {
         return FunctionId.CHATTING
     }

@@ -9,7 +9,7 @@ import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
-class QuoteExecutor(val quoteRepository: QuoteRepository, config: BotConfig) : CommandExecutor(config) {
+class QuoteExecutor(private val quoteRepository: QuoteRepository, config: BotConfig) : CommandExecutor(config) {
     override fun command(): Command {
         return Command.QUOTE
     }

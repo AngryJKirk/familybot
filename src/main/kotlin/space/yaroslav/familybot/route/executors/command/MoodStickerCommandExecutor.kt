@@ -19,8 +19,8 @@ import java.time.ZoneOffset
 
 @Component
 class MoodStickerCommandExecutor(
-    val historyRepository: CommandHistoryRepository,
-    val dictionary: Dictionary,
+    private val historyRepository: CommandHistoryRepository,
+    private val dictionary: Dictionary,
     config: BotConfig
 ) : CommandExecutor(config) {
     override fun command() = Command.WHATS_MOOD_TODAY

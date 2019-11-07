@@ -24,7 +24,7 @@ const val ROULETTE_MESSAGE = "Выбери число от 1 до 6"
 @Deprecated(message = "Replaced with BetExecutor")
 class RouletteExecutor(
     private val commandHistoryRepository: CommandHistoryRepository,
-    val dictionary: Dictionary,
+    private val dictionary: Dictionary,
     config: BotConfig
 ) : CommandExecutor(config), Configurable {
 

@@ -27,8 +27,8 @@ import java.time.ZoneId
 
 @Component
 class TopPidorsByMonthsExecutor(
-    val commonRepository: CommonRepository,
-    val dictionary: Dictionary,
+    private val commonRepository: CommonRepository,
+    private val dictionary: Dictionary,
     config: BotConfig
 ) : CommandExecutor(config), Configurable {
 

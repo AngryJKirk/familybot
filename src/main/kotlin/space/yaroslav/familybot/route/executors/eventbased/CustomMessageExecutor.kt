@@ -14,7 +14,7 @@ import space.yaroslav.familybot.route.executors.Executor
 import space.yaroslav.familybot.route.models.Priority
 
 @Component
-class CustomMessageExecutor(val repository: CustomMessageDeliveryRepository) : Executor {
+class CustomMessageExecutor(private val repository: CustomMessageDeliveryRepository) : Executor {
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         return { sender ->
             val chat = update.toChat()

@@ -16,8 +16,8 @@ import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
 class CommandStatExecutor(
-    val repositoryCommand: CommandHistoryRepository,
-    val dictionary: Dictionary,
+    private val repositoryCommand: CommandHistoryRepository,
+    private val dictionary: Dictionary,
     config: BotConfig
 ) : CommandExecutor(config) {
 

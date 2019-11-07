@@ -19,7 +19,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Component
-class BanResponseExecutor(val banService: BanService) : Executor {
+class BanResponseExecutor(private val banService: BanService) : Executor {
 
     val dateTimeFormatter: DateTimeFormatter =
         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault())

@@ -31,11 +31,11 @@ import java.time.temporal.ChronoUnit
 
 @Component
 class AskWorldInitialExecutor(
-    val askWorldRepository: AskWorldRepository,
-    val commonRepository: CommonRepository,
-    val configureRepository: FunctionsConfigureRepository,
-    val botConfig: BotConfig,
-    val dictionary: Dictionary
+    private val askWorldRepository: AskWorldRepository,
+    private val commonRepository: CommonRepository,
+    private val configureRepository: FunctionsConfigureRepository,
+    private val botConfig: BotConfig,
+    private val dictionary: Dictionary
 ) : CommandExecutor(botConfig), Configurable {
     private val log = LoggerFactory.getLogger(AskWorldInitialExecutor::class.java)
     override fun getFunctionId(): FunctionId {

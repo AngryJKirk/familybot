@@ -14,7 +14,7 @@ import space.yaroslav.familybot.telegram.BotConfig
 const val QUOTE_MESSAGE = "Тег?"
 
 @Component
-class QuoteByTagExecutor(val quoteRepository: QuoteRepository, config: BotConfig) : CommandExecutor(config) {
+class QuoteByTagExecutor(private val quoteRepository: QuoteRepository, config: BotConfig) : CommandExecutor(config) {
     override fun command(): Command {
         return Command.QUOTE_BY_TAG
     }

@@ -22,8 +22,8 @@ import space.yaroslav.familybot.route.services.dictionary.Dictionary
 
 @Component
 class AskWorldSendQuestionExecutor(
-    val askWorldRepository: AskWorldRepository,
-    val dictionary: Dictionary
+    private val askWorldRepository: AskWorldRepository,
+    private val dictionary: Dictionary
 ) : Executor, Configurable {
 
     private val log = LoggerFactory.getLogger(AskWorldSendQuestionExecutor::class.java)

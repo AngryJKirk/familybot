@@ -22,9 +22,9 @@ import java.time.temporal.ChronoUnit
 
 @Component
 class RageExecutor(
-    val commandHistoryRepository: CommandHistoryRepository,
-    val configRepository: RagemodeRepository,
-    val dictionary: Dictionary,
+    private val commandHistoryRepository: CommandHistoryRepository,
+    private val configRepository: RagemodeRepository,
+    private val dictionary: Dictionary,
     config: BotConfig
 ) : CommandExecutor(config), Configurable {
 
