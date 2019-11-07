@@ -28,7 +28,7 @@ import java.io.Serializable
 class TestSender(val actions: MutableList<Action<*>> = ArrayList()) : AbsSender() {
 
     override fun <T : Serializable?, Method : BotApiMethod<T>?> sendApiMethod(method: Method): T {
-        if(method is GetChatMember){
+        if (method is GetChatMember) {
             return ChatMember() as T
         }
         if (method is SendMessage) {
