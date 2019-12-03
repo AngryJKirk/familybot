@@ -1,7 +1,7 @@
 package space.yaroslav.familybot.common
 
-import space.yaroslav.familybot.route.models.Command
 import java.time.Instant
+import space.yaroslav.familybot.route.models.Command
 
 data class User(val id: Long, val chat: Chat, val name: String?, val nickname: String?) {
 

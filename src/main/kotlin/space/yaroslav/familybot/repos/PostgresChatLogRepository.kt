@@ -1,12 +1,12 @@
 package space.yaroslav.familybot.repos
 
 import com.google.common.base.Suppliers
+import java.util.concurrent.TimeUnit
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
-import java.util.concurrent.TimeUnit
 
 @Component
 class PostgresChatLogRepository(val template: JdbcTemplate) : ChatLogRepository {

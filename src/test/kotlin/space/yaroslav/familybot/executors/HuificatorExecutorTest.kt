@@ -41,10 +41,12 @@ class HuificatorExecutorTest : ExecutorTest() {
                 runBlocking { huificatorExecutor.execute(huificateEntry.key).invoke(testSender) }
                 val actions = testSender.actions
                 if (huificateEntry.value == null) {
-                    takeIf { actions.isEmpty() } ?: throw AssertionError("Should not have text action $actions in case of $huificateEntry")
+                    takeIf { actions.isEmpty() }
+                        ?: throw AssertionError("Should not have text action $actions in case of $huificateEntry")
                 } else {
                     val action = actions
-                        .firstOrNull() as? ActionWithText ?: throw AssertionError("Should have text action in case of $huificateEntry")
+                        .firstOrNull() as? ActionWithText
+                        ?: throw AssertionError("Should have text action in case of $huificateEntry")
                     Assert.assertEquals(huificateEntry.value, action.content)
                 }
                 cleanSender()

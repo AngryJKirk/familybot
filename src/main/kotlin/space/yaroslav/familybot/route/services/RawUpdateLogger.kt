@@ -1,12 +1,12 @@
 package space.yaroslav.familybot.route.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import java.time.Instant
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.RawChatLogRepository
-import java.time.Instant
 
 @Component
 class RawUpdateLogger(private val rawChatLogRepository: RawChatLogRepository) {

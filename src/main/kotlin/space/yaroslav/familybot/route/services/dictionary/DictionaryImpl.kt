@@ -1,11 +1,11 @@
 package space.yaroslav.familybot.route.services.dictionary
 
+import java.time.Instant
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.repos.PhraseThemeSetting
 import space.yaroslav.familybot.repos.ifaces.PhraseDictionaryRepository
 import space.yaroslav.familybot.route.models.Phrase
-import java.time.Instant
 
 @Component
 class DictionaryImpl(private val dictionaryRepository: PhraseDictionaryRepository) : Dictionary {

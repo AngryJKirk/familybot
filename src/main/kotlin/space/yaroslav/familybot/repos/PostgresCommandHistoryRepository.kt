@@ -1,5 +1,7 @@
 package space.yaroslav.familybot.repos
 
+import java.sql.Timestamp
+import java.time.Instant
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.jdbc.core.RowMapper
@@ -10,8 +12,6 @@ import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.map
 import space.yaroslav.familybot.common.utils.toCommandByUser
 import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
-import java.sql.Timestamp
-import java.time.Instant
 
 @Component
 class PostgresCommandHistoryRepository(val template: JdbcTemplate) : CommandHistoryRepository {

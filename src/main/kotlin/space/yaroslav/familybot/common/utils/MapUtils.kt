@@ -1,11 +1,11 @@
 package space.yaroslav.familybot.common.utils
 
+import org.telegram.telegrambots.meta.api.objects.Chat as TelegramChat
 import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.api.objects.User as TelegramUser
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.telegram.FamilyBot
-import org.telegram.telegrambots.meta.api.objects.Chat as TelegramChat
-import org.telegram.telegrambots.meta.api.objects.User as TelegramUser
 
 fun TelegramChat.toChat(): Chat = Chat(this.id, this.title)
 

@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.route.executors.command
 
+import java.time.Instant
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -16,7 +17,6 @@ import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
-import java.time.Instant
 
 @Component
 class MeCommandExecutor(

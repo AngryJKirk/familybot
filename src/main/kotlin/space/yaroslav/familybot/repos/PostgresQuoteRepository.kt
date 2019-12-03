@@ -3,6 +3,7 @@ package space.yaroslav.familybot.repos
 import com.google.common.base.Suppliers
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
+import java.util.concurrent.TimeUnit
 import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.utils.random
 import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.repos.ifaces.QuoteRepository
-import java.util.concurrent.TimeUnit
 
 @Component
 @Primary

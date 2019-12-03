@@ -1,9 +1,9 @@
 package space.yaroslav.familybot.infrastructure
 
+import java.util.UUID
 import org.telegram.telegrambots.meta.api.methods.ParseMode
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import space.yaroslav.familybot.telegram.FamilyBot
-import java.util.UUID
 
 fun SendMessage.isHtmlEnabled(): Boolean {
     val field = this::class.java

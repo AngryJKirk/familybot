@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.common.utils
 
+import java.sql.ResultSet
 import space.yaroslav.familybot.common.AskWorldQuestion
 import space.yaroslav.familybot.common.AskWorldReply
 import space.yaroslav.familybot.common.Chat
@@ -8,7 +9,6 @@ import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.telegram.FamilyBot
-import java.sql.ResultSet
 
 fun ResultSet.toUser(): User = User(
     this.getLong("id"),

@@ -1,14 +1,14 @@
 package space.yaroslav.familybot.repos
 
+import java.sql.ResultSet
+import java.sql.Timestamp
+import java.util.UUID
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.repos.ifaces.BanEntity
 import space.yaroslav.familybot.repos.ifaces.BanRepository
 import space.yaroslav.familybot.route.services.ban.Ban
-import java.sql.ResultSet
-import java.sql.Timestamp
-import java.util.UUID
 
 @Component
 class PostgresBanRepository(val jdbcTemplate: JdbcTemplate) : BanRepository {

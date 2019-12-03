@@ -37,8 +37,9 @@ class ReplyToUserExecutorTest : ExecutorTest() {
         runBlocking { replyToUserExecutor.execute(update).invoke(testSender) }
         Assert.assertTrue("Should be at least one action", testSender.actions.isNotEmpty())
         Assert.assertTrue("Should be reply", testSender.actions.first().replyId != null)
-        Assert.assertTrue("Reply should not be empty", testSender.actions.first()
-            .let { it as ActionWithText }.content.isNotBlank()
+        Assert.assertTrue(
+            "Reply should not be empty", testSender.actions.first()
+                .let { it as ActionWithText }.content.isNotBlank()
         )
     }
 

@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.route.executors.command
 
+import java.time.Instant
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -26,7 +27,6 @@ import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.PidorCompetitionService
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
-import java.time.Instant
 
 @Component
 class PidorExecutor(

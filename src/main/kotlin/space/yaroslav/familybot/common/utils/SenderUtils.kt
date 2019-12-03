@@ -7,10 +7,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendSticker
 import org.telegram.telegrambots.meta.api.methods.stickers.GetStickerSet
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.route.models.stickers.Sticker
 import space.yaroslav.familybot.route.models.stickers.StickerPack
-import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 
 fun AbsSender.send(
     update: Update,

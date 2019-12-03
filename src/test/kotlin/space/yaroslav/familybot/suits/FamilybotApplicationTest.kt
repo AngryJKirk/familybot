@@ -1,5 +1,7 @@
 package space.yaroslav.familybot.suits
 
+import java.nio.file.Paths
+import java.util.concurrent.Future
 import org.junit.runner.RunWith
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -9,8 +11,6 @@ import org.telegram.telegrambots.ApiContextInitializer
 import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.images.builder.ImageFromDockerfile
-import java.nio.file.Paths
-import java.util.concurrent.Future
 
 @RunWith(SpringRunner::class)
 @SpringBootTest

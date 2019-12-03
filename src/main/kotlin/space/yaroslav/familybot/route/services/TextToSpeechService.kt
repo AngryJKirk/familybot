@@ -2,6 +2,9 @@ package space.yaroslav.familybot.route.services
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.common.base.Suppliers
+import java.io.InputStream
+import java.net.URI
+import java.util.concurrent.TimeUnit
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
 import org.springframework.http.HttpEntity
@@ -9,9 +12,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
-import java.io.InputStream
-import java.net.URI
-import java.util.concurrent.TimeUnit
 
 @Component
 class TextToSpeechService(

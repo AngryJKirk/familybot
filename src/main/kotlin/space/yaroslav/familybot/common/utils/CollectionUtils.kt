@@ -1,9 +1,9 @@
 package space.yaroslav.familybot.common.utils
 
+import java.util.concurrent.ThreadLocalRandom
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.telegram.FamilyBot
-import java.util.concurrent.ThreadLocalRandom
 
 fun List<User>.formatTopList(): List<String> {
     fun format(index: Int, stats: Pair<String?, Int>): String {

@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.route.executors.eventbased.askworld
 
+import java.time.Instant
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -35,7 +36,6 @@ import space.yaroslav.familybot.route.models.Priority
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
-import java.time.Instant
 
 @Component
 class AskWorldReceiveReplyExecutor(
@@ -54,27 +54,27 @@ class AskWorldReceiveReplyExecutor(
         val chat = update.toChat()
         val user = update.toUser()
         val question =
-                askWorldRepository.findQuestionByMessageId(message.replyToMessage.messageId + chat.id, chat)
+            askWorldRepository.findQuestionByMessageId(message.replyToMessage.messageId + chat.id, chat)
 
         if (askWorldRepository.isReplied(question, chat, user)) {
             return {
                 it.execute(
-                        SendMessage(
-                                chat.id,
-                                "Отвечать можно только раз"
-                        ).setReplyToMessageId(message.messageId)
+                    SendMessage(
+                        chat.id,
+                        "Отвечать можно только раз"
+                    ).setReplyToMessageId(message.messageId)
                 )
             }
         }
         val contentType = detectContentType(message)
         val askWorldReply = AskWorldReply(
-                null,
-                question.id
-                        ?: throw FamilyBot.InternalException("Question id is missing, seems like internal logic error"),
-                reply,
-                user,
-                chat,
-                Instant.now()
+            null,
+            question.id
+                ?: throw FamilyBot.InternalException("Question id is missing, seems like internal logic error"),
+            reply,
+            user,
+            chat,
+            Instant.now()
         )
 
         return {
@@ -85,62 +85,77 @@ class AskWorldReceiveReplyExecutor(
 
                 if (contentType == MessageContentType.TEXT) {
                     it.execute(
-                            SendMessage(
-                                    chatIdToReply,
-                                    "${dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${update.toChat().name.boldNullable()} " +
-                                            "от ${user.getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}"
-                            ).enableHtml(true)
+                        SendMessage(
+                            chatIdToReply,
+                            "${dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${update.toChat().name.boldNullable()} " +
+                                "от ${user.getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}"
+                        ).enableHtml(true)
                     )
                 } else {
                     it.execute(
-                            SendMessage(
-                                    chatIdToReply,
-                                    "${dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${update.toChat().name.boldNullable()} " +
-                                            "от ${user.getGeneralName()} на вопрос \"$questionTitle\":"
-                            ).enableHtml(true)
+                        SendMessage(
+                            chatIdToReply,
+                            "${dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${update.toChat().name.boldNullable()} " +
+                                "от ${user.getGeneralName()} на вопрос \"$questionTitle\":"
+                        ).enableHtml(true)
                     )
                     when (contentType) {
                         MessageContentType.PHOTO -> it
-                                .execute(SendPhoto()
-                                        .setChatId(chatIdToReply)
-                                        .setPhoto(message.photo.first().fileId))
+                            .execute(
+                                SendPhoto()
+                                    .setChatId(chatIdToReply)
+                                    .setPhoto(message.photo.first().fileId)
+                            )
                         MessageContentType.AUDIO -> it
-                                .execute(SendAudio()
-                                        .setChatId(chatIdToReply)
-                                        .setAudio(message.audio.fileId))
+                            .execute(
+                                SendAudio()
+                                    .setChatId(chatIdToReply)
+                                    .setAudio(message.audio.fileId)
+                            )
                         MessageContentType.ANIMATION -> it.execute(
-                                SendAnimation()
-                                        .setChatId(chatIdToReply)
-                                        .setAnimation(message.animation.fileId))
-                        MessageContentType.DOCUMENT -> it.execute(
-                                SendDocument()
-                                        .setChatId(chatIdToReply)
-                                        .setDocument(message.document.fileId))
-                        MessageContentType.VOICE -> it
-                                .execute(SendVoice()
-                                        .setChatId(chatIdToReply)
-                                        .setVoice(message.voice.fileId))
-                        MessageContentType.VIDEO_NOTE -> it
-                                .execute(
-                                        SendVideoNote()
-                                                .setChatId(chatIdToReply)
-                                                .setVideoNote(message.videoNote.fileId))
-                        MessageContentType.LOCATION -> it
-                                .execute(SendLocation(message.location.latitude, message.location.longitude)
-                                        .setChatId(chatIdToReply))
-                        MessageContentType.STICKER -> it.execute(
-                                SendSticker()
-                                        .setChatId(chatIdToReply)
-                                        .setSticker(message.sticker.fileId))
-                        MessageContentType.CONTACT -> it.execute(
-                                SendContact()
-                                        .setChatId(chatIdToReply)
-                                        .setFirstName(message.contact.firstName)
-                                        .setLastName(message.contact.lastName)
-                                        .setPhoneNumber(message.contact.phoneNumber))
-                        MessageContentType.VIDEO -> it.execute(SendVideo()
+                            SendAnimation()
                                 .setChatId(chatIdToReply)
-                                .setVideo(message.video.fileId))
+                                .setAnimation(message.animation.fileId)
+                        )
+                        MessageContentType.DOCUMENT -> it.execute(
+                            SendDocument()
+                                .setChatId(chatIdToReply)
+                                .setDocument(message.document.fileId)
+                        )
+                        MessageContentType.VOICE -> it
+                            .execute(
+                                SendVoice()
+                                    .setChatId(chatIdToReply)
+                                    .setVoice(message.voice.fileId)
+                            )
+                        MessageContentType.VIDEO_NOTE -> it
+                            .execute(
+                                SendVideoNote()
+                                    .setChatId(chatIdToReply)
+                                    .setVideoNote(message.videoNote.fileId)
+                            )
+                        MessageContentType.LOCATION -> it
+                            .execute(
+                                SendLocation(message.location.latitude, message.location.longitude)
+                                    .setChatId(chatIdToReply)
+                            )
+                        MessageContentType.STICKER -> it.execute(
+                            SendSticker()
+                                .setChatId(chatIdToReply)
+                                .setSticker(message.sticker.fileId)
+                        )
+                        MessageContentType.CONTACT -> it.execute(
+                            SendContact()
+                                .setChatId(chatIdToReply)
+                                .setFirstName(message.contact.firstName)
+                                .setLastName(message.contact.lastName)
+                                .setPhoneNumber(message.contact.phoneNumber)
+                        )
+                        MessageContentType.VIDEO -> it.execute(
+                            SendVideo()
+                                .setChatId(chatIdToReply)
+                                .setVideo(message.video.fileId)
+                        )
                         else -> log.warn("Something went wrong with content type detection logic")
                     }
                 }
@@ -155,8 +170,8 @@ class AskWorldReceiveReplyExecutor(
 
     override fun canExecute(message: Message): Boolean {
         val text = message.replyToMessage
-                ?.takeIf { it.from.bot && it.from.userName == botConfig.botname }
-                ?.text ?: return false
+            ?.takeIf { it.from.bot && it.from.userName == botConfig.botname }
+            ?.text ?: return false
 
         val allPrefixes = dictionary.getAll(Phrase.ASK_WORLD_QUESTION_FROM_CHAT)
 

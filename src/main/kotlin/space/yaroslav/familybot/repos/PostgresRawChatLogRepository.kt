@@ -1,12 +1,12 @@
 package space.yaroslav.familybot.repos
 
+import java.sql.Timestamp
+import java.time.Instant
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.repos.ifaces.RawChatLogRepository
-import java.sql.Timestamp
-import java.time.Instant
 
 @Component
 class PostgresRawChatLogRepository(val template: JdbcTemplate) : RawChatLogRepository {

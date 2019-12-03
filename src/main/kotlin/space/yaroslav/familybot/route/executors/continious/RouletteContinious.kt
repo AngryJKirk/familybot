@@ -1,5 +1,11 @@
 package space.yaroslav.familybot.route.executors.continious
 
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
+import java.util.concurrent.ThreadLocalRandom
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
@@ -16,12 +22,6 @@ import space.yaroslav.familybot.route.executors.command.ROULETTE_MESSAGE
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.services.PidorCompetitionService
 import space.yaroslav.familybot.telegram.BotConfig
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneOffset
-import java.util.concurrent.ThreadLocalRandom
 
 @Component
 @Deprecated(message = "Replaced with BetContinious")

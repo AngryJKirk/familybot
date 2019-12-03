@@ -1,5 +1,7 @@
 package space.yaroslav.familybot.repos
 
+import java.sql.Timestamp
+import java.time.Instant
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Component
@@ -11,8 +13,6 @@ import space.yaroslav.familybot.common.utils.toAskWorldQuestion
 import space.yaroslav.familybot.common.utils.toAskWorldReply
 import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
 import space.yaroslav.familybot.telegram.FamilyBot
-import java.sql.Timestamp
-import java.time.Instant
 
 @Component
 class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepository {

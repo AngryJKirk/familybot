@@ -13,7 +13,8 @@ import space.yaroslav.familybot.route.models.Priority
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
-class PatchNoteExecutor(private val botConfig: BotConfig, private val commonRepository: CommonRepository) : PrivateMessageExecutor {
+class PatchNoteExecutor(private val botConfig: BotConfig, private val commonRepository: CommonRepository) :
+    PrivateMessageExecutor {
     private val patchnotePrefix = "PATCHNOTE1488"
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {

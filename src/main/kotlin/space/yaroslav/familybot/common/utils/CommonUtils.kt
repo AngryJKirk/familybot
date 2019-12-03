@@ -1,11 +1,11 @@
 package space.yaroslav.familybot.common.utils
 
-import org.telegram.telegrambots.meta.api.objects.Chat
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneId
+import org.telegram.telegrambots.meta.api.objects.Chat
 
 fun Instant.isToday(): Boolean {
     return LocalDate.now().atTime(0, 0).isBefore(LocalDateTime.ofInstant(this, ZoneId.of("UTC")))

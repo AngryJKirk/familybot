@@ -1,5 +1,8 @@
 package space.yaroslav.familybot.repos
 
+import java.sql.Timestamp
+import java.time.Instant
+import javax.sql.DataSource
 import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
@@ -13,9 +16,6 @@ import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toPidor
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
-import java.sql.Timestamp
-import java.time.Instant
-import javax.sql.DataSource
 
 @Component
 @Primary

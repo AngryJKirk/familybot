@@ -10,6 +10,7 @@ import space.yaroslav.familybot.route.executors.eventbased.ZigaExecutor
 import space.yaroslav.familybot.route.models.Priority
 import space.yaroslav.familybot.route.models.stickers.Sticker
 import space.yaroslav.familybot.suits.ExecutorTest
+
 @Ignore("Need some time to adapt test infrastructure to stickers")
 class ZigaExecutorExecutorTest : ExecutorTest() {
 

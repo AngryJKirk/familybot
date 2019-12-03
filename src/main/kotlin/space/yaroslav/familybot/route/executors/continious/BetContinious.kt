@@ -1,5 +1,10 @@
 package space.yaroslav.familybot.route.executors.continious
 
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
+import java.util.concurrent.ThreadLocalRandom
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -21,11 +26,6 @@ import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.PidorCompetitionService
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneOffset
-import java.util.concurrent.ThreadLocalRandom
 
 @Component
 class BetContinious(

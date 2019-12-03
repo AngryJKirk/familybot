@@ -1,12 +1,12 @@
 package space.yaroslav.familybot.repos.ifaces
 
+import java.time.Instant
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import space.yaroslav.familybot.common.AskWorldQuestion
 import space.yaroslav.familybot.common.AskWorldReply
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
-import java.time.Instant
-import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
 
 interface AskWorldRepository {
 

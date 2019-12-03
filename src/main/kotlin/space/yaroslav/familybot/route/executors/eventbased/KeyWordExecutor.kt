@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.route.executors.eventbased
 
+import java.util.concurrent.ThreadLocalRandom
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -8,7 +9,7 @@ import space.yaroslav.familybot.common.utils.sendSticker
 import space.yaroslav.familybot.route.executors.Executor
 import space.yaroslav.familybot.route.models.Priority
 import space.yaroslav.familybot.route.models.stickers.Sticker
-import java.util.concurrent.ThreadLocalRandom
+
 // TODO Make more universal with actions from database
 @Component
 class KeyWordExecutor : Executor {

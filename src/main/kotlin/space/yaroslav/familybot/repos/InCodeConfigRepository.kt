@@ -1,11 +1,11 @@
 package space.yaroslav.familybot.repos
 
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.KeywordConfig
 import space.yaroslav.familybot.repos.ifaces.RagemodeRepository
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 @Component
 class InCodeConfigRepository : RagemodeRepository {

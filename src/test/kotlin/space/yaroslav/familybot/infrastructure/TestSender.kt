@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.infrastructure
 
+import java.io.Serializable
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember
 import org.telegram.telegrambots.meta.api.methods.groupadministration.SetChatPhoto
@@ -23,7 +24,6 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.stickers.StickerSet
 import org.telegram.telegrambots.meta.bots.AbsSender
 import org.telegram.telegrambots.meta.updateshandlers.SentCallback
-import java.io.Serializable
 
 class TestSender(val actions: MutableList<Action<*>> = ArrayList()) : AbsSender() {
 
