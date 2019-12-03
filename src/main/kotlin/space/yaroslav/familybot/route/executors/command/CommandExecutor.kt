@@ -12,9 +12,9 @@ abstract class CommandExecutor(private val config: BotConfig) : Executor {
         val entities = message.entities ?: return false
         return entities.any {
             it.type == "bot_command" &&
-                it.text == command().command &&
+                it.text.startsWith(command().command) &&
                 it.offset == 0 &&
-                isAddressedToThisBot(message)
+                isAddressedToThisBot(message.text ?: "")
         }
     }
 
@@ -28,11 +28,10 @@ abstract class CommandExecutor(private val config: BotConfig) : Executor {
 
     abstract fun command(): Command
 
-    private fun isAddressedToThisBot(message: Message): Boolean {
-        val text = message.text
+    private fun isAddressedToThisBot(text: String): Boolean {
         if (text.contains("@").not()) {
             return true
         }
-        return text.contains(command().command + "@${config.botname} ")
+        return text.contains(command().command + "@${config.botname}")
     }
 }

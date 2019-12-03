@@ -31,6 +31,12 @@ abstract class CommandExecutorTest : ExecutorTest() {
             "Should not react for command which addressed to another bot",
             commandExecutor.canExecute(messageForOtherBot.message)
         )
+        val messageForSuchara = UpdateBuilder()
+            .simpleCommandFromUser(command = command, postfix = "@IntegrationTests")
+        Assert.assertTrue(
+            "Should not react for command which addressed to another bot",
+            commandExecutor.canExecute(messageForSuchara.message)
+        )
         val messageWithoutCommand = UpdateBuilder().simpleTextMessageFromUser(randomUUID())
         Assert.assertFalse(
             "Any others messages should never let executor be assigned to work",
