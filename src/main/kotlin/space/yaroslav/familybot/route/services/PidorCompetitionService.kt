@@ -1,10 +1,6 @@
 package space.yaroslav.familybot.route.services
 
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneOffset
+import kotlinx.coroutines.delay
 import org.springframework.stereotype.Service
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -18,6 +14,11 @@ import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.FamilyBot
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
 
 @Service
 class PidorCompetitionService(
@@ -25,7 +26,7 @@ class PidorCompetitionService(
     private val dictionary: Dictionary
 ) {
 
-    fun pidorCompetition(update: Update): ((AbsSender) -> Unit)? {
+    fun pidorCompetition(update: Update): (suspend (AbsSender) -> Unit)? {
         if (isEndOfMonth()) {
             val thisMonthPidors = getPidorsOfThisMonth(update)
             val competitors = detectPidorCompetition(thisMonthPidors)
@@ -34,14 +35,13 @@ class PidorCompetitionService(
                     it.send(update, dictionary.get(Phrase.PIDOR_COMPETITION).bold(), enableHtml = true)
                     val oneMorePidor = competitors.randomNotNull()
                     repository.addPidor(Pidor(oneMorePidor, Instant.now()))
-                    Thread.sleep(1000)
+                    delay(1000)
                     val oneMorePidorMessage =
                         dictionary.get(Phrase.COMPETITION_ONE_MORE_PIDOR).bold() + " " + oneMorePidor.getGeneralName()
                     it.send(update, oneMorePidorMessage, enableHtml = true)
                 }
             }
         }
-
         return null
     }
 

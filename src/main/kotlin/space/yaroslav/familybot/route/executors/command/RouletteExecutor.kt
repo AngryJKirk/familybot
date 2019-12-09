@@ -1,9 +1,6 @@
 package space.yaroslav.familybot.route.executors.command
 
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneOffset
+import kotlinx.coroutines.delay
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -17,6 +14,10 @@ import space.yaroslav.familybot.route.models.FunctionId
 import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
 
 const val ROULETTE_MESSAGE = "Выбери число от 1 до 6"
 
@@ -45,7 +46,7 @@ class RouletteExecutor(
         if (commands.filter { it.command == command() }.size > 1) {
             return {
                 it.execute(SendMessage(update.message.chatId, dictionary.get(Phrase.ROULETTE_ALREADY_WAS)))
-                Thread.sleep(2000)
+                delay(2000)
                 it.execute(SendMessage(update.message.chatId, dictionary.get(Phrase.PIDOR)))
             }
         }

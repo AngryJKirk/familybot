@@ -1,12 +1,7 @@
 package space.yaroslav.familybot.route.executors.continious
 
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneOffset
-import java.util.concurrent.ThreadLocalRandom
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -22,6 +17,12 @@ import space.yaroslav.familybot.route.executors.command.ROULETTE_MESSAGE
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.services.PidorCompetitionService
 import space.yaroslav.familybot.telegram.BotConfig
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
+import java.util.concurrent.ThreadLocalRandom
 
 @Component
 @Deprecated(message = "Replaced with BetContinious")
@@ -59,7 +60,7 @@ class RouletteContinious(
         if (commands.any { it.command == command() }) {
             return {
                 it.execute(SendMessage(chatId, "Ты уже крутил рулетку."))
-                Thread.sleep(2000)
+                delay(2000)
                 it.execute(SendMessage(chatId, "Пидор."))
             }
         }
@@ -68,7 +69,7 @@ class RouletteContinious(
             return {
                 it.execute(SendMessage(chatId, "Мушку спили и в следующий раз играй по правилам"))
                 GlobalScope.launch { pidorRepository.addPidor(Pidor(user, Instant.now())) }
-                Thread.sleep(1000)
+                delay(1000)
                 it.execute(SendMessage(chatId, "В наказание твое пидорское очко уходит к остальным"))
             }
         }
@@ -78,12 +79,12 @@ class RouletteContinious(
             if (rouletteNumber == number) {
                 it.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
                 GlobalScope.launch { repeat(5) { pidorRepository.removePidorRecord(user) } }
-                Thread.sleep(2000)
+                delay(2000)
                 it.execute(SendMessage(chatId, "Но он пока не треснул. Свое пидорское очко можешь забрать. "))
             } else {
                 it.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
                 GlobalScope.launch { repeat(3) { pidorRepository.addPidor(Pidor(user, Instant.now())) } }
-                Thread.sleep(2000)
+                delay(2000)
                 it.execute(
                     SendMessage(
                         chatId,
@@ -91,7 +92,7 @@ class RouletteContinious(
                     )
                 )
             }
-            Thread.sleep(2000)
+            delay(2000)
             pidorCompetitionService.pidorCompetition(update)?.invoke(it)
         }
     }
