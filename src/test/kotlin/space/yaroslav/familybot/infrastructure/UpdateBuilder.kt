@@ -1,18 +1,18 @@
 package space.yaroslav.familybot.infrastructure
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import java.time.Instant
+import java.util.UUID
+import java.util.concurrent.ThreadLocalRandom
 import org.telegram.telegrambots.meta.api.objects.Chat
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.MessageEntity
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
+import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 import org.telegram.telegrambots.meta.api.objects.stickers.StickerSet
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.stickers.Sticker
-import java.time.Instant
-import java.util.UUID
-import java.util.concurrent.ThreadLocalRandom
-import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 
 interface TestModelBuilder<T> {
     companion object {

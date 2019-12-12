@@ -1,26 +1,18 @@
 package space.yaroslav.familybot.route.executors.command
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.send.SendVoice
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.dropLastDelimiter
 import space.yaroslav.familybot.common.utils.random
-import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.common.utils.send
-import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.Phrase
-import space.yaroslav.familybot.route.services.TextToSpeechService
-import space.yaroslav.familybot.route.services.YandexSpeechType
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
 class AnswerExecutor(
-    private val textToSpeechService: TextToSpeechService,
     private val dictionary: Dictionary,
     config: BotConfig
 ) : CommandExecutor(config) {
@@ -41,18 +33,8 @@ class AnswerExecutor(
             ?: return {
                 it.send(update, dictionary.get(Phrase.BAD_COMMAND_USAGE), replyToUpdate = true)
             }
-        return {
-            val textToSpeech = GlobalScope.async { textToSpeechService.toSpeech(message, emotion = randomEmotion()) }
-            val sendAudio = SendVoice().apply {
-                chatId = update.toChat().id.toString()
-                replyToMessageId = update.message.messageId
-                setVoice("Test", textToSpeech.await())
-            }
-            it.execute(sendAudio)
-        }
+        return { it.send(update, message, replyToUpdate = true) }
     }
-
-    private fun randomEmotion() = YandexSpeechType.values().toList().randomNotNull()
 
     private fun isOptionsCountEnough(options: List<String>) = options.size >= 2
 

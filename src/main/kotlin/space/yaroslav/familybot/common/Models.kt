@@ -24,10 +24,10 @@ data class Pidor(val user: User, val date: Instant)
 
 data class CommandByUser(val user: User, val command: Command, val date: Instant)
 
-enum class Pluralization(val code: Int) {
-    ONE(1),
-    FEW(2),
-    MANY(3);
+enum class Pluralization {
+    ONE,
+    FEW,
+    MANY;
 
     companion object PluralizationCalc {
         fun getPlur(position: Int): Pluralization {
