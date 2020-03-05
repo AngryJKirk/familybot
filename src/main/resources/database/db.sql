@@ -1518,3 +1518,5 @@ create table if not exists message_content_type
     content_type_name        varchar(200)  not null,
     content_type_description varchar(2000) not null
 );
+
+CREATE INDEX idx_raw_chat_log_chat_id ON raw_chat_log (chat_id);
