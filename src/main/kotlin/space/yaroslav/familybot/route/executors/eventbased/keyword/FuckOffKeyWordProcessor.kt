@@ -21,12 +21,12 @@ class FuckOffKeyWordProcessor(
     private val stateService: StateService
 ) : KeyWordProcessor {
 
-    private val defaultFuckOffDuration = Duration.ofMinutes(1)
+    private val defaultFuckOffDuration = Duration.ofMinutes(15)
     private val defaultToleranceDuration = Duration.ofHours(24)
 
     private val fuckOffPhrases = setOf(
-        Regex(".*завали.{0,10}ебало.*"),
-        Regex(".*ебало.{0,10}завали.*")
+        Regex(".*завали.{0,10}ебало.*", RegexOption.IGNORE_CASE),
+        Regex(".*ебало.{0,10}завали.*", RegexOption.IGNORE_CASE)
     )
 
     override fun canProcess(message: Message): Boolean {

@@ -67,7 +67,7 @@ class TalkingExecutor(
         stateService.getStateForChat(chat.id, RageModeState::class)
 
     private fun shouldReply(rageModEnabled: Boolean): Boolean {
-        return rageModEnabled || ThreadLocalRandom.current().nextInt(0, 1) == 0
+        return rageModEnabled || ThreadLocalRandom.current().nextInt(0, 7) == 0
     }
 
     private fun rageModeFormat(string: String): String {
