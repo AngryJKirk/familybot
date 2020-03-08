@@ -1,7 +1,5 @@
 package space.yaroslav.familybot.route.executors.command
 
-import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -12,20 +10,24 @@ import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
-import space.yaroslav.familybot.repos.ifaces.RagemodeRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.models.Command
 import space.yaroslav.familybot.route.models.FunctionId
 import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
+import space.yaroslav.familybot.route.services.state.RageModeState
+import space.yaroslav.familybot.route.services.state.StateService
 import space.yaroslav.familybot.telegram.BotConfig
+import java.time.Duration
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 
 @Component
 class RageExecutor(
-    private val commandHistoryRepository: CommandHistoryRepository,
-    private val configRepository: RagemodeRepository,
-    private val dictionary: Dictionary,
-    config: BotConfig
+        private val commandHistoryRepository: CommandHistoryRepository,
+        private val dictionary: Dictionary,
+        private val stateService: StateService,
+        config: BotConfig
 ) : CommandExecutor(config), Configurable {
 
     private val logger = LoggerFactory.getLogger(RageExecutor::class.java)
@@ -42,7 +44,7 @@ class RageExecutor(
         val chat = update.toChat()
         if (isRageForced(update)) {
             logger.warn("Someone forced ${command()}")
-            configRepository.enable(10, 20, chat)
+            stateService.setStateForChat(chat.id, RageModeState(20, Duration.ofMinutes(10)))
             return {
                 it.send(update, dictionary.get(Phrase.RAGE_INITIAL))
             }
@@ -59,8 +61,7 @@ class RageExecutor(
                 it.send(update, dictionary.get(Phrase.RAGE_DONT_CARE_ABOUT_YOU))
             }
         }
-
-        configRepository.enable(10, 20, chat)
+        stateService.setStateForChat(chat.id, RageModeState(20, Duration.ofMinutes(10)))
         return {
             it.send(update, dictionary.get(Phrase.RAGE_INITIAL))
         }
@@ -68,20 +69,20 @@ class RageExecutor(
 
     private fun isCooldown(update: Update): Boolean {
         val commands = commandHistoryRepository.get(
-            update.toUser(),
-            from = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
+                update.toUser(),
+                from = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
         )
         return commands
-            .find { it.command == command() } != null
+                .find { it.command == command() } != null
     }
 
     private fun isFirstLaunch(chat: Chat): Boolean {
         return commandHistoryRepository
-            .getAll(chat)
-            .minBy { it.date }
-            ?.date
-            ?.isToday()
-            ?: true
+                .getAll(chat)
+                .minBy { it.date }
+                ?.date
+                ?.isToday()
+                ?: true
     }
 
     private fun isRageForced(update: Update): Boolean {

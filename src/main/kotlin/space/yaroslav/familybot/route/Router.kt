@@ -1,6 +1,5 @@
 package space.yaroslav.familybot.route
 
-import java.time.Instant
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
@@ -29,7 +28,10 @@ import space.yaroslav.familybot.route.models.Priority
 import space.yaroslav.familybot.route.models.higherThan
 import space.yaroslav.familybot.route.services.RawUpdateLogger
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
+import space.yaroslav.familybot.route.services.state.FunctionalToleranceState
+import space.yaroslav.familybot.route.services.state.StateService
 import space.yaroslav.familybot.telegram.BotConfig
+import java.time.Instant
 
 @Component
 class Router(
@@ -40,7 +42,8 @@ class Router(
     private val configureRepository: FunctionsConfigureRepository,
     private val rawUpdateLogger: RawUpdateLogger,
     private val botConfig: BotConfig,
-    private val dictionary: Dictionary
+    private val dictionary: Dictionary,
+    private val stateService: StateService
 ) {
 
     private final val logger = LoggerFactory.getLogger(Router::class.java)
@@ -116,7 +119,17 @@ class Router(
     }
 
     private fun isExecutorDisabled(executor: Executor, chat: Chat): Boolean {
-        return executor is Configurable && !configureRepository.isEnabled(executor.getFunctionId(), chat.toChat())
+        if(executor !is Configurable) return false
+
+        val functionId = executor.getFunctionId()
+        val isExecutorDisabled = !configureRepository.isEnabled(functionId, chat.toChat())
+
+        if(isExecutorDisabled) return true
+
+        return stateService
+                .getFunctionToleranceStatesForChat(chat.id)
+                .flatMap(FunctionalToleranceState::disabledFunctionIds)
+                .contains(executor.getFunctionId())
     }
 
     private fun logChatCommand(executor: Executor, update: Update) {

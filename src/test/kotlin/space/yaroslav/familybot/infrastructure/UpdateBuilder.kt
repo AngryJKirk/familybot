@@ -242,6 +242,3 @@ class StickerSetBuilder(
         stickers.add(stickerBuilder().data)
     }
 }
-
-private fun randomInt() = ThreadLocalRandom.current().nextInt()
-private fun randomIntFrom1to3() = ThreadLocalRandom.current().nextInt(1, 3)

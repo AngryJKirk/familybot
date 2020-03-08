@@ -9,6 +9,3 @@ spring:
     password: testPassword
     username: postgres
   profiles: testing
-yandex:
-  token: {token}
-  folder-id: {folder-id}
