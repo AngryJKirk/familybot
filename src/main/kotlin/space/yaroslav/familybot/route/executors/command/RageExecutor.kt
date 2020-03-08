@@ -1,5 +1,8 @@
 package space.yaroslav.familybot.route.executors.command
 
+import java.time.Duration
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -18,16 +21,13 @@ import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.route.services.state.RageModeState
 import space.yaroslav.familybot.route.services.state.StateService
 import space.yaroslav.familybot.telegram.BotConfig
-import java.time.Duration
-import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
 
 @Component
 class RageExecutor(
-        private val commandHistoryRepository: CommandHistoryRepository,
-        private val dictionary: Dictionary,
-        private val stateService: StateService,
-        config: BotConfig
+    private val commandHistoryRepository: CommandHistoryRepository,
+    private val dictionary: Dictionary,
+    private val stateService: StateService,
+    config: BotConfig
 ) : CommandExecutor(config), Configurable {
 
     private val logger = LoggerFactory.getLogger(RageExecutor::class.java)
@@ -69,20 +69,20 @@ class RageExecutor(
 
     private fun isCooldown(update: Update): Boolean {
         val commands = commandHistoryRepository.get(
-                update.toUser(),
-                from = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
+            update.toUser(),
+            from = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
         )
         return commands
-                .find { it.command == command() } != null
+            .find { it.command == command() } != null
     }
 
     private fun isFirstLaunch(chat: Chat): Boolean {
         return commandHistoryRepository
-                .getAll(chat)
-                .minBy { it.date }
-                ?.date
-                ?.isToday()
-                ?: true
+            .getAll(chat)
+            .minBy { it.date }
+            ?.date
+            ?.isToday()
+            ?: true
     }
 
     private fun isRageForced(update: Update): Boolean {

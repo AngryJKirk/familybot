@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.other
 
+import java.time.Duration
 import org.junit.Assert
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -8,8 +9,6 @@ import space.yaroslav.familybot.route.services.state.FuckOffState
 import space.yaroslav.familybot.route.services.state.RageModeState
 import space.yaroslav.familybot.route.services.state.StateService
 import space.yaroslav.familybot.suits.FamilybotApplicationTest
-import java.time.Duration
-
 
 class StateServiceTest : FamilybotApplicationTest() {
 
@@ -53,6 +52,9 @@ class StateServiceTest : FamilybotApplicationTest() {
         Assert.assertTrue("Should be able to get the state out of service", stateFromService != null)
         state.decrement()
         val stateFromServiceAfterChange = stateService.getStateForChat(chatId, RageModeState::class)
-        Assert.assertTrue("Should not return state again after changing the internal state", stateFromServiceAfterChange == null)
+        Assert.assertTrue(
+            "Should not return state again after changing the internal state",
+            stateFromServiceAfterChange == null
+        )
     }
 }

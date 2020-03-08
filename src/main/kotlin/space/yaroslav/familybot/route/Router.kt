@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.route
 
+import java.time.Instant
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
@@ -31,7 +32,6 @@ import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.route.services.state.FunctionalToleranceState
 import space.yaroslav.familybot.route.services.state.StateService
 import space.yaroslav.familybot.telegram.BotConfig
-import java.time.Instant
 
 @Component
 class Router(
@@ -119,17 +119,17 @@ class Router(
     }
 
     private fun isExecutorDisabled(executor: Executor, chat: Chat): Boolean {
-        if(executor !is Configurable) return false
+        if (executor !is Configurable) return false
 
         val functionId = executor.getFunctionId()
         val isExecutorDisabled = !configureRepository.isEnabled(functionId, chat.toChat())
 
-        if(isExecutorDisabled) return true
+        if (isExecutorDisabled) return true
 
         return stateService
-                .getFunctionToleranceStatesForChat(chat.id)
-                .flatMap(FunctionalToleranceState::disabledFunctionIds)
-                .contains(executor.getFunctionId())
+            .getFunctionToleranceStatesForChat(chat.id)
+            .flatMap(FunctionalToleranceState::disabledFunctionIds)
+            .contains(executor.getFunctionId())
     }
 
     private fun logChatCommand(executor: Executor, update: Update) {

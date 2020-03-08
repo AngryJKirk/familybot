@@ -3,7 +3,6 @@ package space.yaroslav.familybot.infrastructure
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.time.Instant
 import java.util.UUID
-import java.util.concurrent.ThreadLocalRandom
 import org.telegram.telegrambots.meta.api.objects.Chat
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.MessageEntity

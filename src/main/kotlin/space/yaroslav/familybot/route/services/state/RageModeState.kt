@@ -9,5 +9,4 @@ class RageModeState(private var amountOfMessagesToBeRaged: Int, duration: Durati
     override fun additionalIsOverChecks(): List<() -> Boolean> {
         return listOf { amountOfMessagesToBeRaged <= 0 }
     }
-
 }

@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.route.executors.eventbased
 
+import java.util.concurrent.ThreadLocalRandom
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -16,12 +17,11 @@ import space.yaroslav.familybot.route.models.FunctionId
 import space.yaroslav.familybot.route.models.Priority
 import space.yaroslav.familybot.route.services.state.RageModeState
 import space.yaroslav.familybot.route.services.state.StateService
-import java.util.concurrent.ThreadLocalRandom
 
 @Component
 class TalkingExecutor(
-        private val keyset: ChatLogRepository,
-        private val stateService: StateService
+    private val keyset: ChatLogRepository,
+    private val stateService: StateService
 ) : Executor, Configurable {
 
     override fun getFunctionId(): FunctionId {
@@ -42,13 +42,13 @@ class TalkingExecutor(
         val rageModEnabled = rageModeConfiguration != null
         if (shouldReply(rageModEnabled)) {
             val messages = keyset.get(update.toUser()).takeIf { it.size > 300 }
-                    ?: keyset.getAll().filter { it.split(" ").size <= 10 }
+                ?: keyset.getAll().filter { it.split(" ").size <= 10 }
 
             val messageText = messages
-                    .let(this::cleanMessages)
-                    .toList()
-                    .randomNotNull()
-                    .let { if (rageModEnabled) rageModeFormat(it) else it }
+                .let(this::cleanMessages)
+                .toList()
+                .randomNotNull()
+                .let { if (rageModEnabled) rageModeFormat(it) else it }
 
             return {
                 it.send(update, messageText, replyToUpdate = true)
@@ -64,12 +64,11 @@ class TalkingExecutor(
     }
 
     private fun getConfig(chat: Chat) =
-            stateService.getStateForChat(chat.id, RageModeState::class)
+        stateService.getStateForChat(chat.id, RageModeState::class)
 
     private fun shouldReply(rageModEnabled: Boolean): Boolean {
         return rageModEnabled || ThreadLocalRandom.current().nextInt(0, 1) == 0
     }
-
 
     private fun rageModeFormat(string: String): String {
         var message = string
@@ -81,8 +80,8 @@ class TalkingExecutor(
 
     private fun cleanMessages(messages: List<String>): Sequence<String> {
         return messages
-                .asSequence()
-                .filterNot { it.length > 600 }
-                .filterNot { it.contains("http", ignoreCase = true) }
+            .asSequence()
+            .filterNot { it.length > 600 }
+            .filterNot { it.contains("http", ignoreCase = true) }
     }
 }

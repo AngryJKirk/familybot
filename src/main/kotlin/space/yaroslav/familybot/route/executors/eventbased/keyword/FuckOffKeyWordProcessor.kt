@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.route.executors.eventbased.keyword
 
+import java.time.Duration
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -13,20 +14,19 @@ import space.yaroslav.familybot.route.services.state.FuckOffState
 import space.yaroslav.familybot.route.services.state.FuckOffToleranceState
 import space.yaroslav.familybot.route.services.state.StateService
 import space.yaroslav.familybot.telegram.BotConfig
-import java.time.Duration
 
 @Component
 class FuckOffKeyWordProcessor(
-        private val botConfig: BotConfig,
-        private val stateService: StateService
+    private val botConfig: BotConfig,
+    private val stateService: StateService
 ) : KeyWordProcessor {
 
     private val defaultFuckOffDuration = Duration.ofMinutes(1)
     private val defaultToleranceDuration = Duration.ofHours(24)
 
     private val fuckOffPhrases = setOf(
-            Regex(".*завали.{0,10}ебало.*"),
-            Regex(".*ебало.{0,10}завали.*")
+        Regex(".*завали.{0,10}ебало.*"),
+        Regex(".*ебало.{0,10}завали.*")
     )
 
     override fun canProcess(message: Message): Boolean {
@@ -46,9 +46,8 @@ class FuckOffKeyWordProcessor(
     }
 
     private fun isReplyToBot(message: Message) =
-            message.isReply && message.replyToMessage?.from?.userName == botConfig.botname
+        message.isReply && message.replyToMessage?.from?.userName == botConfig.botname
 
     private fun isUserUnderTolerance(user: User, chat: Chat) =
-            stateService.getStateForUserAndChat(chat.id, user.id, FuckOffToleranceState::class) == null
-
+        stateService.getStateForUserAndChat(chat.id, user.id, FuckOffToleranceState::class) == null
 }

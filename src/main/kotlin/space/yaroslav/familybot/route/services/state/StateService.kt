@@ -11,9 +11,7 @@ interface StateService {
     fun <T : State> getStateForChat(chatId: Long, requiredType: KClass<T>): T?
     fun <T : State> getStateForUser(userId: Long, requiredType: KClass<T>): T?
     fun <T : State> getStateForUserAndChat(chatId: Long, userId: Long, requiredType: KClass<T>): T?
-    fun <T: State> getAllStatesByChatPerUser(chatId: Long, requiredType: KClass<T>): Map<Long, T>
+    fun <T : State> getAllStatesByChatPerUser(chatId: Long, requiredType: KClass<T>): Map<Long, T>
 
     fun getFunctionToleranceStatesForChat(chatId: Long): Set<FunctionalToleranceState>
-
 }
-

@@ -1,12 +1,12 @@
 package space.yaroslav.familybot.route.executors.eventbased.keyword
 
+import java.util.concurrent.ThreadLocalRandom
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.sendSticker
 import space.yaroslav.familybot.route.models.stickers.Sticker
-import java.util.concurrent.ThreadLocalRandom
 
 @Component
 class SleepKeyWordProcessor : KeyWordProcessor {

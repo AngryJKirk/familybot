@@ -18,7 +18,7 @@ class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor {
 
     override fun canExecute(message: Message): Boolean {
         val keyWordProcessor = processors
-                .find { it.canProcess(message) }
+            .find { it.canProcess(message) }
         return if (keyWordProcessor != null) {
             actionFastAccess[message.messageId] = { update -> keyWordProcessor.process(update) }
             true

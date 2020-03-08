@@ -1,8 +1,8 @@
 package space.yaroslav.familybot.route.services.state
 
-import org.springframework.stereotype.Component
 import kotlin.reflect.KClass
 import kotlin.reflect.full.safeCast
+import org.springframework.stereotype.Component
 
 @Component
 class StateServiceImpl : StateService {
@@ -36,22 +36,21 @@ class StateServiceImpl : StateService {
     override fun <T : State> getAllStatesByChatPerUser(chatId: Long, requiredType: KClass<T>): Map<Long, T> {
         clearSpoiled()
         return storage
-                .filter { it.key.chatId == chatId }
-                .filter { it.key.userId != null }
-                .filter { it.value::class == requiredType }
-                .map { it.key.userId to getStateByKey(it.key, requiredType) }
-                .mapNotNull { cleanPair(it) }
-                .toMap()
+            .filter { it.key.chatId == chatId }
+            .filter { it.key.userId != null }
+            .filter { it.value::class == requiredType }
+            .map { it.key.userId to getStateByKey(it.key, requiredType) }
+            .mapNotNull { cleanPair(it) }
+            .toMap()
     }
 
     override fun getFunctionToleranceStatesForChat(chatId: Long): Set<FunctionalToleranceState> {
         clearSpoiled()
         return storage.filter { it.key.chatId == chatId }
-                .flatMap { it.value }
-                .filterIsInstance<FunctionalToleranceState>()
-                .toSet()
+            .flatMap { it.value }
+            .filterIsInstance<FunctionalToleranceState>()
+            .toSet()
     }
-
 
     private fun <T> cleanPair(pair: Pair<Long?, T?>): Pair<Long, T>? {
         val first = pair.first ?: return null
@@ -73,19 +72,16 @@ class StateServiceImpl : StateService {
 
     private fun addStateToStorage(stateKey: StateKey, state: State) {
         storage.computeIfAbsent(stateKey) { HashSet() }
-                .add(state)
+            .add(state)
     }
 
-    private fun clearSpoiled(){
+    private fun clearSpoiled() {
         storage.forEach { (_, value) ->
             value.removeIf(State::checkIsItOverAlready)
         }
     }
 
     private fun isOver(state: State) = state.checkIsItOverAlready()
-
-
 }
-
 
 data class StateKey(val chatId: Long? = null, val userId: Long? = null)

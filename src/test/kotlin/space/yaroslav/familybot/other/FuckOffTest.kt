@@ -23,15 +23,15 @@ class FuckOffTest : FamilybotApplicationTest() {
     fun `should be able to process valid message`() {
         val botName = botConfig.botname ?: throw IllegalStateException("Wrong test configuration")
         val phraseSet = setOf(
-                "ебало    завали",
-                "ебало завалил",
-                "ебало бля завали",
-                "ебало, бля, завали",
-                "ебало 123 завали",
-                "завали ебало",
-                "завали бля ебало",
-                "завали, бля, ебало",
-                "завали    ебало"
+            "ебало    завали",
+            "ебало завалил",
+            "ебало бля завали",
+            "ебало, бля, завали",
+            "ебало 123 завали",
+            "завали ебало",
+            "завали бля ебало",
+            "завали, бля, ебало",
+            "завали    ебало"
         ).let { set -> set.plus(set.map { randomUUID() + it + randomUUID() }) }
 
         phraseSet.forEach { phrase ->
@@ -45,5 +45,4 @@ class FuckOffTest : FamilybotApplicationTest() {
             Assert.assertTrue("Should be able to process simple message to bot: $phrase", canProcess)
         }
     }
-
 }
