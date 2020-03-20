@@ -1,6 +1,8 @@
 package space.yaroslav.familybot.route.executors.command
 
 import java.time.Duration
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import org.slf4j.LoggerFactory
@@ -8,7 +10,6 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.Chat
-import space.yaroslav.familybot.common.utils.isToday
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
@@ -72,17 +73,19 @@ class RageExecutor(
             update.toUser(),
             from = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
         )
-        return commands
-            .find { it.command == command() } != null
+        return commands.any { it.command == command() }
     }
 
     private fun isFirstLaunch(chat: Chat): Boolean {
-        return commandHistoryRepository
-            .getAll(chat)
-            .minBy { it.date }
-            ?.date
-            ?.isToday()
-            ?: true
+        val command = commandHistoryRepository
+            .getTheFirst(chat) ?: return true
+
+        val oneDayAgoDate = LocalDateTime
+            .now()
+            .plusDays(1)
+                .toInstant(ZoneOffset.UTC)
+
+        return command.date.isBefore(oneDayAgoDate)
     }
 
     private fun isRageForced(update: Update): Boolean {

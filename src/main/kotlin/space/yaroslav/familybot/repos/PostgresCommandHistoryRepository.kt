@@ -1,7 +1,5 @@
 package space.yaroslav.familybot.repos
 
-import java.sql.Timestamp
-import java.time.Instant
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.jdbc.core.RowMapper
@@ -12,6 +10,8 @@ import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.map
 import space.yaroslav.familybot.common.utils.toCommandByUser
 import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
+import java.sql.Timestamp
+import java.time.Instant
 
 @Component
 class PostgresCommandHistoryRepository(val template: JdbcTemplate) : CommandHistoryRepository {
@@ -20,6 +20,14 @@ class PostgresCommandHistoryRepository(val template: JdbcTemplate) : CommandHist
             "SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ?",
             RowMapper { rs, _ -> rs.toCommandByUser(null) }, chat.id
         )
+    }
+
+    override fun getTheFirst(chat: Chat): CommandByUser? {
+        return template.query(
+                "SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ? " +
+                        "order by command_date limit 1",
+                RowMapper { rs, _ -> rs.toCommandByUser(null) }, chat.id
+        ).firstOrNull()
     }
 
     override fun add(commandByUser: CommandByUser) {

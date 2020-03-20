@@ -1,9 +1,9 @@
 package space.yaroslav.familybot.repos.ifaces
 
-import java.time.Instant
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.User
+import java.time.Instant
 
 interface CommandHistoryRepository {
 
@@ -16,4 +16,6 @@ interface CommandHistoryRepository {
     ): List<CommandByUser>
 
     fun getAll(chat: Chat): List<CommandByUser>
+
+    fun getTheFirst(chat: Chat): CommandByUser?
 }
