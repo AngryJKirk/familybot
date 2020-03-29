@@ -41,19 +41,22 @@ class PidorExecutor(
 
     private final val log = LoggerFactory.getLogger(PidorExecutor::class.java)
 
-    override fun execute(update: Update): suspend suspend (AbsSender) -> Unit {
+    override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val chat = update.message.chat.toChat()
         log.info("Getting pidors from chat $chat")
-        val message = todayPidors(update)
+        val pidorsByChat = repository.getPidorsByChat(update.toChat())
+            .filter { it.date.isToday() }
+        val users = repository.getUsers(chat, activeOnly = true)
 
-        if (message != null) {
-            log.info("Pidors is already founded")
+        if (isLimitOfPidorsExceeded(users, pidorsByChat)) {
+            log.info("Pidors are already found")
+            val message = getMessageForPidors(update, pidorsByChat)
             return { it.execute(message) }
         }
+
         return { sender ->
             log.info("Pidor is not found, initiating search procedure")
             val nextPidor = GlobalScope.async {
-                val users = repository.getUsers(chat, activeOnly = true)
                 users.map { user ->
                     launch {
                         val userFromChat = getUserFromChat(user, sender)
@@ -94,20 +97,25 @@ class PidorExecutor(
         return Command.PIDOR
     }
 
-    private fun todayPidors(update: Update): SendMessage? {
-        val pidorsByChat = repository.getPidorsByChat(update.toChat())
-            .filter { it.date.isToday() }
-            .distinctBy { it.user.id }
-
-        return when (pidorsByChat.size) {
+    private fun getMessageForPidors(update: Update, pidorsByChat: List<Pidor>): SendMessage? {
+        val distinctPidors = pidorsByChat.distinctBy { it.user.id }
+        return when (distinctPidors.size) {
             0 -> null
             1 -> SendMessage(
                 update.message.chatId, dictionary.get(Phrase.PIROR_DISCOVERED_ONE) + ": " +
-                    pidorsByChat.first().user.getGeneralName()
+                    distinctPidors.first().user.getGeneralName()
             ).enableHtml(true)
             else -> SendMessage(update.message.chatId, dictionary.get(Phrase.PIROR_DISCOVERED_MANY) + ": " +
-                pidorsByChat.joinToString { it.user.getGeneralName() }).enableHtml(true)
+                distinctPidors.joinToString { it.user.getGeneralName() }).enableHtml(true)
         }
+    }
+
+    private fun isLimitOfPidorsExceeded(
+        usersInChat: List<User>,
+        todayPidors: List<Pidor>
+    ): Boolean {
+        val limit = if (usersInChat.size >= 100) 2 else 1
+        return todayPidors.size >= limit
     }
 
     private fun getUserFromChat(user: User, absSender: AbsSender): User? {
