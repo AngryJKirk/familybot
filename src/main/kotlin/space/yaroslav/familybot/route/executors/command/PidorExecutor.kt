@@ -114,7 +114,7 @@ class PidorExecutor(
         usersInChat: List<User>,
         todayPidors: List<Pidor>
     ): Boolean {
-        val limit = if (usersInChat.size >= 100) 2 else 1
+        val limit = if (usersInChat.size >= 50) 2 else 1
         return todayPidors.size >= limit
     }
 
