@@ -48,6 +48,6 @@ class PostgresCommandHistoryRepository(val template: JdbcTemplate) : CommandHist
             user.chat.id,
             Timestamp.from(from),
             Timestamp.from(to)
-        )
+        ) ?: emptyList()
     }
 }

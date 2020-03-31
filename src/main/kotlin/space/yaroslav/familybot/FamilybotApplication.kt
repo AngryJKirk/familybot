@@ -1,6 +1,7 @@
 package space.yaroslav.familybot
 
 import org.springframework.boot.SpringApplication
+import org.springframework.boot.WebApplicationType
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -32,6 +33,6 @@ class FamilybotApplication {
 fun main() {
     ApiContextInitializer.init()
     val app = SpringApplication(FamilybotApplication::class.java)
-    app.isWebEnvironment = false
+    app.webApplicationType = WebApplicationType.NONE
     app.run()
 }

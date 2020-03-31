@@ -75,7 +75,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
         return template.query(
             "SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE pidors.chat_id = ? AND pidor_date BETWEEN ? and ?",
             ResultSetExtractor { it.map { it.toPidor() } }, chat.id, Timestamp.from(startDate), Timestamp.from(endDate)
-        )
+        ) ?: emptyList()
     }
 
     override fun containsUser(user: User): Boolean {
@@ -110,7 +110,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
         return template.query(
             "SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE pidor_date BETWEEN ? and ?",
             ResultSetExtractor { it.map { it.toPidor() } }, Timestamp.from(startDate), Timestamp.from(endDate)
-        )
+        ) ?: emptyList()
     }
 
     override fun changeChatActiveStatus(chat: Chat, status: Boolean) {

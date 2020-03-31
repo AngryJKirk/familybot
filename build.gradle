@@ -1,10 +1,13 @@
 buildscript {
     ext {
-        kotlinVersion = '1.3.60'
-        springBootVersion = '1.5.9.RELEASE'
-        telegramBotVersion = '4.4.0.1'
-        ktlintVersion = '9.1.0'
-        coroutinesVersion = '1.3.2'
+        kotlinVersion = '1.3.70'
+        springBootVersion = '2.2.6.RELEASE'
+        telegramBotVersion = '4.6'
+        ktlintVersion = '9.2.1'
+        coroutinesVersion = '1.3.5'
+        testcontainersVersion = '1.13.0'
+        guavaVersion = '28.2-jre'
+        postgresVersion = '42.2.11'
     }
     repositories {
         mavenCentral()
@@ -32,28 +35,19 @@ version = '1.0'
 sourceCompatibility = 1.8
 
 dependencies {
-    compile group: 'com.google.guava', name: 'guava', version: '23.5-jre'
-    compile group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
+    compile group: 'com.google.guava', name: 'guava', version: "${guavaVersion}"
+    compile group: 'org.postgresql', name: 'postgresql', version: "${postgresVersion}"
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: "${springBootVersion}"
-    compile "org.springframework.boot:spring-boot-configuration-processor"
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: "${springBootVersion}"
     compile group: 'org.telegram', name: 'telegrambots', version: "${telegramBotVersion}"
-    compile('org.springframework.boot:spring-boot-starter-web')
-    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
-    compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
-    testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile "org.testcontainers:testcontainers:1.11.3"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
+    compile group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk8", version: "${kotlinVersion}"
+    compile group: "org.jetbrains.kotlin", name: "kotlin-reflect", version: "${kotlinVersion}"
+    testCompile group: "org.testcontainers", name: "testcontainers", version: "${testcontainersVersion}"
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: "${springBootVersion}"
+    implementation group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: "${coroutinesVersion}"
 }
 
 bootRun {
-    jvmArgs = ["-Xmx1024m",
-               "-Dcom.sun.management.jmxremote",
-               "-Djava.rmi.server.hostname=yaroslav.space",
-               "-Dcom.sun.management.jmxremote.local.only=false",
-               "-Dcom.sun.management.jmxremote.rmi.port=8085",
-               "-Dcom.sun.management.jmxremote.port=8085",
-               "-Dcom.sun.management.jmxremote.authenticate=false",
-               "-Dcom.sun.management.jmxremote.ssl=false"
-    ]
+    jvmArgs = ["-Xmx1024m"]
 }
-kotlin {}
+
