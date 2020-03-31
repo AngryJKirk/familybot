@@ -16,10 +16,10 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
-        classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
-        classpath "org.jlleitschuh.gradle:ktlint-gradle:${ktlintVersion}"
+        classpath group: "org.springframework.boot", name: "spring-boot-gradle-plugin", version: "${springBootVersion}"
+        classpath group: "org.jetbrains.kotlin", name: "kotlin-gradle-plugin", version: "${kotlinVersion}"
+        classpath group: "org.jetbrains.kotlin", name: "kotlin-allopen", version: "${kotlinVersion}"
+        classpath group: "org.jlleitschuh.gradle", name: "ktlint-gradle", version: "${ktlintVersion}"
     }
 }
 repositories {
