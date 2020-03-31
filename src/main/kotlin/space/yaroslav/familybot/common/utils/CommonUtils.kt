@@ -5,7 +5,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneId
-import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
 import org.telegram.telegrambots.meta.api.objects.Chat
 
 fun Instant.isToday(): Boolean {
@@ -13,7 +13,7 @@ fun Instant.isToday(): Boolean {
 }
 
 fun Instant.startOfDay(): Instant {
-    return LocalDate.from(this).atStartOfDay().toInstant(ZoneOffset.UTC)
+    return this.truncatedTo(ChronoUnit.DAYS)
 }
 
 val monthMap = mapOf(

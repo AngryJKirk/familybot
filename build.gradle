@@ -31,7 +31,6 @@ apply plugin: 'org.springframework.boot'
 apply plugin: "org.jlleitschuh.gradle.ktlint"
 
 group = 'space.yaroslav'
-version = '1.0'
 sourceCompatibility = 1.8
 
 dependencies {

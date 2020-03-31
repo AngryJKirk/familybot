@@ -6,10 +6,6 @@ RUN apk --no-cache add openjdk11
 
 WORKDIR /usr/bin/app
 
-COPY . .
+COPY build/libs/familybot.jar .
 
-RUN ./gradlew build -x test
-
-EXPOSE 8080 8085
-
-CMD ["./gradlew", "bootRun"]
+CMD ["java", "-jar", "./familybot.jar"]
