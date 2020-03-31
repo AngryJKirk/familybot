@@ -77,7 +77,7 @@ class HuificatorExecutor(private val randomness: Int = 10) : Executor, Configura
     }
 
     companion object {
-        private val vowels = "ёэоеаяуюыи"
+        private const val vowels = "ёэоеаяуюыи"
         private val rules = mapOf('о' to "е", 'а' to "я", 'у' to "ю", 'ы' to "и", 'э' to "е")
         private val nonLetters = Pattern.compile(".*[^a-я]+.*")
         private val onlyDashes = Pattern.compile("^-*$")

@@ -24,12 +24,6 @@ fun String.bold(): String = "<b>$this</b>"
 
 fun String.italic(): String = "<i>$this</i>"
 
-fun String?.italicNullable(): String? {
-    if (this == null) return null
-
-    return "<i>$this</i>"
-}
-
 fun String?.parseCommand(): Command? {
     var first = this?.split(" ")?.get(0)
     if (first?.contains("@") == true) {
