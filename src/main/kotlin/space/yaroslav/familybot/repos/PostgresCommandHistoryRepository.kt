@@ -15,10 +15,12 @@ import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 
 @Component
 class PostgresCommandHistoryRepository(val template: JdbcTemplate) : CommandHistoryRepository {
-    override fun getAll(chat: Chat): List<CommandByUser> {
+
+    override fun getAll(chat: Chat, from: Instant?): List<CommandByUser> {
+        val fromDate = from ?: Instant.MIN
         return template.query(
-            "SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ?",
-            RowMapper { rs, _ -> rs.toCommandByUser(null) }, chat.id
+            "SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ? and history.command_date >= ?",
+            RowMapper { rs, _ -> rs.toCommandByUser(null) }, chat.id, Timestamp.from(fromDate)
         )
     }
 

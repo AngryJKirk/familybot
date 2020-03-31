@@ -15,7 +15,7 @@ interface CommandHistoryRepository {
         to: Instant = Instant.now()
     ): List<CommandByUser>
 
-    fun getAll(chat: Chat): List<CommandByUser>
+    fun getAll(chat: Chat, from: Instant? = null): List<CommandByUser>
 
     fun getTheFirst(chat: Chat): CommandByUser?
 }

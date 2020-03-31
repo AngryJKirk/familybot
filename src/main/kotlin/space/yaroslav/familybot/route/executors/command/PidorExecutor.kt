@@ -11,14 +11,17 @@ import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMem
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.isToday
 import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.common.utils.send
+import space.yaroslav.familybot.common.utils.startOfDay
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
+import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.route.executors.Configurable
 import space.yaroslav.familybot.route.models.Command
@@ -33,6 +36,7 @@ class PidorExecutor(
     private val repository: CommonRepository,
     private val pidorCompetitionService: PidorCompetitionService,
     private val dictionary: Dictionary,
+    private val commandHistoryRepository: CommandHistoryRepository,
     config: BotConfig
 ) : CommandExecutor(config), Configurable {
     override fun getFunctionId(): FunctionId {
@@ -44,16 +48,12 @@ class PidorExecutor(
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val chat = update.message.chat.toChat()
         log.info("Getting pidors from chat $chat")
-        val pidorsByChat = repository.getPidorsByChat(update.toChat())
-            .filter { it.date.isToday() }
         val users = repository.getUsers(chat, activeOnly = true)
-
-        if (isLimitOfPidorsExceeded(users, pidorsByChat)) {
+        if (isLimitOfPidorsExceeded(users, chat)) {
             log.info("Pidors are already found")
-            val message = getMessageForPidors(update, pidorsByChat)
+            val message = getMessageForPidors(chat)
             return { it.execute(message) }
         }
-
         return { sender ->
             log.info("Pidor is not found, initiating search procedure")
             val nextPidor = GlobalScope.async {
@@ -97,25 +97,31 @@ class PidorExecutor(
         return Command.PIDOR
     }
 
-    private fun getMessageForPidors(update: Update, pidorsByChat: List<Pidor>): SendMessage? {
-        val distinctPidors = pidorsByChat.distinctBy { it.user.id }
-        return when (distinctPidors.size) {
+    private fun getMessageForPidors(chat: Chat): SendMessage? {
+        val pidorsByChat = repository
+            .getPidorsByChat(chat)
+            .filter { it.date.isToday() }
+            .distinctBy { it.user.id }
+        return when (pidorsByChat.size) {
             0 -> null
             1 -> SendMessage(
-                update.message.chatId, dictionary.get(Phrase.PIROR_DISCOVERED_ONE) + ": " +
-                    distinctPidors.first().user.getGeneralName()
+                chat.id, dictionary.get(Phrase.PIROR_DISCOVERED_ONE) + ": " +
+                    pidorsByChat.first().user.getGeneralName()
             ).enableHtml(true)
-            else -> SendMessage(update.message.chatId, dictionary.get(Phrase.PIROR_DISCOVERED_MANY) + ": " +
-                distinctPidors.joinToString { it.user.getGeneralName() }).enableHtml(true)
+            else -> SendMessage(chat.id, dictionary.get(Phrase.PIROR_DISCOVERED_MANY) + ": " +
+                pidorsByChat.joinToString { it.user.getGeneralName() }).enableHtml(true)
         }
     }
 
     private fun isLimitOfPidorsExceeded(
         usersInChat: List<User>,
-        todayPidors: List<Pidor>
+        chat: Chat
     ): Boolean {
         val limit = if (usersInChat.size >= 50) 2 else 1
-        return todayPidors.size >= limit
+        return commandHistoryRepository
+            .getAll(chat, Instant.now().startOfDay())
+            .filter { todayCommand -> todayCommand.command == command() }
+            .size >= limit
     }
 
     private fun getUserFromChat(user: User, absSender: AbsSender): User? {
