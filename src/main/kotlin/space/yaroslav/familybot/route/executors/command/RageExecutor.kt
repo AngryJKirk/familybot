@@ -82,10 +82,10 @@ class RageExecutor(
 
         val oneDayAgoDate = LocalDateTime
             .now()
-            .plusDays(1)
+            .minusDays(1)
                 .toInstant(ZoneOffset.UTC)
 
-        return command.date.isBefore(oneDayAgoDate)
+        return command.date.isAfter(oneDayAgoDate)
     }
 
     private fun isRageForced(update: Update): Boolean {
