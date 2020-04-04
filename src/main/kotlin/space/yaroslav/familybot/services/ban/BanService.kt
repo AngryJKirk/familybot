@@ -1,0 +1,21 @@
+package space.yaroslav.familybot.services.ban
+
+import java.time.Instant
+import java.util.UUID
+import space.yaroslav.familybot.common.Chat
+import space.yaroslav.familybot.common.User
+
+interface BanService {
+
+    fun isUserBanned(user: User): Ban?
+
+    fun isChatBanned(chat: Chat): Ban?
+
+    fun banUser(user: User, ban: Ban)
+
+    fun banChat(chat: Chat, ban: Ban)
+
+    fun unban(ban: Ban)
+}
+
+data class Ban(val banId: UUID = UUID.randomUUID(), val description: String, val till: Instant)

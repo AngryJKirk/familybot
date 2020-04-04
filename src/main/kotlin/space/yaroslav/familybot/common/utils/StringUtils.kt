@@ -1,7 +1,7 @@
 package space.yaroslav.familybot.common.utils
 
 import space.yaroslav.familybot.common.Pluralization
-import space.yaroslav.familybot.route.models.Command
+import space.yaroslav.familybot.models.Command
 
 fun String?.dropLastDelimiter(): String? {
     if (this.isNullOrEmpty()) {

@@ -1,6 +1,6 @@
 package space.yaroslav.familybot.repos.ifaces
 
-import space.yaroslav.familybot.route.services.ban.Ban
+import space.yaroslav.familybot.services.ban.Ban
 
 interface BanRepository {
     fun addBan(banEntity: BanEntity, ban: Ban)

@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.repos.ifaces.BanEntity
 import space.yaroslav.familybot.repos.ifaces.BanRepository
-import space.yaroslav.familybot.route.services.ban.Ban
+import space.yaroslav.familybot.services.ban.Ban
 
 @Component
 class PostgresBanRepository(val jdbcTemplate: JdbcTemplate) : BanRepository {

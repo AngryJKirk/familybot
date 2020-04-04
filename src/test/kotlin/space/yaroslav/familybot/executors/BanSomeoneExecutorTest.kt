@@ -7,15 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
+import space.yaroslav.familybot.executors.pm.BanSomeoneExecutor
 import space.yaroslav.familybot.infrastructure.ChatBuilder
 import space.yaroslav.familybot.infrastructure.MessageBuilder
 import space.yaroslav.familybot.infrastructure.UpdateBuilder
 import space.yaroslav.familybot.infrastructure.UserBuilder
+import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.repos.ifaces.BanEntity
 import space.yaroslav.familybot.repos.ifaces.BanEntityType
 import space.yaroslav.familybot.repos.ifaces.BanRepository
-import space.yaroslav.familybot.route.executors.pm.BanSomeoneExecutor
-import space.yaroslav.familybot.route.models.Priority
 import space.yaroslav.familybot.suits.ExecutorTest
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot

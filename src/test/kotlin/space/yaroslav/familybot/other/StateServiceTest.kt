@@ -5,9 +5,9 @@ import org.junit.Assert
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import space.yaroslav.familybot.infrastructure.randomLong
-import space.yaroslav.familybot.route.services.state.FuckOffState
-import space.yaroslav.familybot.route.services.state.RageModeState
-import space.yaroslav.familybot.route.services.state.StateService
+import space.yaroslav.familybot.services.state.FuckOffState
+import space.yaroslav.familybot.services.state.RageModeState
+import space.yaroslav.familybot.services.state.StateService
 import space.yaroslav.familybot.suits.FamilybotApplicationTest
 
 class StateServiceTest : FamilybotApplicationTest() {

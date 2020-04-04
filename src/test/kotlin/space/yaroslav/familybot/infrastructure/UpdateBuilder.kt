@@ -10,8 +10,8 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 import org.telegram.telegrambots.meta.api.objects.stickers.StickerSet
-import space.yaroslav.familybot.route.models.Command
-import space.yaroslav.familybot.route.models.stickers.Sticker
+import space.yaroslav.familybot.models.Command
+import space.yaroslav.familybot.models.stickers.Sticker
 
 interface TestModelBuilder<T> {
     companion object {

@@ -7,7 +7,7 @@ import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.User
-import space.yaroslav.familybot.route.models.Command
+import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.telegram.FamilyBot
 
 fun ResultSet.toUser(): User = User(

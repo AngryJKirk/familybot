@@ -3,10 +3,10 @@ package space.yaroslav.familybot.executors
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.telegram.telegrambots.meta.api.objects.Message
+import space.yaroslav.familybot.executors.eventbased.HuificatorExecutor
 import space.yaroslav.familybot.infrastructure.ActionWithText
 import space.yaroslav.familybot.infrastructure.UpdateBuilder
-import space.yaroslav.familybot.route.executors.eventbased.HuificatorExecutor
-import space.yaroslav.familybot.route.models.Priority
+import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.suits.ExecutorTest
 
 class HuificatorExecutorTest : ExecutorTest() {

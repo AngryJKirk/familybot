@@ -3,8 +3,8 @@ package space.yaroslav.familybot.executors
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.springframework.beans.factory.annotation.Autowired
+import space.yaroslav.familybot.executors.command.QuoteExecutor
 import space.yaroslav.familybot.infrastructure.UpdateBuilder
-import space.yaroslav.familybot.route.executors.command.QuoteExecutor
 import space.yaroslav.familybot.suits.CommandExecutorTest
 
 class QuoteExecutorTest : CommandExecutorTest() {

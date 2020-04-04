@@ -2,10 +2,10 @@ package space.yaroslav.familybot.suits
 
 import org.junit.Assert
 import org.telegram.telegrambots.meta.api.objects.Update
+import space.yaroslav.familybot.executors.command.CommandExecutor
 import space.yaroslav.familybot.infrastructure.UpdateBuilder
 import space.yaroslav.familybot.infrastructure.randomUUID
-import space.yaroslav.familybot.route.executors.command.CommandExecutor
-import space.yaroslav.familybot.route.models.Priority
+import space.yaroslav.familybot.models.Priority
 
 abstract class CommandExecutorTest : ExecutorTest() {
 

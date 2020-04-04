@@ -8,9 +8,9 @@ import java.util.concurrent.TimeUnit
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
+import space.yaroslav.familybot.models.Phrase
+import space.yaroslav.familybot.models.PhraseTheme
 import space.yaroslav.familybot.repos.ifaces.PhraseDictionaryRepository
-import space.yaroslav.familybot.route.models.Phrase
-import space.yaroslav.familybot.route.models.PhraseTheme
 import space.yaroslav.familybot.telegram.FamilyBot
 
 @Component

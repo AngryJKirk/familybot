@@ -3,13 +3,14 @@ package space.yaroslav.familybot.other
 import org.junit.Assert
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
+import space.yaroslav.familybot.executors.eventbased.keyword.FuckOffKeyWordProcessor
 import space.yaroslav.familybot.infrastructure.ChatBuilder
 import space.yaroslav.familybot.infrastructure.MessageBuilder
 import space.yaroslav.familybot.infrastructure.UserBuilder
 import space.yaroslav.familybot.infrastructure.randomUUID
-import space.yaroslav.familybot.route.executors.eventbased.keyword.FuckOffKeyWordProcessor
 import space.yaroslav.familybot.suits.FamilybotApplicationTest
 import space.yaroslav.familybot.telegram.BotConfig
+import space.yaroslav.familybot.telegram.FamilyBot
 
 class FuckOffTest : FamilybotApplicationTest() {
 
@@ -21,7 +22,7 @@ class FuckOffTest : FamilybotApplicationTest() {
 
     @Test
     fun `should be able to process valid message`() {
-        val botName = botConfig.botname ?: throw IllegalStateException("Wrong test configuration")
+        val botName = botConfig.botname ?: throw FamilyBot.InternalException("Wrong test configuration")
         val phraseSet = setOf(
             "ебало    завали",
             "ебало завалил",

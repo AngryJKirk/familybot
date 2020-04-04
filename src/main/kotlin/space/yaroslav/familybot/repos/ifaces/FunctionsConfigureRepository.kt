@@ -1,7 +1,7 @@
 package space.yaroslav.familybot.repos.ifaces
 
 import space.yaroslav.familybot.common.Chat
-import space.yaroslav.familybot.route.models.FunctionId
+import space.yaroslav.familybot.models.FunctionId
 
 interface FunctionsConfigureRepository {
 

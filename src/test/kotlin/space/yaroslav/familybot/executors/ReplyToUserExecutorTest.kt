@@ -5,12 +5,12 @@ import org.junit.Assert
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.telegram.telegrambots.meta.api.objects.Update
+import space.yaroslav.familybot.executors.eventbased.ReplyToUserExecutor
 import space.yaroslav.familybot.infrastructure.ActionWithText
 import space.yaroslav.familybot.infrastructure.ChatBuilder
 import space.yaroslav.familybot.infrastructure.UpdateBuilder
 import space.yaroslav.familybot.infrastructure.UserBuilder
-import space.yaroslav.familybot.route.executors.eventbased.ReplyToUserExecutor
-import space.yaroslav.familybot.route.models.Priority
+import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.suits.ExecutorTest
 
 class ReplyToUserExecutorTest : ExecutorTest() {

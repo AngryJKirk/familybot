@@ -153,7 +153,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
             "INSERT into ask_world_questions (question, chat_id, user_id, date) VALUES (?, ?, ?, ?) returning id",
             RowMapper { rs, _ -> rs.getLong("id") },
             question.message, question.chat.id, question.user.id, Timestamp.from(question.date)
-        ) ?: throw IllegalArgumentException("Something has gone wrong, investigate please")
+        ) ?: throw FamilyBot.InternalException("Something has gone wrong, investigate please")
     }
 
     override fun getQuestionsFromDate(date: Instant): List<AskWorldQuestion> {
@@ -181,7 +181,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
             "INSERT into ask_world_replies (question_id, reply, chat_id, user_id, date) VALUES (?, ?, ?, ?, ?) returning id",
             RowMapper { rs, _ -> rs.getLong("id") },
             reply.questionId, reply.message, reply.chat.id, reply.user.id, Timestamp.from(reply.date)
-        ) ?: throw IllegalArgumentException("Something has gone wrong, investigate please")
+        ) ?: throw FamilyBot.InternalException("Something has gone wrong, investigate please")
     }
 
     override fun isReplied(askWorldQuestion: AskWorldQuestion, chat: Chat, user: User): Boolean {

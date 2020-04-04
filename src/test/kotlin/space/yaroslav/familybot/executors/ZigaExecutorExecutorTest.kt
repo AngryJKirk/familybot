@@ -4,11 +4,11 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Ignore
 import org.springframework.beans.factory.annotation.Autowired
+import space.yaroslav.familybot.executors.eventbased.ZigaExecutor
 import space.yaroslav.familybot.infrastructure.ActionWithSticker
 import space.yaroslav.familybot.infrastructure.UpdateBuilder
-import space.yaroslav.familybot.route.executors.eventbased.ZigaExecutor
-import space.yaroslav.familybot.route.models.Priority
-import space.yaroslav.familybot.route.models.stickers.Sticker
+import space.yaroslav.familybot.models.Priority
+import space.yaroslav.familybot.models.stickers.Sticker
 import space.yaroslav.familybot.suits.ExecutorTest
 
 @Ignore("Need some time to adapt test infrastructure to stickers")
