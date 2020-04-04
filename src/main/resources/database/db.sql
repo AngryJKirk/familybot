@@ -1520,6 +1520,7 @@ create table if not exists message_content_type
 );
 
 CREATE INDEX idx_raw_chat_log_chat_id ON raw_chat_log (chat_id);
+
 INSERT INTO phrase_type_id (description)
 VALUES ('BET_WINNABLE_NUMBERS_ANNOUNCEMENT');
 
@@ -1527,12 +1528,12 @@ INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
 VALUES ((select phrase_type_id from phrase_type_id where description = 'BET_WINNABLE_NUMBERS_ANNOUNCEMENT'),
         1,
         'Твои выигрышные номера, очкошник:'),
-        ((select phrase_type_id from phrase_type_id where description = 'BET_WINNABLE_NUMBERS_ANNOUNCEMENT'),
-                1,
-                'Твои выигрышные номера:'),
-        ((select phrase_type_id from phrase_type_id where description = 'BET_WINNABLE_NUMBERS_ANNOUNCEMENT'),
-                                1,
-                                'Твои выигрышные номера, примерно по столько палок я бросил твоему бате сегодня:'),
-                                ((select phrase_type_id from phrase_type_id where description = 'BET_WINNABLE_NUMBERS_ANNOUNCEMENT'),
-                                                                1,
-                                                                'Спонсор выигрышных номеров ООО "Сказала твоя мамка когда увидела мой хуй":')
+       ((select phrase_type_id from phrase_type_id where description = 'BET_WINNABLE_NUMBERS_ANNOUNCEMENT'),
+        1,
+        'Твои выигрышные номера:'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_WINNABLE_NUMBERS_ANNOUNCEMENT'),
+        1,
+        'Твои выигрышные номера, примерно по столько палок я бросил твоему бате сегодня:'),
+       ((select phrase_type_id from phrase_type_id where description = 'BET_WINNABLE_NUMBERS_ANNOUNCEMENT'),
+        1,
+        'Спонсор выигрышных номеров ООО "Сказала твоя мамка когда увидела мой хуй":')

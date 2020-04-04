@@ -1,5 +1,9 @@
 package space.yaroslav.familybot.route.executors.continious
 
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -21,10 +25,6 @@ import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.PidorCompetitionService
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneOffset
 
 @Component
 class BetContinious(
@@ -161,6 +161,7 @@ class BetContinious(
     }
 
     private fun formatWinnableNumbers(numbers: List<Int>): String {
-        return "${numbers[0]}, ${numbers[1]} и ${numbers[3]}"
+        val orderedNumbers = numbers.sorted()
+        return "${orderedNumbers[0]}, ${orderedNumbers[1]} и ${orderedNumbers[2]}"
     }
 }
