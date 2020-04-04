@@ -1,6 +1,8 @@
 package space.yaroslav.familybot.route.executors.command
 
 import java.time.Instant
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -33,12 +35,15 @@ class MeCommandExecutor(
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val user = update.toUser()
         val chat = update.toChat()
-        val pidorCount = getPidorsCount(chat, user)
-        val commandCount = getCommandCount(user)
-        val messageCount = getMessageCount(chat, user)
-        val message = setOf(pidorCount, commandCount, messageCount).joinToString("\n")
 
-        return { it.send(update, message, replyToUpdate = true) }
+        val messageCount = GlobalScope.async { getMessageCount(chat, user) }
+        val pidorCount = GlobalScope.async { getPidorsCount(chat, user) }
+        val commandCount = GlobalScope.async { getCommandCount(user) }
+
+        return {
+            val message = setOf(pidorCount.await(), commandCount.await(), messageCount.await()).joinToString("\n")
+            it.send(update, message, replyToUpdate = true)
+        }
     }
 
     private fun getMessageCount(chat: Chat, user: User): String {

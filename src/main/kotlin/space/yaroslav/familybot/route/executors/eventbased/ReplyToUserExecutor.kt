@@ -16,8 +16,11 @@ import space.yaroslav.familybot.route.models.Priority
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
-class ReplyToUserExecutor(private val keyset: ChatLogRepository, private val botConfig: BotConfig) : Executor,
-    Configurable {
+class ReplyToUserExecutor(
+    private val keyset: ChatLogRepository,
+    private val botConfig: BotConfig
+) : Executor, Configurable {
+
     override fun getFunctionId(): FunctionId {
         return FunctionId.CHATTING
     }
@@ -28,7 +31,7 @@ class ReplyToUserExecutor(private val keyset: ChatLogRepository, private val bot
     }
 
     override fun canExecute(message: Message): Boolean {
-        return message.isReply && message.replyToMessage.from.userName == botConfig.botname
+        return isReplyToBot(message) || isBotMention(message)
     }
 
     override fun priority(update: Update): Priority {
@@ -44,5 +47,13 @@ class ReplyToUserExecutor(private val keyset: ChatLogRepository, private val bot
             message = messages.randomNotNull()
         }
         return message
+    }
+
+    private fun isBotMention(message: Message): Boolean {
+        return message.text?.contains("@${botConfig.botname}") ?: false
+    }
+
+    private fun isReplyToBot(message: Message): Boolean {
+        return message.isReply && message.replyToMessage.from.userName == botConfig.botname
     }
 }
