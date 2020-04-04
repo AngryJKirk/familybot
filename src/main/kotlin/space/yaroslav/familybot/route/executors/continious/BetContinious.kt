@@ -1,15 +1,10 @@
 package space.yaroslav.familybot.route.executors.continious
 
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneOffset
-import java.util.concurrent.ThreadLocalRandom
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.methods.send.SendDice
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -26,6 +21,10 @@ import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.PidorCompetitionService
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
 
 @Component
 class BetContinious(
@@ -35,10 +34,11 @@ class BetContinious(
     private val pidorCompetitionService: PidorCompetitionService,
     private val botConfig: BotConfig
 ) : ContiniousConversation(botConfig) {
-
+    private val diceNumbers = listOf(1, 2, 3, 4, 5, 6)
     override fun getDialogMessage() = dictionary.get(Phrase.BET_INITIAL_MESSAGE)
 
     override fun command() = Command.BET
+
     override fun canExecute(message: Message): Boolean {
         return message.isReply && message.replyToMessage.from.userName == botConfig.botname && message.replyToMessage.text ?: "" == getDialogMessage()
     }
@@ -51,7 +51,7 @@ class BetContinious(
             user, LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
                 .toInstant(ZoneOffset.UTC)
         )
-        if (isBetAlreadyWas(commands)) {
+        if (isBetAlreadyDone(commands)) {
             return {
                 it.send(update, dictionary.get(Phrase.BET_ALREADY_WAS))
             }
@@ -64,19 +64,22 @@ class BetContinious(
                 it.send(update, dictionary.get(Phrase.BET_BREAKING_THE_RULES_SECOND))
             }
         }
-        val isItWinner = ThreadLocalRandom.current().nextBoolean()
+        val winnableNumbers = diceNumbers.shuffled().subList(0, 3)
         return {
+            it.send(update, "${dictionary.get(Phrase.BET_WINNABLE_NUMBERS_ANNOUNCEMENT)} ${formatWinnableNumbers(winnableNumbers)}")
+            delay(2000)
+            it.send(update, dictionary.get(Phrase.BET_ZATRAVOCHKA))
+            delay(2000)
+            val diceMessage = it.execute(SendDice().setChatId(chatId))
+            delay(4000)
+            val isItWinner = winnableNumbers.contains(diceMessage.dice.value)
             if (isItWinner) {
-                it.execute(SendMessage(chatId, dictionary.get(Phrase.BET_ZATRAVOCHKA)))
                 GlobalScope.launch { repeat(number) { pidorRepository.removePidorRecord(user) } }
-                delay(2000)
                 it.send(update, dictionary.get(Phrase.BET_WIN))
                 delay(2000)
                 it.send(update, winEndPhrase(number))
             } else {
-                it.send(update, dictionary.get(Phrase.BET_ZATRAVOCHKA))
                 GlobalScope.launch { addPidorsMultiplyTimesWithDayShift(number, user) }
-                delay(2000)
                 it.send(update, dictionary.get(Phrase.BET_LOSE))
                 delay(2000)
                 it.send(update, explainPhrase(number))
@@ -107,7 +110,7 @@ class BetContinious(
     private fun extractBetNumber(update: Update) =
         update.message.text.split(" ")[0].toIntOrNull()
 
-    private fun isBetAlreadyWas(commands: List<CommandByUser>) =
+    private fun isBetAlreadyDone(commands: List<CommandByUser>) =
         commands.any { it.command == command() }
 
     private fun winEndPhrase(betNumber: Int): String {
@@ -155,5 +158,9 @@ class BetContinious(
                     .replace("$2", dictionary.get(Phrase.PLURALIZED_DAY_MANY))
             }
         }
+    }
+
+    private fun formatWinnableNumbers(numbers: List<Int>): String {
+        return "${numbers[0]}, ${numbers[1]} и ${numbers[3]}"
     }
 }

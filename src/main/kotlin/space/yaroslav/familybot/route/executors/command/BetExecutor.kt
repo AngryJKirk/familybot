@@ -1,9 +1,5 @@
 package space.yaroslav.familybot.route.executors.command
 
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneOffset
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard
@@ -18,6 +14,10 @@ import space.yaroslav.familybot.route.models.FunctionId
 import space.yaroslav.familybot.route.models.Phrase
 import space.yaroslav.familybot.route.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
 
 @Component
 class BetExecutor(
@@ -35,7 +35,7 @@ class BetExecutor(
             update.toUser(), LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
                 .toInstant(ZoneOffset.UTC)
         )
-        if (isBetAlreadyWas(commands)) {
+        if (isBetAlreadyDone(commands)) {
             return { it.send(update, dictionary.get(Phrase.BET_ALREADY_WAS)) }
         }
         return {
@@ -50,6 +50,6 @@ class BetExecutor(
 
     override fun isLoggable() = false
 
-    private fun isBetAlreadyWas(commands: List<CommandByUser>) =
+    private fun isBetAlreadyDone(commands: List<CommandByUser>) =
         commands.filter { it.command == command() }.size > 1
 }
