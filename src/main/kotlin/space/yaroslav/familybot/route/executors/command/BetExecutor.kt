@@ -35,7 +35,7 @@ class BetExecutor(
             update.toUser(), LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
                 .toInstant(ZoneOffset.UTC)
         )
-        if (isBetAlreadyWas(commands)) {
+        if (isBetAlreadyDone(commands)) {
             return { it.send(update, dictionary.get(Phrase.BET_ALREADY_WAS)) }
         }
         return {
@@ -50,6 +50,6 @@ class BetExecutor(
 
     override fun isLoggable() = false
 
-    private fun isBetAlreadyWas(commands: List<CommandByUser>) =
+    private fun isBetAlreadyDone(commands: List<CommandByUser>) =
         commands.filter { it.command == command() }.size > 1
 }

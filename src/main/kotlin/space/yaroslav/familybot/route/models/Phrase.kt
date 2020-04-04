@@ -70,7 +70,8 @@ enum class Phrase(val id: Int) {
     BET_WIN_END(67),
     SUCHARA_HELLO_MESSAGE(68),
     ASK_WORLD_REPLY_FROM_CHAT(69),
-    TECHNICAL_ISSUE(70);
+    TECHNICAL_ISSUE(70),
+    BET_WINNABLE_NUMBERS_ANNOUNCEMENT(71);
 }
 
 enum class PhraseTheme(val id: Int) {
