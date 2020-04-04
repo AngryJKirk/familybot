@@ -29,9 +29,7 @@ class QuoteByTagExecutor(private val quoteRepository: QuoteRepository, config: B
         }
     }
 
-    private fun customization(rows: List<List<InlineKeyboardButton>>): (SendMessage) -> SendMessage {
-        return { message: SendMessage ->
-            message.setReplyMarkup(InlineKeyboardMarkup().setKeyboard(rows))
-        }
+    private fun customization(rows: List<List<InlineKeyboardButton>>): SendMessage.() -> SendMessage {
+        return { setReplyMarkup(InlineKeyboardMarkup().setKeyboard(rows)) }
     }
 }

@@ -18,7 +18,7 @@ fun AbsSender.send(
     replyMessageId: Int? = null,
     enableHtml: Boolean = false,
     replyToUpdate: Boolean = false,
-    customization: (SendMessage) -> SendMessage = { it -> it }
+    customization: SendMessage.() -> SendMessage = { this }
 ): Message {
     val messageObj = SendMessage(update.chatId(), text).enableHtml(enableHtml)
     if (replyMessageId != null) {

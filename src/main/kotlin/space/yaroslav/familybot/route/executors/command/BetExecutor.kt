@@ -43,7 +43,7 @@ class BetExecutor(
                 update,
                 dictionary.get(Phrase.BET_INITIAL_MESSAGE),
                 replyToUpdate = true,
-                customization = { message -> message.setReplyMarkup(ForceReplyKeyboard().setSelective(true)) }
+                customization = { setReplyMarkup(ForceReplyKeyboard().setSelective(true)) }
             )
         }
     }
