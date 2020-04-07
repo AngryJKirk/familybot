@@ -1,6 +1,5 @@
 package space.yaroslav.familybot.executors.eventbased.keyword
 
-import java.util.concurrent.ThreadLocalRandom
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -16,10 +15,8 @@ class SleepKeyWordProcessor : KeyWordProcessor {
     }
 
     override fun process(update: Update): suspend (AbsSender) -> Unit {
-        return {
-            if (ThreadLocalRandom.current().nextInt(0, 15) == 0) {
-                it.sendSticker(update, Sticker.SWEET_DREAMS, replyToUpdate = true)
-            }
-        }
+        return { it.sendSticker(update, Sticker.SWEET_DREAMS, replyToUpdate = true) }
     }
+
+    override fun isRandom(message: Message) = true
 }

@@ -6,6 +6,8 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 
 interface KeyWordProcessor {
 
+    fun isRandom(message: Message): Boolean = false
+
     fun canProcess(message: Message): Boolean
 
     fun process(update: Update): suspend (AbsSender) -> Unit

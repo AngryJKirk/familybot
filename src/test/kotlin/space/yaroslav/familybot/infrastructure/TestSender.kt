@@ -16,6 +16,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendVideoNote
 import org.telegram.telegrambots.meta.api.methods.send.SendVoice
 import org.telegram.telegrambots.meta.api.methods.stickers.AddStickerToSet
 import org.telegram.telegrambots.meta.api.methods.stickers.CreateNewStickerSet
+import org.telegram.telegrambots.meta.api.methods.stickers.SetStickerSetThumb
 import org.telegram.telegrambots.meta.api.methods.stickers.UploadStickerFile
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia
 import org.telegram.telegrambots.meta.api.objects.ChatMember
@@ -98,6 +99,10 @@ class TestSender(val actions: MutableList<Action<*>> = ArrayList()) : AbsSender(
     }
 
     override fun execute(addStickerToSet: AddStickerToSet?): Boolean {
+        TODO("not implemented")
+    }
+
+    override fun execute(setStickerSetThumb: SetStickerSetThumb?): Boolean {
         TODO("not implemented")
     }
 
