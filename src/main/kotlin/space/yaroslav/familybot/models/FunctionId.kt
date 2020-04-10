@@ -1,8 +1,8 @@
 package space.yaroslav.familybot.models
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 import space.yaroslav.familybot.common.utils.toEmoji
-import space.yaroslav.familybot.common.utils.toInlineKeyBoard
 
 enum class FunctionId(val id: Int, val desc: String) {
     HUIFICATE(1, "Хуификация"),
@@ -17,9 +17,13 @@ enum class FunctionId(val id: Int, val desc: String) {
             return InlineKeyboardMarkup().setKeyboard(values()
                 .toList()
                 .map { it to isEnabled(it) }
-                .map { it.first.desc to it.second }
-                .map { it.first to it.second.toEmoji() }
-                .toInlineKeyBoard())
+                .map { (function, value) -> function.desc to value }
+                .map { (description, value) -> description to value.toEmoji() }
+                .map { (description, value) ->
+                    InlineKeyboardButton("$description $value")
+                        .setCallbackData(description)
+                }
+                .chunked(2))
         }
     }
 }

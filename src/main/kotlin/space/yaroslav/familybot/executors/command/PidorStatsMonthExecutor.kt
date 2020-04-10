@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.Pidor
+import space.yaroslav.familybot.common.utils.PluralizedWordsProvider
 import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.formatTopList
 import space.yaroslav.familybot.common.utils.send
@@ -44,7 +45,11 @@ class PidorStatsMonthExecutor(
                 .toInstant(ZoneOffset.UTC)
         )
             .map(Pidor::user)
-            .formatTopList()
+            .formatTopList(PluralizedWordsProvider(
+                one = { dictionary.get(Phrase.PLURALIZED_COUNT_ONE) },
+                few = { dictionary.get(Phrase.PLURALIZED_COUNT_FEW) },
+                many = { dictionary.get(Phrase.PLURALIZED_COUNT_MANY) }
+            ))
         val title = "${dictionary.get(Phrase.PIDOR_STAT_MONTH)} ${now.month.toRussian()}:\n".bold()
         return { it.send(update, title + pidorsByChat.joinToString("\n"), enableHtml = true) }
     }

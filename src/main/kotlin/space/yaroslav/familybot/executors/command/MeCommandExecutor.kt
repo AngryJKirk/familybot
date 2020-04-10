@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
+import space.yaroslav.familybot.common.utils.PluralizedWordsProvider
 import space.yaroslav.familybot.common.utils.pluralize
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
@@ -50,10 +51,11 @@ class MeCommandExecutor(
         val messageCount = rawChatLogRepository.getMessageCount(chat, user)
         val word = pluralize(
             messageCount,
-            dictionary.get(Phrase.PLURALIZED_MESSAGE_ONE),
-            dictionary.get(Phrase.PLURALIZED_MESSAGE_FEW),
-            dictionary.get(Phrase.PLURALIZED_MESSAGE_MANY)
-        )
+            PluralizedWordsProvider(
+                one = { dictionary.get(Phrase.PLURALIZED_MESSAGE_ONE) },
+                few = { dictionary.get(Phrase.PLURALIZED_MESSAGE_FEW) },
+                many = { dictionary.get(Phrase.PLURALIZED_MESSAGE_MANY) }
+            ))
         return dictionary.get(Phrase.YOU_TALKED) + " $messageCount $word."
     }
 
@@ -62,9 +64,11 @@ class MeCommandExecutor(
             commandHistoryRepository.get(user, from = Instant.now().minusSeconds(60 * 60 * 24 * 3650)).size
         val word = pluralize(
             commandCount,
-            dictionary.get(Phrase.PLURALIZED_COUNT_ONE),
-            dictionary.get(Phrase.PLURALIZED_COUNT_FEW),
-            dictionary.get(Phrase.PLURALIZED_COUNT_MANY)
+            PluralizedWordsProvider(
+                one = { dictionary.get(Phrase.PLURALIZED_MESSAGE_ONE) },
+                few = { dictionary.get(Phrase.PLURALIZED_MESSAGE_FEW) },
+                many = { dictionary.get(Phrase.PLURALIZED_MESSAGE_MANY) }
+            )
         )
         return dictionary.get(Phrase.YOU_USED_COMMANDS) + " $commandCount $word."
     }
@@ -76,9 +80,11 @@ class MeCommandExecutor(
             .size
         val word = pluralize(
             pidorCount,
-            dictionary.get(Phrase.PLURALIZED_COUNT_ONE),
-            dictionary.get(Phrase.PLURALIZED_COUNT_FEW),
-            dictionary.get(Phrase.PLURALIZED_COUNT_MANY)
+            PluralizedWordsProvider(
+                one = { dictionary.get(Phrase.PLURALIZED_MESSAGE_ONE) },
+                few = { dictionary.get(Phrase.PLURALIZED_MESSAGE_FEW) },
+                many = { dictionary.get(Phrase.PLURALIZED_MESSAGE_MANY) }
+            )
         )
         return pidorCount
             .takeIf { it > 0 }

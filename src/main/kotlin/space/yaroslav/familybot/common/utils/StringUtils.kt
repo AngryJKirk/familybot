@@ -32,10 +32,10 @@ fun String?.parseCommand(): Command? {
     return Command.values().find { it.command == first }
 }
 
-fun pluralize(count: Int, one: String, few: String, many: String): String {
+fun pluralize(count: Int, pluralizedWordsProvider: PluralizedWordsProvider): String {
     return when (Pluralization.getPlur(count)) {
-        Pluralization.ONE -> one
-        Pluralization.FEW -> few
-        Pluralization.MANY -> many
+        Pluralization.ONE -> pluralizedWordsProvider.one()
+        Pluralization.FEW -> pluralizedWordsProvider.few()
+        Pluralization.MANY -> pluralizedWordsProvider.many()
     }
 }
