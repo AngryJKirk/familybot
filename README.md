@@ -5,7 +5,7 @@ Wake up Neo
 
 You obosralsya
 
-# disclaimer
+# Disclaimer
 This project may seem offencive. You have been warned. 
 It was made only for fun, I don't have any negative feelings to anyone.
 
