@@ -34,6 +34,8 @@ group = 'space.yaroslav'
 sourceCompatibility = 1.8
 
 dependencies {
+
+    compile group: 'org.logback-extensions', name: 'logback-ext-loggly', version: "0.1.2"
     compile group: 'com.google.guava', name: 'guava', version: "${guavaVersion}"
     compile group: 'org.postgresql', name: 'postgresql', version: "${postgresVersion}"
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: "${springBootVersion}"
