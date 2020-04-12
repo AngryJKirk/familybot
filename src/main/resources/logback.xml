@@ -29,18 +29,11 @@
         </encoder>
     </appender>
 
-    <appender name="loggly" class="ch.qos.logback.ext.loggly.LogglyAppender">
-        <endpointUrl>https://logs-01.loggly.com/inputs/19de7504-2919-49e7-b337-d13cd282d9a7/tag/logback</endpointUrl>
-        <!-- yeah yeah I know about this token which can be stolen, I will fix that
-        in case if I will decide to keep that -->
-        <pattern>%d{"ISO8601", UTC} %mdc %p %t %c{0}.%M - %m%n</pattern>
-    </appender>
-
     <include optional="true" resource="logback.loggers.xml"/>
     <include optional="true" file="${LOGBACK_LOGGERS_FILE}"/>
 
     <root level="INFO">
         <appender-ref ref="${STDOUT_APPENDER_NAME}"/>
-        <appender-ref ref="loggly" />
     </root>
+
 </configuration>
