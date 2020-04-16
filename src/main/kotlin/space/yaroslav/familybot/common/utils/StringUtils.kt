@@ -24,14 +24,6 @@ fun String.bold(): String = "<b>$this</b>"
 
 fun String.italic(): String = "<i>$this</i>"
 
-fun String?.parseCommand(): Command? {
-    var first = this?.split(" ")?.get(0)
-    if (first?.contains("@") == true) {
-        first = first.dropLastWhile { it == '@' }
-    }
-    return Command.values().find { it.command == first }
-}
-
 fun pluralize(count: Int, pluralizedWordsProvider: PluralizedWordsProvider): String {
     return when (Pluralization.getPlur(count)) {
         Pluralization.ONE -> pluralizedWordsProvider.one()
