@@ -57,16 +57,12 @@ fun Message.getCommand(botName: () -> String): Command? {
     val textCommand = this
         .entities
         ?.asSequence()
-        ?.filter { it.offset == 0 }
-        ?.filter { it.type == EntityType.BOTCOMMAND }
+        ?.filter { entity -> entity.offset == 0 }
+        ?.filter { entity -> entity.type == EntityType.BOTCOMMAND }
         ?.map(MessageEntity::getText)
-        ?.filter { it.contains("@").not() || it.endsWith("@$botNameValue") }
-        ?.map { command ->
-            if (command.contains("@"))
-                command
-                    .split("@").first()
-            else command
-        }
+        ?.map { command -> command.split("@") }
+        ?.filter { commandParts -> commandParts.size == 1 || commandParts[1] == botNameValue }
+        ?.map { commandParts -> commandParts.first() }
         ?.firstOrNull() ?: return null
 
     return Command.values().find { command -> command.command == textCommand }
