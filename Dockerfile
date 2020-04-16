@@ -8,4 +8,4 @@ WORKDIR /usr/bin/app
 
 COPY build/libs/familybot.jar .
 
-CMD ["java", "-jar", "./familybot.jar"]
+CMD ["java", "-Xms256m", "-Xmx512m","-jar", "./familybot.jar"]

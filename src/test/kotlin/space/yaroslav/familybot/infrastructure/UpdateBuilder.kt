@@ -59,9 +59,10 @@ class UpdateBuilder(override val data: MutableMap<String, Any> = HashMap()) : Te
     }
 
     fun simpleCommandFromUser(command: Command, prefix: String? = null, postfix: String? = null): Update {
+        val entireMessage = (prefix ?: "") + command.command + (postfix ?: "")
         return message {
-            command(length = command.command.length, offset = prefix?.length ?: 0)
-            text { (prefix ?: "") + command.command + (postfix ?: "") }
+            command(length = command.command.length + (postfix?.length ?: 0), offset = prefix?.length ?: 0)
+            text { entireMessage }
             chat { ChatBuilder() }
             from { UserBuilder() }
         }.build()

@@ -1,10 +1,14 @@
 package space.yaroslav.familybot.common.utils
 
 import org.telegram.telegrambots.meta.api.objects.Chat as TelegramChat
+import org.telegram.telegrambots.meta.api.objects.EntityType
+import org.telegram.telegrambots.meta.api.objects.Message
+import org.telegram.telegrambots.meta.api.objects.MessageEntity
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User as TelegramUser
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
+import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.telegram.FamilyBot
 
 fun TelegramChat.toChat(): Chat = Chat(this.id, this.title)
@@ -46,4 +50,24 @@ fun Update.from(): TelegramUser {
         this.hasCallbackQuery() -> this.callbackQuery.from
         else -> throw FamilyBot.InternalException("Cant process $this")
     }
+}
+
+fun Message.getCommand(botName: () -> String): Command? {
+    val botNameValue = botName()
+    val textCommand = this
+        .entities
+        ?.asSequence()
+        ?.filter { it.offset == 0 }
+        ?.filter { it.type == EntityType.BOTCOMMAND }
+        ?.map(MessageEntity::getText)
+        ?.filter { it.contains("@").not() || it.endsWith("@$botNameValue") }
+        ?.map { command ->
+            if (command.contains("@"))
+                command
+                    .split("@").first()
+            else command
+        }
+        ?.firstOrNull() ?: return null
+
+    return Command.values().find { command -> command.command == textCommand }
 }

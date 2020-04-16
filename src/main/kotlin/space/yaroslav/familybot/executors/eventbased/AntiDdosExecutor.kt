@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.CommandByUser
-import space.yaroslav.familybot.common.utils.parseCommand
+import space.yaroslav.familybot.common.utils.getCommand
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.executors.Configurable
@@ -18,6 +18,7 @@ import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
+import space.yaroslav.familybot.telegram.FamilyBot
 
 @Component
 class AntiDdosExecutor(
@@ -39,12 +40,15 @@ class AntiDdosExecutor(
     }
 
     override fun canExecute(message: Message): Boolean {
+        val command =
+            message.getCommand { config.botname ?: throw FamilyBot.InternalException("Bot name should be set up") }
+                ?: return false
         return repositoryCommand
             .get(selectUser(message).toUser(telegramChat = message.chat))
             .groupBy(CommandByUser::command)
             .filterValues { it.size >= 5 }
             .keys
-            .contains(getText(message).parseCommand())
+            .contains(command)
     }
 
     override fun priority(update: Update): Priority {
