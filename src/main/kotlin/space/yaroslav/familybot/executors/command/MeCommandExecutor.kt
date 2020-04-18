@@ -1,6 +1,5 @@
 package space.yaroslav.familybot.executors.command
 
-import java.time.Instant
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import org.springframework.stereotype.Component
@@ -20,6 +19,7 @@ import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.repos.ifaces.RawChatLogRepository
 import space.yaroslav.familybot.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
+import java.time.Instant
 
 @Component
 class MeCommandExecutor(
@@ -65,9 +65,9 @@ class MeCommandExecutor(
         val word = pluralize(
             commandCount,
             PluralizedWordsProvider(
-                one = { dictionary.get(Phrase.PLURALIZED_MESSAGE_ONE) },
-                few = { dictionary.get(Phrase.PLURALIZED_MESSAGE_FEW) },
-                many = { dictionary.get(Phrase.PLURALIZED_MESSAGE_MANY) }
+                one = { dictionary.get(Phrase.PLURALIZED_COUNT_ONE) },
+                few = { dictionary.get(Phrase.PLURALIZED_COUNT_FEW) },
+                many = { dictionary.get(Phrase.PLURALIZED_COUNT_MANY) }
             )
         )
         return dictionary.get(Phrase.YOU_USED_COMMANDS) + " $commandCount $word."
@@ -81,9 +81,9 @@ class MeCommandExecutor(
         val word = pluralize(
             pidorCount,
             PluralizedWordsProvider(
-                one = { dictionary.get(Phrase.PLURALIZED_MESSAGE_ONE) },
-                few = { dictionary.get(Phrase.PLURALIZED_MESSAGE_FEW) },
-                many = { dictionary.get(Phrase.PLURALIZED_MESSAGE_MANY) }
+                one = { dictionary.get(Phrase.PLURALIZED_COUNT_ONE) },
+                few = { dictionary.get(Phrase.PLURALIZED_COUNT_FEW) },
+                many = { dictionary.get(Phrase.PLURALIZED_COUNT_MANY) }
             )
         )
         return pidorCount
