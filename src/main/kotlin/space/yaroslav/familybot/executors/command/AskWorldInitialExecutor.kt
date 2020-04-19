@@ -1,8 +1,5 @@
 package space.yaroslav.familybot.executors.command
 
-import java.time.Instant
-import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -28,6 +25,9 @@ import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.repos.ifaces.FunctionsConfigureRepository
 import space.yaroslav.familybot.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
+import java.time.Instant
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 
 @Component
 class AskWorldInitialExecutor(
@@ -42,17 +42,6 @@ class AskWorldInitialExecutor(
         return FunctionId.ASK_WORLD
     }
 
-    private val helpMessage: String = """
-
-        Данная команда позволяет вам задать вопрос всем остальным чатам, где есть этот бот.
-        Использование: ${command().command} <вопрос>
-        Если вам придет вопрос, то нужно ответить на него, в таком случае ответ отправится в чат, где он был задан.
-        Ответить можно лишь один раз от человека.
-        Лимиты: не более одного вопроса от человека в день, не более 5 вопросов от чата в день.
-        Команда работает в тестовом режиме. В настройках можно отключить ее, тогда вам не будут приходить вопросы и вы сами не сможете их задавать.
-
-    """
-
     final override fun command(): Command {
         return Command.ASK_WORLD
     }
@@ -63,7 +52,7 @@ class AskWorldInitialExecutor(
             ?.text
             ?.removePrefix(command().command)
             ?.removePrefix("@${botConfig.botname}")
-            ?.takeIf(String::isNotEmpty) ?: return { it.send(update, helpMessage) }
+            ?.takeIf(String::isNotEmpty) ?: return { it.send(update, dictionary.get(Phrase.ASK_WORLD_HELP)) }
 
         if (isLimitForChatExceed(chat)) {
             return {

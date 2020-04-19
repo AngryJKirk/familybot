@@ -1536,4 +1536,12 @@ VALUES ((select phrase_type_id from phrase_type_id where description = 'BET_WINN
         'Твои выигрышные номера, примерно по столько палок я бросил твоему бате сегодня:'),
        ((select phrase_type_id from phrase_type_id where description = 'BET_WINNABLE_NUMBERS_ANNOUNCEMENT'),
         1,
-        'Спонсор выигрышных номеров ООО "Сказала твоя мамка когда увидела мой хуй":')
+        'Спонсор выигрышных номеров ООО "Сказала твоя мамка когда увидела мой хуй":');
+
+INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
+VALUES (((select phrase_type_id from phrase_type_id where description = 'ASK_WORLD_HELP')),
+         1,
+         'Данная команда позволяет вам задать вопрос всем остальным чатам, где есть этот бот. Использование: /ask_world <вопрос>
+Если вам придет вопрос, то нужно ответить на него, в таком случае ответ отправится в чат, где он был задан.
+Ответить можно лишь один раз от человека. В настройках можно отключить команду, тогда вам не будут приходить вопросы и вы сами не сможете их задавать.
+    ');
