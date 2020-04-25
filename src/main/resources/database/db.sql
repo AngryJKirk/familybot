@@ -1545,3 +1545,6 @@ VALUES (((select phrase_type_id from phrase_type_id where description = 'ASK_WOR
 Если вам придет вопрос, то нужно ответить на него, в таком случае ответ отправится в чат, где он был задан.
 Ответить можно лишь один раз от человека. В настройках можно отключить команду, тогда вам не будут приходить вопросы и вы сами не сможете их задавать.
     ');
+
+
+ALTER TABLE function_settings ADD COLUMN id SERIAL PRIMARY KEY;
