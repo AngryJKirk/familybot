@@ -29,7 +29,7 @@ class HuificatorExecutor(private val randomness: Int = 10) : Executor, Configura
 
         if (shouldHuificate()) {
             val huifyed = huify(text) ?: return { }
-            return { it -> it.send(update, huifyed) }
+            return { it -> it.send(update, huifyed, shouldTypeBeforeSend = true) }
         } else {
             return { }
         }

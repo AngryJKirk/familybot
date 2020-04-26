@@ -53,36 +53,31 @@ class BetContinious(
         )
         if (isBetAlreadyDone(commands)) {
             return {
-                it.send(update, dictionary.get(Phrase.BET_ALREADY_WAS))
+                it.send(update, dictionary.get(Phrase.BET_ALREADY_WAS), shouldTypeBeforeSend = true)
             }
         }
         val number = extractBetNumber(update)
         if (number == null || number !in 1..3) {
             return {
-                it.send(update, dictionary.get(Phrase.BET_BREAKING_THE_RULES_FIRST))
-                delay(1000)
-                it.send(update, dictionary.get(Phrase.BET_BREAKING_THE_RULES_SECOND))
+                it.send(update, dictionary.get(Phrase.BET_BREAKING_THE_RULES_FIRST), shouldTypeBeforeSend = true)
+                it.send(update, dictionary.get(Phrase.BET_BREAKING_THE_RULES_SECOND), shouldTypeBeforeSend = true)
             }
         }
         val winnableNumbers = diceNumbers.shuffled().subList(0, 3)
         return {
-            it.send(update, "${dictionary.get(Phrase.BET_WINNABLE_NUMBERS_ANNOUNCEMENT)} ${formatWinnableNumbers(winnableNumbers)}")
-            delay(2000)
-            it.send(update, dictionary.get(Phrase.BET_ZATRAVOCHKA))
-            delay(2000)
+            it.send(update, "${dictionary.get(Phrase.BET_WINNABLE_NUMBERS_ANNOUNCEMENT)} ${formatWinnableNumbers(winnableNumbers)}", shouldTypeBeforeSend = true)
+            it.send(update, dictionary.get(Phrase.BET_ZATRAVOCHKA), shouldTypeBeforeSend = true)
             val diceMessage = it.execute(SendDice().setChatId(chatId))
             delay(4000)
             val isItWinner = winnableNumbers.contains(diceMessage.dice.value)
             if (isItWinner) {
                 GlobalScope.launch { repeat(number) { pidorRepository.removePidorRecord(user) } }
-                it.send(update, dictionary.get(Phrase.BET_WIN))
-                delay(2000)
-                it.send(update, winEndPhrase(number))
+                it.send(update, dictionary.get(Phrase.BET_WIN), shouldTypeBeforeSend = true)
+                it.send(update, winEndPhrase(number), shouldTypeBeforeSend = true)
             } else {
                 GlobalScope.launch { addPidorsMultiplyTimesWithDayShift(number, user) }
-                it.send(update, dictionary.get(Phrase.BET_LOSE))
-                delay(2000)
-                it.send(update, explainPhrase(number))
+                it.send(update, dictionary.get(Phrase.BET_LOSE), shouldTypeBeforeSend = true)
+                it.send(update, explainPhrase(number), shouldTypeBeforeSend = true)
             }
             delay(2000)
             pidorCompetitionService.pidorCompetition(update)?.invoke(it)

@@ -1,7 +1,10 @@
 package space.yaroslav.familybot.common.utils
 
+import java.util.concurrent.ThreadLocalRandom
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker
 import org.telegram.telegrambots.meta.api.methods.stickers.GetStickerSet
@@ -12,13 +15,15 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.models.stickers.Sticker
 import space.yaroslav.familybot.models.stickers.StickerPack
 
-fun AbsSender.send(
+suspend fun AbsSender.send(
     update: Update,
     text: String,
     replyMessageId: Int? = null,
     enableHtml: Boolean = false,
     replyToUpdate: Boolean = false,
-    customization: SendMessage.() -> SendMessage = { this }
+    customization: SendMessage.() -> SendMessage = { this },
+    shouldTypeBeforeSend: Boolean = false,
+    typeDelay: Pair<Long, Long> = 1000L to 2000L
 ): Message {
     val messageObj = SendMessage(update.chatId(), text).enableHtml(enableHtml)
     if (replyMessageId != null) {
@@ -26,6 +31,10 @@ fun AbsSender.send(
     }
     if (replyToUpdate) {
         messageObj.replyToMessageId = update.message.messageId
+    }
+    if (shouldTypeBeforeSend) {
+        this.execute(SendChatAction(update.chatId(), "typing"))
+        delay(ThreadLocalRandom.current().nextLong(typeDelay.first, typeDelay.second))
     }
 
     return this.execute(customization(messageObj))

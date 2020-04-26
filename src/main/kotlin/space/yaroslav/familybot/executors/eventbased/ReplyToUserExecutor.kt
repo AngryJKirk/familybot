@@ -1,13 +1,9 @@
 package space.yaroslav.familybot.executors.eventbased
 
-import java.util.concurrent.ThreadLocalRandom
-import kotlinx.coroutines.delay
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.utils.chatId
 import space.yaroslav.familybot.common.utils.random
 import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.common.utils.send
@@ -32,9 +28,8 @@ class ReplyToUserExecutor(
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val string = getRandomUserMessage(update) ?: getSmallRandomMessage(keyset.getAll())
         return {
-            it.execute(SendChatAction(update.chatId(), "typing"))
-            delay(ThreadLocalRandom.current().nextLong(1000, 2000))
-            it.send(update, string, replyToUpdate = true) }
+            it.send(update, string, replyToUpdate = true, shouldTypeBeforeSend = true)
+        }
     }
 
     override fun canExecute(message: Message): Boolean {

@@ -33,7 +33,7 @@ class AnswerExecutor(
             ?: return {
                 it.send(update, dictionary.get(Phrase.BAD_COMMAND_USAGE), replyToUpdate = true)
             }
-        return { it.send(update, message, replyToUpdate = true) }
+        return { it.send(update, message, replyToUpdate = true, shouldTypeBeforeSend = true) }
     }
 
     private fun isOptionsCountEnough(options: List<String>) = options.size >= 2

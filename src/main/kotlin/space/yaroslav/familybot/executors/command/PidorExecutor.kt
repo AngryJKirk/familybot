@@ -3,7 +3,6 @@ package space.yaroslav.familybot.executors.command
 import java.time.Instant
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -82,13 +81,16 @@ class PidorExecutor(
             val middle = dictionary.get(Phrase.PIDOR_SEARCH_MIDDLE).bold()
             val finisher = dictionary.get(Phrase.PIDOR_SEARCH_FINISHER).bold()
 
-            sender.send(update, start, enableHtml = true)
-            delay(3000)
-            sender.send(update, middle, enableHtml = true)
-            delay(3000)
-            sender.send(update, finisher, enableHtml = true)
-            delay(3000)
-            sender.send(update, nextPidor.await().getGeneralName(), enableHtml = true)
+            sender.send(update, start, enableHtml = true, shouldTypeBeforeSend = true, typeDelay = 1500L to 1501L)
+            sender.send(update, middle, enableHtml = true, shouldTypeBeforeSend = true, typeDelay = 1500L to 1501L)
+            sender.send(update, finisher, enableHtml = true, shouldTypeBeforeSend = true, typeDelay = 1500L to 1501L)
+            sender.send(
+                update,
+                nextPidor.await().getGeneralName(),
+                enableHtml = true,
+                shouldTypeBeforeSend = true,
+                typeDelay = 1500L to 1501L
+            )
             pidorCompetitionService.pidorCompetition(update)?.invoke(sender)
         }
     }

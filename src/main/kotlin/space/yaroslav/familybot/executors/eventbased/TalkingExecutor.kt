@@ -1,14 +1,11 @@
 package space.yaroslav.familybot.executors.eventbased
 
 import java.util.concurrent.ThreadLocalRandom
-import kotlinx.coroutines.delay
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.Chat
-import space.yaroslav.familybot.common.utils.chatId
 import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
@@ -54,13 +51,18 @@ class TalkingExecutor(
                 .let { if (rageModEnabled) rageModeFormat(it) else it }
 
             return {
-                    it.execute(SendChatAction(update.chatId(), "typing"))
-                if (rageModEnabled.not()) {
-                    delay(ThreadLocalRandom.current().nextLong(1000, 2000))
+                val delay = if (rageModEnabled.not()) {
+                    1000L to 2000L
                 } else {
-                    delay(ThreadLocalRandom.current().nextLong(100, 500))
+                    100L to 500L
                 }
-                it.send(update, messageText, replyToUpdate = true)
+                it.send(
+                    update,
+                    messageText,
+                    replyToUpdate = true,
+                    shouldTypeBeforeSend = true,
+                    typeDelay = delay
+                )
                 rageModeConfiguration?.decrement()
             }
         } else {

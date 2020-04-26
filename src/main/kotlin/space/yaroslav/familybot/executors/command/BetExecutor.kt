@@ -36,13 +36,14 @@ class BetExecutor(
                 .toInstant(ZoneOffset.UTC)
         )
         if (isBetAlreadyDone(commands)) {
-            return { it.send(update, dictionary.get(Phrase.BET_ALREADY_WAS)) }
+            return { it.send(update, dictionary.get(Phrase.BET_ALREADY_WAS), shouldTypeBeforeSend = true) }
         }
         return {
             it.send(
                 update,
                 dictionary.get(Phrase.BET_INITIAL_MESSAGE),
                 replyToUpdate = true,
+                shouldTypeBeforeSend = true,
                 customization = { setReplyMarkup(ForceReplyKeyboard().setSelective(true)) }
             )
         }

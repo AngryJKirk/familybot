@@ -47,24 +47,24 @@ class RageExecutor(
             logger.warn("Someone forced ${command()}")
             stateService.setStateForChat(chat.id, RageModeState(20, Duration.ofMinutes(10)))
             return {
-                it.send(update, dictionary.get(Phrase.RAGE_INITIAL))
+                it.send(update, dictionary.get(Phrase.RAGE_INITIAL), shouldTypeBeforeSend = true)
             }
         }
 
         if (isFirstLaunch(chat)) {
             return {
-                it.send(update, dictionary.get(Phrase.TECHNICAL_ISSUE))
+                it.send(update, dictionary.get(Phrase.TECHNICAL_ISSUE), shouldTypeBeforeSend = true)
             }
         }
 
         if (isCooldown(update)) {
             return {
-                it.send(update, dictionary.get(Phrase.RAGE_DONT_CARE_ABOUT_YOU))
+                it.send(update, dictionary.get(Phrase.RAGE_DONT_CARE_ABOUT_YOU), shouldTypeBeforeSend = true)
             }
         }
         stateService.setStateForChat(chat.id, RageModeState(20, Duration.ofMinutes(10)))
         return {
-            it.send(update, dictionary.get(Phrase.RAGE_INITIAL))
+            it.send(update, dictionary.get(Phrase.RAGE_INITIAL), shouldTypeBeforeSend = true)
         }
     }
 
@@ -83,7 +83,7 @@ class RageExecutor(
         val oneDayAgoDate = LocalDateTime
             .now()
             .minusDays(1)
-                .toInstant(ZoneOffset.UTC)
+            .toInstant(ZoneOffset.UTC)
 
         return command.date.isAfter(oneDayAgoDate)
     }
