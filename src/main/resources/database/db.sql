@@ -1548,3 +1548,5 @@ VALUES (((select phrase_type_id from phrase_type_id where description = 'ASK_WOR
 
 
 ALTER TABLE function_settings ADD COLUMN id SERIAL PRIMARY KEY;
+
+ALTER TABLE chats ALTER COLUMN name TYPE varchar(400);

@@ -117,7 +117,7 @@ class AskWorldInitialExecutor(
         return askWorldRepository.getQuestionsFromChat(
             chat,
             date = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
-        ).size >= 2
+        ).isNotEmpty()
     }
 
     private fun isLimitForUserExceed(

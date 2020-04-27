@@ -18,12 +18,14 @@ import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
+import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.services.dictionary.Dictionary
 
 @Component
 class AskWorldSendQuestionExecutor(
     private val askWorldRepository: AskWorldRepository,
-    private val dictionary: Dictionary
+    private val dictionary: Dictionary,
+    private val commonRepository: CommonRepository
 ) : Executor, Configurable {
 
     private val log = LoggerFactory.getLogger(AskWorldSendQuestionExecutor::class.java)
@@ -44,7 +46,11 @@ class AskWorldSendQuestionExecutor(
                             val result = sender.send(update, formatQuestion(question), enableHtml = true)
                             val questionWithId = assignQuestionNewId(question, result)
                             askWorldRepository.addQuestionDeliver(questionWithId, chat)
-                        }.onFailure { e -> log.warn("Could not send question to chat", e) }
+                        }.onFailure { e ->
+                            log.warn("Could not send question $question to chat $chat", e)
+                            val questionWithId = question.copy(messageId = -1)
+                            askWorldRepository.addQuestionDeliver(questionWithId, chat)
+                        }
                     }
                 }
         }
@@ -53,7 +59,7 @@ class AskWorldSendQuestionExecutor(
     private fun formatQuestion(question: AskWorldQuestion): String {
         val messagePrefix = dictionary.get(Phrase.ASK_WORLD_QUESTION_FROM_CHAT)
         val boldChatName = question.chat.name.boldNullable()
-        val italicQuestion = question.message.italic()
+        val italicQuestion = question.message.replace("<", "").replace(">", "").italic()
         return "$messagePrefix $boldChatName: $italicQuestion"
     }
 
