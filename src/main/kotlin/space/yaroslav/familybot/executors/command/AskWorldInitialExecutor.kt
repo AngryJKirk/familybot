@@ -1,8 +1,5 @@
 package space.yaroslav.familybot.executors.command
 
-import java.time.Instant
-import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -28,6 +25,9 @@ import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.repos.ifaces.FunctionsConfigureRepository
 import space.yaroslav.familybot.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
+import java.time.Instant
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 
 @Component
 class AskWorldInitialExecutor(
@@ -65,7 +65,15 @@ class AskWorldInitialExecutor(
                 it.send(update, dictionary.get(Phrase.ASK_WORLD_LIMIT_BY_USER), replyToUpdate = true)
             }
         }
-
+        if (message.length > 2000) {
+            return {
+                it.send(
+                    update,
+                    "Слишком длинный вопрос, иди нахуй",
+                    replyToUpdate = true
+                )
+            } //todo move to dictionary
+        }
         val question = AskWorldQuestion(null, message, update.toUser(), chat, Instant.now(), null)
         return { sender ->
             val questionId = GlobalScope.async { askWorldRepository.addQuestion(question) }
