@@ -1,5 +1,8 @@
 package space.yaroslav.familybot.executors.command
 
+import java.time.Instant
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -25,9 +28,6 @@ import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.repos.ifaces.FunctionsConfigureRepository
 import space.yaroslav.familybot.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
-import java.time.Instant
-import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
 
 @Component
 class AskWorldInitialExecutor(
@@ -72,15 +72,13 @@ class AskWorldInitialExecutor(
                     "Слишком длинный вопрос, иди нахуй",
                     replyToUpdate = true
                 )
-            } //todo move to dictionary
+            } // todo move to dictionary
         }
         val question = AskWorldQuestion(null, message, update.toUser(), chat, Instant.now(), null)
         return { sender ->
             val questionId = GlobalScope.async { askWorldRepository.addQuestion(question) }
             sender.send(update, dictionary.get(Phrase.DATA_CONFIRM))
-            commonRepository.getChats()
-                .filterNot { it == chat }
-                .filter(this@AskWorldInitialExecutor::isEnabledInChat)
+            getChatsToSendQuestion(chat)
                 .forEach {
                     runCatching {
                         val result = sender.execute(SendMessage(it.id, formatMessage(chat, question)).enableHtml(true))
@@ -132,4 +130,13 @@ class AskWorldInitialExecutor(
         chat: Chat,
         update: Update
     ) = askWorldRepository.getQuestionsFromUser(chat, update.toUser()).isNotEmpty()
+
+    private fun getChatsToSendQuestion(currentChat: Chat): List<Chat> {
+        val allChats = commonRepository.getChats()
+            .filterNot { it == currentChat }
+            .filter(this@AskWorldInitialExecutor::isEnabledInChat)
+            .shuffled()
+
+        return allChats.take(allChats.size / 4)
+    }
 }

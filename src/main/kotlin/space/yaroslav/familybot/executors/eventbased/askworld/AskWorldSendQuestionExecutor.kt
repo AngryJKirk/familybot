@@ -18,14 +18,12 @@ import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
-import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.services.dictionary.Dictionary
 
 @Component
 class AskWorldSendQuestionExecutor(
     private val askWorldRepository: AskWorldRepository,
-    private val dictionary: Dictionary,
-    private val commonRepository: CommonRepository
+    private val dictionary: Dictionary
 ) : Executor, Configurable {
 
     private val log = LoggerFactory.getLogger(AskWorldSendQuestionExecutor::class.java)
