@@ -90,7 +90,9 @@ VALUES (1, '/stats_month'),
         ,
        (18, '/bet')
         ,
-       (19, '/today');
+       (19, '/today')
+       ,
+       (20, '/ban');
 
 CREATE TABLE IF NOT EXISTS chat_log
 (
