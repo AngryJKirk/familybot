@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.executors.eventbased.askworld
+package space.yaroslav.familybot.executors.eventbased
 
 import java.time.Instant
 import kotlinx.coroutines.GlobalScope
