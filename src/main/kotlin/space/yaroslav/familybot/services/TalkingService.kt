@@ -3,7 +3,6 @@ package space.yaroslav.familybot.services
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.common.User
-import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
 
@@ -16,7 +15,7 @@ class TalkingService(private val chatLogRepository: ChatLogRepository) {
             .let(this::getMessageList)
             .let(this::cleanMessages)
             .toList()
-            .randomNotNull()
+            .random()
     }
 
     private fun getMessageList(user: User): List<String> {

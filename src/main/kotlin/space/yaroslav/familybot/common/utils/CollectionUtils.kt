@@ -1,8 +1,6 @@
 package space.yaroslav.familybot.common.utils
 
-import java.util.concurrent.ThreadLocalRandom
 import space.yaroslav.familybot.common.User
-import space.yaroslav.familybot.telegram.FamilyBot
 
 class PluralizedWordsProvider(
     val one: () -> String = { "раз" },
@@ -23,24 +21,4 @@ fun List<User>.formatTopList(pluralizedWordsProvider: PluralizedWordsProvider = 
         .map { (key, value) -> key to value.size }
         .sortedByDescending { (_, numberOfTimes) -> numberOfTimes }
         .mapIndexed { index, pair -> format(index, pair) }
-}
-
-fun <T> List<T>.randomNotNull(): T {
-    return random() ?: throw FamilyBot.InternalException("Array should not be empty for randomNotNull() invoke")
-}
-
-fun <T> Set<T>.randomNotNull(): T {
-    return random() ?: throw FamilyBot.InternalException("Array should not be empty for randomNotNull() invoke")
-}
-
-fun <T> List<T>.random(): T? {
-    return when (this.size) {
-        0 -> null
-        1 -> this[0]
-        else -> this[ThreadLocalRandom.current().nextInt(0, this.size)]
-    }
-}
-
-fun <T> Set<T>.random(): T? {
-    return this.toList().random()
 }

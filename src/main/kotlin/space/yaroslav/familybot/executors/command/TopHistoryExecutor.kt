@@ -3,7 +3,6 @@ package space.yaroslav.familybot.executors.command
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
@@ -21,7 +20,7 @@ class TopHistoryExecutor(private val chatLogRepository: ChatLogRepository, confi
             chatLogRepository.getAll()
                 .subList(0, 700)
                 .filterNot { it.contains("http", ignoreCase = true) }
-                .randomNotNull()
+                .random()
         return { it.send(update, randomStory) }
     }
 }

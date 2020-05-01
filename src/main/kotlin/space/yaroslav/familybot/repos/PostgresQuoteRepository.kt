@@ -8,8 +8,6 @@ import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.utils.random
-import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.repos.ifaces.QuoteRepository
 
 @Component
@@ -41,6 +39,6 @@ class PostgresQuoteRepository(val template: JdbcTemplate) : QuoteRepository {
     }
 
     override fun getRandom(): String {
-        return quoteCache.get().randomNotNull()
+        return quoteCache.get().random()
     }
 }

@@ -12,7 +12,6 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.utils.isGroup
-import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.executors.Configurable
@@ -92,7 +91,7 @@ class Router(
         logger.info("No executor found, trying to find random priority executors")
 
         GlobalScope.launch { logChatMessage(update) }
-        val executor = executors.filter { it.priority(update) == Priority.RANDOM }.randomNotNull()
+        val executor = executors.filter { it.priority(update) == Priority.RANDOM }.random()
 
         logger.info("Random priority executor ${executor.javaClass.simpleName} was selected")
         return executor
@@ -128,7 +127,7 @@ class Router(
         return stateService
             .getFunctionToleranceStatesForChat(chat.id)
             .flatMap(FunctionalToleranceState::disabledFunctionIds)
-            .contains(executor.getFunctionId())
+            .contains(functionId)
     }
 
     private fun logChatCommand(executor: Executor, update: Update) {

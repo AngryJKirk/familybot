@@ -12,7 +12,6 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.bold
-import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.models.Phrase
@@ -33,7 +32,7 @@ class PidorCompetitionService(
             if (competitors != null) {
                 return {
                     it.send(update, dictionary.get(Phrase.PIDOR_COMPETITION).bold(), enableHtml = true)
-                    val oneMorePidor = competitors.randomNotNull()
+                    val oneMorePidor = competitors.random()
                     repository.addPidor(Pidor(oneMorePidor, Instant.now()))
                     delay(1000)
                     val oneMorePidorMessage =

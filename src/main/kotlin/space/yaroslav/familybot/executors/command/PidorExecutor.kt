@@ -15,7 +15,6 @@ import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.isToday
-import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.startOfDay
 import space.yaroslav.familybot.common.utils.toChat
@@ -70,7 +69,7 @@ class PidorExecutor(
                     .forEach { it.join() }
                 val actualizedUsers = repository.getUsers(chat, activeOnly = true)
                 log.info("Users to roll: {}", users)
-                val nextPidor = actualizedUsers.randomNotNull()
+                val nextPidor = actualizedUsers.random()
                 log.info("Pidor is rolled to $nextPidor")
                 val newPidor = Pidor(nextPidor, Instant.now())
                 repository.addPidor(newPidor)

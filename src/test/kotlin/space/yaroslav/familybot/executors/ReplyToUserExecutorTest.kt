@@ -5,7 +5,7 @@ import org.junit.Assert
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.telegram.telegrambots.meta.api.objects.Update
-import space.yaroslav.familybot.executors.eventbased.ReplyToUserExecutor
+import space.yaroslav.familybot.executors.eventbased.keyword.KeyWordExecutor
 import space.yaroslav.familybot.infrastructure.ActionWithText
 import space.yaroslav.familybot.infrastructure.ChatBuilder
 import space.yaroslav.familybot.infrastructure.UpdateBuilder
@@ -16,7 +16,7 @@ import space.yaroslav.familybot.suits.ExecutorTest
 class ReplyToUserExecutorTest : ExecutorTest() {
 
     @Autowired
-    lateinit var replyToUserExecutor: ReplyToUserExecutor
+    lateinit var replyToUserExecutor: KeyWordExecutor
 
     @Value("\${settings.botname}")
     lateinit var botName: String

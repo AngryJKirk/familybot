@@ -5,13 +5,19 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.Executor
+import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Priority
 
 @Component
-class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor {
+class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Configurable {
 
     private val actionFastAccess = HashMap<Int, (Update) -> suspend (AbsSender) -> Unit>()
+
+    override fun priority(update: Update) = Priority.LOW
+
+    override fun getFunctionId() = FunctionId.CHATTING
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         return actionFastAccess.remove(update.message.messageId)?.invoke(update) ?: {}
@@ -36,6 +42,4 @@ class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor {
             true
         }
     }
-
-    override fun priority(update: Update) = Priority.LOW
 }
