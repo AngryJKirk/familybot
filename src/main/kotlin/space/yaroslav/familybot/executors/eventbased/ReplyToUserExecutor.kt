@@ -4,21 +4,18 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.utils.random
-import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.common.utils.send
-import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.Executor
 import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Priority
-import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
+import space.yaroslav.familybot.services.TalkingService
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
 class ReplyToUserExecutor(
-    private val keyset: ChatLogRepository,
-    private val botConfig: BotConfig
+    private val botConfig: BotConfig,
+    private val talkingService: TalkingService
 ) : Executor, Configurable {
 
     override fun getFunctionId(): FunctionId {
@@ -26,9 +23,9 @@ class ReplyToUserExecutor(
     }
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        val string = getRandomUserMessage(update) ?: getSmallRandomMessage(keyset.getAll())
+        val reply = talkingService.getReplyToUser(update)
         return {
-            it.send(update, string, replyToUpdate = true, shouldTypeBeforeSend = true)
+            it.send(update, reply, replyToUpdate = true, shouldTypeBeforeSend = true)
         }
     }
 
@@ -38,17 +35,6 @@ class ReplyToUserExecutor(
 
     override fun priority(update: Update): Priority {
         return Priority.VERY_LOW
-    }
-
-    private fun getRandomUserMessage(update: Update) =
-        keyset.get(update.toUser()).takeIf { it.size > 300 }?.random()
-
-    private fun getSmallRandomMessage(messages: List<String>): String {
-        var message: String = messages.randomNotNull()
-        while (message.split(" ").size >= 10) {
-            message = messages.randomNotNull()
-        }
-        return message
     }
 
     private fun isBotMention(message: Message): Boolean {

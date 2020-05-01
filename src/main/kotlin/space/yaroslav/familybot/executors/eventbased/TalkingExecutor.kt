@@ -6,21 +6,19 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.Chat
-import space.yaroslav.familybot.common.utils.randomNotNull
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
-import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.Executor
 import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Priority
-import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
+import space.yaroslav.familybot.services.TalkingService
 import space.yaroslav.familybot.services.state.RageModeState
 import space.yaroslav.familybot.services.state.StateService
 
 @Component
 class TalkingExecutor(
-    private val keyset: ChatLogRepository,
+    private val talkingService: TalkingService,
     private val stateService: StateService
 ) : Executor, Configurable {
 
@@ -41,13 +39,8 @@ class TalkingExecutor(
         val rageModeConfiguration = getConfig(chat)
         val rageModEnabled = rageModeConfiguration != null
         if (shouldReply(rageModEnabled)) {
-            val messages = keyset.get(update.toUser()).takeIf { it.size > 300 }
-                ?: keyset.getAll().filter { it.split(" ").size <= 10 }
 
-            val messageText = messages
-                .let(this::cleanMessages)
-                .toList()
-                .randomNotNull()
+            val messageText = talkingService.getReplyToUser(update)
                 .let { if (rageModEnabled) rageModeFormat(it) else it }
 
             return {
@@ -87,12 +80,5 @@ class TalkingExecutor(
             message = message.dropLast(1)
         }
         return message.toUpperCase() + "!!!!"
-    }
-
-    private fun cleanMessages(messages: List<String>): Sequence<String> {
-        return messages
-            .asSequence()
-            .filterNot { it.length > 600 }
-            .filterNot { it.contains("http", ignoreCase = true) }
     }
 }
