@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.common.utils.dropLastDelimiter
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.Executor
@@ -60,7 +61,7 @@ class HuificatorExecutor(private val randomness: Int = 10) : Executor, Configura
         val postfix = String(wordLowerCase.toCharArray().dropWhile { !vowels.contains(it) }.toCharArray())
 
         return if (rules.containsKey(postfix[0])) {
-            "ху" + rules[postfix[0]] + postfix.drop(1)
+            "ху" + rules[postfix[0]] + postfix.drop(1).dropLastDelimiter()
         } else {
             "ху$postfix"
         }

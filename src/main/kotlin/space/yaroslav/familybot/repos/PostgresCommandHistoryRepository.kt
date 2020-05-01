@@ -12,12 +12,15 @@ import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.map
 import space.yaroslav.familybot.common.utils.toCommandByUser
 import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
+import java.time.temporal.ChronoUnit
 
 @Component
 class PostgresCommandHistoryRepository(val template: JdbcTemplate) : CommandHistoryRepository {
 
+    private val defaultAmountOfDaysToSubtract = 100000L //fix that in 2294 a.c. please
+
     override fun getAll(chat: Chat, from: Instant?): List<CommandByUser> {
-        val fromDate = from ?: Instant.MIN
+        val fromDate = from ?: Instant.now().minus(defaultAmountOfDaysToSubtract, ChronoUnit.DAYS)
         return template.query(
             "SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ? and history.command_date >= ?",
             RowMapper { rs, _ -> rs.toCommandByUser(null) }, chat.id, Timestamp.from(fromDate)
@@ -26,9 +29,9 @@ class PostgresCommandHistoryRepository(val template: JdbcTemplate) : CommandHist
 
     override fun getTheFirst(chat: Chat): CommandByUser? {
         return template.query(
-                "SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ? " +
-                        "order by command_date limit 1",
-                RowMapper { rs, _ -> rs.toCommandByUser(null) }, chat.id
+            "SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ? " +
+                "order by command_date limit 1",
+            RowMapper { rs, _ -> rs.toCommandByUser(null) }, chat.id
         ).firstOrNull()
     }
 
