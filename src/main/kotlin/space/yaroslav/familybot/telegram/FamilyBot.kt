@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.services.Router
+import java.util.UUID
 
 @Component
 class FamilyBot(val config: BotConfig, val router: Router) : TelegramLongPollingBot() {
@@ -42,13 +43,14 @@ class FamilyBot(val config: BotConfig, val router: Router) : TelegramLongPolling
         val user = update.toUser()
         MDC.put("chat", "${user.chat.name}:${user.chat.id}")
         MDC.put("user", "${user.name}:${user.id}")
+        MDC.put("id", UUID.randomUUID().toString().split("-").last())
         try {
-            router.processUpdate(update).invoke(this@FamilyBot).also { MDC.clear() }
+            router.processUpdate(update).invoke(this@FamilyBot)
         } catch (e: TelegramApiRequestException) {
             log.error("Telegram error: {}, {}, {}", e.apiResponse, e.errorCode, e.parameters, e)
         } catch (e: Exception) {
             log.error("Unexpected error", e)
-        }
+        }.also { MDC.clear() }
     }
 
     class InternalException(override val message: String?) : RuntimeException(message)
