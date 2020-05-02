@@ -43,13 +43,13 @@ class FamilyBot(val config: BotConfig, val router: Router) : TelegramLongPolling
         val user = update.toUser()
         MDC.put("chat", "${user.chat.name}:${user.chat.id}")
         MDC.put("user", "${user.name}:${user.id}")
-        MDC.put("id", UUID.randomUUID().toString().split("-").last())
+        MDC.put("update_id", update.updateId.toString())
         try {
             router.processUpdate(update).invoke(this@FamilyBot)
         } catch (e: TelegramApiRequestException) {
-            log.error("Telegram error: {}, {}, {}", e.apiResponse, e.errorCode, e.parameters, e)
+            log.error("Telegram error: ${e.apiResponse}, ${e.errorCode}, ${e.parameters}, update is $update", e)
         } catch (e: Exception) {
-            log.error("Unexpected error", e)
+            log.error("Unexpected error, update is $update", e)
         }.also { MDC.clear() }
     }
 
