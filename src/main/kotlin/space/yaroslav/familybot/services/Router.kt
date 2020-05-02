@@ -3,7 +3,6 @@ package space.yaroslav.familybot.services
 import java.time.Instant
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Chat
@@ -11,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.CommandByUser
+import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.isGroup
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
@@ -44,7 +44,7 @@ class Router(
     private val stateService: StateService
 ) {
 
-    private final val logger = LoggerFactory.getLogger(Router::class.java)
+    private val logger = getLogger()
 
     fun processUpdate(update: Update): suspend (AbsSender) -> Unit {
 
@@ -56,7 +56,7 @@ class Router(
 
         val isGroup = chat.isGroup()
         if (!isGroup) {
-            logger.warn("Someone try to do from outside of groups: $update")
+            logger.warn("Someone is sending private messages: $update")
         } else {
             GlobalScope.launch {
                 register(message)
@@ -80,7 +80,7 @@ class Router(
             when (executor) {
                 is CommandExecutor -> disabledCommand(chat)
                 is AntiDdosExecutor -> antiDdosSkip(message, update)
-                else -> { _ -> logger.info("Skip event executor due to configuration") }
+                else -> { _ -> }
             }
         } else {
             executor.execute(update)
@@ -98,7 +98,6 @@ class Router(
     }
 
     private fun antiDdosSkip(message: Message, update: Update): suspend (AbsSender) -> Unit = marker@{ it ->
-        logger.info("Skip anti-ddos executor due to configuration")
         val executor = executors
             .filterIsInstance<CommandExecutor>()
             .find { it.canExecute(message) } ?: return@marker
@@ -112,7 +111,6 @@ class Router(
     }
 
     private fun disabledCommand(chat: Chat): suspend (AbsSender) -> Unit = { it ->
-        logger.info("Skip command executor due to configuration")
         it.execute(SendMessage(chat.id, dictionary.get(Phrase.COMMAND_IS_OFF)))
     }
 
@@ -122,12 +120,16 @@ class Router(
         val functionId = executor.getFunctionId()
         val isExecutorDisabled = !configureRepository.isEnabled(functionId, chat.toChat())
 
-        if (isExecutorDisabled) return true
+        if (isExecutorDisabled) {
+            logger.info("Executor ${executor::class.simpleName} is disabled")
+            return true
+        }
 
         return stateService
             .getFunctionToleranceStatesForChat(chat.id)
             .flatMap(FunctionalToleranceState::disabledFunctionIds)
             .contains(functionId)
+            .also { isDisabled -> if (isDisabled) logger.info("Executor ${executor::class.simpleName} is disabled due to state service") }
     }
 
     private fun logChatCommand(executor: Executor, update: Update) {

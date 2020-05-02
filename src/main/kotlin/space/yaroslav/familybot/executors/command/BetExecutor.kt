@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.CommandByUser
+import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.executors.Configurable
@@ -25,6 +26,8 @@ class BetExecutor(
     private val dictionary: Dictionary,
     config: BotConfig
 ) : CommandExecutor(config), Configurable {
+    private val log = getLogger()
+
     override fun getFunctionId() = FunctionId.PIDOR
 
     override fun command() = Command.BET
@@ -36,6 +39,7 @@ class BetExecutor(
                 .toInstant(ZoneOffset.UTC)
         )
         if (isBetAlreadyDone(commands)) {
+            log.info("Bet was done already, commands are [{}]", commands)
             return { it.send(update, dictionary.get(Phrase.BET_ALREADY_WAS), shouldTypeBeforeSend = true) }
         }
         return {

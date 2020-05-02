@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.Executor
 import space.yaroslav.familybot.models.FunctionId
@@ -12,6 +13,8 @@ import space.yaroslav.familybot.models.Priority
 
 @Component
 class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Configurable {
+
+    private val log = getLogger()
 
     private val actionFastAccess = HashMap<Int, (Update) -> suspend (AbsSender) -> Unit>()
 
@@ -28,6 +31,7 @@ class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Config
             .find { it.canProcess(message) }
             ?.takeIf { isPassingRandomCheck(it, message) }
         return if (keyWordProcessor != null) {
+            log.info("Key word processor is found: ${keyWordProcessor::class.simpleName}")
             actionFastAccess[message.messageId] = { update -> keyWordProcessor.process(update) }
             true
         } else {

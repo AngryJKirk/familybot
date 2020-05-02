@@ -6,6 +6,8 @@ import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.telegram.telegrambots.meta.api.objects.Chat
 
 fun Instant.isToday(): Boolean {
@@ -44,4 +46,8 @@ fun Boolean.toEmoji(): String {
         true -> "✅"
         false -> "❌"
     }
+}
+
+inline fun <reified T> T.getLogger(): Logger {
+    return LoggerFactory.getLogger(T::class.java)
 }

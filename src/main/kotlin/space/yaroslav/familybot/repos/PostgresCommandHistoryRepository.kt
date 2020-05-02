@@ -2,6 +2,7 @@ package space.yaroslav.familybot.repos
 
 import java.sql.Timestamp
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.jdbc.core.RowMapper
@@ -12,12 +13,11 @@ import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.map
 import space.yaroslav.familybot.common.utils.toCommandByUser
 import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
-import java.time.temporal.ChronoUnit
 
 @Component
 class PostgresCommandHistoryRepository(val template: JdbcTemplate) : CommandHistoryRepository {
 
-    private val defaultAmountOfDaysToSubtract = 100000L //fix that in 2294 a.c. please
+    private val defaultAmountOfDaysToSubtract = 100000L // fix that in 2294 a.c. please
 
     override fun getAll(chat: Chat, from: Instant?): List<CommandByUser> {
         val fromDate = from ?: Instant.now().minus(defaultAmountOfDaysToSubtract, ChronoUnit.DAYS)

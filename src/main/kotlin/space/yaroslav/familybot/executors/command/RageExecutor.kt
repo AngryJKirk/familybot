@@ -5,11 +5,11 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.Chat
+import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
@@ -31,7 +31,7 @@ class RageExecutor(
     config: BotConfig
 ) : CommandExecutor(config), Configurable {
 
-    private val logger = LoggerFactory.getLogger(RageExecutor::class.java)
+    private val log = getLogger()
 
     override fun getFunctionId(): FunctionId {
         return FunctionId.RAGE
@@ -44,7 +44,7 @@ class RageExecutor(
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val chat = update.toChat()
         if (isRageForced(update)) {
-            logger.warn("Someone forced ${command()}")
+            log.warn("Someone forced ${command()}")
             stateService.setStateForChat(chat.id, RageModeState(20, Duration.ofMinutes(10)))
             return {
                 it.send(update, dictionary.get(Phrase.RAGE_INITIAL), shouldTypeBeforeSend = true)
@@ -52,12 +52,14 @@ class RageExecutor(
         }
 
         if (isFirstLaunch(chat)) {
+            log.info("First launch of ${command()} was detected, avoiding that")
             return {
                 it.send(update, dictionary.get(Phrase.TECHNICAL_ISSUE), shouldTypeBeforeSend = true)
             }
         }
 
         if (isCooldown(update)) {
+            log.info("There is a cooldown of ${command()}")
             return {
                 it.send(update, dictionary.get(Phrase.RAGE_DONT_CARE_ABOUT_YOU), shouldTypeBeforeSend = true)
             }

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.dropLastDelimiter
+import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.Phrase
@@ -15,6 +16,8 @@ class AnswerExecutor(
     private val dictionary: Dictionary,
     config: BotConfig
 ) : CommandExecutor(config) {
+    private val log = getLogger()
+
     override fun command(): Command {
         return Command.ANSWER
     }
@@ -30,6 +33,7 @@ class AnswerExecutor(
             ?.capitalize()
             ?.dropLastDelimiter()
             ?: return {
+                log.info("Bad argument was passed, text of message is [{}]", text)
                 it.send(update, dictionary.get(Phrase.BAD_COMMAND_USAGE), replyToUpdate = true)
             }
         return { it.send(update, message, replyToUpdate = true, shouldTypeBeforeSend = true) }

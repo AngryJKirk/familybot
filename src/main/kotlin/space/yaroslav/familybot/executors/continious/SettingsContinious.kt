@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toEmoji
 import space.yaroslav.familybot.models.Command
@@ -22,7 +23,7 @@ class SettingsContinious(
     private val dictionary: Dictionary,
     botConfig: BotConfig
 ) : ContiniousConversation(botConfig) {
-
+    private val log = getLogger()
     override fun command(): Command {
         return Command.SETTINGS
     }
@@ -37,6 +38,7 @@ class SettingsContinious(
             val callbackQuery = update.callbackQuery
 
             if (!checkRights(it, update)) {
+                log.info("Access to settings denied")
                 it.execute(
                     AnswerCallbackQuery().setCallbackQueryId(callbackQuery.id)
                         .setShowAlert(true).setText(dictionary.get(Phrase.ACCESS_DENIED))

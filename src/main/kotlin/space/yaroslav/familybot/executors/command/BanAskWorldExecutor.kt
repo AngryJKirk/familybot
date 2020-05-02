@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.AskWorldQuestion
+import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
@@ -20,6 +21,7 @@ class BanAskWorldExecutor(
     private val banService: BanService,
     private val botConfig: BotConfig
 ) : CommandExecutor(botConfig) {
+    private val log = getLogger()
     override fun command() = Command.BAN
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
@@ -30,6 +32,7 @@ class BanAskWorldExecutor(
             .filter {
                 replyToMessage.text.contains(it.message, ignoreCase = true)
             }
+        log.info("Trying to ban, questions found: {}", questions)
         when (questions.size) {
             0 -> return { it.send(update, "Can't find anyone, sorry, my master") }
             1 -> return ban(update, questions.first())

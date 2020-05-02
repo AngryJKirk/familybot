@@ -6,7 +6,6 @@ import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
@@ -15,6 +14,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.AskWorldQuestion
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.utils.boldNullable
+import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.italic
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
@@ -37,7 +37,7 @@ class AskWorldInitialExecutor(
     private val botConfig: BotConfig,
     private val dictionary: Dictionary
 ) : CommandExecutor(botConfig), Configurable {
-    private val log = LoggerFactory.getLogger(AskWorldInitialExecutor::class.java)
+    private val log = getLogger()
     override fun getFunctionId(): FunctionId {
         return FunctionId.ASK_WORLD
     }
@@ -56,12 +56,14 @@ class AskWorldInitialExecutor(
 
         if (isLimitForChatExceed(chat)) {
             return {
+                log.info("Limit was exceed for chat")
                 it.send(update, dictionary.get(Phrase.ASK_WORLD_LIMIT_BY_CHAT), replyToUpdate = true)
             }
         }
 
         if (isLimitForUserExceed(chat, update)) {
             return {
+                log.info("Limit was exceed for user")
                 it.send(update, dictionary.get(Phrase.ASK_WORLD_LIMIT_BY_USER), replyToUpdate = true)
             }
         }

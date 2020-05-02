@@ -4,7 +4,6 @@ import java.time.Instant
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -14,6 +13,7 @@ import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.bold
+import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.isToday
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.startOfDay
@@ -41,7 +41,7 @@ class PidorExecutor(
         return FunctionId.PIDOR
     }
 
-    private final val log = LoggerFactory.getLogger(PidorExecutor::class.java)
+    private val log = getLogger()
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val chat = update.message.chat.toChat()
@@ -59,7 +59,7 @@ class PidorExecutor(
                     launch {
                         val userFromChat = getUserFromChat(user, sender)
                         if (userFromChat == null) {
-                            log.warn("Some user {} had left without notification", user)
+                            log.warn("Some user {} left without notification", user)
                             repository.changeUserActiveStatusNew(user, false) // TODO remove old method
                         } else {
                             repository.addUser(userFromChat)
