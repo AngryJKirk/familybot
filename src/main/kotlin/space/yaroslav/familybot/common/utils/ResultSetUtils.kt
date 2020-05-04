@@ -1,6 +1,7 @@
 package space.yaroslav.familybot.common.utils
 
 import java.sql.ResultSet
+import java.util.UUID
 import space.yaroslav.familybot.common.AskWorldQuestion
 import space.yaroslav.familybot.common.AskWorldReply
 import space.yaroslav.familybot.common.Chat
@@ -16,6 +17,8 @@ fun ResultSet.toUser(): User = User(
     this.getString("name"),
     this.getString("username")
 )
+
+fun ResultSet.getUuid(columnLabel: String): UUID = UUID.fromString(getString(columnLabel))
 
 fun ResultSet.toChat(): Chat = Chat(
     this.getLong("id"),

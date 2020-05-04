@@ -20,5 +20,6 @@ enum class Command(val command: String, val id: Int) {
     TOP_HISTORY("/top_history", 17),
     BET("/bet", 18),
     WHATS_MOOD_TODAY("/today", 19),
-    BAN("/ban", 20)
+    BAN("/ban", 20),
+    SCENARIO("/play", 21)
 }

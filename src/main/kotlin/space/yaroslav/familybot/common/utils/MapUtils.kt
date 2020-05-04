@@ -23,16 +23,16 @@ fun TelegramUser.toUser(chat: Chat? = null, telegramChat: TelegramChat? = null):
 
 fun Update.toChat(): Chat {
     return when {
-        this.hasMessage() -> Chat(message.chat.id, message.chat.title)
-        this.hasEditedMessage() -> Chat(editedMessage.chat.id, editedMessage.chat.title)
+        hasMessage() -> Chat(message.chat.id, message.chat.title)
+        hasEditedMessage() -> Chat(editedMessage.chat.id, editedMessage.chat.title)
         else -> Chat(this.callbackQuery.message.chat.id, this.callbackQuery.message.chat.title)
     }
 }
 
 fun Update.chatId(): Long {
     return when {
-        this.hasMessage() -> message.chat.id
-        this.hasEditedMessage() -> editedMessage.chat.id
+        hasMessage() -> message.chat.id
+        hasEditedMessage() -> editedMessage.chat.id
         else -> callbackQuery.message.chat.id
     }
 }
@@ -45,9 +45,10 @@ fun Update.toUser(): User {
 
 fun Update.from(): TelegramUser {
     return when {
-        this.hasMessage() -> this.message.from
-        this.hasEditedMessage() -> this.editedMessage.from
-        this.hasCallbackQuery() -> this.callbackQuery.from
+        hasMessage() -> message.from
+        hasEditedMessage() -> editedMessage.from
+        hasCallbackQuery() -> callbackQuery.from
+        hasPollAnswer() -> pollAnswer.user
         else -> throw FamilyBot.InternalException("Cant process $this")
     }
 }

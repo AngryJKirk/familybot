@@ -11,10 +11,15 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
+import space.yaroslav.familybot.services.PollRouter
 import space.yaroslav.familybot.services.Router
 
 @Component
-class FamilyBot(val config: BotConfig, val router: Router) : TelegramLongPollingBot() {
+class FamilyBot(
+    val config: BotConfig,
+    val router: Router,
+    val pollRouter: PollRouter
+) : TelegramLongPollingBot() {
 
     private final val log = LoggerFactory.getLogger(FamilyBot::class.java)
     private final val channels = HashMap<Long, Channel<Update>>()
@@ -23,9 +28,17 @@ class FamilyBot(val config: BotConfig, val router: Router) : TelegramLongPolling
         return config.token ?: throw InternalException("Expression 'config.token' must not be null")
     }
 
-    override fun onUpdateReceived(update: Update?) {
+    override fun onUpdateReceived(tgUpdate: Update?) {
+        val update = tgUpdate ?: throw InternalException("Update should not be null")
+        if (update.hasPollAnswer()) {
+            GlobalScope.launch { proceedPollAnswer(update) }
+            return
+        }
+        if (update.hasPoll()) {
+            return
+        }
 
-        val chat = update?.toChat() ?: throw InternalException("Update should not be null")
+        val chat = update.toChat()
 
         val channel = channels.computeIfAbsent(chat.id) {
             Channel<Update>()
@@ -50,6 +63,10 @@ class FamilyBot(val config: BotConfig, val router: Router) : TelegramLongPolling
         } catch (e: Exception) {
             log.error("Unexpected error, update is $update", e)
         }.also { MDC.clear() }
+    }
+
+    private suspend fun proceedPollAnswer(update: Update) {
+        pollRouter.proceed(update)
     }
 
     class InternalException(override val message: String?) : RuntimeException(message)

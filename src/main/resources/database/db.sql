@@ -1,3 +1,6 @@
+create schema if not exists public;
+CREATE EXTENSION pgcrypto;
+
 CREATE TABLE IF NOT EXISTS chats
 (
     id     BIGINT PRIMARY KEY,
@@ -91,8 +94,10 @@ VALUES (1, '/stats_month'),
        (18, '/bet')
         ,
        (19, '/today')
-       ,
-       (20, '/ban');
+        ,
+       (20, '/ban')
+        ,
+       (21, '/play');
 
 CREATE TABLE IF NOT EXISTS chat_log
 (
@@ -1542,13 +1547,72 @@ VALUES ((select phrase_type_id from phrase_type_id where description = 'BET_WINN
 
 INSERT INTO phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
 VALUES (((select phrase_type_id from phrase_type_id where description = 'ASK_WORLD_HELP')),
-         1,
-         'Данная команда позволяет вам задать вопрос всем остальным чатам, где есть этот бот. Использование: /ask_world <вопрос>
+        1,
+        'Данная команда позволяет вам задать вопрос всем остальным чатам, где есть этот бот. Использование: /ask_world <вопрос>
 Если вам придет вопрос, то нужно ответить на него, в таком случае ответ отправится в чат, где он был задан.
 Ответить можно лишь один раз от человека. В настройках можно отключить команду, тогда вам не будут приходить вопросы и вы сами не сможете их задавать.
-    ');
+   ');
 
 
-ALTER TABLE function_settings ADD COLUMN id SERIAL PRIMARY KEY;
+ALTER TABLE function_settings
+    ADD COLUMN id SERIAL PRIMARY KEY;
 
-ALTER TABLE chats ALTER COLUMN name TYPE varchar(400);
+ALTER TABLE chats
+    ALTER COLUMN name TYPE varchar(400);
+
+
+create table if not exists SCENARIO_MOVE
+(
+    move_id                   uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    scenario_move_description VARCHAR(1000),
+    is_the_end                bool not null    default false
+);
+
+
+create table if not exists SCENARIO_WAY
+(
+    way_id                   uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    answer_number            INT not null,
+    scenario_way_description VARCHAR(500),
+    next_move_id             uuid references SCENARIO_MOVE (move_id)
+);
+
+create table if not exists move2way
+(
+    id      uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    way_id  uuid references SCENARIO_WAY (way_id),
+    move_id uuid references SCENARIO_MOVE (move_id)
+);
+
+create table if not exists SCENARIO
+(
+    scenario_id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    scenario_description VARCHAR(1000),
+    scenario_name        VARCHAR(100),
+    entry_move           uuid references SCENARIO_MOVE (move_id)
+);
+
+create table if not exists SCENARIO_POLL
+(
+    poll_id          VARCHAR(100) not null primary key,
+    chat_id          BIGINT       not null references chats (id),
+    create_date      timestamp    not null,
+    scenario_move_id uuid references SCENARIO_MOVE (move_id)
+);
+
+create table if not exists SCENARIO_CHOICES
+(
+    choice_id       uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id         BIGINT REFERENCES users (id),
+    chat_id         BIGINT references chats (id),
+    choice_date     timestamp not null    default current_date,
+    scenario_way_id uuid references SCENARIO_WAY (way_id)
+);
+
+create table if not exists SCENARIO_STATES
+(
+    state_id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    state_date             timestamp NOT NULL,
+    chat_id          bigint references chats (id),
+    scenario_move_id uuid references SCENARIO_MOVE (move_id)
+);
