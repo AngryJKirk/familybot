@@ -1602,17 +1602,17 @@ create table if not exists SCENARIO_POLL
 
 create table if not exists SCENARIO_CHOICES
 (
-    choice_id       uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    choice_id       uuid PRIMARY KEY   DEFAULT gen_random_uuid(),
     user_id         BIGINT REFERENCES users (id),
     chat_id         BIGINT references chats (id),
-    choice_date     timestamp not null    default current_date,
+    choice_date     timestamp not null default current_date,
     scenario_way_id uuid references SCENARIO_WAY (way_id)
 );
 
 create table if not exists SCENARIO_STATES
 (
     state_id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    state_date             timestamp NOT NULL,
+    state_date       timestamp NOT NULL,
     chat_id          bigint references chats (id),
     scenario_move_id uuid references SCENARIO_MOVE (move_id)
 );
