@@ -43,7 +43,7 @@ class HuificatorExecutor(private val randomness: Int = 10) : Executor, Configura
     fun huify(word: String): String? {
         val wordLowerCase = getLastWord(word).toLowerCase()
 
-        if(wordLowerCase.length < 5){
+        if (wordLowerCase.length < 5) {
             return null
         }
         if (english.matcher(wordLowerCase).matches()) {
