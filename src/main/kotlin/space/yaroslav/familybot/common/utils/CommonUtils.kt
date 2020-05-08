@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory
 import org.telegram.telegrambots.meta.api.objects.Chat
 
 fun Instant.isToday(): Boolean {
-    return LocalDate.now().atTime(0, 0).isBefore(LocalDateTime.ofInstant(this, ZoneId.of("UTC")))
+    val startOfDay = startOfDay()
+    return startOfDay.isBefore(this) || startOfDay == this
 }
 
 fun Instant.startOfDay(): Instant {
