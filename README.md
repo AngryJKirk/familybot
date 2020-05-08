@@ -1,7 +1,7 @@
 # familybot
 Bot for my friends
 
-![](https://storozhenko.dev/images/jesus_final-min.png)
+![](https://storozhenko.dev/images/jesus_final-min.jpg)
 
 Wake up Neo
 
