@@ -3,7 +3,7 @@ package space.yaroslav.familybot.other
 import org.junit.Assert
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
-import space.yaroslav.familybot.executors.eventbased.keyword.FuckOffKeyWordProcessor
+import space.yaroslav.familybot.executors.eventbased.keyword.BotMentionKeyWordProcessor
 import space.yaroslav.familybot.infrastructure.ChatBuilder
 import space.yaroslav.familybot.infrastructure.MessageBuilder
 import space.yaroslav.familybot.infrastructure.UserBuilder
@@ -15,7 +15,7 @@ import space.yaroslav.familybot.telegram.FamilyBot
 class FuckOffTest : FamilybotApplicationTest() {
 
     @Autowired
-    lateinit var fuckOffKeyWordProcessor: FuckOffKeyWordProcessor
+    lateinit var botMentionKeyWordProcessor: BotMentionKeyWordProcessor
 
     @Autowired
     lateinit var botConfig: BotConfig
@@ -42,7 +42,7 @@ class FuckOffTest : FamilybotApplicationTest() {
                 from { UserBuilder() }
                 chat { ChatBuilder() }
             }.build()
-            val canProcess = fuckOffKeyWordProcessor.canProcess(message)
+            val canProcess = botMentionKeyWordProcessor.isFuckOff(message)
             Assert.assertTrue("Should be able to process simple message to bot: $phrase", canProcess)
         }
     }
