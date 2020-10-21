@@ -38,7 +38,7 @@ class BanAskWorldExecutor(
             1 -> return ban(update, questions.first())
             else -> return {
                 questions.distinctBy { question -> question.user.id }
-                    .forEach { question -> ban(update, question) }
+                    .map { question -> ban(update, question) }
             }
         }
     }
@@ -52,23 +52,20 @@ class BanAskWorldExecutor(
     }
 
     private fun ban(update: Update, question: AskWorldQuestion): suspend (AbsSender) -> Unit {
-        try {
-            val tokens = update.message.text.split(" ")
-            val banReason = tokens[1]
-            val isChat = tokens.getOrNull(2) == "chat"
-            val ban = Ban(description = banReason, till = Instant.now().plus(7, ChronoUnit.DAYS))
-            if (isChat) {
-                banService.banChat(question.chat, ban)
-                return { it.send(update, "${question.chat} is banned, my master", replyToUpdate = true) }
-            } else {
-                banService.banUser(question.user, ban)
-                return {
-                    it.send(update, "${question.user} is banned, my master", replyToUpdate = true)
-                }
+
+        val tokens = update.message.text.split(" ")
+        val banReason = tokens[1]
+        val isChat = tokens.getOrNull(2) == "chat"
+        val ban = Ban(description = banReason, till = Instant.now().plus(7, ChronoUnit.DAYS))
+        if (isChat) {
+            banService.banChat(question.chat, ban)
+            return { it.send(update, "${question.chat} is banned, my master", replyToUpdate = true) }
+        } else {
+            banService.banUser(question.user, ban)
+            return {
+                it.send(update, "${question.user} is banned, my master", replyToUpdate = true)
             }
-        } catch (e: Throwable) {
-            log.error("Can't finish ban due to $e")
         }
-        return {}
     }
 }
+
