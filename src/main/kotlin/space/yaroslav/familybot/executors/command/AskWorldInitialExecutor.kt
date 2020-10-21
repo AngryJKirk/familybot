@@ -61,14 +61,10 @@ class AskWorldInitialExecutor(
             }
         }
 
-        if (isLimitForUserExceed(chat, update)) {
-            return {
-                log.info("Limit was exceed for user")
-                it.send(update, dictionary.get(Phrase.ASK_WORLD_LIMIT_BY_USER), replyToUpdate = true)
-            }
-        }
-
-        val isScam = containsUrl(message) || isSpam(message)
+        val isScam = containsUrl(message) ||
+            isSpam(message) ||
+            containsLongWords(message) ||
+            isLimitForUserExceed(update)
 
         if (message.length > 2000) {
             return {
@@ -133,9 +129,8 @@ class AskWorldInitialExecutor(
     }
 
     private fun isLimitForUserExceed(
-        chat: Chat,
         update: Update
-    ) = askWorldRepository.getQuestionsFromUser(chat, update.toUser()).isNotEmpty()
+    ) = askWorldRepository.getQuestionFromUserAllChats(update.toUser()).size >= 3
 
     private fun getChatsToSendQuestion(currentChat: Chat, isScam: Boolean): List<Chat> {
         if (isScam) {
@@ -152,13 +147,13 @@ class AskWorldInitialExecutor(
     }
 
     private fun containsUrl(message: String): Boolean {
-        return message.contains("http", ignoreCase = true)
-            || message.contains("www", ignoreCase = true)
-            || message.contains("jpg", ignoreCase = true)
-            || message.contains("png", ignoreCase = true)
-            || message.contains("jpeg", ignoreCase = true)
-            || message.contains("bmp", ignoreCase = true)
-            || message.contains("gif", ignoreCase = true)
+        return message.contains("http", ignoreCase = true) ||
+            message.contains("www", ignoreCase = true) ||
+            message.contains("jpg", ignoreCase = true) ||
+            message.contains("png", ignoreCase = true) ||
+            message.contains("jpeg", ignoreCase = true) ||
+            message.contains("bmp", ignoreCase = true) ||
+            message.contains("gif", ignoreCase = true)
     }
 
     private fun isSpam(message: String): Boolean {
@@ -167,5 +162,9 @@ class AskWorldInitialExecutor(
                 message,
                 date = Instant.now().minus(30, ChronoUnit.DAYS)
             ).isNotEmpty()
+    }
+
+    private fun containsLongWords(message: String): Boolean {
+        return message.split(" ").any { it.length > 30 }
     }
 }

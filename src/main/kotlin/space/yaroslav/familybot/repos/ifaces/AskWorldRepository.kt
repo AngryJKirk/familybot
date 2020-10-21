@@ -39,4 +39,9 @@ interface AskWorldRepository {
         user: User,
         date: Instant = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
     ): List<AskWorldQuestion>
+
+    fun getQuestionFromUserAllChats(
+        user: User,
+        date: Instant = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
+    ): List<AskWorldQuestion>
 }
