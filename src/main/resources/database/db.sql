@@ -170,7 +170,7 @@ CREATE TABLE IF NOT EXISTS ask_world_replies
 (
     id          SERIAL PRIMARY KEY,
     question_id INTEGER REFERENCES ask_world_questions (id),
-    reply       VARCHAR(2000) NOT NULL,
+    reply       VARCHAR(20000) NOT NULL,
     chat_id     BIGINT        NOT NULL REFERENCES chats (id),
     user_id     BIGINT        NOT NULL REFERENCES users (id),
     date        TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP

@@ -67,6 +67,12 @@ class AskWorldInitialExecutor(
                 it.send(update, dictionary.get(Phrase.ASK_WORLD_LIMIT_BY_USER), replyToUpdate = true)
             }
         }
+
+        if (containsUrl(message)) {
+            log.info("Someone has tried to send URL, message is $message")
+            return { sender -> sender.send(update, dictionary.get(Phrase.DATA_CONFIRM)) }
+        }
+
         if (message.length > 2000) {
             return {
                 it.send(
@@ -140,5 +146,15 @@ class AskWorldInitialExecutor(
             .shuffled()
 
         return allChats.take(allChats.size / 4)
+    }
+
+    private fun containsUrl(message: String): Boolean {
+        return message.contains("http", ignoreCase = true)
+            || message.contains("www", ignoreCase = true)
+            || message.contains("jpg", ignoreCase = true)
+            || message.contains("png", ignoreCase = true)
+            || message.contains("jpeg", ignoreCase = true)
+            || message.contains("bmp", ignoreCase = true)
+            || message.contains("gif", ignoreCase = true)
     }
 }

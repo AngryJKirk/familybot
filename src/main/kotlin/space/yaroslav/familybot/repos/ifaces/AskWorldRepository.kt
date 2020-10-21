@@ -12,7 +12,7 @@ interface AskWorldRepository {
 
     fun addQuestion(question: AskWorldQuestion): Long
 
-    fun getQuestionsFromDate(date: Instant = Instant.now().minusSeconds(60 * 60)): List<AskWorldQuestion>
+    fun getQuestionsFromDate(date: Instant = Instant.now().minusSeconds(60 * 60 * 24)): List<AskWorldQuestion>
 
     fun addReply(reply: AskWorldReply): Long
 
