@@ -36,9 +36,11 @@ class BanAskWorldExecutor(
         when (questions.size) {
             0 -> return { it.send(update, "Can't find anyone, sorry, my master") }
             1 -> return ban(update, questions.first())
-            else -> return {
-                questions.distinctBy { question -> question.user.id }
+            else -> return { sender ->
+                questions
+                    .distinctBy { question -> question.user.id }
                     .map { question -> ban(update, question) }
+                    .forEach { it.invoke(sender) }
             }
         }
     }
