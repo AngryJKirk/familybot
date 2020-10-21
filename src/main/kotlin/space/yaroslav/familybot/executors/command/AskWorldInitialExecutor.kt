@@ -165,7 +165,7 @@ class AskWorldInitialExecutor(
         return askWorldRepository
             .findQuestionByText(
                 message,
-                date = Instant.now().minus(1, ChronoUnit.MONTHS)
+                date = Instant.now().minus(30, ChronoUnit.DAYS)
             ).isNotEmpty()
     }
 }
