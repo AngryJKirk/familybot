@@ -68,10 +68,7 @@ class AskWorldInitialExecutor(
             }
         }
 
-        if (containsUrl(message)) {
-            log.info("Someone has tried to send URL, message is $message")
-            return { sender -> sender.send(update, dictionary.get(Phrase.DATA_CONFIRM)) }
-        }
+        val isScam = containsUrl(message) || isSpam(message)
 
         if (message.length > 2000) {
             return {
@@ -82,11 +79,12 @@ class AskWorldInitialExecutor(
                 )
             } // todo move to dictionary
         }
+
         val question = AskWorldQuestion(null, message, update.toUser(), chat, Instant.now(), null)
         return { sender ->
             val questionId = GlobalScope.async { askWorldRepository.addQuestion(question) }
             sender.send(update, dictionary.get(Phrase.DATA_CONFIRM))
-            getChatsToSendQuestion(chat)
+            getChatsToSendQuestion(chat, isScam)
                 .forEach {
                     runCatching {
                         val result = sender.execute(SendMessage(it.id, formatMessage(chat, question)).enableHtml(true))
@@ -139,7 +137,12 @@ class AskWorldInitialExecutor(
         update: Update
     ) = askWorldRepository.getQuestionsFromUser(chat, update.toUser()).isNotEmpty()
 
-    private fun getChatsToSendQuestion(currentChat: Chat): List<Chat> {
+    private fun getChatsToSendQuestion(currentChat: Chat, isScam: Boolean): List<Chat> {
+        if (isScam) {
+            log.info("Some scam message was found and it won't be sent")
+            return emptyList()
+        }
+
         val allChats = commonRepository.getChats()
             .filterNot { it == currentChat }
             .filter(this@AskWorldInitialExecutor::isEnabledInChat)
@@ -156,5 +159,13 @@ class AskWorldInitialExecutor(
             || message.contains("jpeg", ignoreCase = true)
             || message.contains("bmp", ignoreCase = true)
             || message.contains("gif", ignoreCase = true)
+    }
+
+    private fun isSpam(message: String): Boolean {
+        return askWorldRepository
+            .findQuestionByText(
+                message,
+                date = Instant.now().minus(1, ChronoUnit.MONTHS)
+            ).isNotEmpty()
     }
 }
