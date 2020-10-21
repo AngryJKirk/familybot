@@ -1,6 +1,6 @@
 package space.yaroslav.familybot.services.scenario.dsl
 
-fun main() {
+fun notmain() {
     val imagineWays =
         mutableListOf(
             Way().init {
