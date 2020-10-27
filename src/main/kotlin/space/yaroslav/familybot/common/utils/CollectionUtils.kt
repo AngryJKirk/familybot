@@ -17,7 +17,7 @@ fun List<User>.formatTopList(pluralizedWordsProvider: PluralizedWordsProvider = 
         return "$i $name — $stat"
     }
     return this.groupBy { it.id to (it.name ?: it.nickname) }
-        .mapKeys { it.key.second }
+        .mapKeys { it.key.second?.replace("<", "")?.replace(">", "") }
         .map { (key, value) -> key to value.size }
         .sortedByDescending { (_, numberOfTimes) -> numberOfTimes }
         .mapIndexed { index, pair -> format(index, pair) }
