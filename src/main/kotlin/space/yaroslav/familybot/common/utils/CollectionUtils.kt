@@ -14,10 +14,10 @@ fun List<User>.formatTopList(pluralizedWordsProvider: PluralizedWordsProvider = 
         val i = "${index + 1}.".bold()
         val plurWord = pluralize(numberOfTimes, pluralizedWordsProvider)
         val stat = "$numberOfTimes $plurWord".italic()
-        return "$i $name — $stat"
+        return "$i ${name?.replace("<", "")?.replace(">", "")} — $stat"
     }
     return this.groupBy { it.id to (it.name ?: it.nickname) }
-        .mapKeys { it.key.second?.replace("<", "")?.replace(">", "") }
+        .mapKeys { it.key.second }
         .map { (key, value) -> key to value.size }
         .sortedByDescending { (_, numberOfTimes) -> numberOfTimes }
         .mapIndexed { index, pair -> format(index, pair) }
