@@ -38,6 +38,7 @@ class PidorStatsExecutor(
                     many = { dictionary.get(Phrase.PLURALIZED_COUNT_MANY) }
                 )
             )
+            .take(100)
         val title = "${dictionary.get(Phrase.PIDOR_STAT_ALL_TIME)}:\n".bold()
         return {
             it.send(update, title + pidorsByChat.joinToString("\n"), enableHtml = true)
