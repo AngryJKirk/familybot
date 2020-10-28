@@ -1,7 +1,5 @@
 package space.yaroslav.familybot.executors.eventbased
 
-import java.util.concurrent.ThreadLocalRandom
-import java.util.regex.Pattern
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -12,6 +10,8 @@ import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.Executor
 import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Priority
+import java.util.concurrent.ThreadLocalRandom
+import java.util.regex.Pattern
 
 @Component
 class HuificatorExecutor(private val randomness: Int = 10) : Executor, Configurable {

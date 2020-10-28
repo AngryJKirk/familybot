@@ -1,8 +1,8 @@
 package space.yaroslav.familybot.services.state
 
+import org.springframework.stereotype.Component
 import kotlin.reflect.KClass
 import kotlin.reflect.full.safeCast
-import org.springframework.stereotype.Component
 
 @Component
 class StateServiceImpl : StateService {

@@ -1,8 +1,8 @@
 package space.yaroslav.familybot.repos.ifaces
 
-import java.time.Instant
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
+import java.time.Instant
 
 interface RawChatLogRepository {
 

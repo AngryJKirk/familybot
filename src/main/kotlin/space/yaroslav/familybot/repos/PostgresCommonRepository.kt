@@ -1,8 +1,5 @@
 package space.yaroslav.familybot.repos
 
-import java.sql.Timestamp
-import java.time.Instant
-import javax.sql.DataSource
 import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
@@ -16,6 +13,9 @@ import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toPidor
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
+import java.sql.Timestamp
+import java.time.Instant
+import javax.sql.DataSource
 
 @Component
 @Primary
@@ -28,11 +28,14 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     override fun addUser(user: User) {
         template.update(
             "INSERT INTO users (id, name, username) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET name = EXCLUDED.name, username = EXCLUDED.username ",
-            user.id, user.name, user.nickname
+            user.id,
+            user.name,
+            user.nickname
         )
         template.update(
             "INSERT INTO users2chats (chat_id, user_id) VALUES (?, ?) ON CONFLICT(chat_id, user_id) DO UPDATE SET active = true ",
-            user.chat.id, user.id
+            user.chat.id,
+            user.id
         )
     }
 
@@ -60,21 +63,29 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     override fun addPidor(pidor: Pidor) {
         template.update(
             "INSERT INTO pidors (id, pidor_date, chat_id) VALUES (?, ?, ?)",
-            pidor.user.id, Timestamp.from(pidor.date), pidor.user.chat.id
+            pidor.user.id,
+            Timestamp.from(pidor.date),
+            pidor.user.chat.id
         )
     }
 
     override fun removePidorRecord(user: User) {
         template.update(
             "DELETE FROM pidors where id = ? and chat_id = ? and pidor_date = (SELECT pidor_date from pidors where id = ? and chat_id = ? and pidor_date > date_trunc('month', current_date) LIMIT 1)",
-            user.id, user.chat.id, user.id, user.chat.id
+            user.id,
+            user.chat.id,
+            user.id,
+            user.chat.id
         )
     }
 
     override fun getPidorsByChat(chat: Chat, startDate: Instant, endDate: Instant): List<Pidor> {
         return template.query(
             "SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE pidors.chat_id = ? AND pidor_date BETWEEN ? and ?",
-            ResultSetExtractor { resultSet -> resultSet.map { it.toPidor() } }, chat.id, Timestamp.from(startDate), Timestamp.from(endDate)
+            ResultSetExtractor { resultSet -> resultSet.map { it.toPidor() } },
+            chat.id,
+            Timestamp.from(startDate),
+            Timestamp.from(endDate)
         ) ?: emptyList()
     }
 
@@ -109,7 +120,9 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
     override fun getAllPidors(startDate: Instant, endDate: Instant): List<Pidor> {
         return template.query(
             "SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE pidor_date BETWEEN ? and ?",
-            ResultSetExtractor { resultSet -> resultSet.map { it.toPidor() } }, Timestamp.from(startDate), Timestamp.from(endDate)
+            ResultSetExtractor { resultSet -> resultSet.map { it.toPidor() } },
+            Timestamp.from(startDate),
+            Timestamp.from(endDate)
         ) ?: emptyList()
     }
 

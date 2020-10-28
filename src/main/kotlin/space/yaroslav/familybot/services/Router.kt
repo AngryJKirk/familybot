@@ -1,6 +1,5 @@
 package space.yaroslav.familybot.services
 
-import java.time.Instant
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
@@ -30,6 +29,7 @@ import space.yaroslav.familybot.services.dictionary.Dictionary
 import space.yaroslav.familybot.services.state.FunctionalToleranceState
 import space.yaroslav.familybot.services.state.StateService
 import space.yaroslav.familybot.telegram.BotConfig
+import java.time.Instant
 
 @Component
 class Router(

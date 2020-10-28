@@ -1,6 +1,5 @@
 package space.yaroslav.familybot.services.scenario
 
-import java.time.Instant
 import kotlinx.coroutines.delay
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.polls.SendPoll
@@ -14,6 +13,7 @@ import space.yaroslav.familybot.common.utils.chatId
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.telegram.FamilyBot
+import java.time.Instant
 
 @Component
 class ScenarioSessionManagementServiceImpl(
@@ -37,7 +37,8 @@ class ScenarioSessionManagementServiceImpl(
     override fun listGames(update: Update): suspend (AbsSender) -> Unit {
         return {
             it.send(
-                update, "Какую игру выбрать?",
+                update,
+                "Какую игру выбрать?",
                 replyToUpdate = true,
                 customization = createKeyboardMarkup()
             )
@@ -86,7 +87,8 @@ class ScenarioSessionManagementServiceImpl(
                                     .setCallbackData(scenario.id.toString())
                             }
                         }
-                ))
+                )
+            )
         }
     }
 

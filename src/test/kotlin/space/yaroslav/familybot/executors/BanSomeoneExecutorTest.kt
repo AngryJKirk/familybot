@@ -1,6 +1,5 @@
 package space.yaroslav.familybot.executors
 
-import java.util.UUID
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,6 +18,7 @@ import space.yaroslav.familybot.repos.ifaces.BanRepository
 import space.yaroslav.familybot.suits.ExecutorTest
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
+import java.util.UUID
 
 class BanSomeoneExecutorTest : ExecutorTest() {
 

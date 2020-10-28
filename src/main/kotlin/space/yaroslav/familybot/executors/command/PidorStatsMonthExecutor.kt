@@ -1,9 +1,5 @@
 package space.yaroslav.familybot.executors.command
 
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneOffset
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -21,6 +17,10 @@ import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
 
 @Component
 class PidorStatsMonthExecutor(
@@ -45,11 +45,13 @@ class PidorStatsMonthExecutor(
                 .toInstant(ZoneOffset.UTC)
         )
             .map(Pidor::user)
-            .formatTopList(PluralizedWordsProvider(
-                one = { dictionary.get(Phrase.PLURALIZED_COUNT_ONE) },
-                few = { dictionary.get(Phrase.PLURALIZED_COUNT_FEW) },
-                many = { dictionary.get(Phrase.PLURALIZED_COUNT_MANY) }
-            ))
+            .formatTopList(
+                PluralizedWordsProvider(
+                    one = { dictionary.get(Phrase.PLURALIZED_COUNT_ONE) },
+                    few = { dictionary.get(Phrase.PLURALIZED_COUNT_FEW) },
+                    many = { dictionary.get(Phrase.PLURALIZED_COUNT_MANY) }
+                )
+            )
         val title = "${dictionary.get(Phrase.PIDOR_STAT_MONTH)} ${now.month.toRussian()}:\n".bold()
         return { it.send(update, title + pidorsByChat.joinToString("\n"), enableHtml = true) }
     }

@@ -1,8 +1,5 @@
 package space.yaroslav.familybot.executors.pm
 
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-import kotlin.coroutines.coroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
@@ -15,6 +12,9 @@ import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.services.ban.Ban
 import space.yaroslav.familybot.services.ban.BanService
 import space.yaroslav.familybot.telegram.BotConfig
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import kotlin.coroutines.coroutineContext
 
 @Component
 class BanSomeoneExecutor(

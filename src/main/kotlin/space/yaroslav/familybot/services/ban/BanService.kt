@@ -1,9 +1,9 @@
 package space.yaroslav.familybot.services.ban
 
-import java.time.Instant
-import java.util.UUID
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
+import java.time.Instant
+import java.util.UUID
 
 interface BanService {
 

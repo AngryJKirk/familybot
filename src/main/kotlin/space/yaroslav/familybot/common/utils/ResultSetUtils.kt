@@ -1,7 +1,5 @@
 package space.yaroslav.familybot.common.utils
 
-import java.sql.ResultSet
-import java.util.UUID
 import space.yaroslav.familybot.common.AskWorldQuestion
 import space.yaroslav.familybot.common.AskWorldReply
 import space.yaroslav.familybot.common.Chat
@@ -10,6 +8,8 @@ import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.telegram.FamilyBot
+import java.sql.ResultSet
+import java.util.UUID
 
 fun ResultSet.toUser(): User = User(
     this.getLong("id"),
@@ -55,7 +55,8 @@ fun ResultSet.toAskWorldQuestion(): AskWorldQuestion {
             this.getString("username")
         ),
         chat,
-        this.getTimestamp("date").toInstant(), null
+        this.getTimestamp("date").toInstant(),
+        null
     )
 }
 

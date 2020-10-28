@@ -1,7 +1,5 @@
 package space.yaroslav.familybot.repos.ifaces
 
-import java.time.Instant
-import java.util.UUID
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.services.scenario.Scenario
@@ -9,6 +7,8 @@ import space.yaroslav.familybot.services.scenario.ScenarioMove
 import space.yaroslav.familybot.services.scenario.ScenarioPoll
 import space.yaroslav.familybot.services.scenario.ScenarioState
 import space.yaroslav.familybot.services.scenario.ScenarioWay
+import java.time.Instant
+import java.util.UUID
 
 interface ScenarioRepository {
 

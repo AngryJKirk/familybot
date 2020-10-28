@@ -4,10 +4,11 @@ class ScenarioSqlGenerator {
 
     fun get(scenario: Scenario): String {
         val move = scenario.entryMove
-        val scenarioInsert = """
+        val scenarioInsert =
+            """
             insert into scenario (scenario_id, scenario_description, scenario_name, entry_move)
             values ('${scenario.id}', '${scenario.description}', '${scenario.name}', '${scenario.entryMove.id}');
-        """.trimIndent()
+            """.trimIndent()
         return listOf(
             getForMove(move),
             getForWay(move),
@@ -20,9 +21,10 @@ class ScenarioSqlGenerator {
     }
 
     private fun getForMove(move: Move): List<String> {
-        val moveInsert = """insert into scenario_move (move_id, scenario_move_description, is_the_end)
+        val moveInsert =
+            """insert into scenario_move (move_id, scenario_move_description, is_the_end)
            values ('${move.id}', '${move.description}', ${move.isEnd}) on conflict do nothing; 
-        """.trimIndent()
+            """.trimIndent()
 
         val otherMoves = move
             .ways

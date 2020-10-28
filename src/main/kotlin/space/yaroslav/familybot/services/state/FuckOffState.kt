@@ -1,7 +1,7 @@
 package space.yaroslav.familybot.services.state
 
-import java.time.Duration
 import space.yaroslav.familybot.models.FunctionId
+import java.time.Duration
 
 class FuckOffState(duration: Duration) : TimeLimitedState(duration), FunctionalToleranceState {
 

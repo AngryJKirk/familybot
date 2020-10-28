@@ -1,6 +1,5 @@
 package space.yaroslav.familybot.common.utils
 
-import java.util.concurrent.ThreadLocalRandom
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -10,10 +9,11 @@ import org.telegram.telegrambots.meta.api.methods.send.SendSticker
 import org.telegram.telegrambots.meta.api.methods.stickers.GetStickerSet
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
-import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.models.stickers.Sticker
 import space.yaroslav.familybot.models.stickers.StickerPack
+import java.util.concurrent.ThreadLocalRandom
+import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 
 suspend fun AbsSender.send(
     update: Update,

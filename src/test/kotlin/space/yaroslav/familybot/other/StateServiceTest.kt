@@ -1,6 +1,5 @@
 package space.yaroslav.familybot.other
 
-import java.time.Duration
 import org.junit.Assert
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -9,6 +8,7 @@ import space.yaroslav.familybot.services.state.FuckOffState
 import space.yaroslav.familybot.services.state.RageModeState
 import space.yaroslav.familybot.services.state.StateService
 import space.yaroslav.familybot.suits.FamilybotApplicationTest
+import java.time.Duration
 
 class StateServiceTest : FamilybotApplicationTest() {
 

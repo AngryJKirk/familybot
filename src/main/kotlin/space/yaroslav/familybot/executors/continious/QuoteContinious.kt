@@ -29,10 +29,12 @@ class QuoteContinious(
             val callbackQuery = update.callbackQuery
             it.execute(AnswerCallbackQuery().setCallbackQueryId(callbackQuery.id))
             it.execute(
-                (SendMessage(
-                    callbackQuery.message.chatId,
-                    quoteRepository.getByTag(callbackQuery.data) ?: "Такого тега нет, идите нахуй"
-                ))
+                (
+                    SendMessage(
+                        callbackQuery.message.chatId,
+                        quoteRepository.getByTag(callbackQuery.data) ?: "Такого тега нет, идите нахуй"
+                    )
+                    )
             )
         }
     }

@@ -7,7 +7,8 @@ fun notmain() {
                 answerNumber = 0
                 description = "Моего разраба"
                 nextMove {
-                    description = """Разраб оказался в банде древних укро-турбославян,
+                    description =
+                        """Разраб оказался в банде древних укро-турбославян,
                                        | которые готовятся к войне с рептилоидами""".trimMargin()
                     end()
                 }
@@ -16,7 +17,8 @@ fun notmain() {
                 answerNumber = 1
                 description = "Спасительного Михаила Круга"
                 nextMove {
-                    description = """Круг оказался иллюзий, которую на тебя наложили рептилоиды.
+                    description =
+                        """Круг оказался иллюзий, которую на тебя наложили рептилоиды.
                         |Их предводитель Виталий приглашает вступить с ними в войну против Укров-Турбославян
                     """.trimMargin()
                     end()
@@ -26,7 +28,8 @@ fun notmain() {
                 answerNumber = 2
                 description = "Фестиваль фистинга"
                 nextMove {
-                    description = """Обманули пидорка на два кулака""".trimMargin()
+                    description =
+                        """Обманули пидорка на два кулака""".trimMargin()
                     end()
                 }
             }

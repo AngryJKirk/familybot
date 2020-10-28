@@ -1,9 +1,5 @@
 package space.yaroslav.familybot.executors.command
 
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneOffset
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard
@@ -19,6 +15,10 @@ import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
 
 @Component
 class BetExecutor(
@@ -35,7 +35,8 @@ class BetExecutor(
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val now = LocalDate.now()
         val commands = commandHistoryRepository.get(
-            update.toUser(), LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
+            update.toUser(),
+            LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
                 .toInstant(ZoneOffset.UTC)
         )
         if (isBetAlreadyDone(commands)) {

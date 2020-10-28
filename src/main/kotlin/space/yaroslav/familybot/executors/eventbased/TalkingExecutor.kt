@@ -1,6 +1,5 @@
 package space.yaroslav.familybot.executors.eventbased
 
-import java.util.concurrent.ThreadLocalRandom
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -15,6 +14,7 @@ import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.services.TalkingService
 import space.yaroslav.familybot.services.state.RageModeState
 import space.yaroslav.familybot.services.state.StateService
+import java.util.concurrent.ThreadLocalRandom
 
 @Component
 class TalkingExecutor(

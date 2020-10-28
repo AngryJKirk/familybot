@@ -1,9 +1,5 @@
 package space.yaroslav.familybot.executors.continious
 
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneOffset
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -25,6 +21,10 @@ import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.services.PidorCompetitionService
 import space.yaroslav.familybot.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
 
 @Component
 class BetContinious(
@@ -48,7 +48,8 @@ class BetContinious(
         val user = update.toUser()
         val chatId = update.message.chatId
         val commands = commandHistoryRepository.get(
-            user, LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
+            user,
+            LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
                 .toInstant(ZoneOffset.UTC)
         )
         if (isBetAlreadyDone(commands)) {

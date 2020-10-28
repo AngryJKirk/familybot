@@ -1,9 +1,9 @@
 package space.yaroslav.familybot.services.scenario
 
-import java.time.Instant
-import java.util.UUID
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
+import java.time.Instant
+import java.util.UUID
 
 data class ScenarioMove(
     val id: UUID,

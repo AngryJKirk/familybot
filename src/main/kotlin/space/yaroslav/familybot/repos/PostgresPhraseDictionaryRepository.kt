@@ -3,8 +3,6 @@ package space.yaroslav.familybot.repos
 import com.google.common.base.Suppliers
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
-import java.time.Instant
-import java.util.concurrent.TimeUnit
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
@@ -12,6 +10,8 @@ import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.PhraseTheme
 import space.yaroslav.familybot.repos.ifaces.PhraseDictionaryRepository
 import space.yaroslav.familybot.telegram.FamilyBot
+import java.time.Instant
+import java.util.concurrent.TimeUnit
 
 @Component
 class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : PhraseDictionaryRepository {

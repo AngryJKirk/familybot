@@ -1,6 +1,5 @@
 package space.yaroslav.familybot.executors.eventbased
 
-import java.time.Instant
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -36,6 +35,7 @@ import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
 import space.yaroslav.familybot.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
+import java.time.Instant
 
 @Component
 class AskWorldReceiveReplyExecutor(
@@ -100,18 +100,20 @@ class AskWorldReceiveReplyExecutor(
                         ).enableHtml(true)
                     )
                     when (contentType) {
-                        MessageContentType.PHOTO -> it
-                            .execute(
-                                SendPhoto()
-                                    .setChatId(chatIdToReply)
-                                    .setPhoto(message.photo.first().fileId)
-                            )
-                        MessageContentType.AUDIO -> it
-                            .execute(
-                                SendAudio()
-                                    .setChatId(chatIdToReply)
-                                    .setAudio(message.audio.fileId)
-                            )
+                        MessageContentType.PHOTO ->
+                            it
+                                .execute(
+                                    SendPhoto()
+                                        .setChatId(chatIdToReply)
+                                        .setPhoto(message.photo.first().fileId)
+                                )
+                        MessageContentType.AUDIO ->
+                            it
+                                .execute(
+                                    SendAudio()
+                                        .setChatId(chatIdToReply)
+                                        .setAudio(message.audio.fileId)
+                                )
                         MessageContentType.ANIMATION -> it.execute(
                             SendAnimation()
                                 .setChatId(chatIdToReply)
@@ -122,23 +124,26 @@ class AskWorldReceiveReplyExecutor(
                                 .setChatId(chatIdToReply)
                                 .setDocument(message.document.fileId)
                         )
-                        MessageContentType.VOICE -> it
-                            .execute(
-                                SendVoice()
-                                    .setChatId(chatIdToReply)
-                                    .setVoice(message.voice.fileId)
-                            )
-                        MessageContentType.VIDEO_NOTE -> it
-                            .execute(
-                                SendVideoNote()
-                                    .setChatId(chatIdToReply)
-                                    .setVideoNote(message.videoNote.fileId)
-                            )
-                        MessageContentType.LOCATION -> it
-                            .execute(
-                                SendLocation(message.location.latitude, message.location.longitude)
-                                    .setChatId(chatIdToReply)
-                            )
+                        MessageContentType.VOICE ->
+                            it
+                                .execute(
+                                    SendVoice()
+                                        .setChatId(chatIdToReply)
+                                        .setVoice(message.voice.fileId)
+                                )
+                        MessageContentType.VIDEO_NOTE ->
+                            it
+                                .execute(
+                                    SendVideoNote()
+                                        .setChatId(chatIdToReply)
+                                        .setVideoNote(message.videoNote.fileId)
+                                )
+                        MessageContentType.LOCATION ->
+                            it
+                                .execute(
+                                    SendLocation(message.location.latitude, message.location.longitude)
+                                        .setChatId(chatIdToReply)
+                                )
                         MessageContentType.STICKER -> it.execute(
                             SendSticker()
                                 .setChatId(chatIdToReply)

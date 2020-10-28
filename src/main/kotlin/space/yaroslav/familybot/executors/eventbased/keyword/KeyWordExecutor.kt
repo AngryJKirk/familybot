@@ -1,6 +1,5 @@
 package space.yaroslav.familybot.executors.eventbased.keyword
 
-import java.util.concurrent.ThreadLocalRandom
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -10,6 +9,7 @@ import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.Executor
 import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Priority
+import java.util.concurrent.ThreadLocalRandom
 
 @Component
 class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Configurable {

@@ -1,11 +1,11 @@
 package space.yaroslav.familybot.services.scenario
 
-import java.time.Instant
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.startOfDay
 import space.yaroslav.familybot.repos.ifaces.ScenarioRepository
+import java.time.Instant
 
 @Component
 class ScenarioPollManagingServiceImpl(
@@ -28,9 +28,10 @@ class ScenarioPollManagingServiceImpl(
     override fun getTodayPoll(chat: Chat, scenarioMove: ScenarioMove): ScenarioPoll? {
         log.info("Trying to find poll for chat $chat and move $scenarioMove")
         return scenarioRepository.findScenarioPoll(
-                chat, scenarioMove,
-                afterDate = Instant.now().startOfDay()
-            )
+            chat,
+            scenarioMove,
+            afterDate = Instant.now().startOfDay()
+        )
             .also { log.info("Found poll: $it") }
     }
 }

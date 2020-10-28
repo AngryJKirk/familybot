@@ -1,10 +1,5 @@
 package space.yaroslav.familybot.services
 
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneOffset
 import kotlinx.coroutines.delay
 import org.springframework.stereotype.Service
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -18,6 +13,11 @@ import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.FamilyBot
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
 
 @Service
 class PidorCompetitionService(

@@ -1,6 +1,5 @@
 package space.yaroslav.familybot.executors.eventbased.keyword
 
-import java.time.Duration
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -16,6 +15,7 @@ import space.yaroslav.familybot.services.state.FuckOffState
 import space.yaroslav.familybot.services.state.FuckOffToleranceState
 import space.yaroslav.familybot.services.state.StateService
 import space.yaroslav.familybot.telegram.BotConfig
+import java.time.Duration
 
 @Component
 class BotMentionKeyWordProcessor(

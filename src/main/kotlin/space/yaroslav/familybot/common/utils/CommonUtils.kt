@@ -1,11 +1,11 @@
 package space.yaroslav.familybot.common.utils
 
-import java.time.Instant
-import java.time.Month
-import java.time.temporal.ChronoUnit
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.telegram.telegrambots.meta.api.objects.Chat
+import java.time.Instant
+import java.time.Month
+import java.time.temporal.ChronoUnit
 
 fun Instant.isToday(): Boolean {
     val startOfDay = Instant.now().startOfDay()

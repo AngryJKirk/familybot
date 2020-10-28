@@ -1,7 +1,5 @@
 package space.yaroslav.familybot.repos
 
-import java.sql.Timestamp
-import java.time.Instant
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Component
@@ -13,6 +11,8 @@ import space.yaroslav.familybot.common.utils.toAskWorldQuestion
 import space.yaroslav.familybot.common.utils.toAskWorldReply
 import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
 import space.yaroslav.familybot.telegram.FamilyBot
+import java.sql.Timestamp
+import java.time.Instant
 
 @Component
 class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepository {
@@ -31,7 +31,8 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
                             INNER JOIN chats c2 on ask_world_questions.chat_id = c2.id
                             INNER JOIN users u on ask_world_questions.user_id = u.id
                             where ask_world_questions.chat_id = ? and ask_world_questions.user_id = ?
-                            and ask_world_questions.date >= ?""", RowMapper { rs, _ -> rs.toAskWorldQuestion() },
+                            and ask_world_questions.date >= ?""",
+            RowMapper { rs, _ -> rs.toAskWorldQuestion() },
             chat.id,
             user.id,
             Timestamp.from(date)
@@ -53,7 +54,8 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
                             INNER JOIN chats c2 on ask_world_questions.chat_id = c2.id
                             INNER JOIN users u on ask_world_questions.user_id = u.id
                             where ask_world_questions.user_id = ?
-                            and ask_world_questions.date >= ?""", RowMapper { rs, _ -> rs.toAskWorldQuestion() },
+                            and ask_world_questions.date >= ?""",
+            RowMapper { rs, _ -> rs.toAskWorldQuestion() },
             user.id,
             Timestamp.from(date)
         )
@@ -95,7 +97,8 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
                             from ask_world_replies
                             INNER JOIN chats c2 on ask_world_replies.chat_id = c2.id
                             INNER JOIN users u on ask_world_replies.user_id = u.id where question_id = ?""",
-            RowMapper { rs, _ -> rs.toAskWorldReply() }, askWorldQuestion.id
+            RowMapper { rs, _ -> rs.toAskWorldReply() },
+            askWorldQuestion.id
         )
     }
 
@@ -117,7 +120,8 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
             (SELECT ask_world_questions_delivery.id
             from ask_world_questions_delivery where message_id = ? and chat_id = ?)""",
             RowMapper { rs, _ -> rs.toAskWorldQuestion() },
-            messageId, chat.id
+            messageId,
+            chat.id
         ).first()
     }
 
@@ -135,7 +139,8 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
                             from ask_world_questions
                             INNER JOIN chats c2 on ask_world_questions.chat_id = c2.id
                             INNER JOIN users u on ask_world_questions.user_id = u.id
-                where date >= ? and question = ?""", RowMapper { rs, _ -> rs.toAskWorldQuestion() },
+                where date >= ? and question = ?""",
+            RowMapper { rs, _ -> rs.toAskWorldQuestion() },
             Timestamp.from(date),
             message
         )
@@ -148,7 +153,9 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
     override fun addQuestionDeliver(question: AskWorldQuestion, chat: Chat) {
         template.update(
             "INSERT INTO ask_world_questions_delivery (id, chat_id, message_id) VALUES (?, ?, ?)",
-            question.id, chat.id, question.messageId
+            question.id,
+            chat.id,
+            question.messageId
         )
     }
 
@@ -158,7 +165,8 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
 
         return template.queryForList(
             "SELECT 1 from ask_world_questions_delivery where id = ? and chat_id = ?",
-            questionId, chat.id
+            questionId,
+            chat.id
         ).isNotEmpty()
     }
 
@@ -173,7 +181,10 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
         return template.queryForObject(
             "INSERT into ask_world_questions (question, chat_id, user_id, date) VALUES (?, ?, ?, ?) returning id",
             RowMapper { rs, _ -> rs.getLong("id") },
-            question.message, question.chat.id, question.user.id, Timestamp.from(question.date)
+            question.message,
+            question.chat.id,
+            question.user.id,
+            Timestamp.from(question.date)
         ) ?: throw FamilyBot.InternalException("Something has gone wrong, investigate please")
     }
 
@@ -201,15 +212,21 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
         return template.queryForObject(
             "INSERT into ask_world_replies (question_id, reply, chat_id, user_id, date) VALUES (?, ?, ?, ?, ?) returning id",
             RowMapper { rs, _ -> rs.getLong("id") },
-            reply.questionId, reply.message, reply.chat.id, reply.user.id, Timestamp.from(reply.date)
+            reply.questionId,
+            reply.message,
+            reply.chat.id,
+            reply.user.id,
+            Timestamp.from(reply.date)
         ) ?: throw FamilyBot.InternalException("Something has gone wrong, investigate please")
     }
 
     override fun isReplied(askWorldQuestion: AskWorldQuestion, chat: Chat, user: User): Boolean {
         return template.queryForList(
-                "select 1 from ask_world_replies where question_id = ? and chat_id = ? and user_id =?",
-                askWorldQuestion.id, chat.id, user.id
-            )
+            "select 1 from ask_world_replies where question_id = ? and chat_id = ? and user_id =?",
+            askWorldQuestion.id,
+            chat.id,
+            user.id
+        )
             .isNotEmpty()
     }
 }

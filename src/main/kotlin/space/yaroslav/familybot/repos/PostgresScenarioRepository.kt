@@ -1,9 +1,5 @@
 package space.yaroslav.familybot.repos
 
-import java.sql.ResultSet
-import java.sql.Timestamp
-import java.time.Instant
-import java.util.UUID
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -20,6 +16,10 @@ import space.yaroslav.familybot.services.scenario.ScenarioPoll
 import space.yaroslav.familybot.services.scenario.ScenarioState
 import space.yaroslav.familybot.services.scenario.ScenarioWay
 import space.yaroslav.familybot.telegram.FamilyBot
+import java.sql.ResultSet
+import java.sql.Timestamp
+import java.time.Instant
+import java.util.UUID
 
 @Component
 class PostgresScenarioRepository(
@@ -155,19 +155,19 @@ where chat_id = :chat_id
 
     override fun getResultsForMove(chat: Chat, scenarioState: ScenarioState): Map<ScenarioWay, List<User>> {
         return template.query(
-                """
+            """
     select * from scenario_choices sc
     inner join users u on sc.user_id = u.id
     inner join scenario_way sw on sw.way_id = sc.scenario_way_id
     where chat_id = :chat_id and scenario_way_id in (:ids) 
     and choice_date > :state_date
 """,
-                mapOf(
-                    "chat_id" to chat.id,
-                    "ids" to scenarioState.move.ways.map(ScenarioWay::wayId),
-                    "state_date" to Timestamp.from(scenarioState.date)
-                )
-            ) { rs, rowNum -> scenarioWayRowMapper.mapRowNotNull(rs, rowNum) to rs.toUser() }
+            mapOf(
+                "chat_id" to chat.id,
+                "ids" to scenarioState.move.ways.map(ScenarioWay::wayId),
+                "state_date" to Timestamp.from(scenarioState.date)
+            )
+        ) { rs, rowNum -> scenarioWayRowMapper.mapRowNotNull(rs, rowNum) to rs.toUser() }
             .groupBy({ (way, _) -> way }, { (_, user) -> user })
     }
 
@@ -192,7 +192,8 @@ where chat_id = :chat_id
         """,
             mapOf(
                 "poll_id" to id
-            ), scenarioPollRowMapper
+            ),
+            scenarioPollRowMapper
         ).firstOrNull()
     }
 
@@ -220,7 +221,9 @@ where chat_id = :chat_id
             inner join scenario_way sw on m2w.way_id = sw.way_id
             inner join scenario_move sm on m2w.move_id = sm.move_id
             where sm.move_id = :move_id
-        """, mapOf("move_id" to moveId), scenarioWayRowMapper
+        """,
+            mapOf("move_id" to moveId),
+            scenarioWayRowMapper
         )
     }
 

@@ -1,6 +1,5 @@
 package space.yaroslav.familybot.executors.command
 
-import java.time.Instant
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -28,6 +27,7 @@ import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.services.PidorCompetitionService
 import space.yaroslav.familybot.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
+import java.time.Instant
 
 @Component
 class PidorExecutor(
@@ -106,11 +106,15 @@ class PidorExecutor(
         return when (pidorsByChat.size) {
             0 -> null
             1 -> SendMessage(
-                chat.id, dictionary.get(Phrase.PIROR_DISCOVERED_ONE) + ": " +
+                chat.id,
+                dictionary.get(Phrase.PIROR_DISCOVERED_ONE) + ": " +
                     pidorsByChat.first().user.getGeneralName()
             ).enableHtml(true)
-            else -> SendMessage(chat.id, dictionary.get(Phrase.PIROR_DISCOVERED_MANY) + ": " +
-                pidorsByChat.joinToString { it.user.getGeneralName() }).enableHtml(true)
+            else -> SendMessage(
+                chat.id,
+                dictionary.get(Phrase.PIROR_DISCOVERED_MANY) + ": " +
+                    pidorsByChat.joinToString { it.user.getGeneralName() }
+            ).enableHtml(true)
         }
     }
 
