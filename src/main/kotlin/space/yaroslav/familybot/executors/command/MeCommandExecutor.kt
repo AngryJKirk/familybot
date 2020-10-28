@@ -1,7 +1,10 @@
 package space.yaroslav.familybot.executors.command
 
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -19,7 +22,9 @@ import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.repos.ifaces.RawChatLogRepository
 import space.yaroslav.familybot.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
+import space.yaroslav.familybot.telegram.FamilyBot
 import java.time.Instant
+import java.util.concurrent.TimeUnit
 
 @Component
 class MeCommandExecutor(
@@ -29,22 +34,41 @@ class MeCommandExecutor(
     private val dictionary: Dictionary,
     config: BotConfig
 ) : CommandExecutor(config) {
+    companion object {
+        const val TEN_YEARS_AGO: Long = 60 * 60 * 24 * 3650
+    }
+
+    val cache = CacheBuilder
+        .newBuilder()
+        .expireAfterWrite(1, TimeUnit.HOURS)
+        .build(
+            CacheLoader.from { id: Pair<User, Chat>? ->
+                runBlocking {
+                    executeInternal(
+                        id ?: throw FamilyBot.InternalException("None has been passed to cache function of /me")
+                    )
+                }
+            }
+        )
+
     override fun command(): Command {
         return Command.ME
     }
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        val user = update.toUser()
-        val chat = update.toChat()
 
+        val message = cache[update.toUser() to update.toChat()]
+        return {
+            it.send(update, message, replyToUpdate = true)
+        }
+    }
+
+    private suspend fun executeInternal(id: Pair<User, Chat>): String {
+        val (user, chat) = id
         val messageCount = GlobalScope.async { getMessageCount(chat, user) }
         val pidorCount = GlobalScope.async { getPidorsCount(chat, user) }
         val commandCount = GlobalScope.async { getCommandCount(user) }
-
-        return {
-            val message = setOf(pidorCount.await(), commandCount.await(), messageCount.await()).joinToString("\n")
-            it.send(update, message, replyToUpdate = true)
-        }
+        return setOf(pidorCount.await(), commandCount.await(), messageCount.await()).joinToString("\n")
     }
 
     private fun getMessageCount(chat: Chat, user: User): String {
@@ -62,7 +86,7 @@ class MeCommandExecutor(
 
     private fun getCommandCount(user: User): String {
         val commandCount =
-            commandHistoryRepository.get(user, from = Instant.now().minusSeconds(60 * 60 * 24 * 3650)).size
+            commandHistoryRepository.get(user, from = Instant.now().minusSeconds(TEN_YEARS_AGO)).size
         val word = pluralize(
             commandCount,
             PluralizedWordsProvider(
@@ -76,7 +100,7 @@ class MeCommandExecutor(
 
     private fun getPidorsCount(chat: Chat, user: User): String {
         val pidorCount = commonRepository
-            .getPidorsByChat(chat, startDate = Instant.now().minusSeconds(60 * 60 * 24 * 3650))
+            .getPidorsByChat(chat, startDate = Instant.now().minusSeconds(TEN_YEARS_AGO))
             .filter { it.user.id == user.id }
             .size
         val word = pluralize(
