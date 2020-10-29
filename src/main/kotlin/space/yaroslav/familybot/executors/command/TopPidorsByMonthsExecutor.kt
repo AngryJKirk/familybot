@@ -83,7 +83,7 @@ class TopPidorsByMonthsExecutor(
     private fun calculateStats(pidors: List<Pidor>): PidorStat {
         val pidor = pidors
             .groupBy { it.user }
-            .maxBy { it.value.size }
+            .maxByOrNull { it.value.size }
             ?: throw FamilyBot.InternalException("List of pidors should be not empty to calculate stats")
         return PidorStat(pidor.key, pidors.filter { it.user == pidor.key }.count())
     }

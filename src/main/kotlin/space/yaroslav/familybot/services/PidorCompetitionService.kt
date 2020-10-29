@@ -57,7 +57,7 @@ class PidorCompetitionService(
         val pidorsByUser = pidors.groupBy { it.user }
         val maxCount = pidorsByUser
             .mapValues { it.value.size }
-            .maxBy { it.value }
+            .maxByOrNull { it.value }
             ?: throw FamilyBot.InternalException("List of pidors for competition should be never null")
 
         val competitors = pidorsByUser.filterValues { it.size == maxCount.value }.keys

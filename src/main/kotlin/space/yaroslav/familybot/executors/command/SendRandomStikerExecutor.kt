@@ -27,9 +27,9 @@ abstract class SendRandomStikerExecutor(
         }
 
         return {
-            it.send(update, "Какой ты сегодня?")
+            it.send(update, getMessage())
             delay(1000)
-            it.sendRandomSticker(update, StickerPack.YOU_ARE_TODAY)
+            it.sendRandomSticker(update, getStickerPack())
         }
     }
 
