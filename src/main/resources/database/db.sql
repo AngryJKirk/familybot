@@ -97,7 +97,9 @@ VALUES (1, '/stats_month'),
         ,
        (20, '/ban')
         ,
-       (21, '/play');
+       (21, '/play'),
+
+       (22, '/hampik');
 
 CREATE TABLE IF NOT EXISTS chat_log
 (
@@ -171,9 +173,9 @@ CREATE TABLE IF NOT EXISTS ask_world_replies
     id          SERIAL PRIMARY KEY,
     question_id INTEGER REFERENCES ask_world_questions (id),
     reply       VARCHAR(20000) NOT NULL,
-    chat_id     BIGINT        NOT NULL REFERENCES chats (id),
-    user_id     BIGINT        NOT NULL REFERENCES users (id),
-    date        TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP
+    chat_id     BIGINT         NOT NULL REFERENCES chats (id),
+    user_id     BIGINT         NOT NULL REFERENCES users (id),
+    date        TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS ask_world_questions_delivery
