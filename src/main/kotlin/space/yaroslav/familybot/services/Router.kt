@@ -111,7 +111,7 @@ class Router(
     }
 
     private fun disabledCommand(chat: Chat): suspend (AbsSender) -> Unit = { it ->
-        it.execute(SendMessage(chat.id, dictionary.get(Phrase.COMMAND_IS_OFF)))
+        it.execute(SendMessage(chat.toChat().idString, dictionary.get(Phrase.COMMAND_IS_OFF)))
     }
 
     private fun isExecutorDisabled(executor: Executor, chat: Chat): Boolean {
@@ -147,7 +147,7 @@ class Router(
     private fun logChatMessage(update: Update) {
         val text = update.message?.text
         if (update.message?.isGroupMessage == true &&
-            update.message?.from?.bot == false &&
+            update.message?.from?.isBot == false &&
             text != null &&
             text.split(" ").size >= 3 &&
             text.length < 600 &&
@@ -178,7 +178,7 @@ class Router(
 
         when {
             leftChatMember != null -> {
-                if (leftChatMember.bot && leftChatMember.userName == botConfig.botname) {
+                if (leftChatMember.isBot && leftChatMember.userName == botConfig.botname) {
                     logger.info("Bot was removed from $chat")
                     repository.changeChatActiveStatus(chat, false)
                     repository.disableUsersInChat(chat)
@@ -188,15 +188,15 @@ class Router(
                 }
             }
             newChatMembers?.isNotEmpty() == true -> {
-                if (newChatMembers.any { it.bot && it.userName == botConfig.botname }) {
+                if (newChatMembers.any { it.isBot && it.userName == botConfig.botname }) {
                     logger.info("Bot was added to $chat")
                     repository.changeChatActiveStatus(chat, true)
                 } else {
                     logger.info("New users was added: $newChatMembers")
-                    newChatMembers.filter { !it.bot }.forEach { repository.addUser(it.toUser(chat = chat)) }
+                    newChatMembers.filter { !it.isBot }.forEach { repository.addUser(it.toUser(chat = chat)) }
                 }
             }
-            message.from.bot.not() -> {
+            message.from.isBot.not() -> {
                 repository.addUser(message.from.toUser(chat = chat))
             }
         }

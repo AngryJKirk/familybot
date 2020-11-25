@@ -2,7 +2,7 @@ buildscript {
     ext {
         kotlinVersion = '1.4.10'
         springBootVersion = '2.2.6.RELEASE'
-        telegramBotVersion = '4.9.1'
+        telegramBotVersion = '5.0.1'
         ktlintVersion = '9.4.1'
         coroutinesVersion = '1.3.9'
         testcontainersVersion = '1.13.0'

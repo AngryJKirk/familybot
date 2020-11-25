@@ -27,11 +27,11 @@ class QuoteContinious(
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         return {
             val callbackQuery = update.callbackQuery
-            it.execute(AnswerCallbackQuery().setCallbackQueryId(callbackQuery.id))
+            it.execute(AnswerCallbackQuery(callbackQuery.id))
             it.execute(
                 (
                     SendMessage(
-                        callbackQuery.message.chatId,
+                        callbackQuery.message.chatId.toString(),
                         quoteRepository.getByTag(callbackQuery.data) ?: "Такого тега нет, идите нахуй"
                     )
                     )

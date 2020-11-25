@@ -106,15 +106,15 @@ class PidorExecutor(
         return when (pidorsByChat.size) {
             0 -> null
             1 -> SendMessage(
-                chat.id,
+                chat.idString,
                 dictionary.get(Phrase.PIROR_DISCOVERED_ONE) + ": " +
                     pidorsByChat.first().user.getGeneralName()
-            ).enableHtml(true)
+            ).apply { enableHtml(true) }
             else -> SendMessage(
-                chat.id,
+                chat.idString,
                 dictionary.get(Phrase.PIROR_DISCOVERED_MANY) + ": " +
                     pidorsByChat.joinToString { it.user.getGeneralName() }
-            ).enableHtml(true)
+            ).apply { enableHtml(true) }
         }
     }
 
@@ -130,9 +130,7 @@ class PidorExecutor(
     }
 
     private fun getUserFromChat(user: User, absSender: AbsSender): User? {
-        val getChatMemberCall = GetChatMember()
-            .setChatId(user.chat.id)
-            .setUserId(user.id.toInt())
+        val getChatMemberCall = GetChatMember(user.chat.idString, user.id.toInt())
         return runCatching {
             absSender.execute(getChatMemberCall)
                 .takeIf { it.status != "left" && it.status != "kicked" }

@@ -82,10 +82,12 @@ class AntiDdosExecutor(
         message: String
     ): suspend (AbsSender) -> Unit = { it ->
         it.execute(
-            AnswerCallbackQuery()
-                .setCallbackQueryId(update.callbackQuery.id)
-                .setShowAlert(true)
-                .setText(message)
+            AnswerCallbackQuery(update.callbackQuery.id)
+                .apply {
+                    showAlert = true
+                    text = message
+                }
+
         )
     }
 }

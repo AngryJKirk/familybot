@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.chatId
+import space.yaroslav.familybot.common.utils.chatIdString
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.telegram.FamilyBot
@@ -76,18 +77,15 @@ class ScenarioSessionManagementServiceImpl(
         }
     }
 
-    private fun createKeyboardMarkup(): SendMessage.() -> SendMessage {
+    private fun createKeyboardMarkup(): SendMessage.() -> Unit {
         return {
-            setReplyMarkup(
-                InlineKeyboardMarkup(
-                    scenarioService.getScenarios().chunked(2)
-                        .map {
-                            it.map { scenario ->
-                                InlineKeyboardButton(scenario.name)
-                                    .setCallbackData(scenario.id.toString())
-                            }
+            replyMarkup = InlineKeyboardMarkup(
+                scenarioService.getScenarios().chunked(2)
+                    .map {
+                        it.map { scenario ->
+                            InlineKeyboardButton(scenario.name).apply { callbackData = scenario.id.toString() }
                         }
-                )
+                    }
             )
         }
     }
@@ -115,13 +113,12 @@ class ScenarioSessionManagementServiceImpl(
             val message = it.send(update, messageToSend)
             it.execute(
                 SendPoll()
-                    .setChatId(update.chatId())
-                    .setQuestion("Что выбираете?")
-                    .setOptions((1..scenarioMove.ways.size).map { i -> "Вариант $i" })
-                    .setReplyToMessageId(message.messageId)
-
-                    .setAnonymous(false)
-            )
+                    .apply {
+                        chatId = update.chatIdString()
+                        question = "Что выбираете?"
+                        setOptions((1..scenarioMove.ways.size).map { i -> "Вариант $i" })
+                        replyToMessageId = message.messageId
+                    })
         }
     }
 
@@ -135,11 +132,11 @@ class ScenarioSessionManagementServiceImpl(
             it.send(update, moveDescription)
             it.execute(
                 SendPoll()
-                    .setChatId(update.chatId())
-                    .setQuestion("Что выбираете?")
-                    .setOptions(options)
-                    .setAnonymous(false)
-            )
+                    .apply {
+                        chatId = update.chatIdString()
+                        question = "Что выбираете?"
+                        setOptions(options)
+                    })
         }
     }
 
@@ -150,12 +147,11 @@ class ScenarioSessionManagementServiceImpl(
         val options = scenarioMove.ways.map(ScenarioWay::description)
         return {
             it.execute(
-                SendPoll()
-                    .setChatId(update.chatId())
-                    .setQuestion(scenarioMove.description)
-                    .setOptions(options)
-                    .setAnonymous(false)
-            )
+                SendPoll().apply {
+                    chatId = update.chatIdString()
+                    question = scenarioMove.description
+                    setOptions(options)
+                })
         }
     }
 }

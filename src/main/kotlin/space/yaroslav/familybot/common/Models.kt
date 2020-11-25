@@ -18,7 +18,7 @@ data class User(val id: Long, val chat: Chat, val name: String?, val nickname: S
     }
 }
 
-data class Chat(val id: Long, val name: String?)
+data class Chat(val id: Long, val name: String?, val idString: String = id.toString())
 
 data class Pidor(val user: User, val date: Instant)
 

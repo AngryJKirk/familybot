@@ -36,9 +36,9 @@ class SettingsExecutor(
         }
     }
 
-    private fun customization(chat: Chat): SendMessage.() -> SendMessage {
+    private fun customization(chat: Chat): SendMessage.() -> Unit {
         return {
-            setReplyMarkup(FunctionId.toKeyBoard { configureRepository.isEnabled(it, chat) })
+            replyMarkup = FunctionId.toKeyBoard { configureRepository.isEnabled(it, chat) }
         }
     }
 }

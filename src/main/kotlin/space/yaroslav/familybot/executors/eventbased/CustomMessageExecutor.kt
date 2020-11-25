@@ -23,7 +23,7 @@ class CustomMessageExecutor(private val repository: CustomMessageDeliveryReposit
                     .forEach { message ->
                         GlobalScope.launch {
                             delay(2000)
-                            sender.execute(SendMessage(message.chat.id, message.message))
+                            sender.execute(SendMessage(message.chat.idString, message.message))
                             repository.markAsDelivered(message)
                         }
                     }

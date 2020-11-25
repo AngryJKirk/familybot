@@ -37,6 +37,10 @@ fun Update.chatId(): Long {
     }
 }
 
+fun Update.chatIdString(): String {
+    return this.chatId().toString()
+}
+
 fun Update.toUser(): User {
     val user = this.from()
     val formatedName = (user.firstName?.let { "$it " } ?: "") + (user.lastName ?: "")

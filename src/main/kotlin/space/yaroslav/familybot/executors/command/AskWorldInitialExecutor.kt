@@ -83,7 +83,11 @@ class AskWorldInitialExecutor(
             getChatsToSendQuestion(chat, isScam)
                 .forEach {
                     runCatching {
-                        val result = sender.execute(SendMessage(it.id, formatMessage(chat, question)).enableHtml(true))
+                        val result = sender.execute(
+                            SendMessage(
+                                it.idString,
+                                formatMessage(chat, question)
+                            ).also { it.enableHtml(true) })
                         markQuestionDelivered(question, questionId, result, it)
                     }.onFailure { e -> markChatInactive(it, questionId, e) }
                 }
@@ -107,7 +111,7 @@ class AskWorldInitialExecutor(
     ) {
         val questionWithIds = question.copy(
             id = questionId.await(),
-            messageId = result.messageId + chat.id
+            messageId = result.messageId + chat.id.toLong()
         )
         askWorldRepository.addQuestionDeliver(questionWithIds, chat)
     }

@@ -5,7 +5,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
-import org.telegram.telegrambots.ApiContextInitializer
 import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.images.builder.ImageFromDockerfile
@@ -24,7 +23,6 @@ abstract class FamilybotApplicationTest {
 
     companion object {
         init {
-            ApiContextInitializer.init()
             val postgresContainer: KGenericContainer = KGenericContainer(
                 ImageFromDockerfile()
                     .withFileFromPath("Dockerfile", Paths.get("src/main/resources/database/Dockerfile"))

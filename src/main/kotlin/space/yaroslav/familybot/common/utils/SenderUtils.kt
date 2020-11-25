@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker
 import org.telegram.telegrambots.meta.api.methods.stickers.GetStickerSet
+import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -21,11 +22,12 @@ suspend fun AbsSender.send(
     replyMessageId: Int? = null,
     enableHtml: Boolean = false,
     replyToUpdate: Boolean = false,
-    customization: SendMessage.() -> SendMessage = { this },
+    customization: SendMessage.() -> Unit = { },
     shouldTypeBeforeSend: Boolean = false,
     typeDelay: Pair<Long, Long> = 1000L to 2000L
 ): Message {
-    val messageObj = SendMessage(update.chatId(), text).enableHtml(enableHtml)
+    val messageObj = SendMessage(update.chatIdString(), text).apply { enableHtml(enableHtml) }
+
     if (replyMessageId != null) {
         messageObj.replyToMessageId = replyMessageId
     }
@@ -33,11 +35,11 @@ suspend fun AbsSender.send(
         messageObj.replyToMessageId = update.message.messageId
     }
     if (shouldTypeBeforeSend) {
-        this.execute(SendChatAction(update.chatId(), "typing"))
+        this.execute(SendChatAction(update.chatIdString(), "typing"))
         delay(ThreadLocalRandom.current().nextLong(typeDelay.first, typeDelay.second))
     }
 
-    return this.execute(customization(messageObj))
+    return this.execute(messageObj.apply(customization))
 }
 
 suspend fun AbsSender.sendSticker(
@@ -70,9 +72,10 @@ private suspend fun sendStickerInternal(
     val stickerId = GlobalScope.async {
         stickerSelector(sender.execute(GetStickerSet(stickerPack.packName)).stickers)
     }
-    val sendSticker = SendSticker()
-        .setSticker(stickerId.await()?.fileId)
-        .setChatId(update.chatId())
+    val sendSticker = SendSticker().apply {
+        sticker = InputFile(stickerId.await()?.fileId)
+        chatId = update.chatIdString()
+    }
     if (replyToUpdate) {
         sendSticker.replyToMessageId = update.message.messageId
     }

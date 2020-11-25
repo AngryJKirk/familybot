@@ -32,8 +32,11 @@ class ScenarioContinious(
 
             if (!checkRights(it, update)) {
                 it.execute(
-                    AnswerCallbackQuery().setCallbackQueryId(callbackQuery.id)
-                        .setShowAlert(true).setText(dictionary.get(Phrase.ACCESS_DENIED))
+                    AnswerCallbackQuery(callbackQuery.id)
+                        .apply {
+                            showAlert = true
+                            text = dictionary.get(Phrase.ACCESS_DENIED)
+                        }
                 )
             } else {
                 val scenarioToStart = scenarioService.getScenarios()
@@ -46,7 +49,7 @@ class ScenarioContinious(
 
     private fun checkRights(sender: AbsSender, update: Update): Boolean {
         return sender
-            .execute(GetChatAdministrators().setChatId(update.toChat().id))
+            .execute(GetChatAdministrators(update.toChat().idString))
             .find { it.user.id == update.callbackQuery.from.id } != null
     }
 }

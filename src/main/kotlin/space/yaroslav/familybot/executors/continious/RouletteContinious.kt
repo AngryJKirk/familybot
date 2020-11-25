@@ -52,7 +52,7 @@ class RouletteContinious(
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val now = LocalDate.now()
         val user = update.toUser()
-        val chatId = update.message.chatId
+        val chatId = update.message.chatId.toString()
         val commands = commandHistoryRepository.get(
             user,
             LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)

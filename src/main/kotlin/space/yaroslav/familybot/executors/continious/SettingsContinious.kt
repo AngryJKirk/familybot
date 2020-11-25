@@ -40,8 +40,12 @@ class SettingsContinious(
             if (!checkRights(it, update)) {
                 log.info("Access to settings denied")
                 it.execute(
-                    AnswerCallbackQuery().setCallbackQueryId(callbackQuery.id)
-                        .setShowAlert(true).setText(dictionary.get(Phrase.ACCESS_DENIED))
+                    AnswerCallbackQuery(callbackQuery.id)
+                        .apply {
+                            showAlert = true
+                            text = dictionary.get(Phrase.ACCESS_DENIED)
+                        }
+
                 )
             } else {
                 val function = FunctionId
@@ -51,17 +55,19 @@ class SettingsContinious(
                 if (function != null) {
                     configureRepository.switch(function, chat)
                     val isEnabled = { id: FunctionId -> configureRepository.isEnabled(id, chat) }
+                    it.execute(AnswerCallbackQuery(callbackQuery.id))
                     it.execute(
-                        AnswerCallbackQuery()
-                            .setCallbackQueryId(callbackQuery.id)
-                    )
+                        EditMessageReplyMarkup().apply {
+                            chatId = callbackQuery.message.chatId.toString()
+                            messageId = callbackQuery.message.messageId
+                            replyMarkup = FunctionId.toKeyBoard(isEnabled)
+                        })
                     it.execute(
-                        EditMessageReplyMarkup()
-                            .setChatId(callbackQuery.message.chatId)
-                            .setMessageId(callbackQuery.message.messageId)
-                            .setReplyMarkup(FunctionId.toKeyBoard(isEnabled))
+                        SendMessage(
+                            chat.idString,
+                            "${function.desc} -> ${isEnabled.invoke(function).toEmoji()}"
+                        )
                     )
-                    it.execute(SendMessage(chat.id, "${function.desc} -> ${isEnabled.invoke(function).toEmoji()}"))
                 }
             }
         }
@@ -69,7 +75,7 @@ class SettingsContinious(
 
     private fun checkRights(sender: AbsSender, update: Update): Boolean {
         return sender
-            .execute(GetChatAdministrators().setChatId(update.toChat().id))
+            .execute(GetChatAdministrators(update.toChat().idString))
             .find { it.user.id == update.callbackQuery.from.id } != null
     }
 }

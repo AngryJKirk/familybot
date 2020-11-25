@@ -40,7 +40,7 @@ class PatchNoteExecutor(private val botConfig: BotConfig, private val commonRepo
     private fun tryToSendMessage(sender: AbsSender, chat: Chat, update: Update) {
         GlobalScope.launch {
             runCatching {
-                sender.execute(SendMessage(chat.id, update.message.text.removePrefix(patchnotePrefix)))
+                sender.execute(SendMessage(chat.idString, update.message.text.removePrefix(patchnotePrefix)))
             }.onFailure { markChatAsInactive(chat) }
         }
     }

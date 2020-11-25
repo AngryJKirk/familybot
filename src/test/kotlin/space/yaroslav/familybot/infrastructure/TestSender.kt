@@ -25,6 +25,7 @@ import org.telegram.telegrambots.meta.api.objects.stickers.StickerSet
 import org.telegram.telegrambots.meta.bots.AbsSender
 import org.telegram.telegrambots.meta.updateshandlers.SentCallback
 import java.io.Serializable
+import java.util.concurrent.CompletableFuture
 
 class TestSender(val actions: MutableList<Action<*>> = ArrayList()) : AbsSender() {
 
@@ -60,6 +61,70 @@ class TestSender(val actions: MutableList<Action<*>> = ArrayList()) : AbsSender(
         callback: Callback
     ) {
         TODO("not implemented")
+    }
+
+    override fun <T : Serializable?, Method : BotApiMethod<T>?> sendApiMethodAsync(method: Method): CompletableFuture<T> {
+        TODO("Not yet implemented")
+    }
+
+    override fun executeAsync(sendDocument: SendDocument?): CompletableFuture<Message> {
+        TODO("Not yet implemented")
+    }
+
+    override fun executeAsync(sendPhoto: SendPhoto?): CompletableFuture<Message> {
+        TODO("Not yet implemented")
+    }
+
+    override fun executeAsync(sendVideo: SendVideo?): CompletableFuture<Message> {
+        TODO("Not yet implemented")
+    }
+
+    override fun executeAsync(sendVideoNote: SendVideoNote?): CompletableFuture<Message> {
+        TODO("Not yet implemented")
+    }
+
+    override fun executeAsync(sendSticker: SendSticker?): CompletableFuture<Message> {
+        TODO("Not yet implemented")
+    }
+
+    override fun executeAsync(sendAudio: SendAudio?): CompletableFuture<Message> {
+        TODO("Not yet implemented")
+    }
+
+    override fun executeAsync(sendVoice: SendVoice?): CompletableFuture<Message> {
+        TODO("Not yet implemented")
+    }
+
+    override fun executeAsync(sendMediaGroup: SendMediaGroup?): CompletableFuture<MutableList<Message>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun executeAsync(setChatPhoto: SetChatPhoto?): CompletableFuture<Boolean> {
+        TODO("Not yet implemented")
+    }
+
+    override fun executeAsync(addStickerToSet: AddStickerToSet?): CompletableFuture<Boolean> {
+        TODO("Not yet implemented")
+    }
+
+    override fun executeAsync(setStickerSetThumb: SetStickerSetThumb?): CompletableFuture<Boolean> {
+        TODO("Not yet implemented")
+    }
+
+    override fun executeAsync(createNewStickerSet: CreateNewStickerSet?): CompletableFuture<Boolean> {
+        TODO("Not yet implemented")
+    }
+
+    override fun executeAsync(uploadStickerFile: UploadStickerFile?): CompletableFuture<File> {
+        TODO("Not yet implemented")
+    }
+
+    override fun executeAsync(editMessageMedia: EditMessageMedia?): CompletableFuture<Serializable> {
+        TODO("Not yet implemented")
+    }
+
+    override fun executeAsync(sendAnimation: SendAnimation?): CompletableFuture<Message> {
+        TODO("Not yet implemented")
     }
 
     override fun execute(sendDocument: SendDocument?): Message {

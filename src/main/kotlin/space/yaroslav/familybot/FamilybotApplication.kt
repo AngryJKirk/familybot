@@ -6,9 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.scheduling.annotation.EnableScheduling
-import org.telegram.telegrambots.ApiContextInitializer
 import org.telegram.telegrambots.bots.DefaultBotOptions
 import org.telegram.telegrambots.meta.TelegramBotsApi
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
 
@@ -24,14 +24,13 @@ class FamilybotApplication {
 
     @Bean
     fun telegramBot(bot: FamilyBot): TelegramBotsApi {
-        val telegramBotsApi = TelegramBotsApi()
+        val telegramBotsApi = TelegramBotsApi(DefaultBotSession::class.java)
         telegramBotsApi.registerBot(bot)
         return telegramBotsApi
     }
 }
 
 fun main() {
-    ApiContextInitializer.init()
     val app = SpringApplication(FamilybotApplication::class.java)
     app.webApplicationType = WebApplicationType.NONE
     app.run()

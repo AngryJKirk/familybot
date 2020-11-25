@@ -23,13 +23,13 @@ class QuoteByTagExecutor(private val quoteRepository: QuoteRepository, config: B
         return {
             val rows = quoteRepository
                 .getTags()
-                .map { tag -> InlineKeyboardButton().setText(tag.capitalize()).setCallbackData(tag) }
+                .map { tag -> InlineKeyboardButton(tag.capitalize()).apply { callbackData = tag } }
                 .chunked(3)
             it.send(update, QUOTE_MESSAGE, replyToUpdate = true, customization = customization(rows))
         }
     }
 
-    private fun customization(rows: List<List<InlineKeyboardButton>>): SendMessage.() -> SendMessage {
-        return { setReplyMarkup(InlineKeyboardMarkup().setKeyboard(rows)) }
+    private fun customization(rows: List<List<InlineKeyboardButton>>): SendMessage.() -> Unit {
+        return { replyMarkup = InlineKeyboardMarkup(rows) }
     }
 }
