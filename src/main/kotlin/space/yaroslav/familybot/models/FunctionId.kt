@@ -14,19 +14,21 @@ enum class FunctionId(val id: Int, val desc: String) {
 
     companion object {
         fun toKeyBoard(isEnabled: (FunctionId) -> Boolean): InlineKeyboardMarkup {
-            return InlineKeyboardMarkup((
-                values()
-                    .toList()
-                    .map { it to isEnabled(it) }
-                    .map { (function, value) -> function.desc to value }
-                    .map { (description, value) -> description to value.toEmoji() }
-                    .map { (description, value) ->
-                        InlineKeyboardButton("$description $value").apply {
-                            callbackData = description
+            return InlineKeyboardMarkup(
+                (
+                    values()
+                        .toList()
+                        .map { it to isEnabled(it) }
+                        .map { (function, value) -> function.desc to value }
+                        .map { (description, value) -> description to value.toEmoji() }
+                        .map { (description, value) ->
+                            InlineKeyboardButton("$description $value").apply {
+                                callbackData = description
+                            }
                         }
-                    }
-                    .chunked(2)
-                ))
+                        .chunked(2)
+                    )
+            )
         }
     }
 }

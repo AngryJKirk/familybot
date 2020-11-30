@@ -61,7 +61,8 @@ class SettingsContinious(
                             chatId = callbackQuery.message.chatId.toString()
                             messageId = callbackQuery.message.messageId
                             replyMarkup = FunctionId.toKeyBoard(isEnabled)
-                        })
+                        }
+                    )
                     it.execute(
                         SendMessage(
                             chat.idString,

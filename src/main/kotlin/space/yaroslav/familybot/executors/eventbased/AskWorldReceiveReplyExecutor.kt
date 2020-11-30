@@ -148,7 +148,8 @@ class AskWorldReceiveReplyExecutor(
                         MessageContentType.CONTACT -> it.execute(
                             SendContact(chatIdToReply, message.contact.phoneNumber, message.contact.firstName).apply {
                                 lastName = message.contact.lastName
-                            })
+                            }
+                        )
 
                         MessageContentType.VIDEO -> it.execute(
                             SendVideo(

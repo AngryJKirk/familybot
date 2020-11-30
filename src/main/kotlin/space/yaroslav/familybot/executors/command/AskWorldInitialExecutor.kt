@@ -87,7 +87,8 @@ class AskWorldInitialExecutor(
                             SendMessage(
                                 it.idString,
                                 formatMessage(chat, question)
-                            ).also { it.enableHtml(true) })
+                            ).also { it.enableHtml(true) }
+                        )
                         markQuestionDelivered(question, questionId, result, it)
                     }.onFailure { e -> markChatInactive(it, questionId, e) }
                 }

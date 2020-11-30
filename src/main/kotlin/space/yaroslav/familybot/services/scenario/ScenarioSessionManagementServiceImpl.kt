@@ -118,7 +118,8 @@ class ScenarioSessionManagementServiceImpl(
                         question = "Что выбираете?"
                         setOptions((1..scenarioMove.ways.size).map { i -> "Вариант $i" })
                         replyToMessageId = message.messageId
-                    })
+                    }
+            )
         }
     }
 
@@ -136,7 +137,8 @@ class ScenarioSessionManagementServiceImpl(
                         chatId = update.chatIdString()
                         question = "Что выбираете?"
                         setOptions(options)
-                    })
+                    }
+            )
         }
     }
 
@@ -151,7 +153,8 @@ class ScenarioSessionManagementServiceImpl(
                     chatId = update.chatIdString()
                     question = scenarioMove.description
                     setOptions(options)
-                })
+                }
+            )
         }
     }
 }
