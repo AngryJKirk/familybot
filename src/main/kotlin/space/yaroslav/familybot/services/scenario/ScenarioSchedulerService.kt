@@ -24,7 +24,7 @@ class ScenarioSchedulerService(
 
     private fun moveState(chat: Chat) {
         val currentMoveResults = scenarioGameplayService.getCurrentMoveResults(chat)
-        val chosenWay = currentMoveResults.results.maxBy { it.value.size } ?: return
+        val chosenWay = currentMoveResults.results.maxByOrNull { it.value.size } ?: return
         scenarioGameplayService.nextMove(chat, chosenWay.key)
     }
 }
