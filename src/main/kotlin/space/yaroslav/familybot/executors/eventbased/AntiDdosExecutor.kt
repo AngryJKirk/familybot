@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package space.yaroslav.familybot.executors.eventbased
 
 import org.springframework.stereotype.Component
@@ -61,14 +63,6 @@ class AntiDdosExecutor(
             message.replyToMessage.from
         } else {
             user
-        }
-    }
-
-    private fun getText(message: Message): String? {
-        return if (message.from.userName == config.botname) {
-            message.replyToMessage?.text
-        } else {
-            message.text
         }
     }
 

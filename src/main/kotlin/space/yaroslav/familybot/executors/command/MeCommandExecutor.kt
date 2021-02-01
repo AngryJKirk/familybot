@@ -2,6 +2,7 @@ package space.yaroslav.familybot.executors.command
 
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
+import com.google.common.cache.LoadingCache
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -38,7 +39,7 @@ class MeCommandExecutor(
         const val TEN_YEARS_AGO: Long = 60 * 60 * 24 * 3650
     }
 
-    val cache = CacheBuilder
+    val cache: LoadingCache<Pair<User, Chat>?, String> = CacheBuilder
         .newBuilder()
         .expireAfterWrite(1, TimeUnit.HOURS)
         .build(

@@ -3,7 +3,6 @@ package space.yaroslav.familybot.repos
 import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
-import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.Pidor
@@ -94,7 +93,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
             return true
         }
         val exist =
-            template.query("SELECT * FROM users WHERE id = ?", RowMapper { rs, _ -> rs.toUser() }, user.id).isNotEmpty()
+            template.query("SELECT * FROM users WHERE id = ?", { rs, _ -> rs.toUser() }, user.id).isNotEmpty()
         if (exist) {
             userCache.add(user)
         }
@@ -106,7 +105,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
             return true
         }
         val exist =
-            template.query("SELECT * FROM chats WHERE id = ?", RowMapper { rs, _ -> rs.toChat() }, chat.id).isNotEmpty()
+            template.query("SELECT * FROM chats WHERE id = ?", { rs, _ -> rs.toChat() }, chat.id).isNotEmpty()
         if (exist) {
             chatCache.add(chat)
         }

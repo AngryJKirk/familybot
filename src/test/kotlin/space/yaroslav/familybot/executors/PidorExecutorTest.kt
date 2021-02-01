@@ -52,7 +52,7 @@ class PidorExecutorTest : CommandExecutorTest() {
         )
 
         val lastPidorAfterFirstInvoke =
-            pidorsAfterFirstInvoke.maxBy { it.date } ?: throw AssertionError("Should be one last pidor")
+            pidorsAfterFirstInvoke.maxByOrNull { it.date } ?: throw AssertionError("Should be one last pidor")
 
         val action = firstInvokeActions.last()
         Assert.assertEquals(

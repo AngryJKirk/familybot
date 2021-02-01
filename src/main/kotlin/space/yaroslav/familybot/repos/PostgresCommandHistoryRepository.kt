@@ -2,7 +2,6 @@ package space.yaroslav.familybot.repos
 
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
-import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.CommandByUser
@@ -23,7 +22,7 @@ class PostgresCommandHistoryRepository(val template: JdbcTemplate) : CommandHist
         val fromDate = from ?: Instant.now().minus(defaultAmountOfDaysToSubtract, ChronoUnit.DAYS)
         return template.query(
             "SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ? and history.command_date >= ?",
-            RowMapper { rs, _ -> rs.toCommandByUser(null) },
+            { rs, _ -> rs.toCommandByUser(null) },
             chat.id,
             Timestamp.from(fromDate)
         )
@@ -33,7 +32,7 @@ class PostgresCommandHistoryRepository(val template: JdbcTemplate) : CommandHist
         return template.query(
             "SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ? " +
                 "order by command_date limit 1",
-            RowMapper { rs, _ -> rs.toCommandByUser(null) },
+            { rs, _ -> rs.toCommandByUser(null) },
             chat.id
         ).firstOrNull()
     }

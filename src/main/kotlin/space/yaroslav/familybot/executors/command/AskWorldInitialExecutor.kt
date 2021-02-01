@@ -112,7 +112,7 @@ class AskWorldInitialExecutor(
     ) {
         val questionWithIds = question.copy(
             id = questionId.await(),
-            messageId = result.messageId + chat.id.toLong()
+            messageId = result.messageId + chat.id
         )
         askWorldRepository.addQuestionDeliver(questionWithIds, chat)
     }

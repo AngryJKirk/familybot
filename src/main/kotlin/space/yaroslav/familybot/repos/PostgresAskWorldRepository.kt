@@ -1,7 +1,6 @@
 package space.yaroslav.familybot.repos
 
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.AskWorldQuestion
 import space.yaroslav.familybot.common.AskWorldReply
@@ -32,7 +31,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
                             INNER JOIN users u on ask_world_questions.user_id = u.id
                             where ask_world_questions.chat_id = ? and ask_world_questions.user_id = ?
                             and ask_world_questions.date >= ?""",
-            RowMapper { rs, _ -> rs.toAskWorldQuestion() },
+            { rs, _ -> rs.toAskWorldQuestion() },
             chat.id,
             user.id,
             Timestamp.from(date)
@@ -55,7 +54,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
                             INNER JOIN users u on ask_world_questions.user_id = u.id
                             where ask_world_questions.user_id = ?
                             and ask_world_questions.date >= ?""",
-            RowMapper { rs, _ -> rs.toAskWorldQuestion() },
+            { rs, _ -> rs.toAskWorldQuestion() },
             user.id,
             Timestamp.from(date)
         )
@@ -76,7 +75,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
                             INNER JOIN chats c2 on ask_world_questions.chat_id = c2.id
                             INNER JOIN users u on ask_world_questions.user_id = u.id
                             where ask_world_questions.chat_id = ? and date >= ?""",
-            RowMapper { rs, _ -> rs.toAskWorldQuestion() },
+            { rs, _ -> rs.toAskWorldQuestion() },
             chat.id,
             Timestamp.from(date)
         )
@@ -97,7 +96,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
                             from ask_world_replies
                             INNER JOIN chats c2 on ask_world_replies.chat_id = c2.id
                             INNER JOIN users u on ask_world_replies.user_id = u.id where question_id = ?""",
-            RowMapper { rs, _ -> rs.toAskWorldReply() },
+            { rs, _ -> rs.toAskWorldReply() },
             askWorldQuestion.id
         )
     }
@@ -119,7 +118,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
                             where ask_world_questions.id =
             (SELECT ask_world_questions_delivery.id
             from ask_world_questions_delivery where message_id = ? and chat_id = ?)""",
-            RowMapper { rs, _ -> rs.toAskWorldQuestion() },
+            { rs, _ -> rs.toAskWorldQuestion() },
             messageId,
             chat.id
         ).first()
@@ -140,7 +139,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
                             INNER JOIN chats c2 on ask_world_questions.chat_id = c2.id
                             INNER JOIN users u on ask_world_questions.user_id = u.id
                 where date >= ? and question = ?""",
-            RowMapper { rs, _ -> rs.toAskWorldQuestion() },
+            { rs, _ -> rs.toAskWorldQuestion() },
             Timestamp.from(date),
             message
         )
@@ -180,7 +179,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
     override fun addQuestion(question: AskWorldQuestion): Long {
         return template.queryForObject(
             "INSERT into ask_world_questions (question, chat_id, user_id, date) VALUES (?, ?, ?, ?) returning id",
-            RowMapper { rs, _ -> rs.getLong("id") },
+            { rs, _ -> rs.getLong("id") },
             question.message,
             question.chat.id,
             question.user.id,
@@ -203,7 +202,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
                             INNER JOIN chats c2 on ask_world_questions.chat_id = c2.id
                             INNER JOIN users u on ask_world_questions.user_id = u.id
                 where date >= ?""",
-            RowMapper { rs, _ -> rs.toAskWorldQuestion() },
+            { rs, _ -> rs.toAskWorldQuestion() },
             Timestamp.from(date)
         )
     }
@@ -211,7 +210,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
     override fun addReply(reply: AskWorldReply): Long {
         return template.queryForObject(
             "INSERT into ask_world_replies (question_id, reply, chat_id, user_id, date) VALUES (?, ?, ?, ?, ?) returning id",
-            RowMapper { rs, _ -> rs.getLong("id") },
+            { rs, _ -> rs.getLong("id") },
             reply.questionId,
             reply.message,
             reply.chat.id,

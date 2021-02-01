@@ -5,7 +5,6 @@ import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.repos.ifaces.QuoteRepository
 import java.util.concurrent.TimeUnit
@@ -25,7 +24,7 @@ class PostgresQuoteRepository(val template: JdbcTemplate) : QuoteRepository {
             template.query(
                 "SELECT * FROM quotes INNER JOIN tags2quotes t2q ON quotes.id = t2q.quote_id " +
                     "WHERE t2q.tag_id = (SELECT id from tags WHERE LOWER(tag) = lower(?))",
-                RowMapper { rs, _ -> rs.getString("quote") },
+                { rs, _ -> rs.getString("quote") },
                 tag
             )
         }

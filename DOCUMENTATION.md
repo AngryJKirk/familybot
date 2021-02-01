@@ -5,7 +5,7 @@
 The main entry point of all bot is a so-called `Router`.
 
 It accepts `Update`, which is being proceeded by some executor if there is one
-that can be applied.
+can be applied.
 #### 1.2 Diagram of Router logic
 The diagram below shows the Router's behaviour.
 ![diagram](https://i.ibb.co/VtqzFW6/excalidraw-2020330164515.png)
@@ -39,7 +39,7 @@ There are several priority levels:
 
 Frankly, this can be considered as an architectural mistake: it would be better
 to use just numbers. After all, from the beginning of the project there were only 3 levels,
-and later others were added. It means that it is possible to add some other levels in the future and it would be odd at least to have a level with a name like `VERY_VERY_LOW`.
+and later others were added. It means that it is possible to add some other levels in the future, and it would be odd at least to have a level with a name like `VERY_VERY_LOW`.
 
 The last level in the list above (called `RANDOM`) doesn't take part in choosing executors. 
 Executors with levels like that are usually chosen by random (what a surprise!). 
@@ -73,7 +73,7 @@ which should provide an enum constant containing the command that belongs to the
 Executor, which is created to handle replies which were addressed to other executors. 
 As a rule, there is always another executor which is related to `ContinuousExecutor`.
 
-It has an implemented method as well and they are similar to command executor, the difference is `getDialogMessage()`
+It has an implemented method as well, and they are similar to command executor, the difference is `getDialogMessage()`
 method, which determines the phrase that has been written by the bot. 
 
 For example, there can be a dialog like that:
@@ -140,8 +140,7 @@ Command | Interfaces | FunctionId
 --- | --- | ---
 `/me` | Command| -
 
-It counts all the stats about a user, such as the number of messages in the current chat 
-or the number of commands which were given to the bot from the user.
+It counts all the stats about a user, such as the number of messages in the current chat, or the number of commands which were given to the bot from the user.
 
 ##### 1.4.1.2 Pidor executor
 

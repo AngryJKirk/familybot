@@ -12,7 +12,6 @@ abstract class TimeLimitedState(duration: Duration) : State {
             true
         } else {
             additionalIsOverChecks()
-                .asSequence()
                 .any { it() }
         }
     }
