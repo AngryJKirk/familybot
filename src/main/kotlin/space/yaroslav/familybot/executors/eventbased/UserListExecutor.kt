@@ -5,14 +5,16 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.send
+import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.Executor
+import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
-class UserListExecutor(private val dictionary: Dictionary, private val botConfig: BotConfig) : Executor {
+class UserListExecutor(private val dictionary: Dictionary, private val botConfig: BotConfig) : Executor, Configurable {
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val message = update.message
         val phrase = when {
@@ -31,4 +33,6 @@ class UserListExecutor(private val dictionary: Dictionary, private val botConfig
     private fun isUserEntered(message: Message) = message.newChatMembers?.isNotEmpty() ?: false
     private fun isSucharaEntered(message: Message) =
         message.newChatMembers.any { it.isBot && it.userName == botConfig.botname }
+
+    override fun getFunctionId() = FunctionId.CHATTING
 }
