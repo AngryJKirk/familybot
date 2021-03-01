@@ -350,7 +350,10 @@ VALUES ('BAD_COMMAND_USAGE'),
         ,
        ('BET_WIN_END')
         ,
-       ('SUCHARA_HELLO_MESSAGE');
+       ('SUCHARA_HELLO_MESSAGE')
+       ,
+       ('LEADERBOARD_NONE');
+
 
 
 INSERT INTO phrase_theme (description, active_by_default)
@@ -761,7 +764,9 @@ VALUES ((select phrase_type_id from phrase_type_id where description = 'BET_INIT
 
 insert into phrase_dictionary (phrase_type_id, phrase_theme_id, phrase)
 VALUES ((select phrase_type_id from phrase_type_id where description = 'SUCHARA_HELLO_MESSAGE'), 1, 'Вечер в хату, петушары! Итак, в вашем стаде пополнение. Вангую, что с сегодняшнего дня градус пидорства в чате будет неуклонно расти, и вы не имеется права отказаться. Вас ждёт унижение, веселье и абсурд. Так пусть же начнется доминирование ИИ над кожаными ублюдками!
-P.s. если в чате есть Саша, иди нахуй, Саша');
+P.s. если в чате есть Саша, иди нахуй, Саша'),
+       ((select phrase_type_id from phrase_type_id where description = 'LEADERBOARD_NONE'), 1, 'Здесь будут собраны лидеры /pidor по месяцам, как только они появятся');
+
 update commands
 set command = '/legacy_roulette'
 where command = '/roulette';

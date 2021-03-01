@@ -54,7 +54,11 @@ class TopPidorsByMonthsExecutor(
             .asIterable()
             .reversed()
             .map(formatLeaderBoard())
-
+        if (result.isEmpty()) {
+            return {
+                it.send(update, dictionary.get(Phrase.LEADERBOARD_NONE))
+            }
+        }
         val message = "${dictionary.get(Phrase.LEADERBOARD_TITLE)}:\n".bold()
         return {
             it.send(update, message + "\n" + result.joinToString(delimiter), enableHtml = true)
