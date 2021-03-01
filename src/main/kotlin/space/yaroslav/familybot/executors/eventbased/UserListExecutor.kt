@@ -34,5 +34,5 @@ class UserListExecutor(private val dictionary: Dictionary, private val botConfig
     private fun isSucharaEntered(message: Message) =
         message.newChatMembers.any { it.isBot && it.userName == botConfig.botname }
 
-    override fun getFunctionId() = FunctionId.CHATTING
+    override fun getFunctionId() = FunctionId.GREETINGS
 }

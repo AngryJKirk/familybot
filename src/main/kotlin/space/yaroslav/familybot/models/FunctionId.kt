@@ -10,7 +10,9 @@ enum class FunctionId(val id: Int, val desc: String) {
     PIDOR(3, "Пидор-детектор"),
     RAGE(4, "Рейдж-мод"),
     ANTIDDOS(5, "Антиспам команд"),
-    ASK_WORLD(6, "Вопросы миру");
+    ASK_WORLD(6, "Вопросы миру"),
+    GREETINGS(7, "Приветствия и прощания"),
+    TALK_BACK(8, "Реакция на обращения и реплаи");
 
     companion object {
         fun toKeyBoard(isEnabled: (FunctionId) -> Boolean): InlineKeyboardMarkup {

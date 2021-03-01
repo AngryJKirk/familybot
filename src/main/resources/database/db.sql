@@ -124,15 +124,13 @@ CREATE TABLE IF NOT EXISTS functions
 
 INSERT INTO functions (function_id, description)
 VALUES (1, 'Хуификация'),
-       (2, 'Общение')
-        ,
-       (3, 'Пидор дня')
-        ,
-       (4, 'Рейдж')
-        ,
-       (5, 'АнтиДДос')
-        ,
-       (6, 'Вопросы миру');
+       (2, 'Общение'),
+       (3, 'Пидор дня'),
+       (4, 'Рейдж'),
+       (5, 'АнтиДДос'),
+       (6, 'Вопросы миру'),
+       (7, 'Приветствия и прощания'),
+       (8, 'Реакция на обращения и реплаи');
 
 CREATE TABLE IF NOT EXISTS function_settings
 (

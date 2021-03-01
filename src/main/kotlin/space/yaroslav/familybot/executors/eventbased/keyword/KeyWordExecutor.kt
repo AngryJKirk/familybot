@@ -20,7 +20,7 @@ class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Config
 
     override fun priority(update: Update) = Priority.LOW
 
-    override fun getFunctionId() = FunctionId.CHATTING
+    override fun getFunctionId() = FunctionId.TALK_BACK
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         return actionFastAccess.remove(update.message.messageId)?.invoke(update) ?: {}

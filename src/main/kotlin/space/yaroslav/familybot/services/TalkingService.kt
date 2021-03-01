@@ -10,7 +10,6 @@ import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
 class TalkingService(private val chatLogRepository: ChatLogRepository) {
 
     fun getReplyToUser(update: Update): String {
-
         return update.toUser()
             .let(this::getMessageList)
             .let(this::cleanMessages)
