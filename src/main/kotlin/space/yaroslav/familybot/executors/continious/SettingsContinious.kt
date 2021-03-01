@@ -66,7 +66,7 @@ class SettingsContinious(
                     it.execute(
                         SendMessage(
                             chat.idString,
-                            "${function.desc} -> ${isEnabled.invoke(function).toEmoji()}"
+                            "${function.desc} → ${isEnabled.invoke(function).toEmoji()}"
                         )
                     )
                 }
