@@ -26,8 +26,6 @@ import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
 import space.yaroslav.familybot.repos.ifaces.FunctionsConfigureRepository
 import space.yaroslav.familybot.services.dictionary.Dictionary
-import space.yaroslav.familybot.services.state.FunctionalToleranceState
-import space.yaroslav.familybot.services.state.StateService
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 
@@ -40,8 +38,7 @@ class Router(
     private val configureRepository: FunctionsConfigureRepository,
     private val rawUpdateLogger: RawUpdateLogger,
     private val botConfig: BotConfig,
-    private val dictionary: Dictionary,
-    private val stateService: StateService
+    private val dictionary: Dictionary
 ) {
 
     private val logger = getLogger()
@@ -122,14 +119,8 @@ class Router(
 
         if (isExecutorDisabled) {
             logger.info("Executor ${executor::class.simpleName} is disabled")
-            return true
         }
-
-        return stateService
-            .getFunctionToleranceStatesForChat(chat.id)
-            .flatMap(FunctionalToleranceState::disabledFunctionIds)
-            .contains(functionId)
-            .also { isDisabled -> if (isDisabled) logger.info("Executor ${executor::class.simpleName} is disabled due to state service") }
+        return isExecutorDisabled
     }
 
     private fun logChatCommand(executor: Executor, update: Update) {

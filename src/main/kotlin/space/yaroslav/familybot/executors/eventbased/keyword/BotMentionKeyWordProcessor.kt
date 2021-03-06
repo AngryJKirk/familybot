@@ -4,16 +4,13 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.Chat
-import space.yaroslav.familybot.common.User
-import space.yaroslav.familybot.common.utils.chatId
+import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
-import space.yaroslav.familybot.common.utils.toUser
+import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.services.TalkingService
-import space.yaroslav.familybot.services.state.FuckOffState
-import space.yaroslav.familybot.services.state.FuckOffToleranceState
-import space.yaroslav.familybot.services.state.StateService
+import space.yaroslav.familybot.services.settings.EasySettingsService
+import space.yaroslav.familybot.services.settings.FuckOffTolerance
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Duration
 
@@ -21,7 +18,7 @@ import java.time.Duration
 class BotMentionKeyWordProcessor(
     private val botConfig: BotConfig,
     private val talkingService: TalkingService,
-    private val stateService: StateService
+    private val easySettingsService: EasySettingsService
 ) : KeyWordProcessor {
 
     private val defaultFuckOffDuration = Duration.ofMinutes(15)
@@ -37,7 +34,7 @@ class BotMentionKeyWordProcessor(
     }
 
     override fun process(update: Update): suspend (AbsSender) -> Unit {
-        if (isFuckOff(update.message)) {
+        if (isFuckOff(update)) {
             return fuckOff(update)
         }
         val reply = talkingService.getReplyToUser(update)
@@ -54,22 +51,33 @@ class BotMentionKeyWordProcessor(
         return message.isReply && message.replyToMessage.from.userName == botConfig.botname
     }
 
-    fun isFuckOff(message: Message): Boolean {
-        val chat = message.chat.toChat()
-        return if (isUserUnderTolerance(message.from.toUser(chat = chat), chat)) {
-            fuckOffPhrases.any { it.matches(message.text) }
+    fun isFuckOff(update: Update): Boolean {
+        return if (!isUserUnderTolerance(update)) {
+            fuckOffPhrases.any { it.matches(update.message.text) }
         } else {
             false
         }
     }
 
     fun fuckOff(update: Update): suspend (AbsSender) -> Unit {
-        val chatId = update.chatId()
-        stateService.setStateForChat(chatId, FuckOffState(defaultFuckOffDuration))
-        stateService.setStateForUserAndChat(update.toUser().id, chatId, FuckOffToleranceState(defaultToleranceDuration))
+        setOf(
+            FunctionId.TALK_BACK,
+            FunctionId.GREETINGS,
+            FunctionId.CHATTING,
+            FunctionId.HUIFICATE
+        )
+            .forEach { function ->
+                easySettingsService.put(
+                    function.easySetting,
+                    update.toChat().key(),
+                    false,
+                    defaultFuckOffDuration
+                )
+            }
+        easySettingsService.put(FuckOffTolerance, update.key(), true, defaultToleranceDuration)
         return {}
     }
 
-    private fun isUserUnderTolerance(user: User, chat: Chat) =
-        stateService.getStateForUserAndChat(chat.id, user.id, FuckOffToleranceState::class) == null
+    private fun isUserUnderTolerance(update: Update) =
+        easySettingsService.get(FuckOffTolerance, update.key(), defaultValue = false)
 }

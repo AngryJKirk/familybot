@@ -1,5 +1,5 @@
 create schema if not exists public;
-CREATE EXTENSION pgcrypto;
+CREATE EXTENSION if not exists pgcrypto;
 
 CREATE TABLE IF NOT EXISTS chats
 (

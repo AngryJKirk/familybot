@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.models.Command
+import space.yaroslav.familybot.services.settings.SettingsKey
 import space.yaroslav.familybot.telegram.FamilyBot
 import org.telegram.telegrambots.meta.api.objects.Chat as TelegramChat
 import org.telegram.telegrambots.meta.api.objects.User as TelegramUser
@@ -71,4 +72,16 @@ fun Message.getCommand(botName: () -> String): Command? {
         ?.firstOrNull() ?: return null
 
     return Command.values().find { command -> command.command == textCommand }
+}
+
+fun Update.key(): SettingsKey {
+    return SettingsKey(this.chatId(), this.toUser().id)
+}
+
+fun User.key(): SettingsKey {
+    return SettingsKey(userId = this.id)
+}
+
+fun Chat.key(): SettingsKey {
+    return SettingsKey(chatId = this.id)
 }

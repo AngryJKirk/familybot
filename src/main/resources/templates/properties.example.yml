@@ -3,6 +3,9 @@ settings:
   token: {token}
   developer: {name}
 spring:
+  redis:
+    host: {redis-host}
+    port: {redis-port}
   datasource:
     url: {url}
     driver-class-name: "org.postgresql.Driver"
@@ -15,6 +18,9 @@ settings:
   token: {token}
   developer: {name}
 spring:
+  redis:
+    host: {redis-host}
+    port: {redis-port}
   datasource:
     url: {url}
     driver-class-name: "org.postgresql.Driver"

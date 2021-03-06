@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import space.yaroslav.familybot.executors.eventbased.keyword.BotMentionKeyWordProcessor
 import space.yaroslav.familybot.infrastructure.ChatBuilder
 import space.yaroslav.familybot.infrastructure.MessageBuilder
+import space.yaroslav.familybot.infrastructure.UpdateBuilder
 import space.yaroslav.familybot.infrastructure.UserBuilder
 import space.yaroslav.familybot.infrastructure.randomUUID
 import space.yaroslav.familybot.suits.FamilybotApplicationTest
@@ -36,13 +37,14 @@ class FuckOffTest : FamilybotApplicationTest() {
         ).let { set -> set.plus(set.map { randomUUID() + it + randomUUID() }) }
 
         phraseSet.forEach { phrase ->
-            val message = with(MessageBuilder()) {
-                text { phrase }
-                to { MessageBuilder().from { UserBuilder().toBot(botName) } }
-                from { UserBuilder() }
-                chat { ChatBuilder() }
-            }.build()
-            val canProcess = botMentionKeyWordProcessor.isFuckOff(message)
+            val update = UpdateBuilder()
+                .message {
+                    text { phrase }
+                    to { MessageBuilder().from { UserBuilder().toBot(botName) } }
+                    from { UserBuilder() }
+                    chat { ChatBuilder() }
+                }.build()
+            val canProcess = botMentionKeyWordProcessor.isFuckOff(update)
             Assert.assertTrue("Should be able to process simple message to bot: $phrase", canProcess)
         }
     }
