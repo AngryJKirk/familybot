@@ -66,7 +66,11 @@ class BetContinious(
         }
         val winnableNumbers = diceNumbers.shuffled().subList(0, 3)
         return {
-            it.send(update, "${dictionary.get(Phrase.BET_WINNABLE_NUMBERS_ANNOUNCEMENT)} ${formatWinnableNumbers(winnableNumbers)}", shouldTypeBeforeSend = true)
+            it.send(
+                update,
+                "${dictionary.get(Phrase.BET_WINNABLE_NUMBERS_ANNOUNCEMENT)} ${formatWinnableNumbers(winnableNumbers)}",
+                shouldTypeBeforeSend = true
+            )
             it.send(update, dictionary.get(Phrase.BET_ZATRAVOCHKA), shouldTypeBeforeSend = true)
             val diceMessage = it.execute(SendDice(chatId.toString(), "\uD83C\uDFB2"))
             delay(4000)

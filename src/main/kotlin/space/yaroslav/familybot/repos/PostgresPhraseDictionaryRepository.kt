@@ -48,7 +48,7 @@ class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : Phras
             throw FamilyBot.InternalException("type of phrase should not be null, seems like internal logic error")
         }
         return jdbcTemplate.queryForList(
-            "select phrase from phrase_dictionary where phrase_type_id = ? and phrase_theme_id = ?",
+            "SELECT phrase FROM phrase_dictionary WHERE phrase_type_id = ? AND phrase_theme_id = ?",
             String::class.java,
             type.first.id,
             type.second.id
@@ -57,7 +57,7 @@ class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : Phras
 
     private fun getThemesInternal(): List<PhraseThemeDescription> {
         return jdbcTemplate.query(
-            "select * from phrase_theme;"
+            "SELECT * FROM phrase_theme;"
         ) { rs, _ ->
             PhraseThemeDescription(
                 PhraseTheme.values().first { it.id == rs.getInt("phrase_theme_id") },
@@ -68,7 +68,7 @@ class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : Phras
 
     private fun getThemesSettingsInternal(): List<PhraseThemeSetting> {
         return jdbcTemplate.query(
-            "select * from phrase_theme_settings;"
+            "SELECT * FROM phrase_theme_settings;"
         ) { rs, _ ->
             PhraseThemeSetting(
                 PhraseTheme.values().first { it.id == rs.getInt("phrase_theme_id") },
@@ -87,7 +87,7 @@ class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : Phras
             throw FamilyBot.InternalException("type of phrase should not be null, seems like internal logic error")
         }
         return jdbcTemplate.queryForList(
-            "select phrase from phrase_dictionary where phrase_type_id = ?",
+            "SELECT phrase FROM phrase_dictionary WHERE phrase_type_id = ?",
             String::class.java,
             type.id
         )

@@ -399,7 +399,6 @@ CREATE TABLE IF NOT EXISTS scenario_states
 );
 
 
-
 ------------------- DATA ----------------------
 INSERT INTO commands (id, command)
 VALUES (1, '/stats_month'),

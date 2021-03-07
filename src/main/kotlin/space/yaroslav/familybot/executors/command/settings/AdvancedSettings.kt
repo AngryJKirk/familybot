@@ -54,7 +54,6 @@ class AdvancedSettings(
                     sendErrorMessage(update)
                 }.invoke(it)
             }
-
         }
     }
 

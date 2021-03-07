@@ -1,31 +1,31 @@
 settings:
-  botname: {name}
-  token: {token}
-  developer: {name}
+  botname: { name }
+  token: { token }
+  developer: { name }
 spring:
   redis:
-    host: {redis-host}
-    port: {redis-port}
+    host: { redis-host }
+    port: { redis-port }
   datasource:
-    url: {url}
+    url: { url }
     driver-class-name: "org.postgresql.Driver"
-    password: {password}
-    username: {user}
+    password: { password }
+    username: { user }
 
 ---
 settings:
-  botname: {name}
-  token: {token}
-  developer: {name}
+  botname: { name }
+  token: { token }
+  developer: { name }
 spring:
   redis:
-    host: {redis-host}
-    port: {redis-port}
+    host: { redis-host }
+    port: { redis-port }
   datasource:
-    url: {url}
+    url: { url }
     driver-class-name: "org.postgresql.Driver"
-    password: {password}
-    username: {user}
+    password: { password }
+    username: { user }
   profiles: production
 
 

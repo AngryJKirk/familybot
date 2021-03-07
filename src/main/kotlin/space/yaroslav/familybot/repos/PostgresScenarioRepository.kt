@@ -70,7 +70,7 @@ class PostgresScenarioRepository(
 
     override fun getScenarios(): List<Scenario> {
         return template.query(
-            "select * from scenario inner join scenario_move sm on scenario.entry_move = sm.move_id",
+            "SELECT * FROM scenario INNER JOIN scenario_move sm ON scenario.entry_move = sm.move_id",
             scenarioRowMapper
         )
     }
@@ -78,7 +78,7 @@ class PostgresScenarioRepository(
     override fun findMove(id: UUID): ScenarioMove? {
         return template
             .query(
-                "select * from scenario_move where move_id = :id",
+                "SELECT * FROM scenario_move WHERE move_id = :id",
                 mapOf("id" to id),
                 scenarioMoveRowMapper
             )
@@ -87,16 +87,16 @@ class PostgresScenarioRepository(
 
     override fun getAllCurrentGames(): Map<Chat, ScenarioMove> {
         return template.query(
-            """select *
-        from (
-         select chat_id, scenario_move_id, max(state_date) as date
-         from scenario_states
-         group by chat_id, scenario_move_id) gr
-         join scenario_states ss on gr.chat_id = ss.chat_id
-            and gr.chat_id = ss.chat_id
-            and gr.date = ss.state_date
-         join chats c on ss.chat_id = c.id
-         join scenario_move sm on ss.scenario_move_id = sm.move_id"""
+            """SELECT *
+        FROM (
+         SELECT chat_id, scenario_move_id, MAX(state_date) AS date
+         FROM scenario_states
+         GROUP BY chat_id, scenario_move_id) gr
+         JOIN scenario_states ss ON gr.chat_id = ss.chat_id
+            AND gr.chat_id = ss.chat_id
+            AND gr.date = ss.state_date
+         JOIN chats c ON ss.chat_id = c.id
+         JOIN scenario_move sm ON ss.scenario_move_id = sm.move_id"""
         ) { rs, rowNum ->
             rs.toChat() to (scenarioMoveRowMapper.mapRowNotNull(rs, rowNum))
         }.toMap()
@@ -104,7 +104,7 @@ class PostgresScenarioRepository(
 
     override fun addState(scenarioMove: ScenarioMove, chat: Chat) {
         template.update(
-            "insert into scenario_states (state_date, chat_id, scenario_move_id) values (:date,:chat_id,:move_id)",
+            "INSERT INTO scenario_states (state_date, chat_id, scenario_move_id) VALUES (:date,:chat_id,:move_id)",
             mapOf(
                 "date" to Timestamp.from(Instant.now()),
                 "chat_id" to chat.id,
@@ -116,9 +116,9 @@ class PostgresScenarioRepository(
     override fun getState(chat: Chat): ScenarioState? {
         return template.query(
             """
-            select * from scenario_states ss
-            inner join scenario_move sm on ss.scenario_move_id = sm.move_id
-            where chat_id = :id order by state_date desc limit 1
+            SELECT * FROM scenario_states ss
+            INNER JOIN scenario_move sm ON ss.scenario_move_id = sm.move_id
+            WHERE chat_id = :id ORDER BY state_date DESC LIMIT 1
         """,
             mapOf("id" to chat.id),
             scenarioStateRowMapper
@@ -127,7 +127,7 @@ class PostgresScenarioRepository(
 
     override fun addChoice(chat: Chat, user: User, scenarioMove: ScenarioMove, chosenWay: ScenarioWay) {
         template.update(
-            "insert into scenario_choices (user_id, chat_id, scenario_way_id) values (:user_id, :chat_id, :scenario_way_id)",
+            "INSERT INTO scenario_choices (user_id, chat_id, scenario_way_id) VALUES (:user_id, :chat_id, :scenario_way_id)",
             mapOf(
                 "user_id" to user.id,
                 "chat_id" to chat.id,
@@ -139,11 +139,11 @@ class PostgresScenarioRepository(
     override fun removeChoice(chat: Chat, user: User, scenarioMove: ScenarioMove) {
         template.update(
             """
-           delete
-from scenario_choices
-where chat_id = :chat_id
-  and user_id = :user_id
-  and scenario_way_id in (:ids)
+           DELETE
+FROM scenario_choices
+WHERE chat_id = :chat_id
+  AND user_id = :user_id
+  AND scenario_way_id IN (:ids)
         """,
             mapOf(
                 "chat_id" to chat.id,
@@ -156,11 +156,11 @@ where chat_id = :chat_id
     override fun getResultsForMove(chat: Chat, scenarioState: ScenarioState): Map<ScenarioWay, List<User>> {
         return template.query(
             """
-    select * from scenario_choices sc
-    inner join users u on sc.user_id = u.id
-    inner join scenario_way sw on sw.way_id = sc.scenario_way_id
-    where chat_id = :chat_id and scenario_way_id in (:ids) 
-    and choice_date > :state_date
+    SELECT * FROM scenario_choices sc
+    INNER JOIN users u ON sc.user_id = u.id
+    INNER JOIN scenario_way sw ON sw.way_id = sc.scenario_way_id
+    WHERE chat_id = :chat_id AND scenario_way_id IN (:ids) 
+    AND choice_date > :state_date
 """,
             mapOf(
                 "chat_id" to chat.id,
@@ -173,7 +173,7 @@ where chat_id = :chat_id
 
     override fun savePoll(scenarioPoll: ScenarioPoll) {
         template.update(
-            "insert into scenario_poll (poll_id, chat_id, create_date, scenario_move_id) values (:poll_id,:chat_id,:create_date,:move_id)",
+            "INSERT INTO scenario_poll (poll_id, chat_id, create_date, scenario_move_id) VALUES (:poll_id,:chat_id,:create_date,:move_id)",
             mapOf(
                 "poll_id" to scenarioPoll.pollId,
                 "chat_id" to scenarioPoll.chat.id,
@@ -185,10 +185,10 @@ where chat_id = :chat_id
 
     override fun getDataByPollId(id: String): ScenarioPoll? {
         return template.query(
-            """select * from scenario_poll 
-            inner join chats c on scenario_poll.chat_id = c.id
-            inner join scenario_move sm on scenario_poll.scenario_move_id = sm.move_id
-            where poll_id = :poll_id
+            """SELECT * FROM scenario_poll 
+            INNER JOIN chats c ON scenario_poll.chat_id = c.id
+            INNER JOIN scenario_move sm ON scenario_poll.scenario_move_id = sm.move_id
+            WHERE poll_id = :poll_id
         """,
             mapOf(
                 "poll_id" to id
@@ -199,10 +199,10 @@ where chat_id = :chat_id
 
     override fun findScenarioPoll(chat: Chat, scenarioMove: ScenarioMove, afterDate: Instant): ScenarioPoll? {
         return template.query(
-            """select * from scenario_poll sp
-            inner join chats c on sp.chat_id = c.id
-            inner join scenario_move sm on sp.scenario_move_id = sm.move_id
-            where sp.chat_id = :chat_id and scenario_move_id = :move_id and create_date >= :date 
+            """SELECT * FROM scenario_poll sp
+            INNER JOIN chats c ON sp.chat_id = c.id
+            INNER JOIN scenario_move sm ON sp.scenario_move_id = sm.move_id
+            WHERE sp.chat_id = :chat_id AND scenario_move_id = :move_id AND create_date >= :date 
         """,
             mapOf(
                 "chat_id" to chat.id,
@@ -217,10 +217,10 @@ where chat_id = :chat_id
     private fun findScenarioWays(moveId: UUID): List<ScenarioWay> {
         return template.query(
             """
-            select sw.way_id as scenario_way_id, sm.move_id as scenario_move_id, sw.* from move2way m2w  
-            inner join scenario_way sw on m2w.way_id = sw.way_id
-            inner join scenario_move sm on m2w.move_id = sm.move_id
-            where sm.move_id = :move_id
+            SELECT sw.way_id AS scenario_way_id, sm.move_id AS scenario_move_id, sw.* FROM move2way m2w  
+            INNER JOIN scenario_way sw ON m2w.way_id = sw.way_id
+            INNER JOIN scenario_move sm ON m2w.move_id = sm.move_id
+            WHERE sm.move_id = :move_id
         """,
             mapOf("move_id" to moveId),
             scenarioWayRowMapper

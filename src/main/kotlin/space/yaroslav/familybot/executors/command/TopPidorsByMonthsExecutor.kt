@@ -66,7 +66,9 @@ class TopPidorsByMonthsExecutor(
     }
 
     private fun formatLeaderBoard(): (Map.Entry<LocalDate, PidorStat>) -> String = {
-        "${it.key.month.toRussian().capitalize()}, ${it.key.year}:\n".italic() + "${it.value.user.name.dropLastDelimiter()}, " +
+        "${
+        it.key.month.toRussian().capitalize()
+        }, ${it.key.year}:\n".italic() + "${it.value.user.name.dropLastDelimiter()}, " +
             "${it.value.position} " +
             "${getLeaderboardPhrase(Pluralization.getPlur(it.value.position))} из " +
             "${it.value.position}"
