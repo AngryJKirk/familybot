@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component
 import java.time.Duration
 
 @Component
-class EasySettingsService(val easySettingRepository: EasySettingsRedisRepository) {
+class EasySettingsService(private val easySettingRepository: EasySettingsRedisRepository) {
 
     fun <T : Any> put(easySetting: EasySetting<T>, key: SettingsKey, value: T, duration: Duration? = null) {
         easySettingRepository.put(easySetting, key, value, duration)

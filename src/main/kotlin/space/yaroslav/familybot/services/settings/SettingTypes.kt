@@ -14,3 +14,4 @@ abstract class StringEasySetting : EasySetting<String> {
 
 object FuckOffTolerance : BooleanSetting()
 object RageMode : LongSetting()
+object TalkingDencity : LongSetting()

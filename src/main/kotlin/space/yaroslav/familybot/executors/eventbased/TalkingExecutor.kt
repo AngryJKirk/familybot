@@ -15,6 +15,7 @@ import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.services.TalkingService
 import space.yaroslav.familybot.services.settings.EasySettingsService
 import space.yaroslav.familybot.services.settings.RageMode
+import space.yaroslav.familybot.services.settings.TalkingDencity
 import java.util.concurrent.ThreadLocalRandom
 
 @Component
@@ -38,7 +39,7 @@ class TalkingExecutor(
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val chat = update.toChat()
         val rageModEnabled = isRageModeEnabled(chat)
-        if (shouldReply(rageModEnabled)) {
+        if (shouldReply(rageModEnabled, chat)) {
 
             val messageText = talkingService.getReplyToUser(update)
                 .let { if (rageModEnabled) rageModeFormat(it) else it }
@@ -77,8 +78,16 @@ class TalkingExecutor(
         easySettingsService.decrement(RageMode, chat.key())
     }
 
-    private fun shouldReply(rageModEnabled: Boolean): Boolean {
-        return rageModEnabled || ThreadLocalRandom.current().nextInt(0, 7) == 0
+    private fun shouldReply(rageModEnabled: Boolean, chat: Chat): Boolean {
+        if (rageModEnabled) {
+            return true
+        }
+        val density = getTalkingDensity(chat)
+        return if (density == 0L) {
+            true
+        } else {
+            ThreadLocalRandom.current().nextLong(0, density) == 0L
+        }
     }
 
     private fun rageModeFormat(string: String): String {
@@ -87,5 +96,9 @@ class TalkingExecutor(
             message = message.dropLast(1)
         }
         return message.toUpperCase() + "!!!!"
+    }
+
+    private fun getTalkingDensity(chat: Chat): Long {
+        return easySettingsService.get(TalkingDencity, chat.key(), 7)
     }
 }

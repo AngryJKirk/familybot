@@ -3,6 +3,7 @@ package space.yaroslav.familybot.common.utils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatAdministrators
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker
@@ -60,6 +61,13 @@ suspend fun AbsSender.sendRandomSticker(
     return sendStickerInternal(this, update, replyToUpdate, stickerPack) {
         random()
     }
+}
+
+fun AbsSender.isFromAdmin(update: Update): Boolean {
+    val userId = update.from().id
+    return this
+        .execute(GetChatAdministrators(update.toChat().idString))
+        .any { it.user.id == userId }
 }
 
 private suspend fun sendStickerInternal(

@@ -4,17 +4,22 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.utils.dropLastDelimiter
+import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.send
+import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.Executor
 import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Priority
+import space.yaroslav.familybot.services.settings.EasySettingsService
+import space.yaroslav.familybot.services.settings.TalkingDencity
 import java.util.concurrent.ThreadLocalRandom
 import java.util.regex.Pattern
 
 @Component
-class HuificatorExecutor(private val randomness: Int = 10) : Executor, Configurable {
+class HuificatorExecutor(private val easySettingsService: EasySettingsService) : Executor, Configurable {
     override fun getFunctionId(): FunctionId {
         return FunctionId.HUIFICATE
     }
@@ -28,7 +33,7 @@ class HuificatorExecutor(private val randomness: Int = 10) : Executor, Configura
         val message = update.message
         val text = message.text ?: return {}
 
-        if (shouldHuificate()) {
+        if (shouldHuificate(update.toChat())) {
             val huifyed = huify(text) ?: return { }
             return { it -> it.send(update, huifyed, shouldTypeBeforeSend = true) }
         } else {
@@ -72,12 +77,17 @@ class HuificatorExecutor(private val randomness: Int = 10) : Executor, Configura
 
     private fun getLastWord(text: String) = text.split(regex = spaces).last()
 
-    private fun shouldHuificate(): Boolean {
-        return if (randomness == 0) {
+    private fun shouldHuificate(chat: Chat): Boolean {
+        val density = getTalkingDensity(chat)
+        return if (density == 0L) {
             true
         } else {
-            ThreadLocalRandom.current().nextInt(0, randomness) == 0
+            ThreadLocalRandom.current().nextLong(0, density) == 0L
         }
+    }
+
+    private fun getTalkingDensity(chat: Chat): Long {
+        return easySettingsService.get(TalkingDencity, chat.key(), 7)
     }
 
     companion object {

@@ -59,47 +59,29 @@ CREATE TABLE IF NOT EXISTS history
 
 INSERT INTO commands (id, command)
 VALUES (1, '/stats_month'),
-       (2, '/stats_year')
-        ,
-       (3, '/stats_total')
-        ,
-       (4, '/pidor')
-        ,
-       (5, '/quote')
-        ,
-       (6, '/command_stats')
-        ,
-       (7, '/rage')
-        ,
-       (8, '/leaderboard')
-        ,
-       (9, '/help')
-        ,
-       (10, '/settings')
-        ,
-       (11, '/answer')
-        ,
-       (12, '/quotebytag')
-        ,
-       (13, '/legacy_roulette')
-        ,
-       (14, '/ask_world')
-        ,
-       (15, '/stats_world')
-        ,
-       (16, '/me')
-        ,
-       (17, '/top_history')
-        ,
-       (18, '/bet')
-        ,
-       (19, '/today')
-        ,
-       (20, '/ban')
-        ,
+       (2, '/stats_year'),
+       (3, '/stats_total'),
+       (4, '/pidor'),
+       (5, '/quote'),
+       (6, '/command_stats'),
+       (7, '/rage'),
+       (8, '/leaderboard'),
+       (9, '/help'),
+       (10, '/settings'),
+       (11, '/answer'),
+       (12, '/quotebytag'),
+       (13, '/legacy_roulette'),
+       (14, '/ask_world'),
+       (15, '/stats_world'),
+       (16, '/me'),
+       (17, '/top_history'),
+       (18, '/bet'),
+       (19, '/today'),
+       (20, '/ban'),
        (21, '/play'),
-
-       (22, '/hampik');
+       (22, '/hampik'),
+       (23, '/advanced_settings')
+;
 
 CREATE TABLE IF NOT EXISTS chat_log
 (
@@ -352,7 +334,10 @@ VALUES ('BAD_COMMAND_USAGE'),
         ,
        ('SUCHARA_HELLO_MESSAGE')
        ,
-       ('LEADERBOARD_NONE');
+       ('LEADERBOARD_NONE'),
+    ('ADVANCED_SETTINGS'),
+    ('ADVANCED_SETTINGS_ERROR'),
+    ('ADVANCED_SETTINGS_OK')
 
 
 
@@ -1558,6 +1543,12 @@ VALUES (((select phrase_type_id from phrase_type_id where description = 'ASK_WOR
 Ответить можно лишь один раз от человека. В настройках можно отключить команду, тогда вам не будут приходить вопросы и вы сами не сможете их задавать.
    ');
 
+insert into phrase_dictionary(phrase_type_id, phrase_theme_id, phrase)
+values
+((select phrase_type_id from phrase_type_id where description = 'ADVANCED_SETTINGS'), 1, 'Настройки только для хакеров. Если ты не хакер, то лучше не лезь, оно тебя сожрет. Список возможностей на данный момент:
+<b>1)</b> Команда <code>/advanced_settings разговорчики 7</code> позволит задать частоту разговоров Сучары, где 0 это пиздеж почти постоянно. Чем выше число, тем реже будет пиздеть. По дефолту стоит 7.'),
+((select phrase_type_id from phrase_type_id where description = 'ADVANCED_SETTINGS_ERROR'), 1, 'Что-то пошло не так или ты сделал говно. Перечитай как пользоваться командой или напиши моему папе (/help), если считаешь, что ты нашел баг'),
+((select phrase_type_id from phrase_type_id where description = 'ADVANCED_SETTINGS_OK'), 1, 'Ок, пусть будет');
 
 ALTER TABLE function_settings
     ADD COLUMN id SERIAL PRIMARY KEY;

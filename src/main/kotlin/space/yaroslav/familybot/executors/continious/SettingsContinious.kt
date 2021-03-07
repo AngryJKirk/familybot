@@ -2,12 +2,12 @@ package space.yaroslav.familybot.executors.continious
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
-import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatAdministrators
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.getLogger
+import space.yaroslav.familybot.common.utils.isFromAdmin
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toEmoji
 import space.yaroslav.familybot.models.Command
@@ -37,7 +37,7 @@ class SettingsContinious(
             val chat = update.toChat()
             val callbackQuery = update.callbackQuery
 
-            if (!checkRights(it, update)) {
+            if (!it.isFromAdmin(update)) {
                 log.info("Access to settings denied")
                 it.execute(
                     AnswerCallbackQuery(callbackQuery.id)
@@ -72,11 +72,5 @@ class SettingsContinious(
                 }
             }
         }
-    }
-
-    private fun checkRights(sender: AbsSender, update: Update): Boolean {
-        return sender
-            .execute(GetChatAdministrators(update.toChat().idString))
-            .find { it.user.id == update.callbackQuery.from.id } != null
     }
 }
