@@ -21,7 +21,7 @@ class PostgresCommandHistoryRepository(val template: JdbcTemplate) : CommandHist
     override fun getAll(chat: Chat, from: Instant?): List<CommandByUser> {
         val fromDate = from ?: Instant.now().minus(defaultAmountOfDaysToSubtract, ChronoUnit.DAYS)
         return template.query(
-            "SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ? and history.command_date >= ?",
+            "SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ? AND history.command_date >= ?",
             { rs, _ -> rs.toCommandByUser(null) },
             chat.id,
             Timestamp.from(fromDate)

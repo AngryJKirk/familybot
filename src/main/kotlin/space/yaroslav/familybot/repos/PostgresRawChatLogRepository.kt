@@ -13,7 +13,7 @@ class PostgresRawChatLogRepository(val template: JdbcTemplate) : RawChatLogRepos
 
     override fun getMessageCount(chat: Chat, user: User): Int {
         return template.queryForObject(
-            "SELECT count(*) from raw_chat_log where chat_id = ? and user_id = ?",
+            "SELECT COUNT(*) FROM raw_chat_log WHERE chat_id = ? AND user_id = ?",
             Int::class.java,
             chat.id,
             user.id

@@ -4,7 +4,7 @@ buildscript {
         springBootVersion = '2.3.8.RELEASE'
         springDataVersion = '2.4.5'
         telegramBotVersion = '5.0.1.1'
-        ktlintVersion = '9.4.1'
+        ktlintVersion = '10.0.0'
         coroutinesVersion = '1.4.2'
         testcontainersVersion = '1.15.1'
         guavaVersion = '30.1-jre'
@@ -41,18 +41,18 @@ compileKotlin {
 }
 
 dependencies {
-    compile group: 'com.google.guava', name: 'guava', version: "${guavaVersion}"
-    compile group: 'org.postgresql', name: 'postgresql', version: "${postgresVersion}"
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: "${springBootVersion}"
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: "${springBootVersion}"
-    compile group: 'org.springframework.data', name: 'spring-data-redis', version: "${springDataVersion}"
-    compile group: 'org.telegram', name: 'telegrambots', version: "${telegramBotVersion}"
-    compile group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk8", version: "${kotlinVersion}"
-    compile group: "org.jetbrains.kotlin", name: "kotlin-reflect", version: "${kotlinVersion}"
-    compile group: 'io.lettuce', name: 'lettuce-core', version: "${lettuceVersion}"
-    testCompile group: "org.testcontainers", name: "testcontainers", version: "${testcontainersVersion}"
-    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: "${springBootVersion}"
+    implementation group: 'com.google.guava', name: 'guava', version: "${guavaVersion}"
+    implementation group: 'org.postgresql', name: 'postgresql', version: "${postgresVersion}"
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: "${springBootVersion}"
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: "${springBootVersion}"
+    implementation group: 'org.springframework.data', name: 'spring-data-redis', version: "${springDataVersion}"
+    implementation group: 'org.telegram', name: 'telegrambots', version: "${telegramBotVersion}"
+    implementation group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk8", version: "${kotlinVersion}"
+    implementation group: "org.jetbrains.kotlin", name: "kotlin-reflect", version: "${kotlinVersion}"
+    implementation group: 'io.lettuce', name: 'lettuce-core', version: "${lettuceVersion}"
     implementation group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: "${coroutinesVersion}"
+    testImplementation group: "org.testcontainers", name: "testcontainers", version: "${testcontainersVersion}"
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: "${springBootVersion}"
 }
 
 bootRun {
