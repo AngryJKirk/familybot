@@ -26,4 +26,6 @@ interface ScenarioRepository {
     fun allPolls(from: Instant, to: Instant): List<ScenarioPoll>
     fun findMostRecentPoll(chat: Chat): ScenarioPoll?
     fun getAllStatesOfChat(chat: Chat): List<ScenarioState>
+    fun getCurrentMoveOfChat(chat: Chat): ScenarioMove?
+    fun getPreviousMove(move: ScenarioMove): ScenarioMove?
 }

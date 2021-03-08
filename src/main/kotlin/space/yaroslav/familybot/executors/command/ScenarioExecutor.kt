@@ -4,6 +4,7 @@ import kotlinx.coroutines.delay
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.models.Command
@@ -21,23 +22,29 @@ class ScenarioExecutor(
 ) : CommandExecutor(botConfig) {
     override fun command() = Command.SCENARIO
 
+    companion object {
+        const val MOVE_PREFIX = "move"
+        const val STORY_PREFIX = "story"
+    }
+
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        if (update.message.text.contains("move")) {
-            val nextMove = scenarioGameplayService.nextState(update.toChat())
-            if (nextMove == null) {
-                return { it.send(update, "State haven't moved") }
-            } else {
-                return { it.send(update, "moved state to $nextMove") }
-            }
+        val chat = update.toChat()
+        if (update.message.text.contains(MOVE_PREFIX)) {
+            return moveState(chat, update)
         }
 
-        if (update.message.text.contains("story")) {
-            val story = scenarioService.getAllStoryOfCurrentGame(update.toChat())
-
-            return { it.send(update, story, enableHtml = true) }
+        if (update.message.text.contains(STORY_PREFIX)) {
+            return tellTheStory(chat, update)
         }
 
-        val currentGame = scenarioService.getAllCurrentGames()[update.toChat()]
+        return processGame(chat, update)
+    }
+
+    private fun processGame(
+        chat: Chat,
+        update: Update
+    ): suspend (AbsSender) -> Unit {
+        val currentGame = scenarioService.getCurrentGame(chat)
         return when {
             currentGame == null -> {
                 scenarioSessionManagementService.listGames(update)
@@ -52,6 +59,26 @@ class ScenarioExecutor(
             else -> {
                 scenarioSessionManagementService.processCurrentGame(update)
             }
+        }
+    }
+
+    private fun tellTheStory(
+        chat: Chat,
+        update: Update
+    ): suspend (AbsSender) -> Unit {
+        val story = scenarioService.getAllStoryOfCurrentGame(chat)
+        return { it.send(update, story, enableHtml = true) }
+    }
+
+    private fun moveState(
+        chat: Chat,
+        update: Update
+    ): suspend (AbsSender) -> Unit {
+        val nextMove = scenarioGameplayService.nextState(chat)
+        if (nextMove == null) {
+            return { it.send(update, "State hasn't been moved") }
+        } else {
+            return {}
         }
     }
 }

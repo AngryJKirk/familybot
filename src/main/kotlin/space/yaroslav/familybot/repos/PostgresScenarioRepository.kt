@@ -103,6 +103,28 @@ class PostgresScenarioRepository(
         }.toMap()
     }
 
+    override fun getCurrentMoveOfChat(chat: Chat): ScenarioMove? {
+        return template.query(
+            """
+             SELECT * FROM scenario_move
+             INNER JOIN scenario_states ss ON scenario_move.move_id = ss.scenario_move_id
+             WHERE ss.chat_id = :chat_id ORDER BY state_date DESC LIMIT 1
+        """, mapOf("chat_id" to chat.id)
+        ) { rs, rowNum -> scenarioMoveRowMapper.mapRowNotNull(rs, rowNum) }.firstOrNull()
+    }
+
+    override fun getPreviousMove(move: ScenarioMove): ScenarioMove? {
+        return template.query(
+            """
+             SELECT * FROM move2way
+              INNER JOIN scenario_move sm ON sm.move_id = move2way.move_id
+              WHERE way_id = 
+             (SELECT scenario_way.way_id FROM scenario_way WHERE next_move_id = :move_id)
+            
+        """, mapOf("move_id" to move.id)
+        ) { rs, rowNum -> scenarioMoveRowMapper.mapRowNotNull(rs, rowNum) }.firstOrNull()
+    }
+
     override fun addState(scenarioMove: ScenarioMove, chat: Chat) {
         template.update(
             "INSERT INTO scenario_states (state_date, chat_id, scenario_move_id) VALUES (:date,:chat_id,:move_id)",
@@ -140,12 +162,12 @@ class PostgresScenarioRepository(
     override fun removeChoice(chat: Chat, user: User, scenarioMove: ScenarioMove) {
         template.update(
             """
-           DELETE
-FROM scenario_choices
-WHERE chat_id = :chat_id
-  AND user_id = :user_id
-  AND scenario_way_id IN (:ids)
-        """,
+            DELETE
+            FROM scenario_choices
+            WHERE chat_id = :chat_id
+            AND user_id = :user_id
+            AND scenario_way_id IN (:ids)
+            """,
             mapOf(
                 "chat_id" to chat.id,
                 "user_id" to user.id,
@@ -157,12 +179,12 @@ WHERE chat_id = :chat_id
     override fun getResultsForMove(chat: Chat, scenarioState: ScenarioState): Map<ScenarioWay, List<User>> {
         return template.query(
             """
-    SELECT * FROM scenario_choices sc
-    INNER JOIN users u ON sc.user_id = u.id
-    INNER JOIN scenario_way sw ON sw.way_id = sc.scenario_way_id
-    WHERE chat_id = :chat_id AND scenario_way_id IN (:ids) 
-    AND choice_date > :state_date
-""",
+            SELECT * FROM scenario_choices sc
+            INNER JOIN users u ON sc.user_id = u.id
+            INNER JOIN scenario_way sw ON sw.way_id = sc.scenario_way_id
+            WHERE chat_id = :chat_id AND scenario_way_id IN (:ids) 
+            AND choice_date > :state_date
+            """,
             mapOf(
                 "chat_id" to chat.id,
                 "ids" to scenarioState.move.ways.map(ScenarioWay::wayId),

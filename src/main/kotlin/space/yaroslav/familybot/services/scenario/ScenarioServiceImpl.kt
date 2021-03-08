@@ -18,10 +18,18 @@ class ScenarioServiceImpl(
         return scenarioRepository.getScenarios()
     }
 
+    override fun getPreviousMove(scenarioMove: ScenarioMove): ScenarioMove? {
+        return scenarioRepository.getPreviousMove(scenarioMove)
+    }
+
     override fun getAllCurrentGames(): Map<Chat, ScenarioMove> {
         return scenarioRepository.getAllCurrentGames().also {
             log.info("All current games are $it")
         }
+    }
+
+    override fun getCurrentGame(chat: Chat): ScenarioMove? {
+        return scenarioRepository.getCurrentMoveOfChat(chat)
     }
 
     override fun getAllStoryOfCurrentGame(chat: Chat): String {

@@ -10,9 +10,9 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.chatIdString
 import space.yaroslav.familybot.common.utils.getLogger
+import space.yaroslav.familybot.common.utils.italic
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toHourMinuteString
@@ -73,31 +73,43 @@ class ScenarioSessionManagementServiceImpl(
 
     private fun currentGame(update: Update): suspend (AbsSender) -> Unit {
         val chat = update.toChat()
-        val currentScenarioMove = scenarioGameplayService.getCurrentScenarioState(chat)?.move
+        val previousMove = scenarioGameplayService.getCurrentScenarioState(chat)?.move
             ?: throw FamilyBot.InternalException("Internal logic error, current state wasn't found")
-        if (currentScenarioMove.isEnd) {
+        if (previousMove.isEnd) {
             return {
-                it.send(update, currentScenarioMove.description)
+                val evenMorePreviousMove = scenarioService.getPreviousMove(previousMove)
+                    ?: throw FamilyBot.InternalException("Scenario seems broken")
+                it.send(update, getExpositionMessage(previousMove, evenMorePreviousMove), enableHtml = true)
+                delay(2000)
+                it.send(update, previousMove.description)
                 delay(2000)
                 it.send(update, dictionary.get(Phrase.SCENARIO_END))
             }
         }
-        val recentPoll = scenarioPollManagingService.getRecentPoll(chat, currentScenarioMove)
-            ?: return { sender -> continueGame(currentScenarioMove, update, sender) }
+        val recentPoll = scenarioPollManagingService.getRecentPoll(chat, previousMove)
+            ?: return { sender ->
+                continueGame(
+                    previousMove,
+                    update,
+                    sender,
+                    scenarioService.getPreviousMove(previousMove)
+                )
+            }
 
         return { sender ->
             val dayAgo = Instant.now().minusMillis(Duration.of(24, ChronoUnit.HOURS).toMillis())
             if (dayAgo.isAfter(recentPoll.createDate)) {
                 val nextMove = scenarioGameplayService.nextState(recentPoll.chat)
                 if (nextMove != null) {
-                    continueGame(nextMove, update, sender, currentScenarioMove)
+                    continueGame(nextMove, update, sender, previousMove)
                 } else {
                     sender.send(
                         update,
                         dictionary.get(Phrase.SCENARIO_POLL_DRAW)
                     )
+                    val evenMorePreviousMove = scenarioService.getPreviousMove(previousMove)
                     delay(2000)
-                    continueGame(currentScenarioMove, update, sender, currentScenarioMove)
+                    continueGame(previousMove, update, sender, evenMorePreviousMove)
                 }
             } else {
                 val timeLeft =
@@ -125,48 +137,38 @@ class ScenarioSessionManagementServiceImpl(
     }
 
     private suspend fun continueGame(
-        currentScenarioMove: ScenarioMove,
+        nextMove: ScenarioMove,
         update: Update,
         sender: AbsSender,
-        previousScenarioMove: ScenarioMove? = null
+        previousMove: ScenarioMove? = null
     ) {
-        if (previousScenarioMove != null) {
-            sender.send(update, getExpositionMessage(currentScenarioMove, previousScenarioMove), enableHtml = true)
-            delay(1000)
+        if (previousMove != null) {
+            sender.send(update, getExpositionMessage(nextMove, previousMove), enableHtml = true)
+            delay(2000)
         }
 
-        val message = sendPoll(currentScenarioMove, update).invoke(sender)
+        val message = sendPoll(nextMove, update).invoke(sender)
         scenarioPollManagingService.savePollToScenario(
             ScenarioPoll(
                 message.poll.id,
                 update.toChat(),
                 Instant.now(),
-                currentScenarioMove,
+                nextMove,
                 message.messageId
             )
         )
     }
 
     private suspend fun getExpositionMessage(
-        currentScenarioMove: ScenarioMove,
-        previousScenarioMove: ScenarioMove
+        nextMove: ScenarioMove,
+        previousMove: ScenarioMove
     ): String {
-        val chosenWay = previousScenarioMove.ways.find { it.nextMoveId == currentScenarioMove.id }
-            ?: throw FamilyBot.InternalException("Wrong game logic, current move=$currentScenarioMove previous=$previousScenarioMove")
+        val chosenWay = previousMove.ways.find { it.nextMoveId == nextMove.id }
+            ?: throw FamilyBot.InternalException("Wrong game logic, next move=$nextMove previous=$previousMove")
         return """
-            Ваше предыдущее действие:
-            ${previousScenarioMove.description}
-            ${previousScenarioMove.ways.map { formatAnswers(it, chosenWay) }}
+            <b>Этап истории:</b> ${previousMove.description.italic()}
+            <b>Лидирующий ответ:</b> ${chosenWay.description}
         """.trimIndent()
-    }
-
-    private fun formatAnswers(way: ScenarioWay, chosenWay: ScenarioWay): String {
-        val commonTemplate = "${way.answerNumber}. ${way.description}"
-        return if (way.wayId == chosenWay.wayId) {
-            "$commonTemplate  ❗".bold()
-        } else {
-            commonTemplate
-        }
     }
 
     private fun createKeyboardMarkup(): SendMessage.() -> Unit {
