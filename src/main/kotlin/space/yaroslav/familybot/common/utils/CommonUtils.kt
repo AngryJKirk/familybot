@@ -3,6 +3,7 @@ package space.yaroslav.familybot.common.utils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.telegram.telegrambots.meta.api.objects.Chat
+import java.time.Duration
 import java.time.Instant
 import java.time.Month
 import java.time.temporal.ChronoUnit
@@ -48,4 +49,21 @@ fun Boolean.toEmoji(): String {
 
 inline fun <reified T> T.getLogger(): Logger {
     return LoggerFactory.getLogger(T::class.java)
+}
+
+fun Duration.toHourMinuteString(): String {
+    val hour = toHours().toInt()
+    val minute = (toMinutes() % 60).toInt()
+    val hourPluralized = pluralize(hour, PluralizedWordsProvider(
+        one = { "час" },
+        few = { "часа" },
+        many = { "часов" }
+    ))
+    val minutePluralized = pluralize(minute, PluralizedWordsProvider(
+        one = { "минута" },
+        few = { "минуты" },
+        many = { "минут" }
+    ))
+
+    return "$hour $hourPluralized и $minute $minutePluralized"
 }

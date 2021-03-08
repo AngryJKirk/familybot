@@ -35,7 +35,8 @@ data class ScenarioPoll(
     val pollId: String,
     val chat: Chat,
     val createDate: Instant,
-    val scenarioMove: ScenarioMove
+    val scenarioMove: ScenarioMove,
+    val messageId: Int
 )
 
 data class ScenarioState(

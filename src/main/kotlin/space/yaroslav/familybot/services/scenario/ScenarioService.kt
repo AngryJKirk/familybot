@@ -7,4 +7,6 @@ interface ScenarioService {
     fun getScenarios(): List<Scenario>
 
     fun getAllCurrentGames(): Map<Chat, ScenarioMove>
+
+    fun getAllStoryOfCurrentGame(chat: Chat): String
 }

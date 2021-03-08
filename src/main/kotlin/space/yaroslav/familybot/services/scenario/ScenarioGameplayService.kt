@@ -13,7 +13,5 @@ interface ScenarioGameplayService {
 
     fun removeChoice(chat: Chat, user: User, scenarioMove: ScenarioMove)
 
-    fun nextMove(chat: Chat, scenarioWay: ScenarioWay)
-
-    fun getCurrentMoveResults(chat: Chat): ScenarioMoveVoteResult
+    fun nextState(chat: Chat): ScenarioMove?
 }

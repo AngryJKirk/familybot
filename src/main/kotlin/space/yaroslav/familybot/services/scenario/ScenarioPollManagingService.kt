@@ -8,5 +8,5 @@ interface ScenarioPollManagingService {
 
     fun findScenarioPoll(id: String): ScenarioPoll?
 
-    fun getTodayPoll(chat: Chat, scenarioMove: ScenarioMove): ScenarioPoll?
+    fun getRecentPoll(chat: Chat, scenarioMove: ScenarioMove): ScenarioPoll?
 }

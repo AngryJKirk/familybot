@@ -512,7 +512,16 @@ VALUES (1, 'BAD_COMMAND_USAGE'),
        (72, 'LEADERBOARD_NONE'),
        (73, 'ADVANCED_SETTINGS'),
        (74, 'ADVANCED_SETTINGS_ERROR'),
-       (75, 'ADVANCED_SETTINGS_OK')
+       (75, 'ADVANCED_SETTINGS_OK'),
+       (76, 'SCENARIO_IS_RUNNING_ALREADY'),
+       (77, 'SCENARIO_IS_STARTING'),
+       (78, 'SCENARIO_RULES'),
+       (79, 'SCENARIO_CHOOSE'),
+       (80, 'SCENARIO_END'),
+       (81, 'SCENARIO_POLL_EXISTS'),
+       (82, 'SCENARIO_POLL_EXISTS_FALLBACK'),
+       (83, 'SCENARIO_POLL_DRAW'),
+       (84, 'SCENARIO_POLL_DEFAULT_QUESTION')
 ;
 
 INSERT INTO phrase_theme (description, active_by_default)
@@ -1000,8 +1009,39 @@ P.s. если в чате есть Саша, иди нахуй, Саша'),
          WHERE description = 'ADVANCED_SETTINGS_ERROR'), 1,
         'Что-то пошло не так или ты сделал говно. Перечитай как пользоваться командой или напиши моему папе (/help), если считаешь, что ты нашел баг')
         ,
-       ((SELECT phrase_type_id FROM phrase_type_id WHERE description = 'ADVANCED_SETTINGS_OK'), 1, 'Ок, пусть будет');
-
+       ((SELECT phrase_type_id FROM phrase_type_id WHERE description = 'ADVANCED_SETTINGS_OK'), 1, 'Ок, пусть будет'),
+       ((SELECT phrase_type_id FROM phrase_type_id WHERE description = 'SCENARIO_IS_RUNNING_ALREADY'),
+        1,
+        'Игра уже идет'),
+       ((SELECT phrase_type_id FROM phrase_type_id WHERE description = 'SCENARIO_IS_STARTING'),
+        1,
+        'Игра начинается!'),
+       ((SELECT phrase_type_id FROM phrase_type_id WHERE description = 'SCENARIO_RULES'),
+        1,
+        'Здарова, петушары! Вы вызвали меню интерактивчика (или оно вызвалось само)! Правила простые:
+Ниже представлен список игровых интерактивов. Выбираете нужный и голосуете за понравившийся вариант. От выбраного варианта зависит дальнейшее развитие событий.
+Голосование на каждом этапе длится ровно сутки с момента вызова. По истечению времени я смотрю какой вариант набрал больше всего голосов и выбираю его как верный.
+Игру может выбрать только админ чата.
+Новую игру можно начать только после завершения уже начатой.
+Чтобы посмотреть историю событий, вызовите "/play story"'),
+       ((SELECT phrase_type_id FROM phrase_type_id WHERE description = 'SCENARIO_CHOOSE'),
+        1,
+        'Какую игру выбрать?'),
+       ((SELECT phrase_type_id FROM phrase_type_id WHERE description = 'SCENARIO_END'),
+        1,
+        'Охуеть, вы дошли до конца игры! Награда как всегда, нихуя. Можете начать следующую.'),
+       ((SELECT phrase_type_id FROM phrase_type_id WHERE description = 'SCENARIO_POLL_EXISTS'),
+        1,
+        'Сегодня уже было голосование, вот же оно, еблан. Следующее будет доступно только через $timeLeft'),
+       ((SELECT phrase_type_id FROM phrase_type_id WHERE description = 'SCENARIO_POLL_EXISTS_FALLBACK'),
+        1,
+        'Где-то было голосование, но вы его проебали. Следующее будет доступно только через $timeLeft'),
+       ((SELECT phrase_type_id FROM phrase_type_id WHERE description = 'SCENARIO_POLL_DRAW'),
+        1,
+        'Так так так, вижу вы даже объединиться в выборе варианта не можете, щенки. Придётся переголосовать.'),
+       ((SELECT phrase_type_id FROM phrase_type_id WHERE description = 'SCENARIO_POLL_DEFAULT_QUESTION'),
+        1,
+        'Что выбираете?');
 
 INSERT INTO chats (id, name)
 VALUES (-1001094220065, 'Семья'); -- костыль для цитат, можно любой чат сюда пихать

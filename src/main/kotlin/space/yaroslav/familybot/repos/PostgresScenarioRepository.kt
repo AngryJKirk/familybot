@@ -39,7 +39,8 @@ class PostgresScenarioRepository(
             rs.getString("poll_id"),
             rs.toChat(),
             rs.getTimestamp("create_date").toInstant(),
-            scenarioMoveRowMapper.mapRowNotNull(rs, rowNum)
+            scenarioMoveRowMapper.mapRowNotNull(rs, rowNum),
+            rs.getInt("poll_message_id")
         )
     }
     private val scenarioWayRowMapper = RowMapper { rs, _ ->
@@ -173,12 +174,13 @@ WHERE chat_id = :chat_id
 
     override fun savePoll(scenarioPoll: ScenarioPoll) {
         template.update(
-            "INSERT INTO scenario_poll (poll_id, chat_id, create_date, scenario_move_id) VALUES (:poll_id,:chat_id,:create_date,:move_id)",
+            "INSERT INTO scenario_poll (poll_id, chat_id, create_date, scenario_move_id, poll_message_id) VALUES (:poll_id,:chat_id,:create_date,:move_id, :poll_message_id)",
             mapOf(
                 "poll_id" to scenarioPoll.pollId,
                 "chat_id" to scenarioPoll.chat.id,
                 "create_date" to Timestamp.from(scenarioPoll.createDate),
-                "move_id" to scenarioPoll.scenarioMove.id
+                "move_id" to scenarioPoll.scenarioMove.id,
+                "poll_message_id" to scenarioPoll.messageId
             )
         )
     }
@@ -192,8 +194,7 @@ WHERE chat_id = :chat_id
         """,
             mapOf(
                 "poll_id" to id
-            ),
-            scenarioPollRowMapper
+            ), scenarioPollRowMapper
         ).firstOrNull()
     }
 
@@ -214,6 +215,44 @@ WHERE chat_id = :chat_id
         ).firstOrNull()
     }
 
+    override fun allPolls(from: Instant, to: Instant): List<ScenarioPoll> {
+
+        return template.query(
+            """SELECT * FROM scenario_poll sp
+            INNER JOIN chats c ON sp.chat_id = c.id
+            INNER JOIN scenario_move sm ON sp.scenario_move_id = sm.move_id                
+            WHERE create_date >= :date_from AND create_date < :date_to""",
+            mapOf(
+                "date_from" to Timestamp.from(from),
+                "date_to" to Timestamp.from(to)
+            ),
+            scenarioPollRowMapper
+        )
+    }
+
+    override fun findMostRecentPoll(chat: Chat): ScenarioPoll? {
+        return template.query(
+            """SELECT * FROM scenario_poll sp
+            INNER JOIN chats c ON sp.chat_id = c.id
+            INNER JOIN scenario_move sm ON sp.scenario_move_id = sm.move_id
+            WHERE sp.chat_id = :chat_id ORDER BY create_date DESC LIMIT 1""",
+            mapOf(
+                "chat_id" to chat.id
+            ),
+            scenarioPollRowMapper
+        )
+            .firstOrNull()
+    }
+
+    override fun getAllStatesOfChat(chat: Chat): List<ScenarioState> {
+        return template.query(
+            """
+            SELECT * FROM scenario_states 
+            INNER JOIN scenario_move sm ON scenario_states.scenario_move_id = sm.move_id
+        """, mapOf("chat_id" to chat.id), scenarioStateRowMapper
+        )
+    }
+
     private fun findScenarioWays(moveId: UUID): List<ScenarioWay> {
         return template.query(
             """
@@ -221,9 +260,7 @@ WHERE chat_id = :chat_id
             INNER JOIN scenario_way sw ON m2w.way_id = sw.way_id
             INNER JOIN scenario_move sm ON m2w.move_id = sm.move_id
             WHERE sm.move_id = :move_id
-        """,
-            mapOf("move_id" to moveId),
-            scenarioWayRowMapper
+        """, mapOf("move_id" to moveId), scenarioWayRowMapper
         )
     }
 

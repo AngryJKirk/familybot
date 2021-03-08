@@ -23,4 +23,7 @@ interface ScenarioRepository {
     fun savePoll(scenarioPoll: ScenarioPoll)
     fun getDataByPollId(id: String): ScenarioPoll?
     fun findScenarioPoll(chat: Chat, scenarioMove: ScenarioMove, afterDate: Instant): ScenarioPoll?
+    fun allPolls(from: Instant, to: Instant): List<ScenarioPoll>
+    fun findMostRecentPoll(chat: Chat): ScenarioPoll?
+    fun getAllStatesOfChat(chat: Chat): List<ScenarioState>
 }

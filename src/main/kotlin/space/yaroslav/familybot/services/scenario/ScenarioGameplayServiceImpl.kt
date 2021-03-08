@@ -31,15 +31,32 @@ class ScenarioGameplayServiceImpl(
         scenarioRepository.removeChoice(chat, user, scenarioMove)
     }
 
-    override fun nextMove(chat: Chat, scenarioWay: ScenarioWay) {
+    override fun nextState(chat: Chat): ScenarioMove? {
+        val currentMoveResults = getCurrentMoveResults(chat)
+        val results: List<Pair<ScenarioWay, List<User>>> = currentMoveResults.results
+            .toList()
+            .sortedByDescending { (_, users) -> users.size }
+        return when (results.size) {
+            0 -> null
+            1 -> nextMove(chat, results.first().first)
+            else -> if (isAmbiguousChoice(results).not()) nextMove(chat, results.first().first) else null
+        }
+    }
+
+    private fun isAmbiguousChoice(results: List<Pair<ScenarioWay, List<User>>>): Boolean {
+        return results[0].second.size == results[1].second.size
+    }
+
+    private fun nextMove(chat: Chat, scenarioWay: ScenarioWay): ScenarioMove {
         log.info("Going for next move for chat $chat, way is $scenarioWay")
         val move = scenarioRepository.findMove(scenarioWay.nextMoveId)
             ?: throw FamilyBot.InternalException("Can't find a next move of the way")
         log.info("Next move is $move for chat $chat")
         scenarioRepository.addState(move, chat)
+        return move
     }
 
-    override fun getCurrentMoveResults(chat: Chat): ScenarioMoveVoteResult {
+    private fun getCurrentMoveResults(chat: Chat): ScenarioMoveVoteResult {
         val scenarioState = scenarioRepository.getState(chat)
             ?: throw FamilyBot.InternalException("Can't get state for the chat")
         val scenarioMove = scenarioState.move
