@@ -249,6 +249,7 @@ WHERE chat_id = :chat_id
             """
             SELECT * FROM scenario_states 
             INNER JOIN scenario_move sm ON scenario_states.scenario_move_id = sm.move_id
+            WHERE chat_id = :chat_id
         """, mapOf("chat_id" to chat.id), scenarioStateRowMapper
         )
     }
