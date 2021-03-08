@@ -12,7 +12,7 @@ fun formatStory(
     return """
             ${previousScenarioMove.description}
             ${previousScenarioMove.ways.map { formatAnswers(it, chosenWay) }}
-        """.trimIndent()
+    """.trimIndent()
 }
 
 private fun formatAnswers(way: ScenarioWay, chosenWay: ScenarioWay): String {

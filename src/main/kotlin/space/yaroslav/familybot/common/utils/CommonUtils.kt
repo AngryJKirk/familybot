@@ -54,16 +54,22 @@ inline fun <reified T> T.getLogger(): Logger {
 fun Duration.toHourMinuteString(): String {
     val hour = toHours().toInt()
     val minute = (toMinutes() % 60).toInt()
-    val hourPluralized = pluralize(hour, PluralizedWordsProvider(
-        one = { "час" },
-        few = { "часа" },
-        many = { "часов" }
-    ))
-    val minutePluralized = pluralize(minute, PluralizedWordsProvider(
-        one = { "минута" },
-        few = { "минуты" },
-        many = { "минут" }
-    ))
+    val hourPluralized = pluralize(
+        hour,
+        PluralizedWordsProvider(
+            one = { "час" },
+            few = { "часа" },
+            many = { "часов" }
+        )
+    )
+    val minutePluralized = pluralize(
+        minute,
+        PluralizedWordsProvider(
+            one = { "минута" },
+            few = { "минуты" },
+            many = { "минут" }
+        )
+    )
 
     return "$hour $hourPluralized и $minute $minutePluralized"
 }

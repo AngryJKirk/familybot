@@ -109,7 +109,8 @@ class PostgresScenarioRepository(
              SELECT * FROM scenario_move
              INNER JOIN scenario_states ss ON scenario_move.move_id = ss.scenario_move_id
              WHERE ss.chat_id = :chat_id ORDER BY state_date DESC LIMIT 1
-        """, mapOf("chat_id" to chat.id)
+        """,
+            mapOf("chat_id" to chat.id)
         ) { rs, rowNum -> scenarioMoveRowMapper.mapRowNotNull(rs, rowNum) }.firstOrNull()
     }
 
@@ -121,7 +122,8 @@ class PostgresScenarioRepository(
               WHERE way_id = 
              (SELECT scenario_way.way_id FROM scenario_way WHERE next_move_id = :move_id)
             
-        """, mapOf("move_id" to move.id)
+        """,
+            mapOf("move_id" to move.id)
         ) { rs, rowNum -> scenarioMoveRowMapper.mapRowNotNull(rs, rowNum) }.firstOrNull()
     }
 
@@ -216,7 +218,8 @@ class PostgresScenarioRepository(
         """,
             mapOf(
                 "poll_id" to id
-            ), scenarioPollRowMapper
+            ),
+            scenarioPollRowMapper
         ).firstOrNull()
     }
 
@@ -272,7 +275,8 @@ class PostgresScenarioRepository(
             SELECT * FROM scenario_states 
             INNER JOIN scenario_move sm ON scenario_states.scenario_move_id = sm.move_id
             WHERE chat_id = :chat_id
-        """, mapOf("chat_id" to chat.id), scenarioStateRowMapper
+        """,
+            mapOf("chat_id" to chat.id), scenarioStateRowMapper
         )
     }
 
@@ -283,7 +287,8 @@ class PostgresScenarioRepository(
             INNER JOIN scenario_way sw ON m2w.way_id = sw.way_id
             INNER JOIN scenario_move sm ON m2w.move_id = sm.move_id
             WHERE sm.move_id = :move_id
-        """, mapOf("move_id" to moveId), scenarioWayRowMapper
+        """,
+            mapOf("move_id" to moveId), scenarioWayRowMapper
         )
     }
 
