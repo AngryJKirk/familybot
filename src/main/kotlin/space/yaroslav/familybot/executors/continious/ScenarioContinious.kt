@@ -2,10 +2,9 @@ package space.yaroslav.familybot.executors.continious
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
-import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatAdministrators
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.utils.toChat
+import space.yaroslav.familybot.common.utils.isFromAdmin
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.services.dictionary.Dictionary
@@ -30,7 +29,7 @@ class ScenarioContinious(
         return {
             val callbackQuery = update.callbackQuery
 
-            if (!checkRights(it, update)) {
+            if (!it.isFromAdmin(update)) {
                 it.execute(
                     AnswerCallbackQuery(callbackQuery.id)
                         .apply {
@@ -45,11 +44,5 @@ class ScenarioContinious(
                 scenarioSessionManagementService.startGame(update, scenarioToStart).invoke(it)
             }
         }
-    }
-
-    private fun checkRights(sender: AbsSender, update: Update): Boolean {
-        return sender
-            .execute(GetChatAdministrators(update.toChat().idString))
-            .find { it.user.id == update.callbackQuery.from.id } != null
     }
 }

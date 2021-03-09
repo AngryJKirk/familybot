@@ -140,7 +140,7 @@ class ScenarioSessionManagementServiceImpl(
         nextMove: ScenarioMove,
         update: Update,
         sender: AbsSender,
-        previousMove: ScenarioMove? = null
+        previousMove: ScenarioMove?
     ) {
         if (previousMove != null) {
             sender.send(update, getExpositionMessage(nextMove, previousMove), enableHtml = true)
