@@ -30,7 +30,7 @@ class BotMentionKeyWordProcessor(
     )
 
     override fun canProcess(message: Message): Boolean {
-        return isReplyToBot(message) || isBotMention(message)
+        return isReplyToBot(message) || isBotMention(message) || isBotNameMention(message)
     }
 
     override fun process(update: Update): suspend (AbsSender) -> Unit {
