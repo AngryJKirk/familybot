@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.Chat
+import space.yaroslav.familybot.common.utils.from
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.models.Command
@@ -18,7 +19,7 @@ class ScenarioExecutor(
     private val scenarioSessionManagementService: ScenarioSessionManagementService,
     private val scenarioService: ScenarioService,
     private val scenarioGameplayService: ScenarioGameplayService,
-    botConfig: BotConfig
+    private val botConfig: BotConfig
 ) : CommandExecutor(botConfig) {
     override fun command() = Command.SCENARIO
 
@@ -29,12 +30,12 @@ class ScenarioExecutor(
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val chat = update.toChat()
-        if (update.message.text.contains(MOVE_PREFIX)) {
-            return moveState(chat, update)
-        }
-
         if (update.message.text.contains(STORY_PREFIX)) {
             return tellTheStory(chat, update)
+        }
+
+        if (update.message.text.contains(MOVE_PREFIX) && botConfig.developer == update.from().userName) {
+            return moveState(chat, update)
         }
 
         return processGame(chat, update)

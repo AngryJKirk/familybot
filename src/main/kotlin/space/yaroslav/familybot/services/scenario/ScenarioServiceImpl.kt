@@ -5,6 +5,7 @@ import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.italic
+import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.repos.ifaces.ScenarioRepository
 
 @Component
@@ -45,7 +46,9 @@ class ScenarioServiceImpl(
                 currentStates.add(state)
             }
         }
-
+        if (currentStates.isEmpty()) {
+            return "Вы пока не играли, попробуйте начать: ${Command.SCENARIO.command}"
+        }
         return currentStates
             .sortedBy(ScenarioState::date).joinToString(separator = "\n\n") { state ->
                 "Этап истории: ".bold() + state.move.description.italic() +
