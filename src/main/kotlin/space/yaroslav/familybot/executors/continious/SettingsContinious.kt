@@ -21,7 +21,7 @@ import space.yaroslav.familybot.telegram.BotConfig
 class SettingsContinious(
     private val configureRepository: FunctionsConfigureRepository,
     private val dictionary: Dictionary,
-    botConfig: BotConfig
+    private val botConfig: BotConfig
 ) : ContiniousConversation(botConfig) {
     private val log = getLogger()
     override fun command(): Command {
@@ -37,7 +37,7 @@ class SettingsContinious(
             val chat = update.toChat()
             val callbackQuery = update.callbackQuery
 
-            if (!it.isFromAdmin(update)) {
+            if (!it.isFromAdmin(update, botConfig)) {
                 log.info("Access to settings denied")
                 it.execute(
                     AnswerCallbackQuery(callbackQuery.id)

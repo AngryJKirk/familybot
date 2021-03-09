@@ -14,6 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.models.stickers.Sticker
 import space.yaroslav.familybot.models.stickers.StickerPack
+import space.yaroslav.familybot.telegram.BotConfig
 import java.util.concurrent.ThreadLocalRandom
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 
@@ -63,11 +64,14 @@ suspend fun AbsSender.sendRandomSticker(
     }
 }
 
-fun AbsSender.isFromAdmin(update: Update): Boolean {
-    val userId = update.from().id
+fun AbsSender.isFromAdmin(update: Update, botConfig: BotConfig): Boolean {
+    val user = update.from()
+    if (botConfig.developer == user.userName) {
+        return true
+    }
     return this
         .execute(GetChatAdministrators(update.toChat().idString))
-        .any { it.user.id == userId }
+        .any { admin -> admin.user.id == user.id }
 }
 
 private suspend fun sendStickerInternal(

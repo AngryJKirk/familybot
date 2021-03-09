@@ -18,7 +18,7 @@ class ScenarioContinious(
     private val scenarioSessionManagementService: ScenarioSessionManagementService,
     private val scenarioService: ScenarioService,
     private val dictionary: Dictionary,
-    botConfig: BotConfig
+    private val botConfig: BotConfig
 ) :
     ContiniousConversation(botConfig) {
     override fun getDialogMessage() = "Какую игру выбрать?"
@@ -29,7 +29,7 @@ class ScenarioContinious(
         return {
             val callbackQuery = update.callbackQuery
 
-            if (!it.isFromAdmin(update)) {
+            if (!it.isFromAdmin(update, botConfig)) {
                 it.execute(
                     AnswerCallbackQuery(callbackQuery.id)
                         .apply {

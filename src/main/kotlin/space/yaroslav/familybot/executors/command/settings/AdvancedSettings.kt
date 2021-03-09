@@ -20,7 +20,7 @@ import space.yaroslav.familybot.telegram.BotConfig
 class AdvancedSettings(
     private val easySettingsService: EasySettingsService,
     private val dictionary: Dictionary,
-    botConfig: BotConfig
+    private val botConfig: BotConfig
 ) : CommandExecutor(botConfig) {
     override fun command() = Command.ADVANCED_SETTINGS
 
@@ -38,7 +38,7 @@ class AdvancedSettings(
             }
         }
         return {
-            if (!it.isFromAdmin(update)) {
+            if (!it.isFromAdmin(update, botConfig)) {
                 sendErrorMessage(
                     update,
                     "Ты кого наебать хочешь? Ты ведь не админ даже, а так, ПУСТЫШКА, пародия на личность, позови старшего, если хочешь что-то изменить в этой жизни. Ведь большего ты и не достоин, кроме как всегда полагаться на кого-то, кто тебе поможет. Задумайся, ведь так было всегда, ты всегда был слаб и звал на помощь сильного, вот и сейчас, беги, зови свою МАМОЧКУ или ПАПОЧКУ, чтобы тебе подтерли задницу. Я буду говорить только с настоящими лидерами."
