@@ -1,5 +1,7 @@
 package space.yaroslav.familybot.repos.ifaces
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
@@ -29,5 +31,6 @@ class RedisFunctionsConfigureRepository(
     override fun switch(id: FunctionId, chat: Chat) {
         val currentValue = settingsRepository.get(id.easySetting, chat.key()) ?: true
         settingsRepository.put(id.easySetting, chat.key(), currentValue.not())
+        GlobalScope.launch { oldRepository.switch(id, chat) }
     }
 }
