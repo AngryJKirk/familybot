@@ -119,7 +119,7 @@ class PostgresScenarioRepository(
             """
              SELECT * FROM move2way
               INNER JOIN scenario_move sm ON sm.move_id = move2way.move_id
-              WHERE way_id = 
+              WHERE way_id in
              (SELECT scenario_way.way_id FROM scenario_way WHERE next_move_id = :move_id)
             
         """,
