@@ -52,6 +52,7 @@ class AskWorldInitialExecutor(
             ?.text
             ?.removePrefix(command().command)
             ?.removePrefix("@${botConfig.botname}")
+            ?.removePrefix(" ")
             ?.takeIf(String::isNotEmpty) ?: return { it.send(update, dictionary.get(Phrase.ASK_WORLD_HELP)) }
 
         if (isLimitForChatExceed(chat)) {
