@@ -239,7 +239,7 @@ CREATE TABLE IF NOT EXISTS chat_log
     chat_id BIGINT,
     user_id BIGINT,
     message VARCHAR(10000),
-    id      SERIAL NOT NULL,
+    id      BIGSERIAL NOT NULL,
     CONSTRAINT chat_log_pkey
         PRIMARY KEY (id),
     CONSTRAINT chat_log_chat_id_fkey
