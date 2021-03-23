@@ -42,7 +42,7 @@ class Router(
 ) {
 
     private val logger = getLogger()
-
+    private val chatLogRegex = Regex("[а-яА-Яё\\s,.!]+")
     fun processUpdate(update: Update): suspend (AbsSender) -> Unit {
 
         val message = update.message
@@ -136,16 +136,13 @@ class Router(
     }
 
     private fun logChatMessage(update: Update) {
-        val text = update.message?.text
-        if (update.message?.isGroupMessage == true &&
-            update.message?.from?.isBot == false &&
-            text != null &&
-            text.split(" ").size >= 3 &&
-            text.length < 600 &&
-            !text.contains("http", ignoreCase = true)
-        ) {
-            chatLogRepository.add(update.toUser(), text)
-        }
+        val text = update.message.text
+            ?.takeIf { it.split(" ").size >= 3 }
+            ?.takeIf { it.split(" ").size < 8 }
+            ?.takeIf { it.length < 600 }
+            ?.takeIf { chatLogRegex.matches(it) } ?: return
+
+        chatLogRepository.add(update.toUser(), text)
     }
 
     private fun selectExecutor(update: Update, forSingleUser: Boolean = false): Executor? {
