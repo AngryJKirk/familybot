@@ -17,6 +17,13 @@ class HelpCommandExecutor(private val dictionary: Dictionary, config: BotConfig)
     }
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        return { it.send(update, dictionary.get(Phrase.HELP_MESSAGE), enableHtml = true) }
+        return {
+            it.send(
+                update,
+                dictionary.get(Phrase.HELP_MESSAGE),
+                enableHtml = true,
+                customization = { disableWebPagePreview = true }
+            )
+        }
     }
 }
