@@ -42,7 +42,7 @@ class Router(
 ) {
 
     private val logger = getLogger()
-    private val chatLogRegex = Regex("[а-яА-Яё\\s,.!]+")
+    private val chatLogRegex = Regex("[а-яА-Яё\\s,.!?]+")
     fun processUpdate(update: Update): suspend (AbsSender) -> Unit {
 
         val message = update.message
