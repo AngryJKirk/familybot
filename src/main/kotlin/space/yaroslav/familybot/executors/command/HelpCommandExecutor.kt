@@ -22,7 +22,10 @@ class HelpCommandExecutor(private val dictionary: Dictionary, config: BotConfig)
                 update,
                 dictionary.get(Phrase.HELP_MESSAGE),
                 enableHtml = true,
-                customization = { disableWebPagePreview = true }
+                customization = {
+                    disableWebPagePreview = true
+                    disableNotification = true
+                }
             )
         }
     }
