@@ -72,7 +72,6 @@ class TopPidorsByMonthsExecutor(
         val position = it.value.position
         val leaderboardPhrase = getLeaderboardPhrase(Pluralization.getPlur(it.value.position))
         "$month, $year:\n".italic() + "$userName, $position $leaderboardPhrase"
-
     }
 
     private fun startOfMonth(): Instant {
