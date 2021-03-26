@@ -45,7 +45,7 @@ fun Update.chatIdString(): String {
 fun Update.toUser(): User {
     val user = this.from()
     val formattedName = (user.firstName.let { "$it " }) + (user.lastName ?: "")
-    return User(user.id.toLong(), this.toChat(), formattedName, user.userName)
+    return User(user.id, this.toChat(), formattedName, user.userName)
 }
 
 fun Update.from(): TelegramUser {
