@@ -1,13 +1,13 @@
 package space.yaroslav.familybot.other
 
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import space.yaroslav.familybot.executors.eventbased.keyword.BotMentionKeyWordProcessor
-import space.yaroslav.familybot.infrastructure.ChatBuilder
-import space.yaroslav.familybot.infrastructure.MessageBuilder
-import space.yaroslav.familybot.infrastructure.UpdateBuilder
-import space.yaroslav.familybot.infrastructure.UserBuilder
+import space.yaroslav.familybot.infrastructure.createSimpleMessage
+import space.yaroslav.familybot.infrastructure.createSimpleUpdate
+import space.yaroslav.familybot.infrastructure.createSimpleUser
 import space.yaroslav.familybot.infrastructure.randomUUID
 import space.yaroslav.familybot.suits.FamilybotApplicationTest
 import space.yaroslav.familybot.telegram.BotConfig
@@ -21,10 +21,9 @@ class FuckOffTest : FamilybotApplicationTest() {
     @Autowired
     lateinit var botConfig: BotConfig
 
-    @Test
-    fun `should be able to process valid message`() {
-        val botName = botConfig.botname ?: throw FamilyBot.InternalException("Wrong test configuration")
-        val phraseSet = setOf(
+    @ParameterizedTest
+    @ValueSource(
+        strings = [
             "ебало    завали",
             "ебало завалил",
             "ебало бля завали",
@@ -34,18 +33,16 @@ class FuckOffTest : FamilybotApplicationTest() {
             "завали бля ебало",
             "завали, бля, ебало",
             "завали    ебало"
-        ).let { set -> set.plus(set.map { randomUUID() + it + randomUUID() }) }
+        ]
+    )
 
-        phraseSet.forEach { phrase ->
-            val update = UpdateBuilder()
-                .message {
-                    text { phrase }
-                    to { MessageBuilder().from { UserBuilder().toBot(botName) } }
-                    from { UserBuilder() }
-                    chat { ChatBuilder() }
-                }.build()
-            val canProcess = botMentionKeyWordProcessor.isFuckOff(update)
-            Assert.assertTrue("Should be able to process simple message to bot: $phrase", canProcess)
-        }
+    fun `should be able to process valid message`(value: String) {
+        val botName = botConfig.botname ?: throw FamilyBot.InternalException("Wrong test configuration")
+        val phrase = value.let { set -> set.plus(set.map { randomUUID() + it + randomUUID() }) }
+        val update = createSimpleUpdate(phrase)
+        update.message.replyToMessage = createSimpleMessage()
+        update.message.replyToMessage.from = createSimpleUser(true, botName)
+        val canProcess = botMentionKeyWordProcessor.isFuckOff(update)
+        Assertions.assertTrue(canProcess, "Should be able to process simple message to bot: $phrase")
     }
 }

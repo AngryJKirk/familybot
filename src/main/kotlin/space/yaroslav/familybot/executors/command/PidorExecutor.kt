@@ -68,7 +68,7 @@ class PidorExecutor(
                 }
                     .forEach { it.join() }
                 val actualizedUsers = repository.getUsers(chat, activeOnly = true)
-                log.info("Users to roll: {}", users)
+                log.info("Users to roll: {}", actualizedUsers)
                 val nextPidor = actualizedUsers.random()
                 log.info("Pidor is rolled to $nextPidor")
                 val newPidor = Pidor(nextPidor, Instant.now())
@@ -130,7 +130,7 @@ class PidorExecutor(
     }
 
     private fun getUserFromChat(user: User, absSender: AbsSender): User? {
-        val getChatMemberCall = GetChatMember(user.chat.idString, user.id.toInt())
+        val getChatMemberCall = GetChatMember(user.chat.idString, user.id)
         return runCatching {
             absSender.execute(getChatMemberCall)
                 .takeIf { it.status != "left" && it.status != "kicked" }

@@ -1,244 +1,88 @@
 package space.yaroslav.familybot.infrastructure
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.telegram.telegrambots.meta.api.objects.Chat
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.MessageEntity
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
-import org.telegram.telegrambots.meta.api.objects.stickers.StickerSet
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.stickers.Sticker
-import java.time.Instant
-import java.util.UUID
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 
-interface TestModelBuilder<T> {
-    companion object {
-        val objectMapper = ObjectMapper()
-    }
-
-    val data: MutableMap<String, Any>
-
-    fun type(): Class<T>
-
-    fun build(): T = objectMapper.readValue(objectMapper.writeValueAsString(data), type())
+fun createSimpleUpdate(text: String? = null): Update {
+    return update(text)
 }
 
-class UpdateBuilder(override val data: MutableMap<String, Any> = HashMap()) : TestModelBuilder<Update> {
+fun createSimpleMessage(text: String? = null, chat: Chat = chat()): Message {
+    return message(text, chat)
+}
 
-    init {
-        data.putAll(
-            mapOf(
-                "update_id" to randomInt(),
-                "date" to Instant.now().epochSecond
-            )
+fun createSimpleCommand(command: Command, prefix: String? = null, postfix: String? = null): Update {
+    val entireMessage = (prefix ?: "") + command.command + (postfix ?: "")
+    return update(entireMessage).apply {
+        val element = MessageEntity(
+            "bot_command",
+            prefix?.length ?: 0,
+            command.command.length + (postfix?.length ?: 0)
         )
+            .apply { text = command.command }
+        this.message.entities = mutableListOf()
+        this.message.entities.add(element)
     }
+}
 
-    fun message(build: MessageBuilder.() -> MessageBuilder): UpdateBuilder {
-        val messageBuilder = build(MessageBuilder())
-        data["message"] = messageBuilder.data
-        data.remove("edited_message")
-        return this
+fun createSimpleUser(isBot: Boolean = false, botName: String? = null): User {
+    val user = user()
+    if (isBot) {
+        user.isBot = true
+        user.userName = botName
     }
+    return user
+}
 
-    fun withEditedMessage(build: MessageBuilder.() -> MessageBuilder): UpdateBuilder {
-        val messageBuilder = build(MessageBuilder())
-        data["edited_message"] = messageBuilder.data
-        data.remove("message")
-        return this
-    }
-
-    fun simpleTextMessageFromUser(text: String): Update {
-        return message {
-            text { text }
-            chat { ChatBuilder() }
-            from { UserBuilder() }
-        }.build()
-    }
-
-    fun simpleCommandFromUser(command: Command, prefix: String? = null, postfix: String? = null): Update {
-        val entireMessage = (prefix ?: "") + command.command + (postfix ?: "")
-        return message {
-            command(length = command.command.length + (postfix?.length ?: 0), offset = prefix?.length ?: 0)
-            text { entireMessage }
-            chat { ChatBuilder() }
-            from { UserBuilder() }
-        }.build()
-    }
-
-    fun singleStickerUpdate(sticker: Sticker): Update {
-        return message {
-            sticker {
-                StickerBuilder(
-                    stickerPack = sticker.pack.packName,
-                    emoji = sticker.stickerEmoji
-                )
+fun singleStickerUpdate(sticker: Sticker): Update {
+    return update()
+        .apply {
+            message.sticker = TelegramSticker().apply {
+                emoji = sticker.stickerEmoji
+                setName = sticker.pack.packName
+                fileId = randomUUID()
             }
-        }.build()
-    }
-
-    override fun type() = Update::class.java
+        }
 }
 
-class MessageBuilder(override val data: MutableMap<String, Any> = HashMap()) : TestModelBuilder<Message> {
-
-    init {
-        data.putAll(
-            mapOf(
-                "message_id" to randomInt(),
-                "date" to Instant.now().epochSecond,
-                "text" to UUID.randomUUID().toString()
-            )
-        )
-    }
-
-    fun text(text: () -> String): MessageBuilder {
-        data["text"] = text()
-        return this
-    }
-
-    fun chat(chat: () -> ChatBuilder): MessageBuilder {
-        data["chat"] = chat().data
-        return this
-    }
-
-    fun command(offset: Int = 0, length: Int): MessageBuilder {
-        data["entities"] = listOf(MessageEntityBuilder(offset = offset, length = length).data)
-        return this
-    }
-
-    fun from(from: () -> UserBuilder): MessageBuilder {
-        data["from"] = from().data
-        return this
-    }
-
-    fun to(messageTo: MessageBuilder.() -> MessageBuilder): MessageBuilder {
-        data["reply_to_message"] = messageTo(MessageBuilder()).data
-        return this
-    }
-
-    fun sticker(stiker: () -> StickerBuilder): MessageBuilder {
-        data["stiker"] = stiker().data
-        return this
-    }
-
-    override fun type() = Message::class.java
-}
-
-class ChatBuilder(override val data: MutableMap<String, Any> = HashMap()) : TestModelBuilder<Chat> {
-
-    init {
-        val chatId = randomIntFrom1to3() * 10
-        data.putAll(
-            mapOf(
-                "id" to chatId,
-                "title" to "Test chat #$chatId",
-                "type" to "supergroup"
-            )
-        )
-    }
-
-    fun becomeUser(username: String): ChatBuilder {
-        data.putAll(
-            mapOf(
-                "type" to "private",
-                "username" to username
-            )
-        )
-        return this
-    }
-
-    override fun type() = Chat::class.java
-}
-
-class UserBuilder(override val data: MutableMap<String, Any> = HashMap()) : TestModelBuilder<User> {
-    override fun type() = User::class.java
-
-    init {
-        val userId = randomIntFrom1to3()
-        data.putAll(
-            mapOf(
-                "id" to userId,
-                "username" to "user$userId",
-                "first_name" to "Test user",
-                "last_name" to "#$userId"
-            )
-        )
-    }
-
-    fun username(text: () -> String): UserBuilder {
-        data["username"] = text()
-        return this
-    }
-
-    fun toBot(name: String): UserBuilder {
-        data.putAll(
-            mapOf(
-                "username" to name,
-                "is_bot" to true
-            )
-        )
-        return this
+private fun update(text: String? = null): Update {
+    return Update().apply {
+        message = message(text, chat())
     }
 }
 
-class MessageEntityBuilder(
-    override val data: MutableMap<String, Any> = HashMap(),
-    offset: Int,
-    length: Int
-) : TestModelBuilder<MessageEntity> {
-
-    init {
-        data.putAll(
-            mapOf(
-                "type" to "bot_command",
-                "offset" to offset,
-                "length" to length
-            )
-        )
-    }
-
-    override fun type(): Class<MessageEntity> = MessageEntity::class.java
-}
-
-class StickerBuilder(
-    override val data: MutableMap<String, Any> = HashMap(),
-    stickerPack: String,
-    emoji: String
-) : TestModelBuilder<TelegramSticker> {
-    override fun type(): Class<TelegramSticker> = TelegramSticker::class.java
-
-    init {
-        data.putAll(
-            mapOf(
-                "file_id" to UUID.randomUUID().toString(),
-                "set_name" to stickerPack,
-                "emoji" to emoji
-            )
-        )
+private fun message(text: String?, chat: Chat): Message {
+    return Message().apply {
+        if (text != null) {
+            this.text = text
+        }
+        this.chat = chat
+        from = user()
+        messageId = randomInt()
     }
 }
 
-class StickerSetBuilder(
-    override val data: MutableMap<String, Any> = HashMap(),
-    name: String
-) : TestModelBuilder<StickerSet> {
-    override fun type(): Class<StickerSet> = StickerSet::class.java
-
-    init {
-        data.putAll(
-            mapOf(
-                "name" to name,
-                "stickers" to mutableListOf<MutableMap<String, Any>>()
-            )
-        )
+private fun user(): User {
+    val userId = randomLongFrom1to3()
+    return User().apply {
+        id = userId
+        userName = "user$userId"
+        firstName = "test user"
+        lastName = "#$userId"
     }
+}
 
-    @Suppress("UNCHECKED_CAST")
-    fun withSticker(stickerBuilder: () -> StickerBuilder) {
-        val stickers = data["stickers"] as MutableList<MutableMap<String, Any>>
-        stickers.add(stickerBuilder().data)
+private fun chat(): Chat {
+    val chatId = randomLongFrom1to3() * 10
+    return Chat().apply {
+        id = chatId
+        title = "Test chat #$chatId"
+        type = "supergroup"
     }
 }

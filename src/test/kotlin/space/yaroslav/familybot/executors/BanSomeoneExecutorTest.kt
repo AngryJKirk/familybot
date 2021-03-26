@@ -2,15 +2,22 @@ package space.yaroslav.familybot.executors
 
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
+import org.junit.Ignore
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
+import org.mockito.kotlin.any
+import org.mockito.kotlin.clearInvocations
+import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.executors.pm.BanSomeoneExecutor
-import space.yaroslav.familybot.infrastructure.ChatBuilder
-import space.yaroslav.familybot.infrastructure.MessageBuilder
-import space.yaroslav.familybot.infrastructure.UpdateBuilder
-import space.yaroslav.familybot.infrastructure.UserBuilder
+import space.yaroslav.familybot.infrastructure.createSimpleUpdate
+import space.yaroslav.familybot.infrastructure.randomUUID
 import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.repos.ifaces.BanEntity
 import space.yaroslav.familybot.repos.ifaces.BanEntityType
@@ -18,9 +25,25 @@ import space.yaroslav.familybot.repos.ifaces.BanRepository
 import space.yaroslav.familybot.suits.ExecutorTest
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
-import java.util.UUID
+import java.util.stream.Stream
 
 class BanSomeoneExecutorTest : ExecutorTest() {
+    @Suppress("unused")
+    companion object {
+        @JvmStatic
+        fun valuesProvider(): Stream<Arguments> {
+            val update = createSimpleUpdate()
+            val chatToBan = update.toChat()
+            val userToBan = update.toUser()
+            return Stream.of(
+                Arguments.of(BanTestModel(userToBan.name, BanEntity(userToBan.id, BanEntityType.USER))),
+                Arguments.of(BanTestModel(userToBan.nickname, BanEntity(userToBan.id, BanEntityType.USER))),
+                Arguments.of(BanTestModel(userToBan.id.toString(), BanEntity(userToBan.id, BanEntityType.USER))),
+                Arguments.of(BanTestModel(chatToBan.id.toString(), BanEntity(chatToBan.id, BanEntityType.CHAT))),
+                Arguments.of(BanTestModel(chatToBan.name, BanEntity(chatToBan.id, BanEntityType.CHAT)))
+            )
+        }
+    }
 
     @Autowired
     lateinit var banSomeoneExecutor: BanSomeoneExecutor
@@ -31,9 +54,9 @@ class BanSomeoneExecutorTest : ExecutorTest() {
     @Autowired
     lateinit var banRepository: BanRepository
 
-    override fun priotityTest() {
+    override fun priorityTest() {
         val priority = banSomeoneExecutor.priority(Update())
-        Assert.assertEquals(Priority.HIGH, priority)
+        Assertions.assertEquals(Priority.HIGH, priority)
     }
 
     override fun canExecuteTest() {
@@ -43,46 +66,42 @@ class BanSomeoneExecutorTest : ExecutorTest() {
 
         Assert.assertTrue(canExecuteValid)
 
-        val notValidMessage = updateFromDeveloper(UUID.randomUUID().toString()).message
+        val notValidMessage = updateFromDeveloper(randomUUID()).message
 
         val canExecuteNotValid = banSomeoneExecutor.canExecute(notValidMessage)
 
-        Assert.assertFalse(canExecuteNotValid)
+        Assertions.assertFalse(canExecuteNotValid)
     }
 
+    @Ignore
     override fun executeTest() {
-        val chatToBan = ChatBuilder().build().toChat()
-        val userToBan = UserBuilder().build().toUser(chatToBan)
-        banTest { BanTestModel(userToBan.name, BanEntity(userToBan.id, BanEntityType.USER)) }
-        banTest { BanTestModel(userToBan.nickname, BanEntity(userToBan.id, BanEntityType.USER)) }
-        banTest { BanTestModel(userToBan.id.toString(), BanEntity(userToBan.id, BanEntityType.USER)) }
-        banTest { BanTestModel(chatToBan.id.toString(), BanEntity(chatToBan.id, BanEntityType.CHAT)) }
-        banTest { BanTestModel(chatToBan.name, BanEntity(chatToBan.id, BanEntityType.CHAT)) }
+    }
+
+    @TestFactory
+    @MethodSource("valuesProvider")
+    fun executeTest(banModel: BanTestModel) {
+        clearInvocations(sender)
+        val description = randomUUID()
+        val update = updateFromDeveloper("BAN1488|${banModel.key}|$description")
+        runBlocking { banSomeoneExecutor.execute(update).invoke(sender) }
+        verify(sender).execute(any<SendMessage>())
+
+        val ban = banRepository.getByEntity(banModel.banEntity)
+            ?: throw AssertionError("Should be a new ban")
+
+        banRepository.reduceBan(ban)
     }
 
     private fun updateFromDeveloper(messageText: String): Update {
         val developerUsername =
             botConfig.developer ?: throw FamilyBot.InternalException("Someone wrong with tests setup")
-        return UpdateBuilder()
-            .message {
-                MessageBuilder()
-                    .chat { ChatBuilder().becomeUser(developerUsername) }
-                    .text { messageText }
-                    .from { UserBuilder().username { developerUsername } }
-            }.build()
-    }
-
-    private fun banTest(model: () -> BanTestModel) {
-        val description = UUID.randomUUID()
-        val banModel = model()
-        val update = updateFromDeveloper("BAN1488|${banModel.key}|$description")
-        runBlocking { banSomeoneExecutor.execute(update).invoke(testSender) }
-        Assert.assertEquals(1, testSender.actions.size)
-
-        val ban = banRepository.getByEntity(banModel.banEntity) ?: throw AssertionError()
-
-        cleanSender()
-        banRepository.reduceBan(ban)
+        return createSimpleUpdate(messageText).apply {
+            message.from.userName = developerUsername
+            message.chat.apply {
+                type = "private"
+                userName = developerUsername
+            }
+        }
     }
 
     data class BanTestModel(

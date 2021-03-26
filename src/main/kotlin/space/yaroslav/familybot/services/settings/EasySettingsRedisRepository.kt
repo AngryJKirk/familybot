@@ -8,13 +8,13 @@ import java.time.Duration
 @Component
 class EasySettingsRedisRepository(
     private val redisTemplate: StringRedisTemplate
-) {
+) : EasySettingsRepository {
 
-    fun <T : Any> put(
+    override fun <T : Any> put(
         easySetting: EasySetting<T>,
         key: SettingsKey,
         value: T,
-        duration: Duration? = null
+        duration: Duration?
     ) {
         val keyValue = getKeyValue(easySetting, key)
         if (duration == null) {
@@ -24,18 +24,18 @@ class EasySettingsRedisRepository(
         }
     }
 
-    fun <T : Any> get(easySetting: EasySetting<T>, key: SettingsKey): T? {
+    override fun <T : Any> get(easySetting: EasySetting<T>, key: SettingsKey): T? {
         val rawValue = redisTemplate.opsForValue().get(getKeyValue(easySetting, key))
             ?: return null
 
         return cast(easySetting, rawValue)
     }
 
-    fun decrement(easySetting: EasySetting<Long>, key: SettingsKey): Long {
+    override fun decrement(easySetting: EasySetting<Long>, key: SettingsKey): Long {
         return redisTemplate.opsForValue().decrement(getKeyValue(easySetting, key)) ?: 0
     }
 
-    fun increment(easySetting: EasySetting<Long>, key: SettingsKey): Long {
+    override fun increment(easySetting: EasySetting<Long>, key: SettingsKey): Long {
         return redisTemplate.opsForValue().increment(getKeyValue(easySetting, key)) ?: 0
     }
 

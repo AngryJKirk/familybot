@@ -1,9 +1,10 @@
 package space.yaroslav.familybot.suits
 
-import org.junit.Assert
+import org.junit.jupiter.api.Assertions
 import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.executors.command.CommandExecutor
-import space.yaroslav.familybot.infrastructure.UpdateBuilder
+import space.yaroslav.familybot.infrastructure.createSimpleCommand
+import space.yaroslav.familybot.infrastructure.createSimpleMessage
 import space.yaroslav.familybot.infrastructure.randomUUID
 import space.yaroslav.familybot.models.Priority
 
@@ -14,41 +15,39 @@ abstract class CommandExecutorTest : ExecutorTest() {
     override fun canExecuteTest() {
         val commandExecutor = getCommandExecutor()
         val command = commandExecutor.command()
-        val messageWithOnlyCommand = UpdateBuilder().simpleCommandFromUser(command)
-        Assert.assertTrue(
-            "Command executor should be able to execute only if message starts with command",
-            commandExecutor.canExecute(messageWithOnlyCommand.message)
+        val messageWithOnlyCommand = createSimpleCommand(command)
+        Assertions.assertTrue(
+            commandExecutor.canExecute(messageWithOnlyCommand.message),
+            "Command executor should be able to execute only if message starts with command"
         )
-        val messageWithCommandInMiddle = UpdateBuilder()
-            .simpleCommandFromUser(prefix = randomUUID(), postfix = randomUUID(), command = command)
-        Assert.assertFalse(
-            "Command executor should not react to command in the middle",
-            commandExecutor.canExecute(messageWithCommandInMiddle.message)
+        val messageWithCommandInMiddle =
+            createSimpleCommand(prefix = randomUUID(), postfix = randomUUID(), command = command)
+        Assertions.assertFalse(
+            commandExecutor.canExecute(messageWithCommandInMiddle.message),
+            "Command executor should not react to command in the middle"
         )
-        val messageForOtherBot = UpdateBuilder()
-            .simpleCommandFromUser(command = command, postfix = "@${randomUUID()}")
-        Assert.assertFalse(
-            "Should not react for command which addressed to another bot",
-            commandExecutor.canExecute(messageForOtherBot.message)
+        val messageForOtherBot = createSimpleCommand(command = command, postfix = "@${randomUUID()}")
+        Assertions.assertFalse(
+            commandExecutor.canExecute(messageForOtherBot.message),
+            "Should not react for command which addressed to another bot"
         )
-        val messageForSuchara = UpdateBuilder()
-            .simpleCommandFromUser(command = command, postfix = "@IntegrationTests")
-        Assert.assertTrue(
-            "Should not react for command which addressed to another bot",
-            commandExecutor.canExecute(messageForSuchara.message)
+        val messageForSuchara = createSimpleCommand(command = command, postfix = "@IntegrationTests")
+        Assertions.assertTrue(
+            commandExecutor.canExecute(messageForSuchara.message),
+            "Should not react for command which addressed to another bot"
         )
-        val messageWithoutCommand = UpdateBuilder().simpleTextMessageFromUser(randomUUID())
-        Assert.assertFalse(
-            "Any others messages should never let executor be assigned to work",
-            commandExecutor.canExecute(messageWithoutCommand.message)
+        val messageWithoutCommand = createSimpleMessage(randomUUID())
+        Assertions.assertFalse(
+            commandExecutor.canExecute(messageWithoutCommand),
+            "Any others messages should never let executor be assigned to work"
         )
     }
 
-    override fun priotityTest() {
-        Assert.assertEquals(
-            "Command executors should always have medium priority",
+    override fun priorityTest() {
+        Assertions.assertEquals(
             Priority.MEDIUM,
-            getCommandExecutor().priority(Update())
+            getCommandExecutor().priority(Update()),
+            "Command executors should always have medium priority"
         )
     }
 }

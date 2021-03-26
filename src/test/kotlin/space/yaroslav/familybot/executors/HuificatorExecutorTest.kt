@@ -1,55 +1,87 @@
 package space.yaroslav.familybot.executors
 
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert
+import org.junit.Ignore
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
+import org.mockito.ArgumentCaptor
+import org.mockito.Mockito.atLeastOnce
+import org.mockito.Mockito.verifyNoInteractions
+import org.mockito.kotlin.any
+import org.mockito.kotlin.verify
+import org.springframework.beans.factory.annotation.Autowired
+import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
+import org.telegram.telegrambots.meta.api.objects.Update
+import space.yaroslav.familybot.common.utils.key
+import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.executors.eventbased.HuificatorExecutor
-import space.yaroslav.familybot.infrastructure.ActionWithText
-import space.yaroslav.familybot.infrastructure.UpdateBuilder
+import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.models.Priority
+import space.yaroslav.familybot.services.settings.EasySettingsService
+import space.yaroslav.familybot.services.settings.TalkingDencity
 import space.yaroslav.familybot.suits.ExecutorTest
+import java.util.stream.Stream
 
 class HuificatorExecutorTest : ExecutorTest() {
 
-    val huificatorExecutor: HuificatorExecutor = HuificatorExecutor(0)
+    @Suppress("unused")
+    companion object {
+        @JvmStatic
+        fun valuesProvider(): Stream<Arguments> {
+            return Stream.of(
+                Arguments.of("штош", null),
+                Arguments.of("как-нибудь", "хуяк-нибудь"),
+                Arguments.of("дерево", "хуерево"),
+                Arguments.of("hello", null),
+                Arguments.of("куку шуку пидор", "хуидор"),
+                Arguments.of("куку шуку             петух", "хуетух"),
+                Arguments.of("удача", "хуюдача"),
+                Arguments.of("х-у-й-ня", null)
+            )
+        }
+    }
 
-    override fun priotityTest() {
-        val update = UpdateBuilder().build()
+    @Autowired
+    lateinit var huificatorExecutor: HuificatorExecutor
+
+    @Autowired
+    lateinit var easySettingsService: EasySettingsService
+
+    override fun priorityTest() {
+        val update = Update()
         val priority = huificatorExecutor.priority(update)
-        Assert.assertEquals("Huificator executor should be random", Priority.RANDOM, priority)
+        Assertions.assertEquals(Priority.RANDOM, priority, "Huificator executor should be random")
     }
 
     override fun canExecuteTest() {
         val canExecute = huificatorExecutor.canExecute(Message())
-        Assert.assertFalse("Should always be not available to execute", canExecute)
+        Assertions.assertFalse(canExecute, "Should always be not available to execute")
     }
 
+    @Ignore
     override fun executeTest() {
-        val testSet = mapOf(
-            "штош" to null,
-            "как-нибудь" to "хуяк-нибудь",
-            "дерево" to "хуерево",
-            "hello" to null,
-            "куку шуку пидор" to "хуидор",
-            "куку шуку             петух" to "хуетух",
-            "удача" to "хуюдача",
-            "х-у-й-ня" to null
-        )
-        testSet
-            .mapKeys { word -> UpdateBuilder().simpleTextMessageFromUser(word.key) }
-            .forEach { huificateEntry ->
-                runBlocking { huificatorExecutor.execute(huificateEntry.key).invoke(testSender) }
-                val actions = testSender.actions
-                if (huificateEntry.value == null) {
-                    takeIf { actions.isEmpty() }
-                        ?: throw AssertionError("Should not have text action $actions in case of $huificateEntry")
-                } else {
-                    val action = actions
-                        .firstOrNull() as? ActionWithText
-                        ?: throw AssertionError("Should have text action in case of $huificateEntry")
-                    Assert.assertEquals(huificateEntry.value, action.content)
-                }
-                cleanSender()
-            }
+    }
+
+    @ParameterizedTest
+    @MethodSource("valuesProvider")
+    fun executeTest(input: String, expected: String?) {
+        val update = createSimpleUpdate(input)
+        easySettingsService.put(TalkingDencity, update.toChat().key(), 0)
+        val sender = testSender.sender
+        runBlocking {
+            huificatorExecutor.execute(update).invoke(sender)
+        }
+        if (expected == null) {
+            verifyNoInteractions(sender)
+        } else {
+            val sendMessageCaptor = ArgumentCaptor.forClass(SendMessage::class.java)
+            verify(sender, atLeastOnce()).execute(any<SendChatAction>())
+            verify(sender, atLeastOnce()).execute(sendMessageCaptor.capture())
+            Assertions.assertEquals(expected, sendMessageCaptor.value.text)
+        }
     }
 }

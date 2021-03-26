@@ -1,11 +1,17 @@
-FROM alpine:latest
+FROM maven:3.6.0-jdk-11-slim AS build
+
+COPY src /home/app/src
+
+COPY pom.xml /home/app
+
+RUN  mvn -f /home/app/pom.xml verify clean -DskipTests
+
+RUN mvn -f /home/app/pom.xml package -DskipTests
+
+FROM openjdk:11-jre-slim
 
 ENV SPRING_PROFILES_ACTIVE production
 
-RUN apk --no-cache add openjdk11
+COPY --from=build /home/app/target/familybot.jar /usr/local/lib/familybot.jar
 
-WORKDIR /usr/bin/app
-
-COPY build/libs/familybot.jar .
-
-CMD ["java", "-Xms256m", "-Xmx512m","-jar", "./familybot.jar"]
+ENTRYPOINT ["java","-jar","/usr/local/lib/familybot.jar"]

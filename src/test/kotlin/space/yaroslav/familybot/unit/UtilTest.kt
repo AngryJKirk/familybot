@@ -1,25 +1,32 @@
 package space.yaroslav.familybot.unit
 
-import org.junit.Assert
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import space.yaroslav.familybot.common.Pluralization
+import java.util.stream.Stream
 
-@RunWith(JUnit4::class)
 class UtilTest {
 
-    @Test
-    fun plurTest() {
-        val zero = Pluralization.getPlur(0)
-        val few = Pluralization.getPlur(2)
-        val many = Pluralization.getPlur(5)
-        val elevenIsFew = Pluralization.getPlur(11)
-        val one = Pluralization.getPlur(21)
-        Assert.assertEquals(zero, Pluralization.MANY)
-        Assert.assertEquals(few, Pluralization.FEW)
-        Assert.assertEquals(many, Pluralization.MANY)
-        Assert.assertEquals(elevenIsFew, Pluralization.MANY)
-        Assert.assertEquals(one, Pluralization.ONE)
+    @Suppress("unused")
+    companion object {
+        @JvmStatic
+        fun valuesProvider(): Stream<Arguments> {
+            return Stream.of(
+                Arguments.of(0, Pluralization.MANY),
+                Arguments.of(2, Pluralization.FEW),
+                Arguments.of(5, Pluralization.MANY),
+                Arguments.of(11, Pluralization.MANY),
+                Arguments.of(21, Pluralization.ONE)
+            )
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("valuesProvider")
+    fun plurTest(input: Int, expected: Pluralization) {
+        val actual = Pluralization.getPlur(input)
+        Assertions.assertEquals(expected, actual)
     }
 }

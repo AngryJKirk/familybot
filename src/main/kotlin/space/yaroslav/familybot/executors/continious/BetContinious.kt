@@ -72,7 +72,7 @@ class BetContinious(
                 shouldTypeBeforeSend = true
             )
             it.send(update, dictionary.get(Phrase.BET_ZATRAVOCHKA), shouldTypeBeforeSend = true)
-            val diceMessage = it.execute(SendDice(chatId.toString(), "\uD83C\uDFB2"))
+            val diceMessage = it.execute(SendDice(chatId.toString()))
             delay(4000)
             val isItWinner = winnableNumbers.contains(diceMessage.dice.value)
             if (isItWinner) {

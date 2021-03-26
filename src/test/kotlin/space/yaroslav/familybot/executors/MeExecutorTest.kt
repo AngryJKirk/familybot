@@ -1,11 +1,14 @@
 package space.yaroslav.familybot.executors
 
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert
+import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import space.yaroslav.familybot.executors.command.CommandExecutor
 import space.yaroslav.familybot.executors.command.MeCommandExecutor
-import space.yaroslav.familybot.infrastructure.UpdateBuilder
+import space.yaroslav.familybot.infrastructure.createSimpleCommand
 import space.yaroslav.familybot.suits.CommandExecutorTest
 
 class MeExecutorTest : CommandExecutorTest() {
@@ -16,9 +19,8 @@ class MeExecutorTest : CommandExecutorTest() {
     override fun getCommandExecutor(): CommandExecutor = meCommandExecutor
 
     override fun executeTest() {
-        val update = UpdateBuilder().simpleCommandFromUser(meCommandExecutor.command())
-        runBlocking { meCommandExecutor.execute(update).invoke(testSender) }
-        val actions = testSender.actions
-        Assert.assertTrue("Should be exactly one action with stats", actions.size == 1)
+        val update = createSimpleCommand(meCommandExecutor.command())
+        runBlocking { meCommandExecutor.execute(update).invoke(sender) }
+        verify(sender, Mockito.atLeastOnce()).execute(any<SendMessage>())
     }
 }

@@ -1,19 +1,20 @@
 package space.yaroslav.familybot.suits
 
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.images.builder.ImageFromDockerfile
 import java.nio.file.Paths
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 
-@RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("testing")
+@ExtendWith(SpringExtension::class)
 abstract class FamilybotApplicationTest {
 
     class KGenericContainer(imageName: Future<String>) : GenericContainer<KGenericContainer>(imageName)
@@ -23,6 +24,19 @@ abstract class FamilybotApplicationTest {
 
     companion object {
         init {
+            createPostgres()
+            createRedis()
+        }
+
+        private fun createRedis() {
+            val redisContainer: KGenericContainer = KGenericContainer(
+                CompletableFuture.supplyAsync { "redis:latest" }
+            ).withExposedPorts(6379)
+            redisContainer.start()
+            System.setProperty("spring.redis.port", redisContainer.firstMappedPort.toString())
+        }
+
+        private fun createPostgres() {
             val postgresContainer: KGenericContainer = KGenericContainer(
                 ImageFromDockerfile()
                     .withFileFromPath("Dockerfile", Paths.get("src/main/resources/database/Dockerfile"))
@@ -32,7 +46,7 @@ abstract class FamilybotApplicationTest {
             postgresContainer.start()
             System.setProperty(
                 "spring.datasource.url",
-                "jdbc:postgresql://localhost:${postgresContainer.getMappedPort(5432)}/postgres"
+                "jdbc:postgresql://localhost:${postgresContainer.firstMappedPort}/postgres"
             )
         }
     }

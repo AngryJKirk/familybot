@@ -1,24 +1,31 @@
 package space.yaroslav.familybot.suits
 
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import space.yaroslav.familybot.infrastructure.TestSender
 
 abstract class ExecutorTest : FamilybotApplicationTest() {
 
     protected val testSender = TestSender()
+    protected val sender = TestSender().sender
 
-    @Before
-    fun cleanSender() {
-        testSender.actions.removeAll { true }
+    @Test
+    fun runPriorityTest() {
+        priorityTest()
     }
 
     @Test
-    abstract fun priotityTest()
+    fun runCanExecuteTest() {
+        canExecuteTest()
+    }
 
     @Test
+    fun runExecuteTest() {
+        executeTest()
+    }
+
+    abstract fun priorityTest()
+
     abstract fun canExecuteTest()
 
-    @Test
     abstract fun executeTest()
 }

@@ -1,6 +1,4 @@
 #!/bin/bash
-./gradlew clean &&
-./gradlew ktlintFormat build -x test &&
 docker build . -f Dockerfile -t angrynaz/familybot &&
 docker rm -f suchara
 echo 'Bot has been stopped' &&

@@ -113,7 +113,6 @@ class AskWorldReceiveReplyExecutor(
                         MessageContentType.AUDIO ->
                             it.execute(
                                 SendAudio(
-                                    message.audio.duration,
                                     chatIdToReply,
                                     InputFile(message.audio.fileId)
                                 )

@@ -19,7 +19,7 @@ fun TelegramUser.toUser(chat: Chat? = null, telegramChat: TelegramChat? = null):
         ?: chat
         ?: throw FamilyBot.InternalException("Should be some chat to map user to internal model")
     val formattedName = listOfNotNull(this.firstName, this.lastName).joinToString(separator = " ")
-    return User(this.id.toLong(), internalChat, formattedName, this.userName)
+    return User(this.id, internalChat, formattedName, this.userName)
 }
 
 fun Update.toChat(): Chat {

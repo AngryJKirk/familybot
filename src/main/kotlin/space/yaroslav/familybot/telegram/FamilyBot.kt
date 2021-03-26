@@ -21,8 +21,8 @@ class FamilyBot(
     val pollRouter: PollRouter
 ) : TelegramLongPollingBot() {
 
-    private final val log = LoggerFactory.getLogger(FamilyBot::class.java)
-    private final val channels = HashMap<Long, Channel<Update>>()
+    private val log = LoggerFactory.getLogger(FamilyBot::class.java)
+    private val channels = HashMap<Long, Channel<Update>>()
 
     override fun getBotToken(): String {
         return config.token ?: throw InternalException("Expression 'config.token' must not be null")
@@ -65,7 +65,7 @@ class FamilyBot(
         }.also { MDC.clear() }
     }
 
-    private suspend fun proceedPollAnswer(update: Update) {
+    private fun proceedPollAnswer(update: Update) {
         pollRouter.proceed(update)
     }
 
