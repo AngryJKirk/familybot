@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.repos.ifaces
+package space.yaroslav.familybot.repos
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.models.FunctionId
-import space.yaroslav.familybot.repos.PostgresFunctionsConfigureRepository
+import space.yaroslav.familybot.repos.ifaces.FunctionsConfigureRepository
 import space.yaroslav.familybot.services.settings.EasySettingsRedisRepository
 
 @Component

@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.services
 
+import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
@@ -9,6 +10,9 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.CommandByUser
+import space.yaroslav.familybot.common.meteredCanExecute
+import space.yaroslav.familybot.common.meteredExecute
+import space.yaroslav.familybot.common.meteredPriority
 import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.isGroup
 import space.yaroslav.familybot.common.utils.toChat
@@ -38,7 +42,8 @@ class Router(
     private val configureRepository: FunctionsConfigureRepository,
     private val rawUpdateLogger: RawUpdateLogger,
     private val botConfig: BotConfig,
-    private val dictionary: Dictionary
+    private val dictionary: Dictionary,
+    private val meterRegistry: MeterRegistry
 ) {
 
     private val logger = getLogger()
@@ -80,7 +85,7 @@ class Router(
                 else -> { _ -> }
             }
         } else {
-            executor.execute(update)
+            executor.meteredExecute(update, meterRegistry)
         }.also { GlobalScope.launch { logChatCommand(executor, update) } }
     }
 
@@ -88,7 +93,7 @@ class Router(
         logger.info("No executor found, trying to find random priority executors")
 
         GlobalScope.launch { logChatMessage(update) }
-        val executor = executors.filter { it.priority(update) == Priority.RANDOM }.random()
+        val executor = executors.filter { it.meteredPriority(update, meterRegistry) == Priority.RANDOM }.random()
 
         logger.info("Random priority executor ${executor.javaClass.simpleName} was selected")
         return executor
@@ -97,11 +102,11 @@ class Router(
     private fun antiDdosSkip(message: Message, update: Update): suspend (AbsSender) -> Unit = marker@{ it ->
         val executor = executors
             .filterIsInstance<CommandExecutor>()
-            .find { it.canExecute(message) } ?: return@marker
+            .find { it.meteredCanExecute(message, meterRegistry) } ?: return@marker
         val function = if (isExecutorDisabled(executor, message.chat)) {
             disabledCommand(message.chat)
         } else {
-            executor.execute(update)
+            executor.meteredExecute(update, meterRegistry)
         }
 
         function.invoke(it)
@@ -152,9 +157,9 @@ class Router(
             executors.filterNot { it is PrivateMessageExecutor }
         }
         return executorsToProcess
-            .sortedByDescending { it.priority(update).priorityValue }
-            .filter { it.priority(update) higherThan Priority.RANDOM }
-            .find { it.canExecute(update.message ?: update.editedMessage ?: update.callbackQuery.message) }
+            .sortedByDescending { it.meteredPriority(update, meterRegistry).priorityValue }
+            .filter { it.meteredPriority(update, meterRegistry) higherThan Priority.RANDOM }
+            .find { it.meteredCanExecute(update.message ?: update.editedMessage ?: update.callbackQuery.message, meterRegistry) }
     }
 
     private fun register(message: Message) {
