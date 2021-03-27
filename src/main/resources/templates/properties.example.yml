@@ -11,7 +11,9 @@ spring:
     driver-class-name: "org.postgresql.Driver"
     password: { password }
     username: { user }
-
+management:
+  metrics:
+    enable: false
 ---
 settings:
   botname: { name }
@@ -27,6 +29,13 @@ spring:
     password: { password }
     username: { user }
   profiles: production
+management:
+  metrics:
+    enable: true
+    export:
+      graphite:
+        host: { host }
+        port: { port }
 
 
 

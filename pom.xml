@@ -17,6 +17,7 @@
         <kotlinx-coroutines.version>1.4.2</kotlinx-coroutines.version>
         <testcontainers.version>1.15.1</testcontainers.version>
         <mockito-kotlin.version>2.2.11</mockito-kotlin.version>
+        <micrometer-registry.version>1.6.5</micrometer-registry.version>
     </properties>
 
 
@@ -47,6 +48,22 @@
             <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+            <version>${micrometer-registry.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-graphite</artifactId>
+            <version>${micrometer-registry.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots</artifactId>
             <version>${telegrambots.version}</version>
@@ -71,6 +88,7 @@
             <artifactId>kotlinx-coroutines-core-jvm</artifactId>
             <version>${kotlinx-coroutines.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
