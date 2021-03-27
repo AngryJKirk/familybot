@@ -4,9 +4,7 @@ COPY src /home/app/src
 
 COPY pom.xml /home/app
 
-RUN  mvn -f /home/app/pom.xml verify clean -DskipTests
-
-RUN mvn -f /home/app/pom.xml package -DskipTests
+RUN mvn -f /home/app/pom.xml clean package -DskipTests
 
 FROM openjdk:11-jre-slim
 
