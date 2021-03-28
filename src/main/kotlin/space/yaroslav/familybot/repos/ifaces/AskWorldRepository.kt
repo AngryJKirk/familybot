@@ -8,7 +8,6 @@ import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
-
 interface AskWorldRepository {
 
     fun addQuestion(question: AskWorldQuestion): Long

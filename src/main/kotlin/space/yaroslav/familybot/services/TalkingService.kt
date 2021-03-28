@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.services
 
+import io.micrometer.core.annotation.Timed
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.common.User
@@ -9,6 +10,7 @@ import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
 @Component
 class TalkingService(private val chatLogRepository: ChatLogRepository) {
 
+    @Timed("service.TalkingService.getReplyToUser")
     fun getReplyToUser(update: Update): String {
         return update.toUser()
             .let(this::getMessageList)

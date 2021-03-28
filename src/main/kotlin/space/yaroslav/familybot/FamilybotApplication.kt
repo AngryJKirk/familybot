@@ -14,9 +14,6 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
 
-
-
-
 @SpringBootApplication
 @EnableScheduling
 @EnableConfigurationProperties(BotConfig::class)

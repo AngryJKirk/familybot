@@ -3,6 +3,7 @@ package space.yaroslav.familybot.repos
 import com.google.common.base.Suppliers
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
+import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
@@ -48,14 +49,17 @@ class PostgresChatLogRepository(val template: JdbcTemplate) : ChatLogRepository 
         }
     )
 
+    @Timed("repository.ChatLogRepository.getAllByChat")
     override fun getAllByChat(chat: Chat): List<String> {
         return allByChatCache[chat]
     }
 
+    @Timed("repository.ChatLogRepository.getAll")
     override fun getAll(): List<String> {
         return allCache.get()
     }
 
+    @Timed("repository.ChatLogRepository.add")
     override fun add(user: User, message: String) {
         template.update(
             "INSERT INTO chat_log (chat_id, user_id, message) VALUES (?, ?, ?)",
@@ -65,6 +69,7 @@ class PostgresChatLogRepository(val template: JdbcTemplate) : ChatLogRepository 
         )
     }
 
+    @Timed("repository.ChatLogRepository.get")
     override fun get(user: User): List<String> {
         return allByUserCache[user]
     }
