@@ -88,6 +88,12 @@
             <artifactId>kotlinx-coroutines-core-jvm</artifactId>
             <version>${kotlinx-coroutines.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.9.6</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.testcontainers</groupId>
