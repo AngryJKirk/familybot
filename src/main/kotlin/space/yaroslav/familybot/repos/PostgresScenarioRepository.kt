@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.repos
 
+import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -69,6 +70,7 @@ class PostgresScenarioRepository(
         )
     }
 
+    @Timed("repository.PostgresScenarioRepository.getScenarios")
     override fun getScenarios(): List<Scenario> {
         return template.query(
             "SELECT * FROM scenario INNER JOIN scenario_move sm ON scenario.entry_move = sm.move_id",
@@ -76,6 +78,7 @@ class PostgresScenarioRepository(
         )
     }
 
+    @Timed("repository.PostgresScenarioRepository.findMove")
     override fun findMove(id: UUID): ScenarioMove? {
         return template
             .query(
@@ -86,6 +89,7 @@ class PostgresScenarioRepository(
             .firstOrNull()
     }
 
+    @Timed("repository.PostgresScenarioRepository.getAllCurrentGames")
     override fun getAllCurrentGames(): Map<Chat, ScenarioMove> {
         return template.query(
             """SELECT *
@@ -103,6 +107,7 @@ class PostgresScenarioRepository(
         }.toMap()
     }
 
+    @Timed("repository.PostgresScenarioRepository.getCurrentMoveOfChat")
     override fun getCurrentMoveOfChat(chat: Chat): ScenarioMove? {
         return template.query(
             """
@@ -114,6 +119,7 @@ class PostgresScenarioRepository(
         ) { rs, rowNum -> scenarioMoveRowMapper.mapRowNotNull(rs, rowNum) }.firstOrNull()
     }
 
+    @Timed("repository.PostgresScenarioRepository.getPreviousMove")
     override fun getPreviousMove(move: ScenarioMove): ScenarioMove? {
         return template.query(
             """
@@ -127,6 +133,7 @@ class PostgresScenarioRepository(
         ) { rs, rowNum -> scenarioMoveRowMapper.mapRowNotNull(rs, rowNum) }.firstOrNull()
     }
 
+    @Timed("repository.PostgresScenarioRepository.addState")
     override fun addState(scenarioMove: ScenarioMove, chat: Chat) {
         template.update(
             "INSERT INTO scenario_states (state_date, chat_id, scenario_move_id) VALUES (:date,:chat_id,:move_id)",
@@ -138,6 +145,7 @@ class PostgresScenarioRepository(
         )
     }
 
+    @Timed("repository.PostgresScenarioRepository.getState")
     override fun getState(chat: Chat): ScenarioState? {
         return template.query(
             """
@@ -150,6 +158,7 @@ class PostgresScenarioRepository(
         ).firstOrNull()
     }
 
+    @Timed("repository.PostgresScenarioRepository.addChoice")
     override fun addChoice(chat: Chat, user: User, scenarioMove: ScenarioMove, chosenWay: ScenarioWay) {
         template.update(
             "INSERT INTO scenario_choices (user_id, chat_id, scenario_way_id) VALUES (:user_id, :chat_id, :scenario_way_id)",
@@ -161,6 +170,7 @@ class PostgresScenarioRepository(
         )
     }
 
+    @Timed("repository.PostgresScenarioRepository.removeChoice")
     override fun removeChoice(chat: Chat, user: User, scenarioMove: ScenarioMove) {
         template.update(
             """
@@ -178,6 +188,7 @@ class PostgresScenarioRepository(
         )
     }
 
+    @Timed("repository.PostgresScenarioRepository.getResultsForMove")
     override fun getResultsForMove(chat: Chat, scenarioState: ScenarioState): Map<ScenarioWay, List<User>> {
         return template.query(
             """
@@ -196,6 +207,7 @@ class PostgresScenarioRepository(
             .groupBy({ (way, _) -> way }, { (_, user) -> user })
     }
 
+    @Timed("repository.PostgresScenarioRepository.savePoll")
     override fun savePoll(scenarioPoll: ScenarioPoll) {
         template.update(
             "INSERT INTO scenario_poll (poll_id, chat_id, create_date, scenario_move_id, poll_message_id) VALUES (:poll_id,:chat_id,:create_date,:move_id, :poll_message_id)",
@@ -209,6 +221,7 @@ class PostgresScenarioRepository(
         )
     }
 
+    @Timed("repository.PostgresScenarioRepository.getDataByPollId")
     override fun getDataByPollId(id: String): ScenarioPoll? {
         return template.query(
             """SELECT * FROM scenario_poll 
@@ -223,6 +236,7 @@ class PostgresScenarioRepository(
         ).firstOrNull()
     }
 
+    @Timed("repository.PostgresScenarioRepository.findScenarioPoll")
     override fun findScenarioPoll(chat: Chat, scenarioMove: ScenarioMove, afterDate: Instant): ScenarioPoll? {
         return template.query(
             """SELECT * FROM scenario_poll sp
@@ -240,6 +254,7 @@ class PostgresScenarioRepository(
         ).firstOrNull()
     }
 
+    @Timed("repository.PostgresScenarioRepository.allPolls")
     override fun allPolls(from: Instant, to: Instant): List<ScenarioPoll> {
 
         return template.query(
@@ -255,6 +270,7 @@ class PostgresScenarioRepository(
         )
     }
 
+    @Timed("repository.PostgresScenarioRepository.findMostRecentPoll")
     override fun findMostRecentPoll(chat: Chat): ScenarioPoll? {
         return template.query(
             """SELECT * FROM scenario_poll sp
@@ -269,6 +285,7 @@ class PostgresScenarioRepository(
             .firstOrNull()
     }
 
+    @Timed("repository.PostgresScenarioRepository.getAllStatesOfChat")
     override fun getAllStatesOfChat(chat: Chat): List<ScenarioState> {
         return template.query(
             """

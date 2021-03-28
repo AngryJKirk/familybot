@@ -3,6 +3,7 @@ package space.yaroslav.familybot.repos
 import com.google.common.base.Suppliers
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
+import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
@@ -27,18 +28,22 @@ class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : Phras
     private val themeSettingsCache =
         Suppliers.memoizeWithExpiration({ getThemesSettingsInternal() }, 1, TimeUnit.MINUTES)
 
+    @Timed("repository.PhraseDictionaryRepository.getPhraseSettings")
     override fun getPhraseSettings(): List<PhraseThemeSetting> {
         return themeSettingsCache.get()
     }
 
+    @Timed("repository.PhraseDictionaryRepository.getPhraseTheme")
     override fun getPhraseTheme(chat: Chat): PhraseTheme {
         TODO()
     }
 
+    @Timed("repository.PhraseDictionaryRepository.getPhrases")
     override fun getPhrases(phrase: Phrase, phraseTheme: PhraseTheme): List<String> {
         return cache[phrase to phraseTheme]
     }
 
+    @Timed("repository.PhraseDictionaryRepository.getDefaultPhraseTheme")
     override fun getDefaultPhraseTheme(): PhraseTheme {
         return themeCache.get().first(PhraseThemeDescription::isDefault).theme
     }
@@ -78,6 +83,7 @@ class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : Phras
         }
     }
 
+    @Timed("repository.PhraseDictionaryRepository.getAllPhrases")
     override fun getAllPhrases(phrase: Phrase): List<String> {
         return cacheAllPhrases.get(phrase)
     }

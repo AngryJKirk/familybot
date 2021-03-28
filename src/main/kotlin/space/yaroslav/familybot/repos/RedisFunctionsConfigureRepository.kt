@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.repos
 
+import io.micrometer.core.annotation.Timed
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.springframework.context.annotation.Primary
@@ -17,6 +18,7 @@ class RedisFunctionsConfigureRepository(
     private val oldRepository: PostgresFunctionsConfigureRepository
 ) : FunctionsConfigureRepository {
 
+    @Timed("repository.RedisFunctionsConfigureRepository.isEnabled")
     override fun isEnabled(id: FunctionId, chat: Chat): Boolean {
         val redisFunctionState = settingsRepository.get(id.easySetting, chat.key())
         return if (redisFunctionState == null) {
@@ -28,6 +30,7 @@ class RedisFunctionsConfigureRepository(
         }
     }
 
+    @Timed("repository.RedisFunctionsConfigureRepository.switch")
     override fun switch(id: FunctionId, chat: Chat) {
         val currentValue = settingsRepository.get(id.easySetting, chat.key()) ?: true
         settingsRepository.put(id.easySetting, chat.key(), currentValue.not())

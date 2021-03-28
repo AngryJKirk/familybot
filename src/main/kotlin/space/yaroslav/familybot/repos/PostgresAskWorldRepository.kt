@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.repos
 
+import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.AskWorldQuestion
@@ -15,6 +16,7 @@ import java.time.Instant
 
 @Component
 class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepository {
+    @Timed("repository.AskWorldRepository.getQuestionsFromUser")
     override fun getQuestionsFromUser(chat: Chat, user: User, date: Instant): List<AskWorldQuestion> {
         return template.query(
             """SELECT
@@ -38,6 +40,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
         )
     }
 
+    @Timed("repository.AskWorldRepository.getQuestionFromUserAllChats")
     override fun getQuestionFromUserAllChats(user: User, date: Instant): List<AskWorldQuestion> {
         return template.query(
             """SELECT
@@ -60,6 +63,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
         )
     }
 
+    @Timed("repository.AskWorldRepository.getQuestionsFromChat")
     override fun getQuestionsFromChat(chat: Chat, date: Instant): List<AskWorldQuestion> {
         return template.query(
             """SELECT
@@ -81,6 +85,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
         )
     }
 
+    @Timed("repository.AskWorldRepository.getReplies")
     override fun getReplies(askWorldQuestion: AskWorldQuestion): List<AskWorldReply> {
         return template.query(
             """SELECT
@@ -101,6 +106,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
         )
     }
 
+    @Timed("repository.AskWorldRepository.findQuestionByMessageId")
     override fun findQuestionByMessageId(messageId: Long, chat: Chat): AskWorldQuestion {
         return template.query(
             """SELECT
@@ -124,6 +130,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
         ).first()
     }
 
+    @Timed("repository.AskWorldRepository.findQuestionByText")
     override fun findQuestionByText(message: String, date: Instant): List<AskWorldQuestion> {
         return template.query(
             """SELECT
@@ -145,10 +152,12 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
         )
     }
 
+    @Timed("repository.AskWorldRepository.addReplyDeliver")
     override fun addReplyDeliver(reply: AskWorldReply) {
         template.update("INSERT INTO ask_world_replies_delivery (id) values (?)", reply.id)
     }
 
+    @Timed("repository.AskWorldRepository.addQuestionDeliver")
     override fun addQuestionDeliver(question: AskWorldQuestion, chat: Chat) {
         template.update(
             "INSERT INTO ask_world_questions_delivery (id, chat_id, message_id) VALUES (?, ?, ?)",
@@ -158,6 +167,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
         )
     }
 
+    @Timed("repository.AskWorldRepository.isQuestionDelivered")
     override fun isQuestionDelivered(question: AskWorldQuestion, chat: Chat): Boolean {
         val questionId = question.id
             ?: throw FamilyBot.InternalException("Question id should exist, seems like internal logic error")
@@ -169,6 +179,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
         ).isNotEmpty()
     }
 
+    @Timed("repository.AskWorldRepository.isReplyDelivered")
     override fun isReplyDelivered(reply: AskWorldReply): Boolean {
         return template.queryForList(
             "SELECT 1 from ask_world_replies_delivery where id = ?",
@@ -176,6 +187,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
         ).isNotEmpty()
     }
 
+    @Timed("repository.AskWorldRepository.addQuestion")
     override fun addQuestion(question: AskWorldQuestion): Long {
         return template.queryForObject(
             "INSERT into ask_world_questions (question, chat_id, user_id, date) VALUES (?, ?, ?, ?) returning id",
@@ -187,6 +199,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
         ) ?: throw FamilyBot.InternalException("Something has gone wrong, investigate please")
     }
 
+    @Timed("repository.AskWorldRepository.getQuestionsFromDate")
     override fun getQuestionsFromDate(date: Instant): List<AskWorldQuestion> {
         return template.query(
             """SELECT
@@ -207,6 +220,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
         )
     }
 
+    @Timed("repository.AskWorldRepository.addReply")
     override fun addReply(reply: AskWorldReply): Long {
         return template.queryForObject(
             "INSERT into ask_world_replies (question_id, reply, chat_id, user_id, date) VALUES (?, ?, ?, ?, ?) returning id",
@@ -219,6 +233,7 @@ class PostgresAskWorldRepository(val template: JdbcTemplate) : AskWorldRepositor
         ) ?: throw FamilyBot.InternalException("Something has gone wrong, investigate please")
     }
 
+    @Timed("repository.AskWorldRepository.isReplied")
     override fun isReplied(askWorldQuestion: AskWorldQuestion, chat: Chat, user: User): Boolean {
         return template.queryForList(
             "select 1 from ask_world_replies where question_id = ? and chat_id = ? and user_id =?",

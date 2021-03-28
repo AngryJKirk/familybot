@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.repos
 
+import io.micrometer.core.annotation.Timed
 import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
@@ -24,6 +25,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
 
     private val chatCache: MutableSet<Chat> = HashSet()
     private val userCache: MutableSet<User> = HashSet()
+    @Timed("repository.CommonRepository.addUser")
     override fun addUser(user: User) {
         template.update(
             "INSERT INTO users (id, name, username) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET name = EXCLUDED.name, username = EXCLUDED.username ",
@@ -38,6 +40,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
         )
     }
 
+    @Timed("repository.CommonRepository.getUsers")
     override fun getUsers(chat: Chat, activeOnly: Boolean): List<User> {
         var select = "SELECT * FROM users INNER JOIN users2chats u ON users.id = u.user_id WHERE u.chat_id = ${chat.id}"
         if (activeOnly) {
@@ -46,6 +49,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
         return template.query(select) { rs, _ -> rs.toUser() }
     }
 
+    @Timed("repository.CommonRepository.addChat")
     override fun addChat(chat: Chat) {
         template.update(
             "INSERT INTO chats (id, name) VALUES (?, ?) ON CONFLICT(id) DO UPDATE SET name = EXCLUDED.name, active = true",
@@ -55,10 +59,12 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
         )
     }
 
+    @Timed("repository.CommonRepository.getChats")
     override fun getChats(): List<Chat> {
         return template.query("SELECT * FROM chats where active = true ") { rs, _ -> rs.toChat() }
     }
 
+    @Timed("repository.CommonRepository.addPidor")
     override fun addPidor(pidor: Pidor) {
         template.update(
             "INSERT INTO pidors (id, pidor_date, chat_id) VALUES (?, ?, ?)",
@@ -68,6 +74,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
         )
     }
 
+    @Timed("repository.CommonRepository.removePidorRecord")
     override fun removePidorRecord(user: User) {
         template.update(
             "DELETE FROM pidors where id = ? and chat_id = ? and pidor_date = (SELECT pidor_date from pidors where id = ? and chat_id = ? and pidor_date > date_trunc('month', current_date) LIMIT 1)",
@@ -78,6 +85,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
         )
     }
 
+    @Timed("repository.CommonRepository.getPidorsByChat")
     override fun getPidorsByChat(chat: Chat, startDate: Instant, endDate: Instant): List<Pidor> {
         return template.query(
             "SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE pidors.chat_id = ? AND pidor_date BETWEEN ? and ?",
@@ -88,6 +96,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
         ) ?: emptyList()
     }
 
+    @Timed("repository.CommonRepository.containsUser")
     override fun containsUser(user: User): Boolean {
         if (userCache.contains(user)) {
             return true
@@ -100,6 +109,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
         return exist
     }
 
+    @Timed("repository.CommonRepository.containsChat")
     override fun containsChat(chat: Chat): Boolean {
         if (chatCache.contains(chat)) {
             return true
@@ -112,10 +122,12 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
         return exist
     }
 
+    @Timed("repository.CommonRepository.changeUserActiveStatus")
     override fun changeUserActiveStatus(user: User, status: Boolean) {
         template.update("UPDATE users SET active = ? WHERE id = ?", status, user.id)
     }
 
+    @Timed("repository.CommonRepository.getAllPidors")
     override fun getAllPidors(startDate: Instant, endDate: Instant): List<Pidor> {
         return template.query(
             "SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE pidor_date BETWEEN ? and ?",
@@ -125,10 +137,12 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
         ) ?: emptyList()
     }
 
+    @Timed("repository.CommonRepository.changeChatActiveStatus")
     override fun changeChatActiveStatus(chat: Chat, status: Boolean) {
         template.update("update chats set active = ? where id = ?", status, chat.id)
     }
 
+    @Timed("repository.CommonRepository.changeUserActiveStatusNew")
     override fun changeUserActiveStatusNew(user: User, status: Boolean) {
         template.update(
             "update users2chats set active = ? where chat_id = ? and user_id = ?",
@@ -138,6 +152,7 @@ class PostgresCommonRepository(datasource: DataSource) : CommonRepository {
         )
     }
 
+    @Timed("repository.CommonRepository.disableUsersInChat")
     override fun disableUsersInChat(chat: Chat) {
         template.update("update users2chats set active = false where chat_id = ?", chat.id)
     }

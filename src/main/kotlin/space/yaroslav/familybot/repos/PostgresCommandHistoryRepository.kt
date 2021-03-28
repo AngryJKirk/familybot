@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.repos
 
+import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
@@ -18,6 +19,7 @@ class PostgresCommandHistoryRepository(val template: JdbcTemplate) : CommandHist
 
     private val defaultAmountOfDaysToSubtract = 100000L // fix that in 2294 a.c. please
 
+    @Timed("repository.CommandHistoryRepository.getAll")
     override fun getAll(chat: Chat, from: Instant?): List<CommandByUser> {
         val fromDate = from ?: Instant.now().minus(defaultAmountOfDaysToSubtract, ChronoUnit.DAYS)
         return template.query(
@@ -28,6 +30,7 @@ class PostgresCommandHistoryRepository(val template: JdbcTemplate) : CommandHist
         )
     }
 
+    @Timed("repository.CommandHistoryRepository.getTheFirst")
     override fun getTheFirst(chat: Chat): CommandByUser? {
         return template.query(
             "SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ? " +
@@ -37,6 +40,7 @@ class PostgresCommandHistoryRepository(val template: JdbcTemplate) : CommandHist
         ).firstOrNull()
     }
 
+    @Timed("repository.CommandHistoryRepository.add")
     override fun add(commandByUser: CommandByUser) {
         template.update(
             "INSERT INTO history (command_id, user_id, chat_id, command_date) VALUES (?, ?, ?, ?)",
@@ -47,6 +51,7 @@ class PostgresCommandHistoryRepository(val template: JdbcTemplate) : CommandHist
         )
     }
 
+    @Timed("repository.CommandHistoryRepository.get")
     override fun get(user: User, from: Instant, to: Instant): List<CommandByUser> {
         return template.query(
             "SELECT * FROM history WHERE user_id = ? AND chat_id = ? AND command_date BETWEEN ? AND ?",

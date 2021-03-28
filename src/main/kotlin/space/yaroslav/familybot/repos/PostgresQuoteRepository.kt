@@ -3,6 +3,7 @@ package space.yaroslav.familybot.repos
 import com.google.common.base.Suppliers
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
+import io.micrometer.core.annotation.Timed
 import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
@@ -30,14 +31,17 @@ class PostgresQuoteRepository(val template: JdbcTemplate) : QuoteRepository {
         }
     )
 
+    @Timed("repository.QuoteRepository.getTags")
     override fun getTags(): List<String> {
         return template.queryForList("SELECT tag FROM tags", String::class.java)
     }
 
+    @Timed("repository.QuoteRepository.getByTag")
     override fun getByTag(tag: String): String? {
         return byTagCache.get(tag).random()
     }
 
+    @Timed("repository.QuoteRepository.getRandom")
     override fun getRandom(): String {
         return quoteCache.get().random()
     }
