@@ -1,29 +1,55 @@
 package space.yaroslav.familybot.services
 
 import io.micrometer.core.annotation.Timed
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.common.User
+import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
 
 @Component
 class TalkingService(private val chatLogRepository: ChatLogRepository) {
 
-    @Timed("service.TalkingService.getReplyToUser")
-    fun getReplyToUser(update: Update): String {
-        return update.toUser()
-            .let(this::getMessageList)
-            .let(this::cleanMessages)
-            .toList()
-            .random()
+    companion object {
+        const val cacheUpdateDelay = 1000L * 60L * 60L
+        const val minimalDatabaseSizeThreshold = 300
     }
 
-    private fun getMessageList(user: User): List<String> {
+    private val log = getLogger()
+    private lateinit var messages: List<String>
+
+    init {
+        updateCommonMessagesList()
+    }
+
+    @Timed("service.TalkingService.getReplyToUser")
+    fun getReplyToUser(update: Update): String {
+        val userMessages = getMessagesForUser(update.toUser())
+            ?: messages
+        return userMessages.random()
+    }
+
+    private fun getMessagesForUser(user: User): List<String>? {
         return chatLogRepository
             .get(user)
-            .takeIf { it.size > 300 }
-            ?: chatLogRepository.getAll()
+            .takeIf { it.size > minimalDatabaseSizeThreshold }
+            ?.let(this::cleanMessages)
+            ?.toList()
+    }
+
+    @Scheduled(fixedRate = cacheUpdateDelay, initialDelay = cacheUpdateDelay)
+    final fun updateCommonMessagesList() {
+        messages = runCatching {
+            chatLogRepository
+                .getAll()
+                .let(this::cleanMessages)
+                .toList()
+        }.getOrElse { exception ->
+            log.error("Could not update message cache", exception)
+            messages
+        }
     }
 
     private fun cleanMessages(messages: List<String>): Sequence<String> {
