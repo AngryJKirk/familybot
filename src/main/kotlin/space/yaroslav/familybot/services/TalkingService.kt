@@ -39,8 +39,8 @@ class TalkingService(private val chatLogRepository: ChatLogRepository) {
             ?.toList()
     }
 
-    @Scheduled(fixedRate = cacheUpdateDelay, initialDelay = cacheUpdateDelay)
-    final fun updateCommonMessagesList() {
+    @Scheduled(fixedRate = 1000, initialDelay = 0)
+    fun updateCommonMessagesList() {
         messages = runCatching {
             chatLogRepository
                 .getAll()
