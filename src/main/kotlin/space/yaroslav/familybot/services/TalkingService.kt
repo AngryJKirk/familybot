@@ -39,7 +39,7 @@ class TalkingService(private val chatLogRepository: ChatLogRepository) {
             ?.toList()
     }
 
-    @Scheduled(fixedRate = 1000, initialDelay = 0)
+    @Scheduled(fixedRate = cacheUpdateDelay, initialDelay = cacheUpdateDelay)
     fun updateCommonMessagesList() {
         messages = runCatching {
             chatLogRepository
