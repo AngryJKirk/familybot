@@ -7,5 +7,5 @@ interface FunctionsConfigureRepository {
 
     fun isEnabled(id: FunctionId, chat: Chat): Boolean
 
-    fun switch(id: FunctionId, chat: Chat)
+    suspend fun switch(id: FunctionId, chat: Chat)
 }

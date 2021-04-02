@@ -1,7 +1,7 @@
 package space.yaroslav.familybot.executors.eventbased
 
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -82,7 +82,7 @@ class AskWorldReceiveReplyExecutor(
 
         return {
             runCatching {
-                val id = GlobalScope.async { askWorldRepository.addReply(askWorldReply) }
+                val id = coroutineScope { async { askWorldRepository.addReply(askWorldReply) } }
                 val questionTitle = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
                 val chatIdToReply = question.chat.idString
 
@@ -159,7 +159,7 @@ class AskWorldReceiveReplyExecutor(
                         else -> log.warn("Something went wrong with content type detection logic")
                     }
                 }
-                GlobalScope.launch { askWorldRepository.addReplyDeliver(askWorldReply.copy(id = id.await())) }
+                coroutineScope { launch { askWorldRepository.addReplyDeliver(askWorldReply.copy(id = id.await())) } }
                 it.send(update, "Принято и отправлено")
             }.onFailure { e ->
                 it.send(update, "Принято")

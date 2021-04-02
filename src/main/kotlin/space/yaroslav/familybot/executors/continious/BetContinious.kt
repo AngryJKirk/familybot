@@ -1,6 +1,6 @@
 package space.yaroslav.familybot.executors.continious
 
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
@@ -76,11 +76,11 @@ class BetContinious(
             delay(4000)
             val isItWinner = winnableNumbers.contains(diceMessage.dice.value)
             if (isItWinner) {
-                GlobalScope.launch { repeat(number) { pidorRepository.removePidorRecord(user) } }
+                coroutineScope { launch { repeat(number) { pidorRepository.removePidorRecord(user) } } }
                 it.send(update, dictionary.get(Phrase.BET_WIN), shouldTypeBeforeSend = true)
                 it.send(update, winEndPhrase(number), shouldTypeBeforeSend = true)
             } else {
-                GlobalScope.launch { addPidorsMultiplyTimesWithDayShift(number, user) }
+                coroutineScope { launch { addPidorsMultiplyTimesWithDayShift(number, user) } }
                 it.send(update, dictionary.get(Phrase.BET_LOSE), shouldTypeBeforeSend = true)
                 it.send(update, explainPhrase(number), shouldTypeBeforeSend = true)
             }

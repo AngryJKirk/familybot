@@ -1,8 +1,8 @@
 package space.yaroslav.familybot.executors.command
 
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
@@ -79,7 +79,7 @@ class AskWorldInitialExecutor(
 
         val question = AskWorldQuestion(null, message, update.toUser(), chat, Instant.now(), null)
         return { sender ->
-            val questionId = GlobalScope.async { askWorldRepository.addQuestion(question) }
+            val questionId = coroutineScope { async { askWorldRepository.addQuestion(question) } }
             sender.send(update, dictionary.get(Phrase.DATA_CONFIRM))
             getChatsToSendQuestion(chat, isScam)
                 .forEach {

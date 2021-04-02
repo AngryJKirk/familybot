@@ -1,6 +1,6 @@
 package space.yaroslav.familybot.executors.eventbased
 
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
@@ -21,10 +21,12 @@ class CustomMessageExecutor(private val repository: CustomMessageDeliveryReposit
             if (repository.hasNewMessages(chat)) {
                 repository.getNewMessages(chat)
                     .forEach { message ->
-                        GlobalScope.launch {
-                            delay(2000)
-                            sender.execute(SendMessage(message.chat.idString, message.message))
-                            repository.markAsDelivered(message)
+                        coroutineScope {
+                            launch {
+                                delay(2000)
+                                sender.execute(SendMessage(message.chat.idString, message.message))
+                                repository.markAsDelivered(message)
+                            }
                         }
                     }
             }

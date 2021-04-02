@@ -3,8 +3,8 @@ package space.yaroslav.familybot.executors.command
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -65,11 +65,17 @@ class MeCommandExecutor(
     }
 
     private suspend fun executeInternal(id: Pair<User, Chat>): String {
-        val (user, chat) = id
-        val messageCount = GlobalScope.async { getMessageCount(chat, user) }
-        val pidorCount = GlobalScope.async { getPidorsCount(chat, user) }
-        val commandCount = GlobalScope.async { getCommandCount(user) }
-        return setOf(pidorCount.await(), commandCount.await(), messageCount.await()).joinToString("\n")
+        return coroutineScope {
+            val (user, chat) = id
+            val messageCount = async { getMessageCount(chat, user) }
+            val pidorCount = async { getPidorsCount(chat, user) }
+            val commandCount = async { getCommandCount(user) }
+            setOf(
+                pidorCount.await(),
+                commandCount.await(),
+                messageCount.await()
+            ).joinToString("\n")
+        }
     }
 
     private fun getMessageCount(chat: Chat, user: User): String {

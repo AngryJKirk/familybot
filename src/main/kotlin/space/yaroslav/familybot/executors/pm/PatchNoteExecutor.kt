@@ -1,6 +1,6 @@
 package space.yaroslav.familybot.executors.pm
 
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -37,11 +37,13 @@ class PatchNoteExecutor(private val botConfig: BotConfig, private val commonRepo
         commonRepository.changeChatActiveStatus(chat, false)
     }
 
-    private fun tryToSendMessage(sender: AbsSender, chat: Chat, update: Update) {
-        GlobalScope.launch {
-            runCatching {
-                sender.execute(SendMessage(chat.idString, update.message.text.removePrefix(patchnotePrefix)))
-            }.onFailure { markChatAsInactive(chat) }
+    private suspend fun tryToSendMessage(sender: AbsSender, chat: Chat, update: Update) {
+        coroutineScope {
+            launch {
+                runCatching {
+                    sender.execute(SendMessage(chat.idString, update.message.text.removePrefix(patchnotePrefix)))
+                }.onFailure { markChatAsInactive(chat) }
+            }
         }
     }
 }

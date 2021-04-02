@@ -1,7 +1,7 @@
 package space.yaroslav.familybot.services
 
 import io.micrometer.core.instrument.MeterRegistry
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -48,7 +48,8 @@ class Router(
 
     private val logger = getLogger()
     private val chatLogRegex = Regex("[а-яА-Яё\\s,.!?]+")
-    fun processUpdate(update: Update): suspend (AbsSender) -> Unit {
+
+    suspend fun processUpdate(update: Update): suspend (AbsSender) -> Unit {
 
         val message = update.message
             ?: update.editedMessage
@@ -60,11 +61,7 @@ class Router(
         if (!isGroup) {
             logger.warn("Someone is sending private messages: $update")
         } else {
-            GlobalScope.launch {
-                register(message)
-                rawUpdateLogger.log(update)
-            }
-
+            registerUpdate(message, update)
             if (update.hasEditedMessage()) {
                 return {}
             }
@@ -86,13 +83,25 @@ class Router(
             }
         } else {
             executor.meteredExecute(update, meterRegistry)
-        }.also { GlobalScope.launch { logChatCommand(executor, update) } }
+        }.also { logChatCommand(executor, update) }
     }
 
-    private fun selectRandom(update: Update): Executor {
+    private suspend fun registerUpdate(
+        message: Message,
+        update: Update
+    ) {
+        coroutineScope {
+            launch {
+                register(message)
+                rawUpdateLogger.log(update)
+            }
+        }
+    }
+
+    private suspend fun selectRandom(update: Update): Executor {
         logger.info("No executor found, trying to find random priority executors")
 
-        GlobalScope.launch { logChatMessage(update) }
+        coroutineScope { launch { logChatMessage(update) } }
         val executor = executors.filter { it.meteredPriority(update, meterRegistry) == Priority.RANDOM }.random()
 
         logger.info("Random priority executor ${executor.javaClass.simpleName} was selected")
@@ -128,15 +137,19 @@ class Router(
         return isExecutorDisabled
     }
 
-    private fun logChatCommand(executor: Executor, update: Update) {
-        if (executor is CommandExecutor && executor.isLoggable()) {
-            commandHistoryRepository.add(
-                CommandByUser(
-                    update.toUser(),
-                    executor.command(),
-                    Instant.now()
-                )
-            )
+    private suspend fun logChatCommand(executor: Executor, update: Update) {
+        coroutineScope {
+            launch {
+                if (executor is CommandExecutor && executor.isLoggable()) {
+                    commandHistoryRepository.add(
+                        CommandByUser(
+                            update.toUser(),
+                            executor.command(),
+                            Instant.now()
+                        )
+                    )
+                }
+            }
         }
     }
 

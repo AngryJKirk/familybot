@@ -1,7 +1,8 @@
 package space.yaroslav.familybot.executors.command
 
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember
@@ -54,27 +55,7 @@ class PidorExecutor(
         }
         return { sender ->
             log.info("Pidor is not found, initiating search procedure")
-            val nextPidor = GlobalScope.async {
-                users.map { user ->
-                    launch {
-                        val userFromChat = getUserFromChat(user, sender)
-                        if (userFromChat == null) {
-                            log.warn("Some user {} left without notification", user)
-                            repository.changeUserActiveStatusNew(user, false) // TODO remove old method
-                        } else {
-                            repository.addUser(userFromChat)
-                        }
-                    }
-                }
-                    .forEach { it.join() }
-                val actualizedUsers = repository.getUsers(chat, activeOnly = true)
-                log.info("Users to roll: {}", actualizedUsers)
-                val nextPidor = actualizedUsers.random()
-                log.info("Pidor is rolled to $nextPidor")
-                val newPidor = Pidor(nextPidor, Instant.now())
-                repository.addPidor(newPidor)
-                return@async nextPidor
-            }
+            val nextPidor = getNextPidorAsync(users, sender, chat)
 
             val start = dictionary.get(Phrase.PIDOR_SEARCH_START).bold()
             val middle = dictionary.get(Phrase.PIDOR_SEARCH_MIDDLE).bold()
@@ -91,6 +72,40 @@ class PidorExecutor(
                 typeDelay = 1500L to 1501L
             )
             pidorCompetitionService.pidorCompetition(update)?.invoke(sender)
+        }
+    }
+
+    private suspend fun getNextPidorAsync(
+        users: List<User>,
+        sender: AbsSender,
+        chat: Chat
+    ): Deferred<User> {
+        return coroutineScope {
+            async {
+                users
+                    .map { user -> launch { checkIfUserStillThere(user, sender) } }
+                    .forEach { it.join() }
+                val actualizedUsers = repository.getUsers(chat, activeOnly = true)
+                log.info("Users to roll: {}", actualizedUsers)
+                val nextPidor = actualizedUsers.random()
+                log.info("Pidor is rolled to $nextPidor")
+                val newPidor = Pidor(nextPidor, Instant.now())
+                repository.addPidor(newPidor)
+                return@async nextPidor
+            }
+        }
+    }
+
+    private fun checkIfUserStillThere(
+        user: User,
+        sender: AbsSender
+    ) {
+        val userFromChat = getUserFromChat(user, sender)
+        if (userFromChat == null) {
+            log.warn("Some user {} left without notification", user)
+            repository.changeUserActiveStatusNew(user, false) // TODO remove old method
+        } else {
+            repository.addUser(userFromChat)
         }
     }
 

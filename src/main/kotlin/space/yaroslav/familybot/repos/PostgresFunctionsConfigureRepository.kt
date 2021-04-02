@@ -20,7 +20,7 @@ class PostgresFunctionsConfigureRepository(val jdbcTemplate: JdbcTemplate) : Fun
     }
 
     @Timed("repository.PostgresFunctionsConfigureRepository.switch")
-    override fun switch(id: FunctionId, chat: Chat) {
+    override suspend fun switch(id: FunctionId, chat: Chat) {
         jdbcTemplate.update(
             "INSERT INTO function_settings (function_id, chat_id, active) VALUES (?, ?, ?)",
             id.id,

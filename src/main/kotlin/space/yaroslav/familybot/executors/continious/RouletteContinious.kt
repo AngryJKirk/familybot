@@ -1,6 +1,6 @@
 package space.yaroslav.familybot.executors.continious
 
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
@@ -69,7 +69,7 @@ class RouletteContinious(
         if (number !in 1..6) {
             return {
                 it.execute(SendMessage(chatId, "Мушку спили и в следующий раз играй по правилам"))
-                GlobalScope.launch { pidorRepository.addPidor(Pidor(user, Instant.now())) }
+                coroutineScope { launch { pidorRepository.addPidor(Pidor(user, Instant.now())) } }
                 delay(1000)
                 it.execute(SendMessage(chatId, "В наказание твое пидорское очко уходит к остальным"))
             }
@@ -79,12 +79,12 @@ class RouletteContinious(
         return {
             if (rouletteNumber == number) {
                 it.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
-                GlobalScope.launch { repeat(5) { pidorRepository.removePidorRecord(user) } }
+                coroutineScope { launch { repeat(5) { pidorRepository.removePidorRecord(user) } } }
                 delay(2000)
                 it.execute(SendMessage(chatId, "Но он пока не треснул. Свое пидорское очко можешь забрать. "))
             } else {
                 it.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
-                GlobalScope.launch { repeat(3) { pidorRepository.addPidor(Pidor(user, Instant.now())) } }
+                coroutineScope { launch { repeat(3) { pidorRepository.addPidor(Pidor(user, Instant.now())) } } }
                 delay(2000)
                 it.execute(
                     SendMessage(

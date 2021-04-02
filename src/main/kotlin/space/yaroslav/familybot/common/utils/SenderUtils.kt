@@ -1,7 +1,7 @@
 package space.yaroslav.familybot.common.utils
 
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatAdministrators
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
@@ -81,8 +81,11 @@ private suspend fun sendStickerInternal(
     stickerPack: StickerPack,
     stickerSelector: List<TelegramSticker>.() -> TelegramSticker?
 ): Message {
-    val stickerId = GlobalScope.async {
-        stickerSelector(sender.execute(GetStickerSet(stickerPack.packName)).stickers)
+
+    val stickerId = coroutineScope {
+        async {
+            stickerSelector(sender.execute(GetStickerSet(stickerPack.packName)).stickers)
+        }
     }
     val sendSticker = SendSticker().apply {
         sticker = InputFile(stickerId.await()?.fileId)

@@ -1,7 +1,7 @@
 package space.yaroslav.familybot.repos
 
 import io.micrometer.core.annotation.Timed
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
@@ -31,9 +31,9 @@ class RedisFunctionsConfigureRepository(
     }
 
     @Timed("repository.RedisFunctionsConfigureRepository.switch")
-    override fun switch(id: FunctionId, chat: Chat) {
+    override suspend fun switch(id: FunctionId, chat: Chat) {
         val currentValue = settingsRepository.get(id.easySetting, chat.key()) ?: true
         settingsRepository.put(id.easySetting, chat.key(), currentValue.not())
-        GlobalScope.launch { oldRepository.switch(id, chat) }
+        coroutineScope { launch { oldRepository.switch(id, chat) } }
     }
 }

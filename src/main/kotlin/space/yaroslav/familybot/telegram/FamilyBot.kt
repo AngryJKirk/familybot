@@ -1,6 +1,7 @@
 package space.yaroslav.familybot.telegram
 
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
@@ -22,6 +23,7 @@ class FamilyBot(
 ) : TelegramLongPollingBot() {
 
     private val log = LoggerFactory.getLogger(FamilyBot::class.java)
+    private val routerScope = CoroutineScope(Dispatchers.Default)
     private val channels = HashMap<Long, Channel<Update>>()
 
     override fun getBotToken(): String {
@@ -29,9 +31,10 @@ class FamilyBot(
     }
 
     override fun onUpdateReceived(tgUpdate: Update?) {
+
         val update = tgUpdate ?: throw InternalException("Update should not be null")
         if (update.hasPollAnswer()) {
-            GlobalScope.launch { proceedPollAnswer(update) }
+            routerScope.launch { proceedPollAnswer(update) }
             return
         }
         if (update.hasPoll()) {
@@ -40,11 +43,9 @@ class FamilyBot(
 
         val chat = update.toChat()
 
-        val channel = channels.computeIfAbsent(chat.id) {
-            Channel<Update>()
-                .also { GlobalScope.launch { for (incomingUpdate in it) proceed(incomingUpdate) } }
-        }
-        GlobalScope.launch { channel.send(update) }
+        val channel = channels.computeIfAbsent(chat.id) { createChannel() }
+
+        routerScope.launch { channel.send(update) }
     }
 
     override fun getBotUsername(): String {
@@ -67,6 +68,16 @@ class FamilyBot(
 
     private fun proceedPollAnswer(update: Update) {
         pollRouter.proceed(update)
+    }
+
+    private fun createChannel(): Channel<Update> {
+        val channel = Channel<Update>()
+        routerScope.launch {
+            for (incomingUpdate in channel) {
+                proceed(incomingUpdate)
+            }
+        }
+        return channel
     }
 
     class InternalException(override val message: String?) : RuntimeException(message)
