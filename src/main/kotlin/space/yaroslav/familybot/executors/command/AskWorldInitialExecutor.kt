@@ -3,6 +3,7 @@ package space.yaroslav.familybot.executors.command
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
@@ -96,12 +97,12 @@ class AskWorldInitialExecutor(
         }
     }
 
-    private fun markChatInactive(
+    private suspend fun markChatInactive(
         chat: Chat,
         questionId: Deferred<Long>,
         e: Throwable
     ) {
-        commonRepository.changeChatActiveStatus(chat, false)
+        coroutineScope { launch { commonRepository.changeChatActiveStatus(chat, false) } }
         log.warn("Could not send question $questionId to $chat due to error: [${e.message}]")
     }
 

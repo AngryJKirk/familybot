@@ -1,12 +1,14 @@
 package space.yaroslav.familybot.repos
 
 import io.micrometer.core.annotation.Timed
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
+import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.getUuid
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
@@ -27,7 +29,7 @@ class PostgresScenarioRepository(
     jdbcTemplate: JdbcTemplate
 ) : ScenarioRepository {
     private val template = NamedParameterJdbcTemplate(jdbcTemplate.dataSource!!)
-
+    private val log = getLogger()
     private val scenarioStateRowMapper = RowMapper { rs, rowNum ->
         ScenarioState(
             scenarioMoveRowMapper.mapRowNotNull(rs, rowNum),
@@ -160,14 +162,19 @@ class PostgresScenarioRepository(
 
     @Timed("repository.PostgresScenarioRepository.addChoice")
     override fun addChoice(chat: Chat, user: User, scenarioMove: ScenarioMove, chosenWay: ScenarioWay) {
-        template.update(
-            "INSERT INTO scenario_choices (user_id, chat_id, scenario_way_id) VALUES (:user_id, :chat_id, :scenario_way_id)",
-            mapOf(
-                "user_id" to user.id,
-                "chat_id" to chat.id,
-                "scenario_way_id" to chosenWay.wayId
+        try {
+            template.update(
+                "INSERT INTO scenario_choices (user_id, chat_id, scenario_way_id) VALUES (:user_id, :chat_id, :scenario_way_id)",
+                mapOf(
+                    "user_id" to user.id,
+                    "chat_id" to chat.id,
+                    "scenario_way_id" to chosenWay.wayId
+                )
             )
-        )
+        } catch (e: DataIntegrityViolationException) {
+            log.warn("DataIntegrityViolationException on voting, probably the vote was forwarded", e)
+            throw FamilyBot.InternalException("User is probably unknown")
+        }
     }
 
     @Timed("repository.PostgresScenarioRepository.removeChoice")

@@ -67,7 +67,11 @@ class FamilyBot(
     }
 
     private fun proceedPollAnswer(update: Update) {
-        pollRouter.proceed(update)
+        runCatching {
+            pollRouter.proceed(update)
+        }.onFailure {
+            log.warn("Poll router failed", it)
+        }
     }
 
     private fun createChannel(): Channel<Update> {
