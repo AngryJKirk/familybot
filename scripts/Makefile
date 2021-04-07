@@ -1,8 +1,8 @@
 deploy-test:
-	docker-compose up -d -e BOT_NAME  -e BOT_TOKEN -e BOT_OWNER_NAME
+	docker-compose up -d
 
 deploy-prod:
-	docker-compose up -d --env-file=~/production.env
+	docker-compose --env-file /root/production.env up -d
 
 redeploy:
-	docker-compose up -d --no-deps --build family
+	docker-compose --env-file /root/production.env up -d --no-deps --build family

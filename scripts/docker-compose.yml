@@ -1,8 +1,11 @@
-version: "3.7"
+version: "3.3"
 
 services:
 
   family-redis:
+    networks:
+      family-net:
+    container_name: family-redis
     image: redis:alpine
     restart: always
     volumes:
@@ -10,10 +13,13 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
-      - "127.0.0.1:6379:6379"
+      - "127.0.0.1:16379:6379"
 
   family-db:
+    networks:
+      family-net:
     image: postgres
+    container_name: family-db
     restart: always
     volumes:
       - postgres-data:/var/lib/postgresql/data
@@ -23,9 +29,12 @@ services:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
     ports:
-      - "5432:5432"
+      - "15432:5432"
 
   family:
+    container_name: family
+    networks:
+      family-net:
     build:
       dockerfile: scripts/Dockerfile
       context: ..
