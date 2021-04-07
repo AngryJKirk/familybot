@@ -1,0 +1,50 @@
+version: "3.7"
+
+services:
+
+  family-redis:
+    image: redis:alpine
+    restart: always
+    volumes:
+      - redis-data:/data
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "127.0.0.1:6379:6379"
+
+  family-db:
+    image: postgres
+    restart: always
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./db.sql:/docker-entrypoint-initdb.d/db.sql
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    ports:
+      - "5432:5432"
+
+  family:
+    build:
+      dockerfile: scripts/Dockerfile
+      context: ..
+    restart: always
+    environment:
+      - JDBC_URL=jdbc:postgresql://family-db:5432/${POSTGRES_DB}
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - BOT_NAME
+      - BOT_TOKEN
+      - BOT_OWNER_NAME
+      - REDIS_HOST=family-redis
+    depends_on:
+      - family-db
+      - family-redis
+
+volumes:
+  redis-data:
+  postgres-data:
+
+networks:
+  family-net:

@@ -26,5 +26,4 @@ nbdist/
 # IntelliJ project files.idea
 out
 gen
-application.yml
 

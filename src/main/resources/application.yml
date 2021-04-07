@@ -1,0 +1,17 @@
+settings:
+  botname: ${BOT_NAME}
+  token: ${BOT_TOKEN}
+  developer: ${BOT_OWNER_NAME}
+spring:
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+  datasource:
+    url: ${JDBC_URL:jdbc:postgresql://localhost:5432/postgres}
+    driver-class-name: "org.postgresql.Driver"
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+management:
+  metrics:
+    enable:
+      all: false
