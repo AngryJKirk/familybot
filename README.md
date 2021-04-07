@@ -40,7 +40,7 @@ Amount of everyday messages passed through the bot:
 
 ### Deploy test
 
-1. Fill envrironment variables in `scripts/.env`.
+1. Fill environment variables in `scripts/.env`.
 
 2. enter `scripts/` and run `make deploy-test`
 
