@@ -39,8 +39,8 @@ abstract class FamilybotApplicationTest {
         private fun createPostgres() {
             val postgresContainer: KGenericContainer = KGenericContainer(
                 ImageFromDockerfile()
-                    .withFileFromPath("Dockerfile", Paths.get("src/main/resources/database/Dockerfile"))
-                    .withFileFromPath("db.sql", Paths.get("src/main/resources/database/db.sql"))
+                    .withFileFromPath("Dockerfile", Paths.get("src/test/resources/Dockerfile"))
+                    .withFileFromPath("db.sql", Paths.get("scripts/db.sql"))
                     .withFileFromPath("db_test_assets.sql", Paths.get("src/test/resources/db_test_assets.sql"))
             ).withExposedPorts(5432)
             postgresContainer.start()

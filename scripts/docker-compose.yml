@@ -29,7 +29,7 @@ services:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
     ports:
-      - "15432:5432"
+      - "5432:5432"
 
   family:
     container_name: family

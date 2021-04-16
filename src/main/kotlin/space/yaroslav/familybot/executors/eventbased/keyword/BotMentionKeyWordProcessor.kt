@@ -37,8 +37,8 @@ class BotMentionKeyWordProcessor(
         if (isFuckOff(update)) {
             return fuckOff(update)
         }
-        val reply = talkingService.getReplyToUser(update)
         return {
+            val reply = talkingService.getReplyToUser(update)
             it.send(update, reply, replyToUpdate = true, shouldTypeBeforeSend = true)
         }
     }

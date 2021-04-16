@@ -1,16 +1,17 @@
 settings:
-  botname: ${BOT_NAME}
+  botname: ${BOT_NAME:BotName}
   token: ${BOT_TOKEN}
   developer: ${BOT_OWNER_NAME}
+  yandex-key: ${YANDEX_API_TOKEN}
 spring:
   redis:
     host: ${REDIS_HOST:localhost}
     port: ${REDIS_PORT:6379}
   datasource:
-    url: ${JDBC_URL:jdbc:postgresql://localhost:5432/postgres}
+    url: ${JDBC_URL:jdbc:postgresql://localhost:5432/family}
     driver-class-name: "org.postgresql.Driver"
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
+    username: ${POSTGRES_USER:family}
+    password: ${POSTGRES_PASSWORD:family}
 management:
   metrics:
     enable:

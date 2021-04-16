@@ -11,6 +11,7 @@ import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.executors.command.CommandExecutor
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.Phrase
+import space.yaroslav.familybot.models.UkranianLanguage
 import space.yaroslav.familybot.services.dictionary.Dictionary
 import space.yaroslav.familybot.services.settings.EasySettingsService
 import space.yaroslav.familybot.services.settings.TalkingDencity
@@ -47,6 +48,7 @@ class AdvancedSettings(
                 runCatching {
                     when (splitMessage[1]) {
                         "разговорчики" -> setTalkingDensity(update, splitMessage[2])
+                        "хохол" -> setLanguage(update, splitMessage[2])
                         else -> sendErrorMessage(update)
                     }
                 }.getOrElse { throwable ->
@@ -71,6 +73,18 @@ class AdvancedSettings(
         }
 
         easySettingsService.put(TalkingDencity, update.toChat().key(), amountOfDensity)
+        return getOkMessage(update)
+    }
+
+    private fun setLanguage(update: Update, value: String): suspend (AbsSender) -> Unit {
+        if (value != "вкл" && value != "выкл") {
+            return sendErrorMessage(
+                update,
+                "Ну ты долбоеб, читать научись, неудивительно что ты хочешь язык переключить. Слава Украине."
+            )
+        }
+        val setting = value == "вкл"
+        easySettingsService.put(UkranianLanguage, update.toChat().key(), setting)
         return getOkMessage(update)
     }
 

@@ -41,10 +41,9 @@ class TalkingExecutor(
         val rageModEnabled = isRageModeEnabled(chat)
         if (shouldReply(rageModEnabled, chat)) {
 
-            val messageText = talkingService.getReplyToUser(update)
-                .let { if (rageModEnabled) rageModeFormat(it) else it }
-
             return {
+                val messageText = talkingService.getReplyToUser(update)
+                    .let { message -> if (rageModEnabled) rageModeFormat(message) else message }
                 val delay = if (rageModEnabled.not()) {
                     1000L to 2000L
                 } else {

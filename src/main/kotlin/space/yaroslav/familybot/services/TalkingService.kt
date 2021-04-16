@@ -1,16 +1,27 @@
 package space.yaroslav.familybot.services
 
 import io.micrometer.core.annotation.Timed
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.getLogger
+import space.yaroslav.familybot.common.utils.key
+import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
+import space.yaroslav.familybot.models.UkranianLanguage
 import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
+import space.yaroslav.familybot.services.dictionary.TranslateService
+import space.yaroslav.familybot.services.settings.EasySettingsService
 
 @Component
-class TalkingService(private val chatLogRepository: ChatLogRepository) {
+class TalkingService(
+    private val chatLogRepository: ChatLogRepository,
+    private val translateService: TranslateService,
+    private val easySettingsService: EasySettingsService
+) {
 
     companion object {
         const val cacheUpdateDelay = 1000L * 60L * 60L
@@ -25,10 +36,25 @@ class TalkingService(private val chatLogRepository: ChatLogRepository) {
     }
 
     @Timed("service.TalkingService.getReplyToUser")
-    fun getReplyToUser(update: Update): String {
-        val userMessages = getMessagesForUser(update.toUser())
-            ?: messages
-        return userMessages.random()
+    suspend fun getReplyToUser(update: Update): String {
+        val message = coroutineScope {
+            async {
+                val userMessages = getMessagesForUser(update.toUser())
+                    ?: messages
+                return@async userMessages.random()
+            }
+        }
+
+        return if (easySettingsService.get(UkranianLanguage, update.toChat().key()) == true) {
+            translateService.translate(message.await())
+        } else {
+            message.await()
+        }
+    }
+
+    @Scheduled(fixedRate = cacheUpdateDelay, initialDelay = cacheUpdateDelay)
+    fun scheduleUpdate() {
+        updateCommonMessagesList()
     }
 
     private fun getMessagesForUser(user: User): List<String>? {
@@ -37,11 +63,6 @@ class TalkingService(private val chatLogRepository: ChatLogRepository) {
             .takeIf { it.size > minimalDatabaseSizeThreshold }
             ?.let(this::cleanMessages)
             ?.toList()
-    }
-
-    @Scheduled(fixedRate = cacheUpdateDelay, initialDelay = cacheUpdateDelay)
-    fun scheduleUpdate() {
-        updateCommonMessagesList()
     }
 
     private fun updateCommonMessagesList() {
@@ -62,6 +83,7 @@ class TalkingService(private val chatLogRepository: ChatLogRepository) {
             .filterNot { it.split(" ").size > 10 }
             .filterNot { it.length > 600 }
             .filterNot { it.contains("http", ignoreCase = true) }
+            .filterNot { it.contains("сучар", ignoreCase = true) }
             .filterNot { it.contains("@") }
     }
 }
