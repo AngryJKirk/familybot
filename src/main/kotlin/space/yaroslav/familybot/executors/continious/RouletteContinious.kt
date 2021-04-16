@@ -15,7 +15,7 @@ import space.yaroslav.familybot.executors.command.ROULETTE_MESSAGE
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
-import space.yaroslav.familybot.services.PidorCompetitionService
+import space.yaroslav.familybot.services.misc.PidorCompetitionService
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 import java.time.LocalDate

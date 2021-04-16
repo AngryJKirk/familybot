@@ -18,7 +18,7 @@ import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
 import space.yaroslav.familybot.repos.ifaces.CommonRepository
-import space.yaroslav.familybot.services.PidorCompetitionService
+import space.yaroslav.familybot.services.misc.PidorCompetitionService
 import space.yaroslav.familybot.services.dictionary.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.LocalDate

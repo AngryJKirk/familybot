@@ -8,7 +8,7 @@ import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.models.FunctionId
-import space.yaroslav.familybot.services.TalkingService
+import space.yaroslav.familybot.services.talking.TalkingService
 import space.yaroslav.familybot.services.settings.EasySettingsService
 import space.yaroslav.familybot.services.settings.FuckOffTolerance
 import space.yaroslav.familybot.telegram.BotConfig

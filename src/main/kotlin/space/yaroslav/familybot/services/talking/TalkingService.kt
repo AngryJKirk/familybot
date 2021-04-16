@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.services
+package space.yaroslav.familybot.services.talking
 
 import io.micrometer.core.annotation.Timed
 import kotlinx.coroutines.async
