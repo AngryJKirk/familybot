@@ -30,6 +30,37 @@ Total amount of chats and users that have been seen by the bot:
 Amount of everyday messages passed through the bot:
 ![](https://i.vas3k.club/7a130c5979d2f84dc55b1416ecd1d7b4d22c14c34a6892af4d060d585fc31d89.jpg)
 
+# Build & deploy
+
+### Requirments
+
+1. make
+2. docker
+3. docker-compose
+
+### Deploy test
+
+1. Fill environment variables in `scripts/.env`.
+
+2. enter `scripts/` and run `make deploy-test`
+
+To re-deploy only the app run `make redeploy-test`.
+
+### Deploy prod
+
+1. Create production.env in your home folder just like `scripts/.env` but with production params
+
+2. enter `scripts/` and run `make deploy-prod`
+
+To re-deploy only the app run `make redeploy-prod`.
+
+### Troubleshooting:
+
+1. Old versions of docker-compose do not support `--env-file` which is required for production.
+
+3. If you have issues installing `make`, just copy commands from `scripts/Makefile`
+
+
 # Thanks
 
 This project is written using JetBrains All Products Pack, provided
