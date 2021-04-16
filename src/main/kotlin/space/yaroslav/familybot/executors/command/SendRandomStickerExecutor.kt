@@ -9,12 +9,12 @@ import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.sendRandomSticker
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.models.stickers.StickerPack
-import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
+import space.yaroslav.familybot.repos.CommandHistoryRepository
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.LocalDate
 import java.time.ZoneOffset
 
-abstract class SendRandomStikerExecutor(
+abstract class SendRandomStickerExecutor(
     botConfig: BotConfig,
     private val historyRepository: CommandHistoryRepository
 ) :

@@ -8,11 +8,10 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
-import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
 import java.util.concurrent.TimeUnit
 
 @Component
-class PostgresChatLogRepository(val template: JdbcTemplate) : ChatLogRepository {
+class ChatLogRepository(val template: JdbcTemplate) {
     private val allCache = Suppliers.memoizeWithExpiration(
         {
             template.queryForList(
@@ -50,17 +49,17 @@ class PostgresChatLogRepository(val template: JdbcTemplate) : ChatLogRepository 
     )
 
     @Timed("repository.ChatLogRepository.getAllByChat")
-    override fun getAllByChat(chat: Chat): List<String> {
+    fun getAllByChat(chat: Chat): List<String> {
         return allByChatCache[chat]
     }
 
     @Timed("repository.ChatLogRepository.getAll")
-    override fun getAll(): List<String> {
+    fun getAll(): List<String> {
         return allCache.get()
     }
 
     @Timed("repository.ChatLogRepository.add")
-    override fun add(user: User, message: String) {
+    fun add(user: User, message: String) {
         template.update(
             "INSERT INTO chat_log (chat_id, user_id, message) VALUES (?, ?, ?)",
             user.chat.id,
@@ -70,7 +69,7 @@ class PostgresChatLogRepository(val template: JdbcTemplate) : ChatLogRepository 
     }
 
     @Timed("repository.ChatLogRepository.get")
-    override fun get(user: User): List<String> {
+    fun get(user: User): List<String> {
         return allByUserCache[user]
     }
 }

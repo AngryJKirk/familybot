@@ -12,8 +12,8 @@ import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.executors.Executor
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.Priority
-import space.yaroslav.familybot.services.ban.Ban
-import space.yaroslav.familybot.services.ban.BanService
+import space.yaroslav.familybot.services.misc.Ban
+import space.yaroslav.familybot.services.misc.BanService
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter

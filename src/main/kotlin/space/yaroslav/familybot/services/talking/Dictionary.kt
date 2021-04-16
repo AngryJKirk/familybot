@@ -1,18 +1,18 @@
-package space.yaroslav.familybot.services.dictionary
+package space.yaroslav.familybot.services.talking
 
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.models.Phrase
+import space.yaroslav.familybot.repos.PhraseDictionaryRepository
 import space.yaroslav.familybot.repos.PhraseThemeSetting
-import space.yaroslav.familybot.repos.ifaces.PhraseDictionaryRepository
 import java.time.Instant
 
 @Component
-class DictionaryImpl(private val dictionaryRepository: PhraseDictionaryRepository) : Dictionary {
-    override fun getAll(phrase: Phrase): List<String> {
+class Dictionary(private val dictionaryRepository: PhraseDictionaryRepository) {
+    fun getAll(phrase: Phrase): List<String> {
         return dictionaryRepository.getAllPhrases(phrase)
     }
 
-    override fun get(phrase: Phrase): String {
+    fun get(phrase: Phrase): String {
         val now = Instant.now()
         val theme = dictionaryRepository.getPhraseSettings()
             .find { isCurrentSetting(now, it) }

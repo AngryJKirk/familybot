@@ -10,8 +10,8 @@ import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
-import space.yaroslav.familybot.services.dictionary.Dictionary
+import space.yaroslav.familybot.repos.CommandHistoryRepository
+import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component

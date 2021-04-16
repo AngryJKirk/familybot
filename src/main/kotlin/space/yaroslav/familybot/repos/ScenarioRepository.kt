@@ -12,7 +12,6 @@ import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.getUuid
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
-import space.yaroslav.familybot.repos.ifaces.ScenarioRepository
 import space.yaroslav.familybot.services.scenario.Scenario
 import space.yaroslav.familybot.services.scenario.ScenarioMove
 import space.yaroslav.familybot.services.scenario.ScenarioPoll
@@ -25,10 +24,8 @@ import java.time.Instant
 import java.util.UUID
 
 @Component
-class PostgresScenarioRepository(
-    jdbcTemplate: JdbcTemplate
-) : ScenarioRepository {
-    private val template = NamedParameterJdbcTemplate(jdbcTemplate.dataSource!!)
+class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
+    private val template = NamedParameterJdbcTemplate(jdbcTemplate)
     private val log = getLogger()
     private val scenarioStateRowMapper = RowMapper { rs, rowNum ->
         ScenarioState(
@@ -73,7 +70,7 @@ class PostgresScenarioRepository(
     }
 
     @Timed("repository.PostgresScenarioRepository.getScenarios")
-    override fun getScenarios(): List<Scenario> {
+    fun getScenarios(): List<Scenario> {
         return template.query(
             "SELECT * FROM scenario INNER JOIN scenario_move sm ON scenario.entry_move = sm.move_id",
             scenarioRowMapper
@@ -81,7 +78,7 @@ class PostgresScenarioRepository(
     }
 
     @Timed("repository.PostgresScenarioRepository.findMove")
-    override fun findMove(id: UUID): ScenarioMove? {
+    fun findMove(id: UUID): ScenarioMove? {
         return template
             .query(
                 "SELECT * FROM scenario_move WHERE move_id = :id",
@@ -92,7 +89,7 @@ class PostgresScenarioRepository(
     }
 
     @Timed("repository.PostgresScenarioRepository.getAllCurrentGames")
-    override fun getAllCurrentGames(): Map<Chat, ScenarioMove> {
+    fun getAllCurrentGames(): Map<Chat, ScenarioMove> {
         return template.query(
             """SELECT *
         FROM (
@@ -110,7 +107,7 @@ class PostgresScenarioRepository(
     }
 
     @Timed("repository.PostgresScenarioRepository.getCurrentMoveOfChat")
-    override fun getCurrentMoveOfChat(chat: Chat): ScenarioMove? {
+    fun getCurrentMoveOfChat(chat: Chat): ScenarioMove? {
         return template.query(
             """
              SELECT * FROM scenario_move
@@ -122,12 +119,12 @@ class PostgresScenarioRepository(
     }
 
     @Timed("repository.PostgresScenarioRepository.getPreviousMove")
-    override fun getPreviousMove(move: ScenarioMove): ScenarioMove? {
+    fun getPreviousMove(move: ScenarioMove): ScenarioMove? {
         return template.query(
             """
              SELECT * FROM move2way
               INNER JOIN scenario_move sm ON sm.move_id = move2way.move_id
-              WHERE way_id in
+              WHERE way_id IN
              (SELECT scenario_way.way_id FROM scenario_way WHERE next_move_id = :move_id)
             
         """,
@@ -136,7 +133,7 @@ class PostgresScenarioRepository(
     }
 
     @Timed("repository.PostgresScenarioRepository.addState")
-    override fun addState(scenarioMove: ScenarioMove, chat: Chat) {
+    fun addState(scenarioMove: ScenarioMove, chat: Chat) {
         template.update(
             "INSERT INTO scenario_states (state_date, chat_id, scenario_move_id) VALUES (:date,:chat_id,:move_id)",
             mapOf(
@@ -148,7 +145,7 @@ class PostgresScenarioRepository(
     }
 
     @Timed("repository.PostgresScenarioRepository.getState")
-    override fun getState(chat: Chat): ScenarioState? {
+    fun getState(chat: Chat): ScenarioState? {
         return template.query(
             """
             SELECT * FROM scenario_states ss
@@ -161,7 +158,7 @@ class PostgresScenarioRepository(
     }
 
     @Timed("repository.PostgresScenarioRepository.addChoice")
-    override fun addChoice(chat: Chat, user: User, scenarioMove: ScenarioMove, chosenWay: ScenarioWay) {
+    fun addChoice(chat: Chat, user: User, scenarioMove: ScenarioMove, chosenWay: ScenarioWay) {
         try {
             template.update(
                 "INSERT INTO scenario_choices (user_id, chat_id, scenario_way_id) VALUES (:user_id, :chat_id, :scenario_way_id)",
@@ -178,7 +175,7 @@ class PostgresScenarioRepository(
     }
 
     @Timed("repository.PostgresScenarioRepository.removeChoice")
-    override fun removeChoice(chat: Chat, user: User, scenarioMove: ScenarioMove) {
+    fun removeChoice(chat: Chat, user: User, scenarioMove: ScenarioMove) {
         template.update(
             """
             DELETE
@@ -196,7 +193,7 @@ class PostgresScenarioRepository(
     }
 
     @Timed("repository.PostgresScenarioRepository.getResultsForMove")
-    override fun getResultsForMove(chat: Chat, scenarioState: ScenarioState): Map<ScenarioWay, List<User>> {
+    fun getResultsForMove(chat: Chat, scenarioState: ScenarioState): Map<ScenarioWay, List<User>> {
         return template.query(
             """
             SELECT * FROM scenario_choices sc
@@ -215,7 +212,7 @@ class PostgresScenarioRepository(
     }
 
     @Timed("repository.PostgresScenarioRepository.savePoll")
-    override fun savePoll(scenarioPoll: ScenarioPoll) {
+    fun savePoll(scenarioPoll: ScenarioPoll) {
         template.update(
             "INSERT INTO scenario_poll (poll_id, chat_id, create_date, scenario_move_id, poll_message_id) VALUES (:poll_id,:chat_id,:create_date,:move_id, :poll_message_id)",
             mapOf(
@@ -229,7 +226,7 @@ class PostgresScenarioRepository(
     }
 
     @Timed("repository.PostgresScenarioRepository.getDataByPollId")
-    override fun getDataByPollId(id: String): ScenarioPoll? {
+    fun getDataByPollId(id: String): ScenarioPoll? {
         return template.query(
             """SELECT * FROM scenario_poll 
             INNER JOIN chats c ON scenario_poll.chat_id = c.id
@@ -244,7 +241,7 @@ class PostgresScenarioRepository(
     }
 
     @Timed("repository.PostgresScenarioRepository.findScenarioPoll")
-    override fun findScenarioPoll(chat: Chat, scenarioMove: ScenarioMove, afterDate: Instant): ScenarioPoll? {
+    fun findScenarioPoll(chat: Chat, scenarioMove: ScenarioMove, afterDate: Instant): ScenarioPoll? {
         return template.query(
             """SELECT * FROM scenario_poll sp
             INNER JOIN chats c ON sp.chat_id = c.id
@@ -262,7 +259,7 @@ class PostgresScenarioRepository(
     }
 
     @Timed("repository.PostgresScenarioRepository.allPolls")
-    override fun allPolls(from: Instant, to: Instant): List<ScenarioPoll> {
+    fun allPolls(from: Instant, to: Instant): List<ScenarioPoll> {
 
         return template.query(
             """SELECT * FROM scenario_poll sp
@@ -278,7 +275,7 @@ class PostgresScenarioRepository(
     }
 
     @Timed("repository.PostgresScenarioRepository.findMostRecentPoll")
-    override fun findMostRecentPoll(chat: Chat): ScenarioPoll? {
+    fun findMostRecentPoll(chat: Chat): ScenarioPoll? {
         return template.query(
             """SELECT * FROM scenario_poll sp
             INNER JOIN chats c ON sp.chat_id = c.id
@@ -293,7 +290,7 @@ class PostgresScenarioRepository(
     }
 
     @Timed("repository.PostgresScenarioRepository.getAllStatesOfChat")
-    override fun getAllStatesOfChat(chat: Chat): List<ScenarioState> {
+    fun getAllStatesOfChat(chat: Chat): List<ScenarioState> {
         return template.query(
             """
             SELECT * FROM scenario_states 

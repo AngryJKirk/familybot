@@ -32,8 +32,8 @@ import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.MessageContentType
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.Priority
-import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
-import space.yaroslav.familybot.services.dictionary.Dictionary
+import space.yaroslav.familybot.repos.AskWorldRepository
+import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.time.Instant

@@ -5,12 +5,12 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
-import space.yaroslav.familybot.repos.ifaces.RawChatLogRepository
+import space.yaroslav.familybot.repos.RawChatLogRepository
 import java.time.Instant
 
 @Component
 class RawUpdateLogger(private val rawChatLogRepository: RawChatLogRepository) {
-    private final val objectMapper = ObjectMapper()
+    private val objectMapper = ObjectMapper()
 
     fun log(update: Update) {
         val rawMessage = when {

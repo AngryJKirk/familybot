@@ -13,8 +13,8 @@ import space.yaroslav.familybot.common.utils.toEmoji
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.repos.ifaces.FunctionsConfigureRepository
-import space.yaroslav.familybot.services.dictionary.Dictionary
+import space.yaroslav.familybot.repos.FunctionsConfigureRepository
+import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component

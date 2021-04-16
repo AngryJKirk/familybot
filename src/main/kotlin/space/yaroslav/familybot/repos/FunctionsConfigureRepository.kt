@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.repos.ifaces
+package space.yaroslav.familybot.repos
 
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.models.FunctionId

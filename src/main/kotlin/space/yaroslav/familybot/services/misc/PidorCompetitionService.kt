@@ -10,8 +10,8 @@ import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.repos.ifaces.CommonRepository
-import space.yaroslav.familybot.services.dictionary.Dictionary
+import space.yaroslav.familybot.repos.CommonRepository
+import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.time.Instant
 import java.time.LocalDate

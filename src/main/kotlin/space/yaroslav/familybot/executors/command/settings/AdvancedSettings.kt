@@ -12,7 +12,7 @@ import space.yaroslav.familybot.executors.command.CommandExecutor
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.UkranianLanguage
-import space.yaroslav.familybot.services.dictionary.Dictionary
+import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.services.settings.EasySettingsService
 import space.yaroslav.familybot.services.settings.TalkingDencity
 import space.yaroslav.familybot.telegram.BotConfig

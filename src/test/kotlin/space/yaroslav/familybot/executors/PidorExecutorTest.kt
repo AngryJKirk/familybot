@@ -12,8 +12,8 @@ import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.executors.command.PidorExecutor
 import space.yaroslav.familybot.infrastructure.createSimpleCommand
-import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
-import space.yaroslav.familybot.repos.ifaces.CommonRepository
+import space.yaroslav.familybot.repos.CommandHistoryRepository
+import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.suits.CommandExecutorTest
 import java.time.Instant
 

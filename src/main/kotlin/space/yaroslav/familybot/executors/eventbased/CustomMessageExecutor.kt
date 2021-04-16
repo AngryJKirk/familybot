@@ -11,7 +11,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.executors.Executor
 import space.yaroslav.familybot.models.Priority
-import space.yaroslav.familybot.repos.ifaces.CustomMessageDeliveryRepository
+import space.yaroslav.familybot.repos.CustomMessageDeliveryRepository
 
 @Component
 class CustomMessageExecutor(private val repository: CustomMessageDeliveryRepository) : Executor {

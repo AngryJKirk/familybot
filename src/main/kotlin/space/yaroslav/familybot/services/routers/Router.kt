@@ -25,12 +25,12 @@ import space.yaroslav.familybot.executors.pm.PrivateMessageExecutor
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.models.higherThan
-import space.yaroslav.familybot.repos.ifaces.ChatLogRepository
-import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
-import space.yaroslav.familybot.repos.ifaces.CommonRepository
-import space.yaroslav.familybot.repos.ifaces.FunctionsConfigureRepository
+import space.yaroslav.familybot.repos.ChatLogRepository
+import space.yaroslav.familybot.repos.CommandHistoryRepository
+import space.yaroslav.familybot.repos.CommonRepository
+import space.yaroslav.familybot.repos.FunctionsConfigureRepository
 import space.yaroslav.familybot.services.misc.RawUpdateLogger
-import space.yaroslav.familybot.services.dictionary.Dictionary
+import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 

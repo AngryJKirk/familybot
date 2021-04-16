@@ -8,9 +8,9 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.models.Priority
-import space.yaroslav.familybot.repos.ifaces.CommonRepository
-import space.yaroslav.familybot.services.ban.Ban
-import space.yaroslav.familybot.services.ban.BanService
+import space.yaroslav.familybot.repos.CommonRepository
+import space.yaroslav.familybot.services.misc.Ban
+import space.yaroslav.familybot.services.misc.BanService
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 import java.time.temporal.ChronoUnit

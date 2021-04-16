@@ -8,9 +8,9 @@ import space.yaroslav.familybot.common.AskWorldQuestion
 import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.models.Command
-import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
-import space.yaroslav.familybot.services.ban.Ban
-import space.yaroslav.familybot.services.ban.BanService
+import space.yaroslav.familybot.repos.AskWorldRepository
+import space.yaroslav.familybot.services.misc.Ban
+import space.yaroslav.familybot.services.misc.BanService
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 import java.time.temporal.ChronoUnit

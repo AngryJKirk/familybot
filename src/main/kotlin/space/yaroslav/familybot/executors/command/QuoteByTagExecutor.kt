@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.models.Command
-import space.yaroslav.familybot.repos.ifaces.QuoteRepository
+import space.yaroslav.familybot.repos.QuoteRepository
 import space.yaroslav.familybot.telegram.BotConfig
 
 const val QUOTE_MESSAGE = "Тег?"

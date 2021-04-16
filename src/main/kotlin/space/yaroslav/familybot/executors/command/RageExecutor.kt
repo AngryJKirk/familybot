@@ -13,8 +13,8 @@ import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
-import space.yaroslav.familybot.services.dictionary.Dictionary
+import space.yaroslav.familybot.repos.CommandHistoryRepository
+import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.services.settings.EasySettingsService
 import space.yaroslav.familybot.services.settings.RageMode
 import space.yaroslav.familybot.telegram.BotConfig

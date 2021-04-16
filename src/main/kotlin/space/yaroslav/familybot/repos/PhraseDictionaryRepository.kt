@@ -9,13 +9,12 @@ import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.PhraseTheme
-import space.yaroslav.familybot.repos.ifaces.PhraseDictionaryRepository
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.time.Instant
 import java.util.concurrent.TimeUnit
 
 @Component
-class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : PhraseDictionaryRepository {
+class PhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) {
 
     private val cache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES)
         .build(CacheLoader.from { type: Pair<Phrase, PhraseTheme>? -> getPhrasesInternal(type) })
@@ -29,22 +28,22 @@ class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : Phras
         Suppliers.memoizeWithExpiration({ getThemesSettingsInternal() }, 1, TimeUnit.MINUTES)
 
     @Timed("repository.PhraseDictionaryRepository.getPhraseSettings")
-    override fun getPhraseSettings(): List<PhraseThemeSetting> {
+    fun getPhraseSettings(): List<PhraseThemeSetting> {
         return themeSettingsCache.get()
     }
 
     @Timed("repository.PhraseDictionaryRepository.getPhraseTheme")
-    override fun getPhraseTheme(chat: Chat): PhraseTheme {
+    fun getPhraseTheme(chat: Chat): PhraseTheme {
         TODO()
     }
 
     @Timed("repository.PhraseDictionaryRepository.getPhrases")
-    override fun getPhrases(phrase: Phrase, phraseTheme: PhraseTheme): List<String> {
+    fun getPhrases(phrase: Phrase, phraseTheme: PhraseTheme): List<String> {
         return cache[phrase to phraseTheme]
     }
 
     @Timed("repository.PhraseDictionaryRepository.getDefaultPhraseTheme")
-    override fun getDefaultPhraseTheme(): PhraseTheme {
+    fun getDefaultPhraseTheme(): PhraseTheme {
         return themeCache.get().first(PhraseThemeDescription::isDefault).theme
     }
 
@@ -84,7 +83,7 @@ class PostgresPhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) : Phras
     }
 
     @Timed("repository.PhraseDictionaryRepository.getAllPhrases")
-    override fun getAllPhrases(phrase: Phrase): List<String> {
+    fun getAllPhrases(phrase: Phrase): List<String> {
         return cacheAllPhrases.get(phrase)
     }
 

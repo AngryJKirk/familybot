@@ -13,8 +13,8 @@ import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.executors.command.ROULETTE_MESSAGE
 import space.yaroslav.familybot.models.Command
-import space.yaroslav.familybot.repos.ifaces.CommandHistoryRepository
-import space.yaroslav.familybot.repos.ifaces.CommonRepository
+import space.yaroslav.familybot.repos.CommandHistoryRepository
+import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.misc.PidorCompetitionService
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant

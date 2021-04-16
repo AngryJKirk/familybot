@@ -7,12 +7,11 @@ import io.micrometer.core.annotation.Timed
 import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.repos.ifaces.QuoteRepository
 import java.util.concurrent.TimeUnit
 
 @Component
 @Primary
-class PostgresQuoteRepository(val template: JdbcTemplate) : QuoteRepository {
+class QuoteRepository(val template: JdbcTemplate) {
 
     private val quoteCache = Suppliers.memoizeWithExpiration(
         { template.query("SELECT * FROM quotes") { rs, _ -> rs.getString("quote") } },
@@ -32,17 +31,17 @@ class PostgresQuoteRepository(val template: JdbcTemplate) : QuoteRepository {
     )
 
     @Timed("repository.QuoteRepository.getTags")
-    override fun getTags(): List<String> {
+    fun getTags(): List<String> {
         return template.queryForList("SELECT tag FROM tags", String::class.java)
     }
 
     @Timed("repository.QuoteRepository.getByTag")
-    override fun getByTag(tag: String): String? {
+    fun getByTag(tag: String): String? {
         return byTagCache.get(tag).random()
     }
 
     @Timed("repository.QuoteRepository.getRandom")
-    override fun getRandom(): String {
+    fun getRandom(): String {
         return quoteCache.get().random()
     }
 }

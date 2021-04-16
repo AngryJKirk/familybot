@@ -21,10 +21,10 @@ import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.repos.ifaces.AskWorldRepository
-import space.yaroslav.familybot.repos.ifaces.CommonRepository
-import space.yaroslav.familybot.repos.ifaces.FunctionsConfigureRepository
-import space.yaroslav.familybot.services.dictionary.Dictionary
+import space.yaroslav.familybot.repos.AskWorldRepository
+import space.yaroslav.familybot.repos.CommonRepository
+import space.yaroslav.familybot.repos.FunctionsConfigureRepository
+import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 import java.time.ZonedDateTime

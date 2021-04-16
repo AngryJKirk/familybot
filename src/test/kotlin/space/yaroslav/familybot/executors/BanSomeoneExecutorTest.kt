@@ -19,9 +19,9 @@ import space.yaroslav.familybot.executors.pm.BanSomeoneExecutor
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.randomUUID
 import space.yaroslav.familybot.models.Priority
-import space.yaroslav.familybot.repos.ifaces.BanEntity
-import space.yaroslav.familybot.repos.ifaces.BanEntityType
-import space.yaroslav.familybot.repos.ifaces.BanRepository
+import space.yaroslav.familybot.repos.BanEntity
+import space.yaroslav.familybot.repos.BanEntityType
+import space.yaroslav.familybot.repos.BanRepository
 import space.yaroslav.familybot.suits.ExecutorTest
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot

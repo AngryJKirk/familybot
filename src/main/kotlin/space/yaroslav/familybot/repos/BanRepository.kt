@@ -4,21 +4,19 @@ import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.repos.ifaces.BanEntity
-import space.yaroslav.familybot.repos.ifaces.BanRepository
-import space.yaroslav.familybot.services.ban.Ban
+import space.yaroslav.familybot.services.misc.Ban
 import java.sql.ResultSet
 import java.sql.Timestamp
 import java.util.UUID
 
 @Component
-class PostgresBanRepository(val jdbcTemplate: JdbcTemplate) : BanRepository {
+class BanRepository(val jdbcTemplate: JdbcTemplate) {
     private val banRowMapper = BanRowMapper()
 
     @Timed("repository.BanRepository.addBan")
-    override fun addBan(banEntity: BanEntity, ban: Ban) {
+    fun addBan(banEntity: BanEntity, ban: Ban) {
         jdbcTemplate.update(
-            "INSERT INTO bans (ban_uuid, ban_till_date, ban_description, entity_id, entity_type_id,ban_date) VALUES (?,?,?,?,?,current_timestamp)",
+            "INSERT INTO bans (ban_uuid, ban_till_date, ban_description, entity_id, entity_type_id,ban_date) VALUES (?,?,?,?,?,CURRENT_TIMESTAMP)",
             ban.banId,
             Timestamp.from(ban.till),
             ban.description,
@@ -28,17 +26,17 @@ class PostgresBanRepository(val jdbcTemplate: JdbcTemplate) : BanRepository {
     }
 
     @Timed("repository.BanRepository.reduceBan")
-    override fun reduceBan(ban: Ban) {
-        jdbcTemplate.update("UPDATE bans set ban_till_date = current_timestamp where ban_uuid = ?", ban.banId)
+    fun reduceBan(ban: Ban) {
+        jdbcTemplate.update("UPDATE bans SET ban_till_date = CURRENT_TIMESTAMP WHERE ban_uuid = ?", ban.banId)
     }
 
     @Timed("repository.BanRepository.getByEntity")
-    override fun getByEntity(banEntity: BanEntity): Ban? {
+    fun getByEntity(banEntity: BanEntity): Ban? {
         return jdbcTemplate.query(
-            """SELECT * from bans where entity_id =? 
-                and entity_type_id = ? 
-                and ban_till_date >= current_timestamp
-                and ban_date <= current_timestamp
+            """SELECT * FROM bans WHERE entity_id =? 
+                AND entity_type_id = ? 
+                AND ban_till_date >= CURRENT_TIMESTAMP
+                AND ban_date <= CURRENT_TIMESTAMP
                 """,
 
             banRowMapper,
@@ -57,3 +55,11 @@ class BanRowMapper : RowMapper<Ban> {
         )
     }
 }
+
+enum class BanEntityType(val entityTypeId: Int) {
+    USER(1),
+    CHAT(2)
+}
+
+data class BanEntity(val entityId: Long, val entityType: BanEntityType)
+
