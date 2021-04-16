@@ -47,6 +47,7 @@ services:
       - BOT_TOKEN
       - BOT_OWNER_NAME
       - REDIS_HOST=family-redis
+      - YANDEX_API_TOKEN
     depends_on:
       - family-db
       - family-redis
