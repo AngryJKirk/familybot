@@ -5,23 +5,18 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.isFromAdmin
-import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.send
-import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.executors.command.CommandExecutor
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.models.UkranianLanguage
-import space.yaroslav.familybot.services.settings.EasySettingsService
-import space.yaroslav.familybot.services.settings.TalkingDensity
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
-class AdvancedSettings(
-    private val easySettingsService: EasySettingsService,
+class AdvancedSettingsExecutor(
     private val dictionary: Dictionary,
-    private val botConfig: BotConfig
+    private val botConfig: BotConfig,
+    private val processors: List<SettingProcessor>
 ) : CommandExecutor(botConfig) {
     override fun command() = Command.ADVANCED_SETTINGS
 
@@ -45,47 +40,20 @@ class AdvancedSettings(
                     "Ты кого наебать хочешь? Ты ведь не админ даже, а так, ПУСТЫШКА, пародия на личность, позови старшего, если хочешь что-то изменить в этой жизни. Ведь большего ты и не достоин, кроме как всегда полагаться на кого-то, кто тебе поможет. Задумайся, ведь так было всегда, ты всегда был слаб и звал на помощь сильного, вот и сейчас, беги, зови свою МАМОЧКУ или ПАПОЧКУ, чтобы тебе подтерли задницу. Я буду говорить только с настоящими лидерами."
                 )
             } else {
+
                 runCatching {
-                    when (splitMessage[1]) {
-                        "разговорчики" -> setTalkingDensity(update, splitMessage[2])
-                        "хохол" -> setLanguage(update, splitMessage[2])
-                        else -> sendErrorMessage(update)
-                    }
+
+                    val processor = processors
+                        .find { processor -> processor.canProcess(update) }
+                    return@runCatching processor
+                        ?.process(update)
+                        ?: sendErrorMessage(update)
                 }.getOrElse { throwable ->
                     log.error("Advanced settings failed", throwable)
                     sendErrorMessage(update)
                 }.invoke(it)
             }
         }
-    }
-
-    private fun setTalkingDensity(update: Update, value: String): suspend (AbsSender) -> Unit {
-        val amountOfDensity = value.toLongOrNull() ?: return sendErrorMessage(
-            update,
-            "Я твоей матери на спине написал $value когда ебал ее, научись блять читать как пользоваться командой"
-        )
-
-        if (amountOfDensity < 0) {
-            return sendErrorMessage(
-                update,
-                "Ровно столько раз я колол твою мамашу, только со знаком плюс."
-            )
-        }
-
-        easySettingsService.put(TalkingDensity, update.toChat().key(), amountOfDensity)
-        return getOkMessage(update)
-    }
-
-    private fun setLanguage(update: Update, value: String): suspend (AbsSender) -> Unit {
-        if (value != "вкл" && value != "выкл") {
-            return sendErrorMessage(
-                update,
-                "Ну ты долбоеб, читать научись, неудивительно что ты хочешь язык переключить. Слава Украине."
-            )
-        }
-        val setting = value == "вкл"
-        easySettingsService.put(UkranianLanguage, update.toChat().key(), setting)
-        return getOkMessage(update)
     }
 
     private fun sendErrorMessage(
@@ -95,17 +63,7 @@ class AdvancedSettings(
         return {
             it.send(
                 update,
-                message,
-                shouldTypeBeforeSend = true
-            )
-        }
-    }
-
-    private fun getOkMessage(update: Update): suspend (AbsSender) -> Unit {
-        return {
-            it.send(
-                update,
-                dictionary.get(Phrase.ADVANCED_SETTINGS_OK, update)
+                message
             )
         }
     }

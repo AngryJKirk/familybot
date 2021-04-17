@@ -5,6 +5,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatAdministrators
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker
@@ -23,6 +24,7 @@ class TestSender {
         on { execute(any<SendSticker>()) } doReturn Message()
         on { execute(any<GetStickerSet>()) } doReturn createStickers()
         on { execute(any<GetChatMember>()) } doAnswer requestedChatMember()
+        on { execute(any<GetChatAdministrators>()) } doReturn requestedAdmins()
     }
 
     private fun requestedChatMember(): (InvocationOnMock) -> ChatMember? =
@@ -35,6 +37,17 @@ class TestSender {
                 status = "member"
             }
         }
+
+    private fun requestedAdmins(): ArrayList<ChatMember> {
+        return ArrayList((1L..3L).map {
+            ChatMember().apply {
+                user = User()
+                user.id = it
+                user.userName = randomUUID()
+                status = "administrator"
+            }
+        })
+    }
 
     private fun createStickers(): StickerSet {
         val stickers = Sticker
