@@ -48,11 +48,6 @@ class ChatLogRepository(val template: JdbcTemplate) {
         }
     )
 
-    @Timed("repository.ChatLogRepository.getAllByChat")
-    fun getAllByChat(chat: Chat): List<String> {
-        return allByChatCache[chat]
-    }
-
     @Timed("repository.ChatLogRepository.getAll")
     fun getAll(): List<String> {
         return allCache.get()

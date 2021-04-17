@@ -164,7 +164,7 @@ class ScenarioSessionManagementService(
         )
     }
 
-    private suspend fun getExpositionMessage(
+    private fun getExpositionMessage(
         nextMove: ScenarioMove,
         previousMove: ScenarioMove
     ): String {

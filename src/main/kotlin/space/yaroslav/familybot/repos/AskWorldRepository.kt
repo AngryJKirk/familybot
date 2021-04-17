@@ -17,33 +17,6 @@ import java.time.temporal.ChronoUnit
 
 @Component
 class AskWorldRepository(val template: JdbcTemplate) {
-    @Timed("repository.AskWorldRepository.getQuestionsFromUser")
-    fun getQuestionsFromUser(
-        chat: Chat,
-        user: User,
-        date: Instant = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
-    ): List<AskWorldQuestion> {
-        return template.query(
-            """SELECT
-                          ask_world_questions.id,
-                          ask_world_questions.question,
-                          ask_world_questions.chat_id,
-                          ask_world_questions.user_id,
-                          ask_world_questions.date,
-                          c2.name as chat_name,
-                          u.name as common_name,
-                          u.username
-                            from ask_world_questions
-                            INNER JOIN chats c2 on ask_world_questions.chat_id = c2.id
-                            INNER JOIN users u on ask_world_questions.user_id = u.id
-                            where ask_world_questions.chat_id = ? and ask_world_questions.user_id = ?
-                            and ask_world_questions.date >= ?""",
-            { rs, _ -> rs.toAskWorldQuestion() },
-            chat.id,
-            user.id,
-            Timestamp.from(date)
-        )
-    }
 
     @Timed("repository.AskWorldRepository.getQuestionFromUserAllChats")
     fun getQuestionFromUserAllChats(
@@ -176,26 +149,6 @@ class AskWorldRepository(val template: JdbcTemplate) {
             chat.id,
             question.messageId
         )
-    }
-
-    @Timed("repository.AskWorldRepository.isQuestionDelivered")
-    fun isQuestionDelivered(question: AskWorldQuestion, chat: Chat): Boolean {
-        val questionId = question.id
-            ?: throw FamilyBot.InternalException("Question id should exist, seems like internal logic error")
-
-        return template.queryForList(
-            "SELECT 1 from ask_world_questions_delivery where id = ? and chat_id = ?",
-            questionId,
-            chat.id
-        ).isNotEmpty()
-    }
-
-    @Timed("repository.AskWorldRepository.isReplyDelivered")
-    fun isReplyDelivered(reply: AskWorldReply): Boolean {
-        return template.queryForList(
-            "SELECT 1 from ask_world_replies_delivery where id = ?",
-            reply.id
-        ).isNotEmpty()
     }
 
     @Timed("repository.AskWorldRepository.addQuestion")
