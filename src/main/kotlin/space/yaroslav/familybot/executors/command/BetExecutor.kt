@@ -33,6 +33,7 @@ class BetExecutor(
     override fun command() = Command.BET
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
+        val context = dictionary.createContext(update)
         val now = LocalDate.now()
         val commands = commandHistoryRepository.get(
             update.toUser(),
@@ -41,12 +42,12 @@ class BetExecutor(
         )
         if (isBetAlreadyDone(commands)) {
             log.info("Bet was done already, commands are [{}]", commands)
-            return { it.send(update, dictionary.get(Phrase.BET_ALREADY_WAS), shouldTypeBeforeSend = true) }
+            return { it.send(update, context.get(Phrase.BET_ALREADY_WAS), shouldTypeBeforeSend = true) }
         }
         return {
             it.send(
                 update,
-                dictionary.get(Phrase.BET_INITIAL_MESSAGE),
+                context.get(Phrase.BET_INITIAL_MESSAGE),
                 replyToUpdate = true,
                 shouldTypeBeforeSend = true,
                 customization = { replyMarkup = ForceReplyKeyboard(true, true) }

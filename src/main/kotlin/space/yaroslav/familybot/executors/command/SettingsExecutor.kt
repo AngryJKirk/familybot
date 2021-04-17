@@ -29,7 +29,7 @@ class SettingsExecutor(
         return {
             it.send(
                 update,
-                dictionary.get(Phrase.WHICH_SETTING_SHOULD_CHANGE),
+                dictionary.get(Phrase.WHICH_SETTING_SHOULD_CHANGE, update),
                 replyToUpdate = true,
                 customization = customization(chat)
             )

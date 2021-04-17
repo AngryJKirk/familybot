@@ -12,6 +12,7 @@ import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.repos.CommandHistoryRepository
 import space.yaroslav.familybot.services.talking.Dictionary
+import space.yaroslav.familybot.services.talking.DictionaryContext
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
@@ -26,20 +27,21 @@ class CommandStatExecutor(
     }
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
+        val context = dictionary.createContext(update)
         val all = repositoryCommand.getAll(update.message.chat.toChat()).groupBy { it.command }
 
         val topList = all
             .filterNot { it.key == command() }
-            .map(this::format)
+            .map { format(it, context)}
             .joinToString("\n")
 
         return {
-            it.send(update, "${dictionary.get(Phrase.STATS_BY_COMMAND)}:\n".bold() + topList, enableHtml = true)
+            it.send(update, "${context.get(Phrase.STATS_BY_COMMAND)}:\n".bold() + topList, enableHtml = true)
         }
     }
 
-    private fun format(it: Map.Entry<Command, List<CommandByUser>>) =
-        "${dictionary.get(Phrase.COMMAND)} " + "${it.key.command}:".bold() + "\n" + it.value.map { it.user }
+    private fun format(it: Map.Entry<Command, List<CommandByUser>>, context: DictionaryContext) =
+        "${context.get(Phrase.COMMAND)} " + "${it.key.command}:".bold() + "\n" + it.value.map { it.user }
             .formatTopList()
             .joinToString("\n")
 }

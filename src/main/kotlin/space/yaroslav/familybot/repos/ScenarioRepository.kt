@@ -240,40 +240,6 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
         ).firstOrNull()
     }
 
-    @Timed("repository.PostgresScenarioRepository.findScenarioPoll")
-    fun findScenarioPoll(chat: Chat, scenarioMove: ScenarioMove, afterDate: Instant): ScenarioPoll? {
-        return template.query(
-            """SELECT * FROM scenario_poll sp
-            INNER JOIN chats c ON sp.chat_id = c.id
-            INNER JOIN scenario_move sm ON sp.scenario_move_id = sm.move_id
-            WHERE sp.chat_id = :chat_id AND scenario_move_id = :move_id AND create_date >= :date 
-        """,
-            mapOf(
-                "chat_id" to chat.id,
-                "move_id" to scenarioMove.id,
-                "date" to Timestamp.from(afterDate)
-            ),
-            scenarioPollRowMapper
-
-        ).firstOrNull()
-    }
-
-    @Timed("repository.PostgresScenarioRepository.allPolls")
-    fun allPolls(from: Instant, to: Instant): List<ScenarioPoll> {
-
-        return template.query(
-            """SELECT * FROM scenario_poll sp
-            INNER JOIN chats c ON sp.chat_id = c.id
-            INNER JOIN scenario_move sm ON sp.scenario_move_id = sm.move_id                
-            WHERE create_date >= :date_from AND create_date < :date_to""",
-            mapOf(
-                "date_from" to Timestamp.from(from),
-                "date_to" to Timestamp.from(to)
-            ),
-            scenarioPollRowMapper
-        )
-    }
-
     @Timed("repository.PostgresScenarioRepository.findMostRecentPoll")
     fun findMostRecentPoll(chat: Chat): ScenarioPoll? {
         return template.query(

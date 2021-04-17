@@ -14,9 +14,9 @@ import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.repos.CommandHistoryRepository
-import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.services.settings.EasySettingsService
 import space.yaroslav.familybot.services.settings.RageMode
+import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Duration
 import java.time.LocalDateTime
@@ -48,30 +48,31 @@ class RageExecutor(
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val chat = update.toChat()
+        val context = dictionary.createContext(chat)
         if (isRageForced(update)) {
             log.warn("Someone forced ${command()}")
             easySettingsService.put(RageMode, chat.key(), AMOUNT_OF_RAGE_MESSAGES, Duration.ofMinutes(10))
             return {
-                it.send(update, dictionary.get(Phrase.RAGE_INITIAL), shouldTypeBeforeSend = true)
+                it.send(update, context.get(Phrase.RAGE_INITIAL), shouldTypeBeforeSend = true)
             }
         }
 
         if (isFirstLaunch(chat)) {
             log.info("First launch of ${command()} was detected, avoiding that")
             return {
-                it.send(update, dictionary.get(Phrase.TECHNICAL_ISSUE), shouldTypeBeforeSend = true)
+                it.send(update, context.get(Phrase.TECHNICAL_ISSUE), shouldTypeBeforeSend = true)
             }
         }
 
         if (isCooldown(update)) {
             log.info("There is a cooldown of ${command()}")
             return {
-                it.send(update, dictionary.get(Phrase.RAGE_DONT_CARE_ABOUT_YOU), shouldTypeBeforeSend = true)
+                it.send(update, context.get(Phrase.RAGE_DONT_CARE_ABOUT_YOU), shouldTypeBeforeSend = true)
             }
         }
         easySettingsService.put(RageMode, chat.key(), AMOUNT_OF_RAGE_MESSAGES, Duration.ofMinutes(10))
         return {
-            it.send(update, dictionary.get(Phrase.RAGE_INITIAL), shouldTypeBeforeSend = true)
+            it.send(update, context.get(Phrase.RAGE_INITIAL), shouldTypeBeforeSend = true)
         }
     }
 

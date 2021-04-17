@@ -12,9 +12,9 @@ import space.yaroslav.familybot.executors.command.CommandExecutor
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.UkranianLanguage
-import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.services.settings.EasySettingsService
 import space.yaroslav.familybot.services.settings.TalkingDencity
+import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
@@ -33,7 +33,7 @@ class AdvancedSettings(
             return {
                 it.send(
                     update,
-                    dictionary.get(Phrase.ADVANCED_SETTINGS),
+                    dictionary.get(Phrase.ADVANCED_SETTINGS, update),
                     enableHtml = true
                 )
             }
@@ -90,7 +90,7 @@ class AdvancedSettings(
 
     private fun sendErrorMessage(
         update: Update,
-        message: String = dictionary.get(Phrase.ADVANCED_SETTINGS_ERROR)
+        message: String = dictionary.get(Phrase.ADVANCED_SETTINGS_ERROR, update)
     ): suspend (AbsSender) -> Unit {
         return {
             it.send(
@@ -105,7 +105,7 @@ class AdvancedSettings(
         return {
             it.send(
                 update,
-                dictionary.get(Phrase.ADVANCED_SETTINGS_OK)
+                dictionary.get(Phrase.ADVANCED_SETTINGS_OK, update)
             )
         }
     }

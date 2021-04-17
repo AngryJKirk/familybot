@@ -25,6 +25,7 @@ import space.yaroslav.familybot.repos.AskWorldRepository
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.repos.FunctionsConfigureRepository
 import space.yaroslav.familybot.services.talking.Dictionary
+import space.yaroslav.familybot.services.talking.DictionaryContext
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 import java.time.ZonedDateTime
@@ -48,18 +49,19 @@ class AskWorldInitialExecutor(
     }
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
+        val context = dictionary.createContext(update)
         val chat = update.toChat()
         val message = update.message
             ?.text
             ?.removePrefix(command().command)
             ?.removePrefix("@${botConfig.botname}")
             ?.removePrefix(" ")
-            ?.takeIf(String::isNotEmpty) ?: return { it.send(update, dictionary.get(Phrase.ASK_WORLD_HELP)) }
+            ?.takeIf(String::isNotEmpty) ?: return { it.send(update, context.get(Phrase.ASK_WORLD_HELP)) }
 
         if (isLimitForChatExceed(chat)) {
             return {
                 log.info("Limit was exceed for chat")
-                it.send(update, dictionary.get(Phrase.ASK_WORLD_LIMIT_BY_CHAT), replyToUpdate = true)
+                it.send(update, context.get(Phrase.ASK_WORLD_LIMIT_BY_CHAT), replyToUpdate = true)
             }
         }
 
@@ -81,14 +83,14 @@ class AskWorldInitialExecutor(
         val question = AskWorldQuestion(null, message, update.toUser(), chat, Instant.now(), null)
         return { sender ->
             val questionId = coroutineScope { async { askWorldRepository.addQuestion(question) } }
-            sender.send(update, dictionary.get(Phrase.DATA_CONFIRM))
+            sender.send(update, context.get(Phrase.DATA_CONFIRM))
             getChatsToSendQuestion(chat, isScam)
                 .forEach {
                     runCatching {
                         val result = sender.execute(
                             SendMessage(
                                 it.idString,
-                                formatMessage(chat, question)
+                                formatMessage(chat, question, context)
                             ).also { it.enableHtml(true) }
                         )
                         markQuestionDelivered(question, questionId, result, it)
@@ -119,8 +121,8 @@ class AskWorldInitialExecutor(
         askWorldRepository.addQuestionDeliver(questionWithIds, chat)
     }
 
-    private fun formatMessage(chat: Chat, question: AskWorldQuestion): String {
-        val messagePrefix = dictionary.get(Phrase.ASK_WORLD_QUESTION_FROM_CHAT)
+    private fun formatMessage(chat: Chat, question: AskWorldQuestion, context: DictionaryContext): String {
+        val messagePrefix = context.get(Phrase.ASK_WORLD_QUESTION_FROM_CHAT)
         val boldChatName = chat.name.boldNullable()
         val italicMessage = question.message.italic()
         return "$messagePrefix $boldChatName: $italicMessage"

@@ -2,14 +2,15 @@ package space.yaroslav.familybot.executors.continious
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
+import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.isFromAdmin
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.services.scenario.ScenarioService
 import space.yaroslav.familybot.services.scenario.ScenarioSessionManagementService
+import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
 
@@ -21,7 +22,7 @@ class ScenarioContinious(
     private val botConfig: BotConfig
 ) :
     ContiniousConversation(botConfig) {
-    override fun getDialogMessage() = "Какую игру выбрать?"
+    override fun getDialogMessage(message: Message) = "Какую игру выбрать?"
 
     override fun command() = Command.SCENARIO
 
@@ -34,7 +35,7 @@ class ScenarioContinious(
                     AnswerCallbackQuery(callbackQuery.id)
                         .apply {
                             showAlert = true
-                            text = dictionary.get(Phrase.ACCESS_DENIED)
+                            text = dictionary.get(Phrase.ACCESS_DENIED, update)
                         }
                 )
             } else {

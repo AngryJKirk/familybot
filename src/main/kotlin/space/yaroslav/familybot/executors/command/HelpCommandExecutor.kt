@@ -20,7 +20,7 @@ class HelpCommandExecutor(private val dictionary: Dictionary, config: BotConfig)
         return {
             it.send(
                 update,
-                dictionary.get(Phrase.HELP_MESSAGE),
+                dictionary.get(Phrase.HELP_MESSAGE, update),
                 enableHtml = true,
                 customization = {
                     disableWebPagePreview = true

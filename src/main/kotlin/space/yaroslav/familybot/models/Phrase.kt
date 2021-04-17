@@ -90,5 +90,6 @@ enum class Phrase(val id: Int) {
 enum class PhraseTheme(val id: Int) {
     DEFAULT(1),
     DAY_OF_DEFENDER_23_FEB(2),
-    DAY_OF_WOMAN_8_MARCH(3)
+    DAY_OF_WOMAN_8_MARCH(3),
+    UKRAINIAN(4)
 }

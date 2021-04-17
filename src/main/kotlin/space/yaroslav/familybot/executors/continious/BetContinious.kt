@@ -12,7 +12,9 @@ import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.Pluralization
 import space.yaroslav.familybot.common.User
+import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.send
+import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.Phrase
@@ -20,6 +22,7 @@ import space.yaroslav.familybot.repos.CommandHistoryRepository
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.misc.PidorCompetitionService
 import space.yaroslav.familybot.services.talking.Dictionary
+import space.yaroslav.familybot.services.talking.DictionaryContext
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -35,15 +38,20 @@ class BetContinious(
     private val botConfig: BotConfig
 ) : ContiniousConversation(botConfig) {
     private val diceNumbers = listOf(1, 2, 3, 4, 5, 6)
-    override fun getDialogMessage() = dictionary.get(Phrase.BET_INITIAL_MESSAGE)
+    override fun getDialogMessage(message: Message): String {
+        return dictionary.get(Phrase.BET_INITIAL_MESSAGE, message.chat.toChat().key())
+    }
 
     override fun command() = Command.BET
 
     override fun canExecute(message: Message): Boolean {
-        return message.isReply && message.replyToMessage.from.userName == botConfig.botname && message.replyToMessage.text ?: "" == getDialogMessage()
+        return message.isReply
+            && message.replyToMessage.from.userName == botConfig.botname
+            && message.replyToMessage.text ?: "" == getDialogMessage(message)
     }
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
+        val context = dictionary.createContext(update)
         val now = LocalDate.now()
         val user = update.toUser()
         val chatId = update.message.chatId
@@ -54,35 +62,35 @@ class BetContinious(
         )
         if (isBetAlreadyDone(commands)) {
             return {
-                it.send(update, dictionary.get(Phrase.BET_ALREADY_WAS), shouldTypeBeforeSend = true)
+                it.send(update, context.get(Phrase.BET_ALREADY_WAS), shouldTypeBeforeSend = true)
             }
         }
         val number = extractBetNumber(update)
         if (number == null || number !in 1..3) {
             return {
-                it.send(update, dictionary.get(Phrase.BET_BREAKING_THE_RULES_FIRST), shouldTypeBeforeSend = true)
-                it.send(update, dictionary.get(Phrase.BET_BREAKING_THE_RULES_SECOND), shouldTypeBeforeSend = true)
+                it.send(update, context.get(Phrase.BET_BREAKING_THE_RULES_FIRST), shouldTypeBeforeSend = true)
+                it.send(update, context.get(Phrase.BET_BREAKING_THE_RULES_SECOND), shouldTypeBeforeSend = true)
             }
         }
         val winnableNumbers = diceNumbers.shuffled().subList(0, 3)
         return {
             it.send(
                 update,
-                "${dictionary.get(Phrase.BET_WINNABLE_NUMBERS_ANNOUNCEMENT)} ${formatWinnableNumbers(winnableNumbers)}",
+                "${context.get(Phrase.BET_WINNABLE_NUMBERS_ANNOUNCEMENT)} ${formatWinnableNumbers(winnableNumbers)}",
                 shouldTypeBeforeSend = true
             )
-            it.send(update, dictionary.get(Phrase.BET_ZATRAVOCHKA), shouldTypeBeforeSend = true)
+            it.send(update, context.get(Phrase.BET_ZATRAVOCHKA), shouldTypeBeforeSend = true)
             val diceMessage = it.execute(SendDice(chatId.toString()))
             delay(4000)
             val isItWinner = winnableNumbers.contains(diceMessage.dice.value)
             if (isItWinner) {
                 coroutineScope { launch { repeat(number) { pidorRepository.removePidorRecord(user) } } }
-                it.send(update, dictionary.get(Phrase.BET_WIN), shouldTypeBeforeSend = true)
-                it.send(update, winEndPhrase(number), shouldTypeBeforeSend = true)
+                it.send(update, context.get(Phrase.BET_WIN), shouldTypeBeforeSend = true)
+                it.send(update, winEndPhrase(number, context), shouldTypeBeforeSend = true)
             } else {
                 coroutineScope { launch { addPidorsMultiplyTimesWithDayShift(number, user) } }
-                it.send(update, dictionary.get(Phrase.BET_LOSE), shouldTypeBeforeSend = true)
-                it.send(update, explainPhrase(number), shouldTypeBeforeSend = true)
+                it.send(update, context.get(Phrase.BET_LOSE), shouldTypeBeforeSend = true)
+                it.send(update, explainPhrase(number, context), shouldTypeBeforeSend = true)
             }
             delay(2000)
             pidorCompetitionService.pidorCompetition(update)?.invoke(it)
@@ -113,49 +121,49 @@ class BetContinious(
     private fun isBetAlreadyDone(commands: List<CommandByUser>) =
         commands.any { it.command == command() }
 
-    private fun winEndPhrase(betNumber: Int): String {
+    private fun winEndPhrase(betNumber: Int, context: DictionaryContext): String {
         val plur = Pluralization.getPlur(betNumber)
-        val winPhraseTemplate = dictionary.get(Phrase.BET_WIN_END)
+        val winPhraseTemplate = context.get(Phrase.BET_WIN_END)
         return when (plur) {
             Pluralization.ONE -> {
                 winPhraseTemplate
                     .replace("$0", betNumber.toString())
-                    .replace("$1", dictionary.get(Phrase.PLURALIZED_PIDORSKOE_ONE))
-                    .replace("$2", dictionary.get(Phrase.PLURALIZED_OCHKO_ONE))
+                    .replace("$1", context.get(Phrase.PLURALIZED_PIDORSKOE_ONE))
+                    .replace("$2", context.get(Phrase.PLURALIZED_OCHKO_ONE))
             }
             Pluralization.FEW -> {
                 winPhraseTemplate
                     .replace("$0", betNumber.toString())
-                    .replace("$1", dictionary.get(Phrase.PLURALIZED_PIDORSKOE_FEW))
-                    .replace("$2", dictionary.get(Phrase.PLURALIZED_OCHKO_FEW))
+                    .replace("$1", context.get(Phrase.PLURALIZED_PIDORSKOE_FEW))
+                    .replace("$2", context.get(Phrase.PLURALIZED_OCHKO_FEW))
             }
             Pluralization.MANY -> {
                 winPhraseTemplate
                     .replace("$0", betNumber.toString())
-                    .replace("$1", dictionary.get(Phrase.PLURALIZED_PIDORSKOE_MANY))
-                    .replace("$2", dictionary.get(Phrase.PLURALIZED_OCHKO_MANY))
+                    .replace("$1", context.get(Phrase.PLURALIZED_PIDORSKOE_MANY))
+                    .replace("$2", context.get(Phrase.PLURALIZED_OCHKO_MANY))
             }
         }
     }
 
-    private fun explainPhrase(betNumber: Int): String {
+    private fun explainPhrase(betNumber: Int, context: DictionaryContext): String {
         val plur = Pluralization.getPlur(betNumber)
-        val explainTemplate = dictionary.get(Phrase.BET_EXPLAIN)
+        val explainTemplate = context.get(Phrase.BET_EXPLAIN)
         return when (plur) {
             Pluralization.ONE -> {
-                dictionary.get(Phrase.BET_EXPLAIN_SINGLE_DAY)
+                context.get(Phrase.BET_EXPLAIN_SINGLE_DAY)
             }
             Pluralization.FEW -> {
                 explainTemplate
                     .replace("$0", betNumber.toString())
-                    .replace("$1", dictionary.get(Phrase.PLURALIZED_NEXT_FEW))
-                    .replace("$2", dictionary.get(Phrase.PLURALIZED_DAY_FEW))
+                    .replace("$1", context.get(Phrase.PLURALIZED_NEXT_FEW))
+                    .replace("$2", context.get(Phrase.PLURALIZED_DAY_FEW))
             }
             Pluralization.MANY -> {
                 explainTemplate
                     .replace("$0", betNumber.toString())
-                    .replace("$1", dictionary.get(Phrase.PLURALIZED_NEXT_MANY))
-                    .replace("$2", dictionary.get(Phrase.PLURALIZED_DAY_MANY))
+                    .replace("$1", context.get(Phrase.PLURALIZED_NEXT_MANY))
+                    .replace("$2", context.get(Phrase.PLURALIZED_DAY_MANY))
             }
         }
     }

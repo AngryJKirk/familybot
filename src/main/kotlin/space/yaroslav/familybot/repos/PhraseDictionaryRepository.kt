@@ -6,7 +6,6 @@ import com.google.common.cache.CacheLoader
 import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.PhraseTheme
 import space.yaroslav.familybot.telegram.FamilyBot
@@ -30,11 +29,6 @@ class PhraseDictionaryRepository(val jdbcTemplate: JdbcTemplate) {
     @Timed("repository.PhraseDictionaryRepository.getPhraseSettings")
     fun getPhraseSettings(): List<PhraseThemeSetting> {
         return themeSettingsCache.get()
-    }
-
-    @Timed("repository.PhraseDictionaryRepository.getPhraseTheme")
-    fun getPhraseTheme(chat: Chat): PhraseTheme {
-        TODO()
     }
 
     @Timed("repository.PhraseDictionaryRepository.getPhrases")

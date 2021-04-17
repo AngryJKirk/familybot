@@ -35,7 +35,7 @@ class RouletteContinious(
 
     private val log = LoggerFactory.getLogger(RouletteContinious::class.java)
 
-    override fun getDialogMessage(): String {
+    override fun getDialogMessage(message: Message): String {
         return ROULETTE_MESSAGE
     }
 
@@ -46,7 +46,7 @@ class RouletteContinious(
     override fun canExecute(message: Message): Boolean {
         return message.isReply &&
             message.replyToMessage.from.userName == botConfig.botname &&
-            message.replyToMessage.text ?: "" == getDialogMessage()
+            message.replyToMessage.text ?: "" == getDialogMessage(message)
     }
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {

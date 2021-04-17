@@ -27,6 +27,7 @@ import space.yaroslav.familybot.repos.CommandHistoryRepository
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.misc.PidorCompetitionService
 import space.yaroslav.familybot.services.talking.Dictionary
+import space.yaroslav.familybot.services.talking.DictionaryContext
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 
@@ -45,21 +46,22 @@ class PidorExecutor(
     private val log = getLogger()
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        val chat = update.message.chat.toChat()
+        val chat = update.toChat()
+        val context = dictionary.createContext(chat)
         log.info("Getting pidors from chat $chat")
         val users = repository.getUsers(chat, activeOnly = true)
         if (isLimitOfPidorsExceeded(users, chat)) {
             log.info("Pidors are already found")
-            val message = getMessageForPidors(chat)
+            val message = getMessageForPidors(chat, context)
             return { it.execute(message) }
         }
         return { sender ->
             log.info("Pidor is not found, initiating search procedure")
             val nextPidor = getNextPidorAsync(users, sender, chat)
 
-            val start = dictionary.get(Phrase.PIDOR_SEARCH_START).bold()
-            val middle = dictionary.get(Phrase.PIDOR_SEARCH_MIDDLE).bold()
-            val finisher = dictionary.get(Phrase.PIDOR_SEARCH_FINISHER).bold()
+            val start = context.get(Phrase.PIDOR_SEARCH_START).bold()
+            val middle = context.get(Phrase.PIDOR_SEARCH_MIDDLE).bold()
+            val finisher = context.get(Phrase.PIDOR_SEARCH_FINISHER).bold()
 
             sender.send(update, start, enableHtml = true, shouldTypeBeforeSend = true, typeDelay = 1500L to 1501L)
             sender.send(update, middle, enableHtml = true, shouldTypeBeforeSend = true, typeDelay = 1500L to 1501L)
@@ -113,7 +115,7 @@ class PidorExecutor(
         return Command.PIDOR
     }
 
-    private fun getMessageForPidors(chat: Chat): SendMessage? {
+    private fun getMessageForPidors(chat: Chat, context: DictionaryContext): SendMessage? {
         val pidorsByChat = repository
             .getPidorsByChat(chat)
             .filter { it.date.isToday() }
@@ -122,12 +124,12 @@ class PidorExecutor(
             0 -> null
             1 -> SendMessage(
                 chat.idString,
-                dictionary.get(Phrase.PIROR_DISCOVERED_ONE) + ": " +
+                context.get(Phrase.PIROR_DISCOVERED_ONE) + ": " +
                     pidorsByChat.first().user.getGeneralName()
             ).apply { enableHtml(true) }
             else -> SendMessage(
                 chat.idString,
-                dictionary.get(Phrase.PIROR_DISCOVERED_MANY) + ": " +
+                context.get(Phrase.PIROR_DISCOVERED_MANY) + ": " +
                     pidorsByChat.joinToString { it.user.getGeneralName() }
             ).apply { enableHtml(true) }
         }

@@ -33,7 +33,7 @@ class AntiDdosExecutor(
     }
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        val message = dictionary.get(Phrase.STOP_DDOS)
+        val message = dictionary.get(Phrase.STOP_DDOS, update)
         return when {
             update.hasCallbackQuery() -> callbackQueryCase(update, message)
             update.hasMessage() -> messageCase(update, message)

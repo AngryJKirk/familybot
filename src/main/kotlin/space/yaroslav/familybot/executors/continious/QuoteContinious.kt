@@ -3,6 +3,7 @@ package space.yaroslav.familybot.executors.continious
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.executors.command.QUOTE_MESSAGE
@@ -20,7 +21,7 @@ class QuoteContinious(
         return Command.QUOTE_BY_TAG
     }
 
-    override fun getDialogMessage(): String {
+    override fun getDialogMessage(message: Message): String {
         return QUOTE_MESSAGE
     }
 

@@ -18,6 +18,7 @@ import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toHourMinuteString
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.services.talking.Dictionary
+import space.yaroslav.familybot.services.talking.DictionaryContext
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.time.Duration
 import java.time.Instant
@@ -34,6 +35,7 @@ class ScenarioSessionManagementService(
 
     fun startGame(update: Update, scenario: Scenario): suspend (AbsSender) -> Unit {
         val chat = update.toChat()
+        val context = dictionary.createContext(chat)
         val currentMove = scenarioGameplayService.getCurrentScenarioState(chat)
         if (currentMove != null && currentMove.move.isEnd.not()) {
             return {
@@ -41,37 +43,38 @@ class ScenarioSessionManagementService(
                     AnswerCallbackQuery().apply {
                         callbackQueryId = update.callbackQuery.id
                         showAlert = true
-                        text = dictionary.get(Phrase.SCENARIO_IS_RUNNING_ALREADY)
+                        text = context.get(Phrase.SCENARIO_IS_RUNNING_ALREADY)
                     }
                 )
             }
         }
         scenarioGameplayService.startGame(scenario, chat)
         return {
-            it.send(update, dictionary.get(Phrase.SCENARIO_IS_STARTING))
-            currentGame(update).invoke(it)
+            it.send(update, context.get(Phrase.SCENARIO_IS_STARTING))
+            currentGame(update, context).invoke(it)
         }
     }
 
     fun processCurrentGame(update: Update): suspend (AbsSender) -> Unit {
-        return currentGame(update)
+        return currentGame(update, dictionary.createContext(update))
     }
 
     fun listGames(update: Update): suspend (AbsSender) -> Unit {
+        val context = dictionary.createContext(update)
         return {
             it.send(
                 update,
-                dictionary.get(Phrase.SCENARIO_RULES)
+                context.get(Phrase.SCENARIO_RULES)
             )
             it.send(
-                update, dictionary.get(Phrase.SCENARIO_CHOOSE),
+                update, context.get(Phrase.SCENARIO_CHOOSE),
                 replyToUpdate = true,
                 customization = createKeyboardMarkup()
             )
         }
     }
 
-    private fun currentGame(update: Update): suspend (AbsSender) -> Unit {
+    private fun currentGame(update: Update, context: DictionaryContext): suspend (AbsSender) -> Unit {
         val chat = update.toChat()
         val previousMove = scenarioGameplayService.getCurrentScenarioState(chat)?.move
             ?: throw FamilyBot.InternalException("Internal logic error, current state wasn't found")
@@ -83,7 +86,7 @@ class ScenarioSessionManagementService(
                 delay(2000)
                 it.send(update, previousMove.description)
                 delay(2000)
-                it.send(update, dictionary.get(Phrase.SCENARIO_END))
+                it.send(update, context.get(Phrase.SCENARIO_END))
             }
         }
         val recentPoll = scenarioPollManagingService.getRecentPoll(chat, previousMove)
@@ -92,7 +95,8 @@ class ScenarioSessionManagementService(
                     previousMove,
                     update,
                     sender,
-                    scenarioService.getPreviousMove(previousMove)
+                    scenarioService.getPreviousMove(previousMove),
+                    context
                 )
             }
 
@@ -101,15 +105,15 @@ class ScenarioSessionManagementService(
             if (dayAgo.isAfter(recentPoll.createDate)) {
                 val nextMove = scenarioGameplayService.nextState(recentPoll.chat)
                 if (nextMove != null) {
-                    continueGame(nextMove, update, sender, previousMove)
+                    continueGame(nextMove, update, sender, previousMove, context)
                 } else {
                     sender.send(
                         update,
-                        dictionary.get(Phrase.SCENARIO_POLL_DRAW)
+                        context.get(Phrase.SCENARIO_POLL_DRAW)
                     )
                     val evenMorePreviousMove = scenarioService.getPreviousMove(previousMove)
                     delay(2000)
-                    continueGame(previousMove, update, sender, evenMorePreviousMove)
+                    continueGame(previousMove, update, sender, evenMorePreviousMove, context)
                 }
             } else {
                 val timeLeft =
@@ -121,7 +125,7 @@ class ScenarioSessionManagementService(
                 runCatching {
                     sender.send(
                         update,
-                        dictionary.get(Phrase.SCENARIO_POLL_EXISTS).replace("\$timeLeft", timeLeft),
+                        context.get(Phrase.SCENARIO_POLL_EXISTS).replace("\$timeLeft", timeLeft),
                         replyMessageId = recentPoll.messageId
                     )
                 }
@@ -129,7 +133,7 @@ class ScenarioSessionManagementService(
                         log.error("Sending poll reply fucked up", throwable)
                         sender.send(
                             update,
-                            dictionary.get(Phrase.SCENARIO_POLL_EXISTS_FALLBACK).replace("\$timeLeft", timeLeft)
+                            context.get(Phrase.SCENARIO_POLL_EXISTS_FALLBACK).replace("\$timeLeft", timeLeft)
                         )
                     }
             }
@@ -140,14 +144,15 @@ class ScenarioSessionManagementService(
         nextMove: ScenarioMove,
         update: Update,
         sender: AbsSender,
-        previousMove: ScenarioMove?
+        previousMove: ScenarioMove?,
+        context: DictionaryContext
     ) {
         if (previousMove != null) {
             sender.send(update, getExpositionMessage(nextMove, previousMove), enableHtml = true)
             delay(2000)
         }
 
-        val message = sendPoll(nextMove, update).invoke(sender)
+        val message = sendPoll(nextMove, update, context).invoke(sender)
         scenarioPollManagingService.savePollToScenario(
             ScenarioPoll(
                 message.poll.id,
@@ -188,17 +193,22 @@ class ScenarioSessionManagementService(
         }
     }
 
-    private fun sendPoll(scenarioMove: ScenarioMove, update: Update): suspend (AbsSender) -> Message {
+    private fun sendPoll(
+        scenarioMove: ScenarioMove,
+        update: Update,
+        context: DictionaryContext
+    ): suspend (AbsSender) -> Message {
         return when {
-            scenarioMove.ways.any { it.description.length > 100 } -> sendSeparately(scenarioMove, update)
-            scenarioMove.description.length > 255 -> sendDescriptionSeparately(scenarioMove, update)
+            scenarioMove.ways.any { it.description.length > 100 } -> sendSeparately(scenarioMove, update, context)
+            scenarioMove.description.length > 255 -> sendDescriptionSeparately(scenarioMove, update, context)
             else -> sendInOneMessage(scenarioMove, update)
         }
     }
 
     private fun sendSeparately(
         scenarioMove: ScenarioMove,
-        update: Update
+        update: Update,
+        context: DictionaryContext
     ): suspend (AbsSender) -> Message {
         val moveDescription = scenarioMove.description
         val scenarioOptions = scenarioMove
@@ -212,7 +222,7 @@ class ScenarioSessionManagementService(
             it.execute(
                 SendPoll().apply {
                     chatId = update.chatIdString()
-                    question = dictionary.get(Phrase.SCENARIO_POLL_DEFAULT_QUESTION)
+                    question = context.get(Phrase.SCENARIO_POLL_DEFAULT_QUESTION)
                     options = (1..scenarioMove.ways.size).map { i -> "Вариант $i" }
                     replyToMessageId = message.messageId
                     isAnonymous = false
@@ -223,7 +233,8 @@ class ScenarioSessionManagementService(
 
     private fun sendDescriptionSeparately(
         scenarioMove: ScenarioMove,
-        update: Update
+        update: Update,
+        context: DictionaryContext
     ): suspend (AbsSender) -> Message {
         val moveDescription = scenarioMove.description
         val scenarioOptions = scenarioMove.ways.map(ScenarioWay::description)
@@ -232,7 +243,7 @@ class ScenarioSessionManagementService(
             it.execute(
                 SendPoll().apply {
                     chatId = update.chatIdString()
-                    question = dictionary.get(Phrase.SCENARIO_POLL_DEFAULT_QUESTION)
+                    question = context.get(Phrase.SCENARIO_POLL_DEFAULT_QUESTION)
                     options = scenarioOptions
                     isAnonymous = false
                 }

@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.isGroup
+import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.meteredCanExecute
 import space.yaroslav.familybot.common.utils.meteredExecute
 import space.yaroslav.familybot.common.utils.meteredPriority
@@ -122,8 +123,12 @@ class Router(
         function.invoke(it)
     }
 
-    private fun disabledCommand(chat: Chat): suspend (AbsSender) -> Unit = { it ->
-        it.execute(SendMessage(chat.toChat().idString, dictionary.get(Phrase.COMMAND_IS_OFF)))
+    private fun disabledCommand(chat: Chat): suspend (AbsSender) -> Unit {
+        val mappedChat = chat.toChat()
+        val phrase = dictionary.get(Phrase.COMMAND_IS_OFF, mappedChat.key())
+        return { it ->
+            it.execute(SendMessage(mappedChat.idString, phrase))
+        }
     }
 
     private fun isExecutorDisabled(executor: Executor, chat: Chat): Boolean {

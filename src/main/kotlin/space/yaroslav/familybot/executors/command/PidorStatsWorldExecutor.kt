@@ -36,6 +36,7 @@ class PidorStatsWorldExecutor(
     }
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
+        val context = dictionary.createContext(update)
         val pidorsByChat = repository.getAllPidors(
             startDate = LocalDateTime.of(
                 LocalDate.of(2000, Month.JANUARY, 1),
@@ -45,14 +46,14 @@ class PidorStatsWorldExecutor(
             .map(Pidor::user)
             .formatTopList(
                 PluralizedWordsProvider(
-                    one = { dictionary.get(Phrase.PLURALIZED_COUNT_ONE) },
-                    few = { dictionary.get(Phrase.PLURALIZED_COUNT_FEW) },
-                    many = { dictionary.get(Phrase.PLURALIZED_COUNT_MANY) }
+                    one = { context.get(Phrase.PLURALIZED_COUNT_ONE) },
+                    few = { context.get(Phrase.PLURALIZED_COUNT_FEW) },
+                    many = { context.get(Phrase.PLURALIZED_COUNT_MANY) }
                 )
             )
             .take(100)
 
-        val title = "${dictionary.get(Phrase.PIDOR_STAT_WORLD)}:\n".bold()
+        val title = "${context.get(Phrase.PIDOR_STAT_WORLD)}:\n".bold()
         return { it.send(update, title + pidorsByChat.joinToString("\n"), enableHtml = true) }
     }
 }

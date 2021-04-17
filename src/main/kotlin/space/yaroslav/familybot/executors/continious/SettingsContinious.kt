@@ -4,10 +4,12 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
+import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.isFromAdmin
+import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toEmoji
 import space.yaroslav.familybot.models.Command
@@ -28,8 +30,8 @@ class SettingsContinious(
         return Command.SETTINGS
     }
 
-    override fun getDialogMessage(): String {
-        return dictionary.get(Phrase.WHICH_SETTING_SHOULD_CHANGE)
+    override fun getDialogMessage(message: Message): String {
+        return dictionary.get(Phrase.WHICH_SETTING_SHOULD_CHANGE, message.chat.toChat().key())
     }
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
@@ -43,7 +45,7 @@ class SettingsContinious(
                     AnswerCallbackQuery(callbackQuery.id)
                         .apply {
                             showAlert = true
-                            text = dictionary.get(Phrase.ACCESS_DENIED)
+                            text = dictionary.get(Phrase.ACCESS_DENIED, update)
                         }
 
                 )

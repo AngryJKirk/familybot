@@ -22,6 +22,7 @@ import space.yaroslav.familybot.repos.CommandHistoryRepository
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.repos.RawChatLogRepository
 import space.yaroslav.familybot.services.talking.Dictionary
+import space.yaroslav.familybot.services.talking.DictionaryContext
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.time.Instant
@@ -65,11 +66,12 @@ class MeCommandExecutor(
     }
 
     private suspend fun executeInternal(id: Pair<User, Chat>): String {
+        val (user, chat) = id
+        val context = dictionary.createContext(chat)
         return coroutineScope {
-            val (user, chat) = id
-            val messageCount = async { getMessageCount(chat, user) }
-            val pidorCount = async { getPidorsCount(chat, user) }
-            val commandCount = async { getCommandCount(user) }
+            val messageCount = async { getMessageCount(chat, user, context) }
+            val pidorCount = async { getPidorsCount(chat, user, context) }
+            val commandCount = async { getCommandCount(user, context) }
             setOf(
                 pidorCount.await(),
                 commandCount.await(),
@@ -78,34 +80,34 @@ class MeCommandExecutor(
         }
     }
 
-    private fun getMessageCount(chat: Chat, user: User): String {
+    private fun getMessageCount(chat: Chat, user: User, context: DictionaryContext): String {
         val messageCount = rawChatLogRepository.getMessageCount(chat, user)
         val word = pluralize(
             messageCount,
             PluralizedWordsProvider(
-                one = { dictionary.get(Phrase.PLURALIZED_MESSAGE_ONE) },
-                few = { dictionary.get(Phrase.PLURALIZED_MESSAGE_FEW) },
-                many = { dictionary.get(Phrase.PLURALIZED_MESSAGE_MANY) }
+                one = { context.get(Phrase.PLURALIZED_MESSAGE_ONE) },
+                few = { context.get(Phrase.PLURALIZED_MESSAGE_FEW) },
+                many = { context.get(Phrase.PLURALIZED_MESSAGE_MANY) }
             )
         )
-        return dictionary.get(Phrase.YOU_TALKED) + " $messageCount $word."
+        return context.get(Phrase.YOU_TALKED) + " $messageCount $word."
     }
 
-    private fun getCommandCount(user: User): String {
+    private fun getCommandCount(user: User, context: DictionaryContext): String {
         val commandCount =
             commandHistoryRepository.get(user, from = Instant.now().minusSeconds(TEN_YEARS_AGO)).size
         val word = pluralize(
             commandCount,
             PluralizedWordsProvider(
-                one = { dictionary.get(Phrase.PLURALIZED_COUNT_ONE) },
-                few = { dictionary.get(Phrase.PLURALIZED_COUNT_FEW) },
-                many = { dictionary.get(Phrase.PLURALIZED_COUNT_MANY) }
+                one = { context.get(Phrase.PLURALIZED_COUNT_ONE) },
+                few = { context.get(Phrase.PLURALIZED_COUNT_FEW) },
+                many = { context.get(Phrase.PLURALIZED_COUNT_MANY) }
             )
         )
-        return dictionary.get(Phrase.YOU_USED_COMMANDS) + " $commandCount $word."
+        return context.get(Phrase.YOU_USED_COMMANDS) + " $commandCount $word."
     }
 
-    private fun getPidorsCount(chat: Chat, user: User): String {
+    private fun getPidorsCount(chat: Chat, user: User, context: DictionaryContext): String {
         val pidorCount = commonRepository
             .getPidorsByChat(chat, startDate = Instant.now().minusSeconds(TEN_YEARS_AGO))
             .filter { it.user.id == user.id }
@@ -113,14 +115,14 @@ class MeCommandExecutor(
         val word = pluralize(
             pidorCount,
             PluralizedWordsProvider(
-                one = { dictionary.get(Phrase.PLURALIZED_COUNT_ONE) },
-                few = { dictionary.get(Phrase.PLURALIZED_COUNT_FEW) },
-                many = { dictionary.get(Phrase.PLURALIZED_COUNT_MANY) }
+                one = { context.get(Phrase.PLURALIZED_COUNT_ONE) },
+                few = { context.get(Phrase.PLURALIZED_COUNT_FEW) },
+                many = { context.get(Phrase.PLURALIZED_COUNT_MANY) }
             )
         )
         return pidorCount
             .takeIf { it > 0 }
-            ?.let { dictionary.get(Phrase.YOU_WAS_PIDOR) + " $it $word." }
-            ?: dictionary.get(Phrase.YOU_WAS_NOT_PIDOR)
+            ?.let { context.get(Phrase.YOU_WAS_PIDOR) + " $it $word." }
+            ?: context.get(Phrase.YOU_WAS_NOT_PIDOR)
     }
 }

@@ -1,7 +1,6 @@
 package space.yaroslav.familybot.repos
 
 import io.micrometer.core.annotation.Timed
-import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
@@ -20,9 +19,6 @@ import javax.sql.DataSource
 class CommonRepository(datasource: DataSource) {
 
     private val template = JdbcTemplate(datasource)
-
-    private val chatCache: MutableSet<Chat> = HashSet()
-    private val userCache: MutableSet<User> = HashSet()
 
     @Timed("repository.CommonRepository.addUser")
     fun addUser(user: User) {
@@ -96,37 +92,6 @@ class CommonRepository(datasource: DataSource) {
             Timestamp.from(startDate),
             Timestamp.from(endDate)
         ) ?: emptyList()
-    }
-
-    @Timed("repository.CommonRepository.containsUser")
-    fun containsUser(user: User): Boolean {
-        if (userCache.contains(user)) {
-            return true
-        }
-        val exist =
-            template.query("SELECT * FROM users WHERE id = ?", { rs, _ -> rs.toUser() }, user.id).isNotEmpty()
-        if (exist) {
-            userCache.add(user)
-        }
-        return exist
-    }
-
-    @Timed("repository.CommonRepository.containsChat")
-    fun containsChat(chat: Chat): Boolean {
-        if (chatCache.contains(chat)) {
-            return true
-        }
-        val exist =
-            template.query("SELECT * FROM chats WHERE id = ?", { rs, _ -> rs.toChat() }, chat.id).isNotEmpty()
-        if (exist) {
-            chatCache.add(chat)
-        }
-        return exist
-    }
-
-    @Timed("repository.CommonRepository.changeUserActiveStatus")
-    fun changeUserActiveStatus(user: User, status: Boolean) {
-        template.update("UPDATE users SET active = ? WHERE id = ?", status, user.id)
     }
 
     @Timed("repository.CommonRepository.getAllPidors")

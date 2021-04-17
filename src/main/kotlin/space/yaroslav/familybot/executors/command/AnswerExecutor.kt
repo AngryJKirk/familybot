@@ -34,7 +34,7 @@ class AnswerExecutor(
             ?.dropLastDelimiter()
             ?: return {
                 log.info("Bad argument was passed, text of message is [{}]", text)
-                it.send(update, dictionary.get(Phrase.BAD_COMMAND_USAGE), replyToUpdate = true)
+                it.send(update, dictionary.get(Phrase.BAD_COMMAND_USAGE, update), replyToUpdate = true)
             }
         return { it.send(update, message, replyToUpdate = true, shouldTypeBeforeSend = true) }
     }

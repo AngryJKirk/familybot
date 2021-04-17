@@ -39,6 +39,7 @@ class RouletteExecutor(
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val now = LocalDate.now()
+        val context = dictionary.createContext(update)
         val commands = commandHistoryRepository.get(
             update.toUser(),
             LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
@@ -47,14 +48,14 @@ class RouletteExecutor(
         val chatId = update.message.chatId.toString()
         if (commands.filter { it.command == command() }.size > 1) {
             return {
-                it.execute(SendMessage(chatId, dictionary.get(Phrase.ROULETTE_ALREADY_WAS)))
+                it.execute(SendMessage(chatId, context.get(Phrase.ROULETTE_ALREADY_WAS)))
                 delay(2000)
-                it.execute(SendMessage(chatId, dictionary.get(Phrase.PIDOR)))
+                it.execute(SendMessage(chatId, context.get(Phrase.PIDOR)))
             }
         }
         return {
             it.execute(
-                SendMessage(chatId, dictionary.get(Phrase.ROULETTE_MESSAGE))
+                SendMessage(chatId, context.get(Phrase.ROULETTE_MESSAGE))
                     .apply {
                         replyMarkup = ForceReplyKeyboard().apply { selective = true }
                         replyToMessageId = update.message.messageId

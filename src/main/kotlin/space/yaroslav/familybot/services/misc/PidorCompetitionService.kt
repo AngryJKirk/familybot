@@ -26,17 +26,18 @@ class PidorCompetitionService(
 ) {
 
     fun pidorCompetition(update: Update): (suspend (AbsSender) -> Unit)? {
+        val context = dictionary.createContext(update)
         if (isEndOfMonth()) {
             val thisMonthPidors = getPidorsOfThisMonth(update)
             val competitors = detectPidorCompetition(thisMonthPidors)
             if (competitors != null) {
                 return {
-                    it.send(update, dictionary.get(Phrase.PIDOR_COMPETITION).bold(), enableHtml = true)
+                    it.send(update, context.get(Phrase.PIDOR_COMPETITION).bold(), enableHtml = true)
                     val oneMorePidor = competitors.random()
                     repository.addPidor(Pidor(oneMorePidor, Instant.now()))
                     delay(1000)
                     val oneMorePidorMessage =
-                        dictionary.get(Phrase.COMPETITION_ONE_MORE_PIDOR).bold() + " " + oneMorePidor.getGeneralName()
+                        context.get(Phrase.COMPETITION_ONE_MORE_PIDOR).bold() + " " + oneMorePidor.getGeneralName()
                     it.send(update, oneMorePidorMessage, enableHtml = true)
                 }
             }

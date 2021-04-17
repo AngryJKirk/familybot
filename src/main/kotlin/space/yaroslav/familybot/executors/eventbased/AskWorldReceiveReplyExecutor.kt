@@ -82,6 +82,7 @@ class AskWorldReceiveReplyExecutor(
 
         return {
             runCatching {
+                val context = dictionary.createContext(update)
                 val id = coroutineScope { async { askWorldRepository.addReply(askWorldReply) } }
                 val questionTitle = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
                 val chatIdToReply = question.chat.idString
@@ -90,7 +91,7 @@ class AskWorldReceiveReplyExecutor(
                     it.execute(
                         SendMessage(
                             chatIdToReply,
-                            "${dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${update.toChat().name.boldNullable()} " +
+                            "${context.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${update.toChat().name.boldNullable()} " +
                                 "от ${user.getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}"
                         ).apply {
                             enableHtml(true)
@@ -100,7 +101,7 @@ class AskWorldReceiveReplyExecutor(
                     it.execute(
                         SendMessage(
                             chatIdToReply,
-                            "${dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${update.toChat().name.boldNullable()} " +
+                            "${context.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${update.toChat().name.boldNullable()} " +
                                 "от ${user.getGeneralName()} на вопрос \"$questionTitle\":"
                         ).apply {
                             enableHtml(true)

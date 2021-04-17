@@ -18,6 +18,7 @@ import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.talking.Dictionary
+import space.yaroslav.familybot.services.talking.DictionaryContext
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.time.Instant
@@ -45,6 +46,7 @@ class TopPidorsByMonthsExecutor(
     }
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
+        val context = dictionary.createContext(update)
         val result = commonRepository
             .getPidorsByChat(update.toChat())
             .filter { it.date.isBefore(startOfMonth()) }
@@ -53,24 +55,25 @@ class TopPidorsByMonthsExecutor(
             .toSortedMap()
             .asIterable()
             .reversed()
-            .map(formatLeaderBoard())
+            .map(formatLeaderBoard(context))
         if (result.isEmpty()) {
             return {
-                it.send(update, dictionary.get(Phrase.LEADERBOARD_NONE))
+                it.send(update, context.get(Phrase.LEADERBOARD_NONE))
             }
         }
-        val message = "${dictionary.get(Phrase.LEADERBOARD_TITLE)}:\n".bold()
+        val message = "${context.get(Phrase.LEADERBOARD_TITLE)}:\n".bold()
         return {
             it.send(update, message + "\n" + result.joinToString(delimiter), enableHtml = true)
         }
     }
 
-    private fun formatLeaderBoard(): (Map.Entry<LocalDate, PidorStat>) -> String = {
+    private fun formatLeaderBoard(context: DictionaryContext): (Map.Entry<LocalDate, PidorStat>) -> String = {
         val month = it.key.month.toRussian().capitalize()
         val year = it.key.year
         val userName = it.value.user.name.dropLastDelimiter()
         val position = it.value.position
-        val leaderboardPhrase = getLeaderboardPhrase(Pluralization.getPlur(it.value.position))
+        val leaderboardPhrase = getLeaderboardPhrase(
+            Pluralization.getPlur(it.value.position), context)
         "$month, $year:\n".italic() + "$userName, $position $leaderboardPhrase"
     }
 
@@ -94,11 +97,11 @@ class TopPidorsByMonthsExecutor(
         return PidorStat(pidor.key, pidors.filter { it.user == pidor.key }.count())
     }
 
-    private fun getLeaderboardPhrase(pluralization: Pluralization): String {
+    private fun getLeaderboardPhrase(pluralization: Pluralization, context: DictionaryContext): String {
         return when (pluralization) {
-            Pluralization.ONE -> dictionary.get(Phrase.PLURALIZED_LEADERBOARD_ONE)
-            Pluralization.FEW -> dictionary.get(Phrase.PLURALIZED_LEADERBOARD_FEW)
-            Pluralization.MANY -> dictionary.get(Phrase.PLURALIZED_LEADERBOARD_MANY)
+            Pluralization.ONE -> context.get(Phrase.PLURALIZED_LEADERBOARD_ONE)
+            Pluralization.FEW -> context.get(Phrase.PLURALIZED_LEADERBOARD_FEW)
+            Pluralization.MANY -> context.get(Phrase.PLURALIZED_LEADERBOARD_MANY)
         }
     }
 }

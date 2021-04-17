@@ -37,6 +37,7 @@ class PidorStatsYearExecutor(
     }
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
+        val context = dictionary.createContext(update)
         val now = LocalDate.now()
         val pidorsByChat = repository.getPidorsByChat(
             update.message.chat.toChat(),
@@ -47,12 +48,12 @@ class PidorStatsYearExecutor(
             .map(Pidor::user)
             .formatTopList(
                 PluralizedWordsProvider(
-                    one = { dictionary.get(Phrase.PLURALIZED_COUNT_ONE) },
-                    few = { dictionary.get(Phrase.PLURALIZED_COUNT_FEW) },
-                    many = { dictionary.get(Phrase.PLURALIZED_COUNT_MANY) }
+                    one = { context.get(Phrase.PLURALIZED_COUNT_ONE) },
+                    few = { context.get(Phrase.PLURALIZED_COUNT_FEW) },
+                    many = { context.get(Phrase.PLURALIZED_COUNT_MANY) }
                 )
             )
-        val title = "${dictionary.get(Phrase.PIDOR_STAT_YEAR)} ${now.year}:\n".bold()
+        val title = "${context.get(Phrase.PIDOR_STAT_YEAR)} ${now.year}:\n".bold()
         return { it.send(update, title + pidorsByChat.joinToString("\n"), enableHtml = true) }
     }
 }

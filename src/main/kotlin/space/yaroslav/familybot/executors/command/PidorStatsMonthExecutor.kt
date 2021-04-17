@@ -39,6 +39,7 @@ class PidorStatsMonthExecutor(
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val now = LocalDate.now()
+        val context = dictionary.createContext(update)
         val pidorsByChat = repository.getPidorsByChat(
             update.message.chat.toChat(),
             startDate = LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
@@ -47,12 +48,12 @@ class PidorStatsMonthExecutor(
             .map(Pidor::user)
             .formatTopList(
                 PluralizedWordsProvider(
-                    one = { dictionary.get(Phrase.PLURALIZED_COUNT_ONE) },
-                    few = { dictionary.get(Phrase.PLURALIZED_COUNT_FEW) },
-                    many = { dictionary.get(Phrase.PLURALIZED_COUNT_MANY) }
+                    one = { context.get(Phrase.PLURALIZED_COUNT_ONE) },
+                    few = { context.get(Phrase.PLURALIZED_COUNT_FEW) },
+                    many = { context.get(Phrase.PLURALIZED_COUNT_MANY) }
                 )
             )
-        val title = "${dictionary.get(Phrase.PIDOR_STAT_MONTH)} ${now.month.toRussian()}:\n".bold()
+        val title = "${context.get(Phrase.PIDOR_STAT_MONTH)} ${now.month.toRussian()}:\n".bold()
         return { it.send(update, title + pidorsByChat.joinToString("\n"), enableHtml = true) }
     }
 }

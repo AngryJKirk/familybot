@@ -22,7 +22,13 @@ class UserListExecutor(private val dictionary: Dictionary, private val botConfig
             isSucharaEntered(message) -> Phrase.SUCHARA_HELLO_MESSAGE
             else -> Phrase.USER_ENTERING_CHAT
         }
-        return { it.send(update, dictionary.get(phrase), replyToUpdate = true, shouldTypeBeforeSend = true) }
+        return {
+            it.send(
+                update, dictionary.get(phrase, update),
+                replyToUpdate = true,
+                shouldTypeBeforeSend = true
+            )
+        }
     }
 
     override fun canExecute(message: Message) = isUserLeft(message) || isUserEntered(message)

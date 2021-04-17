@@ -28,18 +28,19 @@ class PidorStatsExecutor(
     }
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        val chat = update.message.chat.toChat()
+        val chat = update.toChat()
+        val context = dictionary.createContext(chat)
         val pidorsByChat = repository.getPidorsByChat(chat)
             .map { it.user }
             .formatTopList(
                 PluralizedWordsProvider(
-                    one = { dictionary.get(Phrase.PLURALIZED_COUNT_ONE) },
-                    few = { dictionary.get(Phrase.PLURALIZED_COUNT_FEW) },
-                    many = { dictionary.get(Phrase.PLURALIZED_COUNT_MANY) }
+                    one = { context.get(Phrase.PLURALIZED_COUNT_ONE) },
+                    few = { context.get(Phrase.PLURALIZED_COUNT_FEW) },
+                    many = { context.get(Phrase.PLURALIZED_COUNT_MANY) }
                 )
             )
             .take(100)
-        val title = "${dictionary.get(Phrase.PIDOR_STAT_ALL_TIME)}:\n".bold()
+        val title = "${context.get(Phrase.PIDOR_STAT_ALL_TIME)}:\n".bold()
         return {
             it.send(update, title + pidorsByChat.joinToString("\n"), enableHtml = true)
         }
