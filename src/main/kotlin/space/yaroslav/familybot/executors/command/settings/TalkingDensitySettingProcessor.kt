@@ -17,7 +17,7 @@ class TalkingDensitySettingProcessor(
     private val dictionary: Dictionary
 ) : SettingProcessor {
 
-    private val commands = setOf("разговорчики")
+    private val commands = setOf("разговорчики", "балачки")
     override fun canProcess(update: Update): Boolean {
         val command = update.message.text.split(" ")[1]
         return commands.contains(command)
