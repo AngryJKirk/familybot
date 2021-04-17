@@ -8,9 +8,9 @@ import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.models.FunctionId
-import space.yaroslav.familybot.services.talking.TalkingService
 import space.yaroslav.familybot.services.settings.EasySettingsService
 import space.yaroslav.familybot.services.settings.FuckOffTolerance
+import space.yaroslav.familybot.services.talking.TalkingService
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Duration
 
@@ -26,7 +26,9 @@ class BotMentionKeyWordProcessor(
 
     private val fuckOffPhrases = setOf(
         Regex(".*завали.{0,10}ебало.*", RegexOption.IGNORE_CASE),
-        Regex(".*ебало.{0,10}завали.*", RegexOption.IGNORE_CASE)
+        Regex(".*ебало.{0,10}завали.*", RegexOption.IGNORE_CASE),
+        Regex(".*стули.{0,10}пельку.*", RegexOption.IGNORE_CASE),
+        Regex(".*пельку.{0,10}стули.*", RegexOption.IGNORE_CASE)
     )
 
     override fun canProcess(message: Message): Boolean {
