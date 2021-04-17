@@ -10,6 +10,7 @@ import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
+import java.util.regex.Pattern
 
 @Component
 class AnswerExecutor(
@@ -17,16 +18,17 @@ class AnswerExecutor(
     config: BotConfig
 ) : CommandExecutor(config) {
     private val log = getLogger()
-
+    private val orPattern = Pattern.compile(" (или|або) ")
     override fun command(): Command {
         return Command.ANSWER
     }
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val text = update.message.text
+
         val message = text
             .removeRange(0, getIndexOfQuestionStart(text))
-            .split(" или ")
+            .split(orPattern)
             .filter(String::isNotEmpty)
             .takeIf(this::isOptionsCountEnough)
             ?.random()
