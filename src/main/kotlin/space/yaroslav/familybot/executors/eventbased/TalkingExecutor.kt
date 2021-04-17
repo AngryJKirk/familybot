@@ -15,7 +15,7 @@ import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.services.talking.TalkingService
 import space.yaroslav.familybot.services.settings.EasySettingsService
 import space.yaroslav.familybot.services.settings.RageMode
-import space.yaroslav.familybot.services.settings.TalkingDencity
+import space.yaroslav.familybot.services.settings.TalkingDensity
 import java.util.concurrent.ThreadLocalRandom
 
 @Component
@@ -98,6 +98,6 @@ class TalkingExecutor(
     }
 
     private fun getTalkingDensity(chat: Chat): Long {
-        return easySettingsService.get(TalkingDencity, chat.key(), 7)
+        return easySettingsService.get(TalkingDensity, chat.key(), 7)
     }
 }

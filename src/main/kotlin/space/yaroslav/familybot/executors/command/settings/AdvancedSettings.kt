@@ -13,7 +13,7 @@ import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.UkranianLanguage
 import space.yaroslav.familybot.services.settings.EasySettingsService
-import space.yaroslav.familybot.services.settings.TalkingDencity
+import space.yaroslav.familybot.services.settings.TalkingDensity
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 
@@ -72,7 +72,7 @@ class AdvancedSettings(
             )
         }
 
-        easySettingsService.put(TalkingDencity, update.toChat().key(), amountOfDensity)
+        easySettingsService.put(TalkingDensity, update.toChat().key(), amountOfDensity)
         return getOkMessage(update)
     }
 

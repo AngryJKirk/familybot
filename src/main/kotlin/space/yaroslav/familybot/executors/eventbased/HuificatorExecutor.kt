@@ -14,7 +14,7 @@ import space.yaroslav.familybot.executors.Executor
 import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.services.settings.EasySettingsService
-import space.yaroslav.familybot.services.settings.TalkingDencity
+import space.yaroslav.familybot.services.settings.TalkingDensity
 import java.util.concurrent.ThreadLocalRandom
 import java.util.regex.Pattern
 
@@ -87,7 +87,7 @@ class HuificatorExecutor(private val easySettingsService: EasySettingsService) :
     }
 
     private fun getTalkingDensity(chat: Chat): Long {
-        return easySettingsService.get(TalkingDencity, chat.key(), 7)
+        return easySettingsService.get(TalkingDensity, chat.key(), 7)
     }
 
     companion object {

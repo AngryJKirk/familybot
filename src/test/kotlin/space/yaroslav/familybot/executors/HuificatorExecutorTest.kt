@@ -22,7 +22,7 @@ import space.yaroslav.familybot.executors.eventbased.HuificatorExecutor
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.services.settings.EasySettingsService
-import space.yaroslav.familybot.services.settings.TalkingDencity
+import space.yaroslav.familybot.services.settings.TalkingDensity
 import space.yaroslav.familybot.suits.ExecutorTest
 import java.util.stream.Stream
 
@@ -70,7 +70,7 @@ class HuificatorExecutorTest : ExecutorTest() {
     @MethodSource("valuesProvider")
     fun executeTest(input: String, expected: String?) {
         val update = createSimpleUpdate(input)
-        easySettingsService.put(TalkingDencity, update.toChat().key(), 0)
+        easySettingsService.put(TalkingDensity, update.toChat().key(), 0)
         val sender = testSender.sender
         runBlocking {
             huificatorExecutor.execute(update).invoke(sender)
