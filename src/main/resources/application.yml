@@ -16,3 +16,6 @@ management:
   metrics:
     enable:
       all: false
+    export:
+      graphite:
+        enabled: false

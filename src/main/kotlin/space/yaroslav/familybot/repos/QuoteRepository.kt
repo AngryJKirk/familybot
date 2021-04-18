@@ -1,47 +1,40 @@
 package space.yaroslav.familybot.repos
 
-import com.google.common.base.Suppliers
-import com.google.common.cache.CacheBuilder
-import com.google.common.cache.CacheLoader
-import io.micrometer.core.annotation.Timed
-import org.springframework.context.annotation.Primary
-import org.springframework.jdbc.core.JdbcTemplate
+import com.moandjiezana.toml.Toml
 import org.springframework.stereotype.Component
-import java.util.concurrent.TimeUnit
+import space.yaroslav.familybot.telegram.FamilyBot
 
 @Component
-@Primary
-class QuoteRepository(val template: JdbcTemplate) {
+class QuoteRepository {
+    private val quotes: Map<String, List<String>>
+    private val flattenQuotes: List<String>
 
-    private val quoteCache = Suppliers.memoizeWithExpiration(
-        { template.query("SELECT * FROM quotes") { rs, _ -> rs.getString("quote") } },
-        5,
-        TimeUnit.MINUTES
-    )
+    init {
+        val toml = Toml().read(this::class.java.classLoader.getResourceAsStream("static/quotes.toml"))
+        quotes = toml.getList<Map<String, String>>("quotes")
+            .map { row -> function(row) }
+            .groupBy(Pair<String, String>::first, Pair<String, String>::second)
+        flattenQuotes = quotes.values.flatten()
+    }
 
-    private val byTagCache = CacheBuilder.newBuilder().expireAfterWrite(3, TimeUnit.MINUTES).build(
-        CacheLoader.from { tag: String? ->
-            template.query(
-                "SELECT * FROM quotes INNER JOIN tags2quotes t2q ON quotes.id = t2q.quote_id " +
-                    "WHERE t2q.tag_id = (SELECT id from tags WHERE LOWER(tag) = lower(?))",
-                { rs, _ -> rs.getString("quote") },
-                tag
-            )
+    private fun function(row: Map<String, String>): Pair<String, String> {
+        val tag = row["tag"]
+        val quote = row["quote"]
+        if (tag == null || quote == null) {
+            throw FamilyBot.InternalException("quotes.toml is invalid, current row is $row")
         }
-    )
-
-    @Timed("repository.QuoteRepository.getTags")
-    fun getTags(): List<String> {
-        return template.queryForList("SELECT tag FROM tags", String::class.java)
+        return tag to quote
     }
 
-    @Timed("repository.QuoteRepository.getByTag")
+    fun getTags(): Set<String> {
+        return quotes.keys
+    }
+
     fun getByTag(tag: String): String? {
-        return byTagCache.get(tag).random()
+        return quotes[tag]?.random()
     }
 
-    @Timed("repository.QuoteRepository.getRandom")
     fun getRandom(): String {
-        return quoteCache.get().random()
+        return flattenQuotes.random()
     }
 }
