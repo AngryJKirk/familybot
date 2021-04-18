@@ -6,10 +6,15 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.executors.command.HelpCommandExecutor
+import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.Priority
+import space.yaroslav.familybot.services.talking.Dictionary
 
 @Component
-class UserHelpExecutor(private val helpExecutor: HelpCommandExecutor) : PrivateMessageExecutor {
+class UserHelpExecutor(
+    private val helpExecutor: HelpCommandExecutor,
+    private val dictionary: Dictionary
+) : PrivateMessageExecutor {
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         if (helpExecutor.canExecute(update.message)) {
             return helpExecutor.execute(update)
@@ -17,7 +22,7 @@ class UserHelpExecutor(private val helpExecutor: HelpCommandExecutor) : PrivateM
             return {
                 it.send(
                     update,
-                    "В группу меня добавь, долбоеб, ну или /help нажми, почитаешь что я умею",
+                    dictionary.get(Phrase.PRIVATE_MESSAGE_HELP, update),
                     shouldTypeBeforeSend = true
                 )
             }

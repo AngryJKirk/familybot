@@ -50,6 +50,7 @@ class AskWorldReceiveReplyExecutor(
     }
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
+        val context = dictionary.createContext(update)
         val message = update.message
         val reply = message.text ?: "MEDIA: $message"
         val chat = update.toChat()
@@ -62,7 +63,7 @@ class AskWorldReceiveReplyExecutor(
                 it.execute(
                     SendMessage(
                         chat.idString,
-                        "Отвечать можно только раз"
+                        context.get(Phrase.ASK_WORLD_ANSWER_COULD_BE_ONLY_ONE)
                     ).apply {
                         replyToMessageId = message.messageId
                     }
@@ -82,7 +83,6 @@ class AskWorldReceiveReplyExecutor(
 
         return {
             runCatching {
-                val context = dictionary.createContext(update)
                 val id = coroutineScope { async { askWorldRepository.addReply(askWorldReply) } }
                 val questionTitle = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
                 val chatIdToReply = question.chat.idString

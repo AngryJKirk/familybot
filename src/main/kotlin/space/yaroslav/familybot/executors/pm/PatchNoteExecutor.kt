@@ -15,7 +15,7 @@ import space.yaroslav.familybot.telegram.BotConfig
 @Component
 class PatchNoteExecutor(private val botConfig: BotConfig, private val commonRepository: CommonRepository) :
     PrivateMessageExecutor {
-    private val patchnotePrefix = "PATCHNOTE1488"
+    private val patchNotePrefix = "PATCHNOTE "
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         return { sender ->
@@ -26,7 +26,7 @@ class PatchNoteExecutor(private val botConfig: BotConfig, private val commonRepo
     }
 
     override fun canExecute(message: Message): Boolean {
-        return botConfig.developer == message.from.userName && message.text.startsWith(patchnotePrefix)
+        return botConfig.developer == message.from.userName && message.text.startsWith(patchNotePrefix)
     }
 
     override fun priority(update: Update): Priority {
@@ -41,7 +41,7 @@ class PatchNoteExecutor(private val botConfig: BotConfig, private val commonRepo
         coroutineScope {
             launch {
                 runCatching {
-                    sender.execute(SendMessage(chat.idString, update.message.text.removePrefix(patchnotePrefix)))
+                    sender.execute(SendMessage(chat.idString, update.message.text.removePrefix(patchNotePrefix)))
                 }.onFailure { markChatAsInactive(chat) }
             }
         }
