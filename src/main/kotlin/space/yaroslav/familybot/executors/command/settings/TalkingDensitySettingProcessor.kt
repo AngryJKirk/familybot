@@ -3,6 +3,7 @@ package space.yaroslav.familybot.executors.command.settings
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.common.utils.getMessageTokens
 import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
@@ -19,12 +20,12 @@ class TalkingDensitySettingProcessor(
 
     private val commands = setOf("разговорчики", "балачки")
     override fun canProcess(update: Update): Boolean {
-        val command = update.message.text.split(" ")[1]
+        val command = update.getMessageTokens()[1]
         return commands.contains(command)
     }
 
     override fun process(update: Update): suspend (AbsSender) -> Unit {
-        val value = update.message.text.split(" ")[2]
+        val value = update.getMessageTokens()[2]
         val amountOfDensity = value.toLongOrNull() ?: return {
             it.send(
                 update,

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.getLogger
+import space.yaroslav.familybot.common.utils.getMessageTokens
 import space.yaroslav.familybot.common.utils.isFromAdmin
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.executors.command.CommandExecutor
@@ -23,8 +24,8 @@ class AdvancedSettingsExecutor(
     private val log = getLogger()
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        val splitMessage = update.message.text.split(" ")
-        if (splitMessage.size == 1) {
+        val messageTokens = update.getMessageTokens()
+        if (messageTokens.size == 1) {
             return {
                 it.send(
                     update,

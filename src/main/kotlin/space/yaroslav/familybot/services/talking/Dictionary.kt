@@ -8,7 +8,7 @@ import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.PhraseTheme
 import space.yaroslav.familybot.models.UkranianLanguage
-import space.yaroslav.familybot.repos.PhraseDictionaryRepository
+import space.yaroslav.familybot.repos.PhraseSettingsRepository
 import space.yaroslav.familybot.repos.PhraseThemeSetting
 import space.yaroslav.familybot.services.settings.EasySettingsService
 import space.yaroslav.familybot.services.settings.SettingsKey
@@ -16,11 +16,12 @@ import java.time.Instant
 
 @Component
 class Dictionary(
-    private val dictionaryRepository: PhraseDictionaryRepository,
-    private val settingsService: EasySettingsService
+    private val settingsRepository: PhraseSettingsRepository,
+    private val settingsService: EasySettingsService,
+    private val dictionaryReader: DictionaryReader
 ) {
     fun getAll(phrase: Phrase): List<String> {
-        return dictionaryRepository.getAllPhrases(phrase)
+        return dictionaryReader.getAllPhrases(phrase)
     }
 
     fun createContext(update: Update): DictionaryContext {
@@ -41,13 +42,13 @@ class Dictionary(
         val theme = if (isUkrainian == true) {
             PhraseTheme.UKRAINIAN
         } else {
-            dictionaryRepository.getPhraseSettings()
+            settingsRepository.getPhraseSettings()
                 .find { isCurrentSetting(now, it) }
                 ?.theme
-                ?: dictionaryRepository.getDefaultPhraseTheme()
+                ?: PhraseTheme.DEFAULT
         }
 
-        return dictionaryRepository.getPhrases(phrase, theme).random()
+        return dictionaryReader.getPhrases(phrase, theme).random()
     }
 
     private fun isCurrentSetting(

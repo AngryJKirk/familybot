@@ -74,6 +74,14 @@ fun Message.getCommand(botName: () -> String): Command? {
     return Command.values().find { command -> command.command == textCommand }
 }
 
+fun Update.getMessageTokens(): List<String> {
+    return if (message.hasText()) {
+        message.text.split(" ")
+    } else {
+        emptyList()
+    }
+}
+
 fun Update.key(): SettingsKey {
     return SettingsKey(this.chatId(), this.toUser().id)
 }
