@@ -19,16 +19,19 @@ class DictionaryReader {
     }
 
     fun getPhrases(phrase: Phrase, theme: PhraseTheme): List<String> {
-        val byThemes = dictionary[phrase]
-            ?: throw FamilyBot.InternalException("Phrase $phrase is missing")
+        val byThemes = getPhraseContent(phrase)
         return byThemes[theme] ?: byThemes[PhraseTheme.DEFAULT]
         ?: throw FamilyBot.InternalException("Default value for phrase $phrase is missing")
     }
 
     fun getAllPhrases(phrase: Phrase): List<String> {
-        val byThemes = (dictionary[phrase]
-            ?: throw FamilyBot.InternalException("Phrase $phrase is missing"))
+        val byThemes = getPhraseContent(phrase)
         return byThemes.map(Map.Entry<PhraseTheme, List<String>>::value).flatten()
+    }
+
+    private fun getPhraseContent(phrase: Phrase): Map<PhraseTheme, List<String>> {
+        return dictionary[phrase]
+            ?: throw FamilyBot.InternalException("Phrase $phrase is missing")
     }
 
     private fun parsePhrasesByTheme(table: Toml): Map<PhraseTheme, List<String>> {
