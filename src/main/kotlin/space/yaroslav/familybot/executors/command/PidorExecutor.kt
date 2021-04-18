@@ -59,13 +59,22 @@ class PidorExecutor(
             log.info("Pidor is not found, initiating search procedure")
             val nextPidor = getNextPidorAsync(users, sender, chat)
 
-            val start = context.get(Phrase.PIDOR_SEARCH_START).bold()
-            val middle = context.get(Phrase.PIDOR_SEARCH_MIDDLE).bold()
-            val finisher = context.get(Phrase.PIDOR_SEARCH_FINISHER).bold()
-
-            sender.send(update, start, enableHtml = true, shouldTypeBeforeSend = true, typeDelay = 1500L to 1501L)
-            sender.send(update, middle, enableHtml = true, shouldTypeBeforeSend = true, typeDelay = 1500L to 1501L)
-            sender.send(update, finisher, enableHtml = true, shouldTypeBeforeSend = true, typeDelay = 1500L to 1501L)
+            listOf(
+                Phrase.PIDOR_SEARCH_START,
+                Phrase.PIDOR_SEARCH_MIDDLE,
+                Phrase.PIDOR_SEARCH_FINISHER
+            )
+                .map(context::get)
+                .map(String::bold)
+                .forEach { phrase ->
+                    sender.send(
+                        update,
+                        phrase,
+                        enableHtml = true,
+                        shouldTypeBeforeSend = true,
+                        typeDelay = 1500L to 1501L
+                    )
+                }
             sender.send(
                 update,
                 nextPidor.await().getGeneralName(),
@@ -86,7 +95,7 @@ class PidorExecutor(
             async {
                 users
                     .map { user -> launch { checkIfUserStillThere(user, sender) } }
-                    .forEach { it.join() }
+                    .forEach { job -> job.join() }
                 val actualizedUsers = repository.getUsers(chat, activeOnly = true)
                 log.info("Users to roll: {}", actualizedUsers)
                 val nextPidor = actualizedUsers.random()
@@ -104,8 +113,8 @@ class PidorExecutor(
     ) {
         val userFromChat = getUserFromChat(user, sender)
         if (userFromChat == null) {
-            log.warn("Some user {} left without notification", user)
-            repository.changeUserActiveStatusNew(user, false) // TODO remove old method
+            log.warn("Some user {} has left without notification", user)
+            repository.changeUserActiveStatusNew(user, false)
         } else {
             repository.addUser(userFromChat)
         }
@@ -118,8 +127,8 @@ class PidorExecutor(
     private fun getMessageForPidors(chat: Chat, context: DictionaryContext): SendMessage? {
         val pidorsByChat = repository
             .getPidorsByChat(chat)
-            .filter { it.date.isToday() }
-            .distinctBy { it.user.id }
+            .filter { pidor -> pidor.date.isToday() }
+            .distinctBy { pidor -> pidor.user.id }
         return when (pidorsByChat.size) {
             0 -> null
             1 -> SendMessage(
@@ -150,7 +159,7 @@ class PidorExecutor(
         val getChatMemberCall = GetChatMember(user.chat.idString, user.id)
         return runCatching {
             absSender.execute(getChatMemberCall)
-                .takeIf { it.status != "left" && it.status != "kicked" }
+                .takeIf { member -> member.status != "left" && member.status != "kicked" }
                 ?.user
                 ?.toUser(user.chat)
         }.getOrNull()

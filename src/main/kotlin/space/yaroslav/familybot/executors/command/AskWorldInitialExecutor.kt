@@ -74,10 +74,10 @@ class AskWorldInitialExecutor(
             return {
                 it.send(
                     update,
-                    "Слишком длинный вопрос, иди нахуй",
+                    context.get(Phrase.ASK_WORLD_QUESTION_TOO_LONG),
                     replyToUpdate = true
                 )
-            } // todo move to dictionary
+            }
         }
 
         val question = AskWorldQuestion(null, message, update.toUser(), chat, Instant.now(), null)
@@ -139,7 +139,13 @@ class AskWorldInitialExecutor(
 
     private fun isLimitForUserExceed(
         update: Update
-    ) = askWorldRepository.getQuestionFromUserAllChats(update.toUser()).size >= 3
+    ): Boolean {
+        val questionFromUserAllChats = askWorldRepository.getQuestionFromUserAllChats(
+            update.toUser(),
+            ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
+        )
+        return questionFromUserAllChats.size >= 3
+    }
 
     private fun getChatsToSendQuestion(currentChat: Chat, isScam: Boolean): List<Chat> {
         if (isScam) {

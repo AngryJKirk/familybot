@@ -12,8 +12,6 @@ import space.yaroslav.familybot.common.utils.toAskWorldReply
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.sql.Timestamp
 import java.time.Instant
-import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
 
 @Component
 class AskWorldRepository(val template: JdbcTemplate) {
@@ -21,7 +19,7 @@ class AskWorldRepository(val template: JdbcTemplate) {
     @Timed("repository.AskWorldRepository.getQuestionFromUserAllChats")
     fun getQuestionFromUserAllChats(
         user: User,
-        date: Instant = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
+        date: Instant
     ): List<AskWorldQuestion> {
         return template.query(
             """SELECT
@@ -47,7 +45,7 @@ class AskWorldRepository(val template: JdbcTemplate) {
     @Timed("repository.AskWorldRepository.getQuestionsFromChat")
     fun getQuestionsFromChat(
         chat: Chat,
-        date: Instant = Instant.now().minusSeconds(60 * 60)
+        date: Instant
     ): List<AskWorldQuestion> {
         return template.query(
             """SELECT
@@ -165,7 +163,7 @@ class AskWorldRepository(val template: JdbcTemplate) {
 
     @Timed("repository.AskWorldRepository.getQuestionsFromDate")
     fun getQuestionsFromDate(
-        date: Instant = Instant.now().minusSeconds(60 * 60 * 24)
+        date: Instant
     ): List<AskWorldQuestion> {
         return template.query(
             """SELECT
@@ -200,9 +198,13 @@ class AskWorldRepository(val template: JdbcTemplate) {
     }
 
     @Timed("repository.AskWorldRepository.isReplied")
-    fun isReplied(askWorldQuestion: AskWorldQuestion, chat: Chat, user: User): Boolean {
+    fun isReplied(
+        askWorldQuestion: AskWorldQuestion,
+        chat: Chat,
+        user: User
+    ): Boolean {
         return template.queryForList(
-            "select 1 from ask_world_replies where question_id = ? and chat_id = ? and user_id =?",
+            "SELECT 1 FROM ask_world_replies WHERE question_id = ? AND chat_id = ? AND user_id =?",
             askWorldQuestion.id,
             chat.id,
             user.id

@@ -28,7 +28,7 @@ class BanAskWorldExecutor(
         if (update.message.isReply.not()) return {}
 
         val replyToMessage = update.message.replyToMessage
-        val questions = askWorldRepository.getQuestionsFromDate()
+        val questions = askWorldRepository.getQuestionsFromDate(Instant.now().minusSeconds(60 * 60 * 24))
             .filter {
                 replyToMessage.text.contains(it.message, ignoreCase = true)
             }

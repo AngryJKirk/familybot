@@ -726,3 +726,6 @@ DEFAULT = ["Ровно столько раз я колол твою мамашу
 
 [ADVANCED_SETTINGS_FAILED_TALKING_DENSITY_NOT_NUMBER]
 DEFAULT = ["Я твоей матери на спине написал #value когда ебал ее, научись блять читать как пользоваться командой"]
+
+[ASK_WORLD_QUESTION_TOO_LONG]
+DEFAULT = ["Слишком длинный вопрос, иди нахуй"]

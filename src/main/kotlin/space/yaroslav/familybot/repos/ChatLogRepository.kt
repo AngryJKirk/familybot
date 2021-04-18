@@ -6,7 +6,6 @@ import com.google.common.cache.CacheLoader
 import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
 import java.util.concurrent.TimeUnit
 
@@ -26,16 +25,6 @@ class ChatLogRepository(val template: JdbcTemplate) {
     private val defaultBuilder = CacheBuilder
         .newBuilder()
         .expireAfterWrite(5, TimeUnit.MINUTES)
-
-    private val allByChatCache = defaultBuilder.build(
-        CacheLoader.from { chat: Chat? ->
-            template.queryForList(
-                "SELECT message from chat_log where chat_id = ?",
-                String::class.java,
-                chat?.id
-            )
-        }
-    )
 
     private val allByUserCache = defaultBuilder.build(
         CacheLoader.from { user: User? ->
