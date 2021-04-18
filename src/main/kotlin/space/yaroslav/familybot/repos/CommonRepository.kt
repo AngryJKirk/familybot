@@ -11,6 +11,7 @@ import space.yaroslav.familybot.common.utils.map
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toPidor
 import space.yaroslav.familybot.common.utils.toUser
+import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.Instant
 import javax.sql.DataSource
@@ -87,7 +88,7 @@ class CommonRepository(datasource: DataSource) {
     ): List<Pidor> {
         return template.query(
             "SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE pidors.chat_id = ? AND pidor_date BETWEEN ? AND ?",
-            ResultSetExtractor { resultSet -> resultSet.map { it.toPidor() } },
+            ResultSetExtractor { resultSet -> resultSet.map(ResultSet::toPidor) },
             chat.id,
             Timestamp.from(startDate),
             Timestamp.from(endDate)
@@ -101,7 +102,7 @@ class CommonRepository(datasource: DataSource) {
     ): List<Pidor> {
         return template.query(
             "SELECT * FROM pidors INNER JOIN users u ON pidors.id = u.id WHERE pidor_date BETWEEN ? AND ?",
-            ResultSetExtractor { resultSet -> resultSet.map { it.toPidor() } },
+            ResultSetExtractor { resultSet -> resultSet.map(ResultSet::toPidor) },
             Timestamp.from(startDate),
             Timestamp.from(endDate)
         ) ?: emptyList()

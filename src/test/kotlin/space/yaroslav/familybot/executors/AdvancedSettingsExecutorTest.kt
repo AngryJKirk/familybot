@@ -13,7 +13,7 @@ import space.yaroslav.familybot.executors.command.settings.AdvancedSettingsExecu
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.randomLong
 import space.yaroslav.familybot.models.Command
-import space.yaroslav.familybot.models.UkranianLanguage
+import space.yaroslav.familybot.models.UkrainianLanguage
 import space.yaroslav.familybot.services.settings.EasySetting
 import space.yaroslav.familybot.services.settings.EasySettingsService
 import space.yaroslav.familybot.services.settings.TalkingDensity
@@ -33,8 +33,8 @@ class AdvancedSettingsExecutorTest : CommandExecutorTest() {
                     TalkingDensity,
                     randomDensityValue
                 ),
-                Arguments.of("${Command.ADVANCED_SETTINGS} хохол вкл", UkranianLanguage, true),
-                Arguments.of("${Command.ADVANCED_SETTINGS} хохол выкл", UkranianLanguage, false)
+                Arguments.of("${Command.ADVANCED_SETTINGS} хохол вкл", UkrainianLanguage, true),
+                Arguments.of("${Command.ADVANCED_SETTINGS} хохол выкл", UkrainianLanguage, false)
             )
         }
     }

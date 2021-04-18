@@ -11,7 +11,7 @@ import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
-import space.yaroslav.familybot.models.UkranianLanguage
+import space.yaroslav.familybot.models.UkrainianLanguage
 import space.yaroslav.familybot.repos.ChatLogRepository
 import space.yaroslav.familybot.services.dictionary.TranslateService
 import space.yaroslav.familybot.services.settings.EasySettingsService
@@ -45,7 +45,7 @@ class TalkingService(
             }
         }
 
-        return if (easySettingsService.get(UkranianLanguage, update.toChat().key()) == true) {
+        return if (easySettingsService.get(UkrainianLanguage, update.toChat().key()) == true) {
             translateService.translate(message.await())
         } else {
             message.await()

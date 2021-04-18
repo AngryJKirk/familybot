@@ -1,6 +1,5 @@
 package space.yaroslav.familybot.repos
 
-import com.google.common.base.Suppliers
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import io.micrometer.core.annotation.Timed
@@ -11,16 +10,6 @@ import java.util.concurrent.TimeUnit
 
 @Component
 class ChatLogRepository(val template: JdbcTemplate) {
-    private val allCache = Suppliers.memoizeWithExpiration(
-        {
-            template.queryForList(
-                "SELECT message FROM chat_log",
-                String::class.java
-            ).toList().sortedByDescending { it.length }
-        },
-        10,
-        TimeUnit.MINUTES
-    )
 
     private val defaultBuilder = CacheBuilder
         .newBuilder()
@@ -39,7 +28,10 @@ class ChatLogRepository(val template: JdbcTemplate) {
 
     @Timed("repository.ChatLogRepository.getAll")
     fun getAll(): List<String> {
-        return allCache.get()
+        return template.queryForList(
+            "SELECT message FROM chat_log",
+            String::class.java
+        ).toList().sortedByDescending { it.length }
     }
 
     @Timed("repository.ChatLogRepository.add")

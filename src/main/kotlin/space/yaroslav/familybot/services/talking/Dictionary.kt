@@ -7,7 +7,7 @@ import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.PhraseTheme
-import space.yaroslav.familybot.models.UkranianLanguage
+import space.yaroslav.familybot.models.UkrainianLanguage
 import space.yaroslav.familybot.repos.PhraseSettingsRepository
 import space.yaroslav.familybot.repos.PhraseThemeSetting
 import space.yaroslav.familybot.services.settings.EasySettingsService
@@ -37,7 +37,7 @@ class Dictionary(
     fun get(phrase: Phrase, settingsKey: SettingsKey) = getInternal(phrase, settingsKey)
 
     fun getInternal(phrase: Phrase, settingsKey: SettingsKey): String {
-        val isUkrainian = settingsService.get(UkranianLanguage, settingsKey)
+        val isUkrainian = settingsService.get(UkrainianLanguage, settingsKey)
         val now = Instant.now()
         val theme = if (isUkrainian == true) {
             PhraseTheme.UKRAINIAN

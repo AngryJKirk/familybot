@@ -13,7 +13,7 @@ object AntiDdos : BooleanSetting()
 object AskWorld : BooleanSetting()
 object Greetings : BooleanSetting()
 object TalkBack : BooleanSetting()
-object UkranianLanguage: BooleanSetting()
+object UkrainianLanguage: BooleanSetting()
 
 enum class FunctionId(val id: Int, val desc: String, val easySetting: BooleanSetting) {
     HUIFICATE(1, "Хуификация", Huificate),
