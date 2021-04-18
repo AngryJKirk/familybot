@@ -23,19 +23,20 @@ class LanguageSettingProcessor(
     }
 
     override fun process(update: Update): suspend (AbsSender) -> Unit {
+        val context = dictionary.createContext(update)
         val value = update.getMessageTokens()[2]
         if (value != "вкл" && value != "выкл") {
             return {
                 it.send(
                     update,
-                    "Ну ты долбоеб, читать научись, неудивительно что ты хочешь язык переключить. Слава Украине."
+                    context.get(Phrase.ADVANCED_SETTINGS_FAILED_UKRAINIAN_CHANGE)
                 )
             }
         }
         val setting = value == "вкл"
         easySettingsService.put(UkranianLanguage, update.toChat().key(), setting)
         return {
-            it.send(update, dictionary.get(Phrase.ADVANCED_SETTINGS_OK, update))
+            it.send(update, context.get(Phrase.ADVANCED_SETTINGS_OK))
         }
     }
 }

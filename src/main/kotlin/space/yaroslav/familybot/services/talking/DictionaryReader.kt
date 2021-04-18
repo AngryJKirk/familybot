@@ -13,7 +13,7 @@ class DictionaryReader {
     init {
         val toml = Toml().read(this::class.java.classLoader.getResourceAsStream("dictionary.toml"))
         dictionary = Phrase.values()
-            .map { phrase -> phrase to toml.getTable(phrase.name) }
+            .map { phrase -> phrase to (toml.getTable(phrase.name) ?: throw FamilyBot.InternalException("Phrase $phrase is missing"))  }
             .associate { (phrase, table) -> phrase to parsePhrasesByTheme(table) }
         checkDefaults(dictionary)
     }

@@ -25,23 +25,25 @@ class TalkingDensitySettingProcessor(
     }
 
     override fun process(update: Update): suspend (AbsSender) -> Unit {
+        val context = dictionary.createContext(update)
         val value = update.getMessageTokens()[2]
         val amountOfDensity = value.toLongOrNull() ?: return {
             it.send(
                 update,
-                "Я твоей матери на спине написал $value когда ебал ее, научись блять читать как пользоваться командой"
+                context.get(Phrase.ADVANCED_SETTINGS_FAILED_TALKING_DENSITY_NOT_NUMBER)
+                    .replace("#value", value)
             )
         }
 
         if (amountOfDensity < 0) {
             return {
-                it.send(update, "Ровно столько раз я колол твою мамашу, только со знаком плюс.")
+                it.send(update, context.get(Phrase.ADVANCED_SETTINGS_FAILED_TALKING_DENSITY_NEGATIVE))
             }
         }
 
         easySettingsService.put(TalkingDensity, update.toChat().key(), amountOfDensity)
         return {
-            it.send(update, dictionary.get(Phrase.ADVANCED_SETTINGS_OK, update))
+            it.send(update, context.get(Phrase.ADVANCED_SETTINGS_OK))
         }
     }
 }
