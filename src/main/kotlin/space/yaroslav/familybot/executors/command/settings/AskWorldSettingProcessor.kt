@@ -36,20 +36,14 @@ class AskWorldSettingProcessor(
                 )
             }
         return {
+            val chat = update.toChat()
             if (density == AskWorldDensityValue.NONE) {
-                disableAskWorld(update)
+                functionsConfigureRepository.setStatus(FunctionId.ASK_WORLD, chat, false)
             } else {
-                easySettingsService.put(AskWorldDensity, update.toChat().key(), density.text)
+                functionsConfigureRepository.setStatus(FunctionId.ASK_WORLD, chat, true)
+                easySettingsService.put(AskWorldDensity, chat.key(), density.text)
             }
             it.send(update, context.get(Phrase.ADVANCED_SETTINGS_OK))
-        }
-    }
-
-    private suspend fun disableAskWorld(update: Update) {
-        val chat = update.toChat()
-        val isEnabledNow = functionsConfigureRepository.isEnabled(FunctionId.ASK_WORLD, chat)
-        if (isEnabledNow) {
-            functionsConfigureRepository.switch(FunctionId.ASK_WORLD, chat)
         }
     }
 }

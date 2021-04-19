@@ -19,6 +19,24 @@ class RedisFunctionsConfigureRepository(
 
     @Timed("repository.RedisFunctionsConfigureRepository.isEnabled")
     override fun isEnabled(id: FunctionId, chat: Chat): Boolean {
+        return isEnabledInternal(id, chat)
+    }
+
+    @Timed("repository.RedisFunctionsConfigureRepository.switch")
+    override suspend fun switch(id: FunctionId, chat: Chat) {
+        switchInternal(id, chat)
+    }
+
+    override suspend fun setStatus(id: FunctionId, chat: Chat, isEnabled: Boolean) {
+        if (isEnabledInternal(id, chat) != isEnabled) {
+            switchInternal(id, chat)
+        }
+    }
+
+    private fun isEnabledInternal(
+        id: FunctionId,
+        chat: Chat
+    ): Boolean {
         val redisFunctionState = settingsRepository.get(id.easySetting, chat.key())
         return if (redisFunctionState == null) {
             val postgresFunctionState = oldRepository.isEnabled(id, chat)
@@ -29,8 +47,10 @@ class RedisFunctionsConfigureRepository(
         }
     }
 
-    @Timed("repository.RedisFunctionsConfigureRepository.switch")
-    override suspend fun switch(id: FunctionId, chat: Chat) {
+    private suspend fun switchInternal(
+        id: FunctionId,
+        chat: Chat
+    ) {
         val currentValue = settingsRepository.get(id.easySetting, chat.key()) ?: true
         settingsRepository.put(id.easySetting, chat.key(), currentValue.not())
         coroutineScope { launch { oldRepository.switch(id, chat) } }

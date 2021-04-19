@@ -27,4 +27,8 @@ class PostgresFunctionsConfigureRepository(val jdbcTemplate: JdbcTemplate) : Fun
             !isEnabled(id, chat)
         )
     }
+
+    override suspend fun setStatus(id: FunctionId, chat: Chat, isEnabled: Boolean) {
+        TODO("Not going to be implemented, use redis repository for that")
+    }
 }
