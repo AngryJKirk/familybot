@@ -27,3 +27,7 @@ object TalkingDensity : LongSetting<ChatSettingsKey>() {
 object UkrainianLanguage : BooleanSetting<ChatSettingsKey>() {
     override fun settingType() = ChatSettingsKey::class
 }
+
+object AskWorldDensity : StringEasySetting<ChatSettingsKey>() {
+    override fun settingType() = ChatSettingsKey::class
+}

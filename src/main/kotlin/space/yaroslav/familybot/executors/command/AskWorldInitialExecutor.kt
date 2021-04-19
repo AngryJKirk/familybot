@@ -14,16 +14,20 @@ import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.utils.boldNullable
 import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.italic
+import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.executors.Configurable
+import space.yaroslav.familybot.executors.command.settings.AskWorldDensityValue
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.repos.AskWorldRepository
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.repos.FunctionsConfigureRepository
+import space.yaroslav.familybot.services.settings.AskWorldDensity
+import space.yaroslav.familybot.services.settings.EasySettingsService
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.services.talking.DictionaryContext
 import space.yaroslav.familybot.telegram.BotConfig
@@ -37,7 +41,8 @@ class AskWorldInitialExecutor(
     private val commonRepository: CommonRepository,
     private val configureRepository: FunctionsConfigureRepository,
     private val botConfig: BotConfig,
-    private val dictionary: Dictionary
+    private val dictionary: Dictionary,
+    private val easySettingsService: EasySettingsService
 ) : CommandExecutor(botConfig), Configurable {
     private val log = getLogger()
     override fun getFunctionId(): FunctionId {
@@ -153,12 +158,19 @@ class AskWorldInitialExecutor(
             return emptyList()
         }
 
-        val allChats = commonRepository.getChats()
+        val chatsWithFeatureEnabled = commonRepository.getChats()
             .filterNot { it == currentChat }
             .filter(this@AskWorldInitialExecutor::isEnabledInChat)
             .shuffled()
+        log.info("Number of chats with feature enabled: ${chatsWithFeatureEnabled.size}")
+        val acceptAllChats = chatsWithFeatureEnabled
+            .filter { getDensity(currentChat) == AskWorldDensityValue.ALL }
+        val acceptLessChats = chatsWithFeatureEnabled
+            .filter { getDensity(currentChat) == AskWorldDensityValue.LESS }
+        log.info("Number of chats with ${AskWorldDensityValue.ALL} density: ${acceptAllChats.size}")
+        log.info("Number of chats with ${AskWorldDensityValue.LESS} density: ${acceptLessChats.size}")
 
-        return allChats.take(allChats.size / 4)
+        return acceptAllChats + acceptLessChats.take(acceptLessChats.size / 4)
     }
 
     private fun containsUrl(message: String): Boolean {
@@ -184,5 +196,15 @@ class AskWorldInitialExecutor(
 
     private fun containsLongWords(message: String): Boolean {
         return message.split(" ").any { it.length > 30 }
+    }
+
+    private fun getDensity(chat: Chat): AskWorldDensityValue {
+        val settingValue = easySettingsService.get(
+            AskWorldDensity,
+            chat.key()
+        ) ?: return AskWorldDensityValue.LESS
+        return AskWorldDensityValue
+            .values()
+            .find { value -> value.text == settingValue } ?: AskWorldDensityValue.LESS
     }
 }
