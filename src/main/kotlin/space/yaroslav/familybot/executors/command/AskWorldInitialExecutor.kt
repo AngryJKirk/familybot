@@ -164,9 +164,9 @@ class AskWorldInitialExecutor(
             .shuffled()
         log.info("Number of chats with feature enabled: ${chatsWithFeatureEnabled.size}")
         val acceptAllChats = chatsWithFeatureEnabled
-            .filter { getDensity(currentChat) == AskWorldDensityValue.ALL }
+            .filter { chat -> getDensity(chat) == AskWorldDensityValue.ALL }
         val acceptLessChats = chatsWithFeatureEnabled
-            .filter { getDensity(currentChat) == AskWorldDensityValue.LESS }
+            .filter { chat -> getDensity(chat) == AskWorldDensityValue.LESS }
         log.info("Number of chats with ${AskWorldDensityValue.ALL} density: ${acceptAllChats.size}")
         log.info("Number of chats with ${AskWorldDensityValue.LESS} density: ${acceptLessChats.size}")
 
