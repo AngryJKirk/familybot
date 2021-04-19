@@ -32,7 +32,7 @@ class CommandStatExecutor(
 
         val topList = all
             .filterNot { it.key == command() }
-            .map { format(it, context)}
+            .map { format(it, context) }
             .joinToString("\n")
 
         return {

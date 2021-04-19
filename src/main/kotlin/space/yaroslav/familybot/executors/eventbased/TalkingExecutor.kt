@@ -12,10 +12,10 @@ import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.Executor
 import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Priority
-import space.yaroslav.familybot.services.talking.TalkingService
 import space.yaroslav.familybot.services.settings.EasySettingsService
 import space.yaroslav.familybot.services.settings.RageMode
 import space.yaroslav.familybot.services.settings.TalkingDensity
+import space.yaroslav.familybot.services.talking.TalkingService
 import java.util.concurrent.ThreadLocalRandom
 
 @Component

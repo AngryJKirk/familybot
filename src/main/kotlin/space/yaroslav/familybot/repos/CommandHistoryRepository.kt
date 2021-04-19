@@ -52,7 +52,8 @@ class CommandHistoryRepository(val template: JdbcTemplate) {
 
     @Timed("repository.CommandHistoryRepository.get")
     fun get(
-        user: User, from: Instant = Instant.now().minusSeconds(300),
+        user: User,
+        from: Instant = Instant.now().minusSeconds(300),
         to: Instant = Instant.now()
     ): List<CommandByUser> {
         return template.query(

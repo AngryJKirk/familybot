@@ -11,7 +11,6 @@ import space.yaroslav.familybot.repos.PhraseSettingsRepository
 import space.yaroslav.familybot.repos.PhraseThemeSetting
 import space.yaroslav.familybot.services.settings.ChatSettingsKey
 import space.yaroslav.familybot.services.settings.EasySettingsService
-import space.yaroslav.familybot.services.settings.SettingsKey
 import space.yaroslav.familybot.services.settings.UkrainianLanguage
 import java.time.Instant
 

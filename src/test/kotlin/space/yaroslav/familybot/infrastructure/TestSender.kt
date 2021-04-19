@@ -39,14 +39,16 @@ class TestSender {
         }
 
     private fun requestedAdmins(): ArrayList<ChatMember> {
-        return ArrayList((1L..3L).map {
-            ChatMember().apply {
-                user = User()
-                user.id = it
-                user.userName = randomUUID()
-                status = "administrator"
+        return ArrayList(
+            (1L..3L).map {
+                ChatMember().apply {
+                    user = User()
+                    user.id = it
+                    user.userName = randomUUID()
+                    status = "administrator"
+                }
             }
-        })
+        )
     }
 
     private fun createStickers(): StickerSet {

@@ -178,7 +178,12 @@ class Router(
         return executorsToProcess
             .sortedByDescending { it.meteredPriority(update, meterRegistry).priorityValue }
             .filter { it.meteredPriority(update, meterRegistry) higherThan Priority.RANDOM }
-            .find { it.meteredCanExecute(update.message ?: update.editedMessage ?: update.callbackQuery.message, meterRegistry) }
+            .find {
+                it.meteredCanExecute(
+                    update.message ?: update.editedMessage ?: update.callbackQuery.message,
+                    meterRegistry
+                )
+            }
     }
 
     private fun register(message: Message) {

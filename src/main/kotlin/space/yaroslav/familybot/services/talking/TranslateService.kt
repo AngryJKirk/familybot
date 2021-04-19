@@ -36,7 +36,8 @@ class TranslateService(private val botConfig: BotConfig) {
             mapOf(
                 "texts" to listOf(message),
                 "targetLanguageCode" to "uk"
-            ), headers
+            ),
+            headers
         )
         return restTemplate
             .exchange(yandexUrl, HttpMethod.POST, entity, YandexTranslateResponse::class.java)

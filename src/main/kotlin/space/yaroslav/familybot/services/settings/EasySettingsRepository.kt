@@ -43,7 +43,7 @@ class EasySettingsRepository(
         return "${easySetting.getName()}:${key.value()}"
     }
 
-    private fun <T : Any, K: SettingsKey> cast(easySetting: EasySetting<T, K>, rawValue: String): T {
+    private fun <T : Any, K : SettingsKey> cast(easySetting: EasySetting<T, K>, rawValue: String): T {
         val result = when (easySetting.getType()) {
             Boolean::class -> rawValue.toBoolean()
             Long::class -> rawValue.toLong()
@@ -53,4 +53,3 @@ class EasySettingsRepository(
         return result as T
     }
 }
-

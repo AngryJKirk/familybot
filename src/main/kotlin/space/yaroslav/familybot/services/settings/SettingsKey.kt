@@ -5,13 +5,13 @@ interface SettingsKey {
 }
 
 data class ChatSettingsKey(val chatId: Long) : SettingsKey {
-    override fun value() = "${chatId}:null"
+    override fun value() = "$chatId:null"
 }
 
 data class UserSettingsKey(val userId: Long) : SettingsKey {
-    override fun value() = "null:${userId}"
+    override fun value() = "null:$userId"
 }
 
 data class UserAndChatSettingsKey(val userId: Long, val chatId: Long) : SettingsKey {
-    override fun value() = "${chatId}:${userId}"
+    override fun value() = "$chatId:$userId"
 }

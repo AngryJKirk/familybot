@@ -62,4 +62,3 @@ enum class BanEntityType(val entityTypeId: Int) {
 }
 
 data class BanEntity(val entityId: Long, val entityType: BanEntityType)
-

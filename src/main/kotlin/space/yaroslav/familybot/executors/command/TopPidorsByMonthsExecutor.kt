@@ -73,7 +73,8 @@ class TopPidorsByMonthsExecutor(
         val userName = it.value.user.name.dropLastDelimiter()
         val position = it.value.position
         val leaderboardPhrase = getLeaderboardPhrase(
-            Pluralization.getPlur(it.value.position), context)
+            Pluralization.getPlur(it.value.position), context
+        )
         "$month, $year:\n".italic() + "$userName, $position $leaderboardPhrase"
     }
 

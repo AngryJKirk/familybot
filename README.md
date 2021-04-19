@@ -60,7 +60,6 @@ To re-deploy only the app run `make redeploy-prod`.
 
 3. If you have issues installing `make`, just copy commands from `scripts/Makefile`
 
-
 # Thanks
 
 This project is written using JetBrains All Products Pack, provided

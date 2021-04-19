@@ -83,7 +83,8 @@ class CommonRepository(datasource: DataSource) {
 
     @Timed("repository.CommonRepository.getPidorsByChat")
     fun getPidorsByChat(
-        chat: Chat, startDate: Instant = Instant.ofEpochMilli(969652800000),
+        chat: Chat,
+        startDate: Instant = Instant.ofEpochMilli(969652800000),
         endDate: Instant = Instant.now()
     ): List<Pidor> {
         return template.query(
