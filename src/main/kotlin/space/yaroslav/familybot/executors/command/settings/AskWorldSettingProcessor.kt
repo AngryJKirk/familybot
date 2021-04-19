@@ -35,15 +35,15 @@ class AskWorldSettingProcessor(
                     context.get(Phrase.ADVANCED_SETTINGS_ASK_WORLD_BAD_USAGE)
                 )
             }
-        return {
+        return { sender ->
             val chat = update.toChat()
-            if (density == AskWorldDensityValue.NONE) {
-                functionsConfigureRepository.setStatus(FunctionId.ASK_WORLD, chat, false)
-            } else {
-                functionsConfigureRepository.setStatus(FunctionId.ASK_WORLD, chat, true)
-                easySettingsService.put(AskWorldDensity, chat.key(), density.text)
-            }
-            it.send(update, context.get(Phrase.ADVANCED_SETTINGS_OK))
+            functionsConfigureRepository.setStatus(
+                FunctionId.ASK_WORLD,
+                chat,
+                isEnabled = density != AskWorldDensityValue.NONE
+            )
+            easySettingsService.put(AskWorldDensity, chat.key(), density.text)
+            sender.send(update, context.get(Phrase.ADVANCED_SETTINGS_OK))
         }
     }
 }
