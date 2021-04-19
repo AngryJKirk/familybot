@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.models.FunctionId
-import space.yaroslav.familybot.services.settings.EasySettingsRedisRepository
+import space.yaroslav.familybot.services.settings.EasySettingsRepository
 
 @Component
 @Primary
 class RedisFunctionsConfigureRepository(
-    private val settingsRepository: EasySettingsRedisRepository,
+    private val settingsRepository: EasySettingsRepository,
     private val oldRepository: PostgresFunctionsConfigureRepository
 ) : FunctionsConfigureRepository {
 

@@ -4,18 +4,22 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 import space.yaroslav.familybot.common.utils.toEmoji
 import space.yaroslav.familybot.services.settings.BooleanSetting
+import space.yaroslav.familybot.services.settings.ChatSettingsKey
 
-object Huificate : BooleanSetting()
-object Chatting : BooleanSetting()
-object Pidor : BooleanSetting()
-object Rage : BooleanSetting()
-object AntiDdos : BooleanSetting()
-object AskWorld : BooleanSetting()
-object Greetings : BooleanSetting()
-object TalkBack : BooleanSetting()
-object UkrainianLanguage: BooleanSetting()
+abstract class ChatFunctionSetting : BooleanSetting<ChatSettingsKey>() {
+    override fun settingType() = ChatSettingsKey::class
+}
 
-enum class FunctionId(val id: Int, val desc: String, val easySetting: BooleanSetting) {
+object Huificate : ChatFunctionSetting()
+object Chatting : ChatFunctionSetting()
+object Pidor : ChatFunctionSetting()
+object Rage : ChatFunctionSetting()
+object AntiDdos : ChatFunctionSetting()
+object AskWorld : ChatFunctionSetting()
+object Greetings : ChatFunctionSetting()
+object TalkBack : ChatFunctionSetting()
+
+enum class FunctionId(val id: Int, val desc: String, val easySetting: ChatFunctionSetting) {
     HUIFICATE(1, "Хуификация", Huificate),
     CHATTING(2, "Влезание в диалог", Chatting),
     PIDOR(3, "Пидор-детектор", Pidor),

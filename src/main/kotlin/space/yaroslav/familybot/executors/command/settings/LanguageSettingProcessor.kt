@@ -8,8 +8,8 @@ import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.models.UkrainianLanguage
 import space.yaroslav.familybot.services.settings.EasySettingsService
+import space.yaroslav.familybot.services.settings.UkrainianLanguage
 import space.yaroslav.familybot.services.talking.Dictionary
 
 @Component

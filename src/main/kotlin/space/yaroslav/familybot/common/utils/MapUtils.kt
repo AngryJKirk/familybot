@@ -7,7 +7,9 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.models.Command
-import space.yaroslav.familybot.services.settings.SettingsKey
+import space.yaroslav.familybot.services.settings.ChatSettingsKey
+import space.yaroslav.familybot.services.settings.UserAndChatSettingsKey
+import space.yaroslav.familybot.services.settings.UserSettingsKey
 import space.yaroslav.familybot.telegram.FamilyBot
 import org.telegram.telegrambots.meta.api.objects.Chat as TelegramChat
 import org.telegram.telegrambots.meta.api.objects.User as TelegramUser
@@ -82,14 +84,14 @@ fun Update.getMessageTokens(): List<String> {
     }
 }
 
-fun Update.key(): SettingsKey {
-    return SettingsKey(this.chatId(), this.toUser().id)
+fun Update.key(): UserAndChatSettingsKey {
+    return UserAndChatSettingsKey(this.chatId(), this.toUser().id)
 }
 
-fun User.key(): SettingsKey {
-    return SettingsKey(userId = this.id)
+fun User.key(): UserSettingsKey {
+    return UserSettingsKey(userId = this.id)
 }
 
-fun Chat.key(): SettingsKey {
-    return SettingsKey(chatId = this.id)
+fun Chat.key(): ChatSettingsKey {
+    return ChatSettingsKey(chatId = this.id)
 }

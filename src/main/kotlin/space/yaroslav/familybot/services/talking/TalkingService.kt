@@ -11,10 +11,10 @@ import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
-import space.yaroslav.familybot.models.UkrainianLanguage
 import space.yaroslav.familybot.repos.ChatLogRepository
 import space.yaroslav.familybot.services.dictionary.TranslateService
 import space.yaroslav.familybot.services.settings.EasySettingsService
+import space.yaroslav.familybot.services.settings.UkrainianLanguage
 
 @Component
 class TalkingService(

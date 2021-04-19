@@ -13,10 +13,11 @@ import space.yaroslav.familybot.executors.command.settings.AdvancedSettingsExecu
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.randomLong
 import space.yaroslav.familybot.models.Command
-import space.yaroslav.familybot.models.UkrainianLanguage
+import space.yaroslav.familybot.services.settings.ChatSettingsKey
 import space.yaroslav.familybot.services.settings.EasySetting
 import space.yaroslav.familybot.services.settings.EasySettingsService
 import space.yaroslav.familybot.services.settings.TalkingDensity
+import space.yaroslav.familybot.services.settings.UkrainianLanguage
 import space.yaroslav.familybot.suits.CommandExecutorTest
 import java.util.stream.Stream
 
@@ -55,7 +56,7 @@ class AdvancedSettingsExecutorTest : CommandExecutorTest() {
     @MethodSource("valuesProvider")
     fun <T : Any> executeTest(
         command: String,
-        easySetting: EasySetting<T>,
+        easySetting: EasySetting<T, ChatSettingsKey>,
         expectedSettingValue: T
     ) {
         val update = createSimpleUpdate(command)

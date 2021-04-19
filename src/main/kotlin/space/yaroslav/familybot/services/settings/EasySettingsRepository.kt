@@ -6,15 +6,15 @@ import space.yaroslav.familybot.telegram.FamilyBot
 import java.time.Duration
 
 @Component
-class EasySettingsRedisRepository(
+class EasySettingsRepository(
     private val redisTemplate: StringRedisTemplate
-) : EasySettingsRepository {
+) {
 
-    override fun <T : Any> put(
-        easySetting: EasySetting<T>,
-        key: SettingsKey,
+    fun <T : Any, K : SettingsKey> put(
+        easySetting: EasySetting<T, K>,
+        key: K,
         value: T,
-        duration: Duration?
+        duration: Duration? = null
     ) {
         val keyValue = getKeyValue(easySetting, key)
         if (duration == null) {
@@ -24,26 +24,26 @@ class EasySettingsRedisRepository(
         }
     }
 
-    override fun <T : Any> get(easySetting: EasySetting<T>, key: SettingsKey): T? {
+    fun <T : Any, K : SettingsKey> get(easySetting: EasySetting<T, K>, key: K): T? {
         val rawValue = redisTemplate.opsForValue().get(getKeyValue(easySetting, key))
             ?: return null
 
         return cast(easySetting, rawValue)
     }
 
-    override fun decrement(easySetting: EasySetting<Long>, key: SettingsKey): Long {
+    fun <K : SettingsKey> decrement(easySetting: EasySetting<Long, K>, key: K): Long {
         return redisTemplate.opsForValue().decrement(getKeyValue(easySetting, key)) ?: 0
     }
 
-    override fun increment(easySetting: EasySetting<Long>, key: SettingsKey): Long {
+    fun <K : SettingsKey> increment(easySetting: EasySetting<Long, K>, key: K): Long {
         return redisTemplate.opsForValue().increment(getKeyValue(easySetting, key)) ?: 0
     }
 
-    private fun <T : Any> getKeyValue(easySetting: EasySetting<T>, key: SettingsKey): String {
-        return "${easySetting.getName()}:${key.chatId}:${key.userId}"
+    private fun <T : Any, K : SettingsKey> getKeyValue(easySetting: EasySetting<T, K>, key: K): String {
+        return "${easySetting.getName()}:${key.value()}"
     }
 
-    private fun <T : Any> cast(easySetting: EasySetting<T>, rawValue: String): T {
+    private fun <T : Any, K: SettingsKey> cast(easySetting: EasySetting<T, K>, rawValue: String): T {
         val result = when (easySetting.getType()) {
             Boolean::class -> rawValue.toBoolean()
             Long::class -> rawValue.toLong()
@@ -54,7 +54,3 @@ class EasySettingsRedisRepository(
     }
 }
 
-data class SettingsKey(
-    val chatId: Long? = null,
-    val userId: Long? = null
-)

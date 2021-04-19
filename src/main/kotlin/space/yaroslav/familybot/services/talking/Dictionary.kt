@@ -7,11 +7,12 @@ import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.PhraseTheme
-import space.yaroslav.familybot.models.UkrainianLanguage
 import space.yaroslav.familybot.repos.PhraseSettingsRepository
 import space.yaroslav.familybot.repos.PhraseThemeSetting
+import space.yaroslav.familybot.services.settings.ChatSettingsKey
 import space.yaroslav.familybot.services.settings.EasySettingsService
 import space.yaroslav.familybot.services.settings.SettingsKey
+import space.yaroslav.familybot.services.settings.UkrainianLanguage
 import java.time.Instant
 
 @Component
@@ -34,9 +35,9 @@ class Dictionary(
 
     fun get(phrase: Phrase, update: Update) = getInternal(phrase, update.toChat().key())
 
-    fun get(phrase: Phrase, settingsKey: SettingsKey) = getInternal(phrase, settingsKey)
+    fun get(phrase: Phrase, settingsKey: ChatSettingsKey) = getInternal(phrase, settingsKey)
 
-    fun getInternal(phrase: Phrase, settingsKey: SettingsKey): String {
+    fun getInternal(phrase: Phrase, settingsKey: ChatSettingsKey): String {
         val isUkrainian = settingsService.get(UkrainianLanguage, settingsKey)
         val now = Instant.now()
         val theme = if (isUkrainian == true) {
@@ -58,8 +59,8 @@ class Dictionary(
 }
 
 class DictionaryContext(
-    private val settingsKey: SettingsKey,
-    private val callback: (Phrase, SettingsKey) -> String
+    private val settingsKey: ChatSettingsKey,
+    private val callback: (Phrase, ChatSettingsKey) -> String
 ) {
     fun get(phrase: Phrase) = callback(phrase, settingsKey)
 }
