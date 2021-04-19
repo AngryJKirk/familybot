@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>space.yaroslav</groupId>
     <artifactId>familybot</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
 
     <properties>
         <kotlin.version>1.4.32</kotlin.version>
