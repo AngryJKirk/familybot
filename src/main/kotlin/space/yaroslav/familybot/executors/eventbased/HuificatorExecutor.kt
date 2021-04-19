@@ -92,7 +92,7 @@ class HuificatorExecutor(private val easySettingsService: EasySettingsService) :
 
     companion object {
         private const val vowels = "ёэоеаяуюыи"
-        private val rules = mapOf('о' to "е", 'а' to "я", 'у' to "ю", 'ы' to "и", 'э' to "е")
+        private val rules = mapOf('о' to "ё", 'а' to "я", 'у' to "ю", 'ы' to "и", 'э' to "е")
         private val nonLetters = Pattern.compile(".*[^a-я]+.*")
         private val onlyDashes = Pattern.compile("^-*$")
         private val english = Pattern.compile(".*[A-Za-z]+.*")
