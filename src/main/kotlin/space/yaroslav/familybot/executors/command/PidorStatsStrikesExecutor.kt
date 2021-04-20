@@ -39,11 +39,13 @@ class PidorStatsStrikesExecutor(
                 }
             }
             .flatten()
-            .formatTopList(PluralizedWordsProvider(
-                one = { context.get(Phrase.PIDOR_STRIKE_STAT_PLURALIZED_ONE) },
-                few = { context.get(Phrase.PIDOR_STRIKE_STAT_PLURALIZED_FEW) },
-                many = { context.get(Phrase.PIDOR_STRIKE_STAT_PLURALIZED_MANY) }
-            ))
+            .formatTopList(
+                PluralizedWordsProvider(
+                    one = { context.get(Phrase.PIDOR_STRIKE_STAT_PLURALIZED_ONE) },
+                    few = { context.get(Phrase.PIDOR_STRIKE_STAT_PLURALIZED_FEW) },
+                    many = { context.get(Phrase.PIDOR_STRIKE_STAT_PLURALIZED_MANY) }
+                )
+            )
         val title = "${context.get(Phrase.PIDOR_STRIKE_STAT_TITLE)}:\n".bold()
         if (stats.isNotEmpty()) {
             return { it.send(update, title + stats.joinToString("\n"), enableHtml = true) }

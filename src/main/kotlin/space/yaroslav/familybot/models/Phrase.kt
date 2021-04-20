@@ -110,9 +110,10 @@ enum class Phrase {
     PIDOR_STRIKE_STAT_NONE
 }
 
-enum class PhraseTheme(val id: Int) {
-    DEFAULT(1),
-    DAY_OF_DEFENDER_23_FEB(2),
-    DAY_OF_WOMAN_8_MARCH(3),
-    UKRAINIAN(4)
+enum class PhraseTheme {
+    DEFAULT,
+    DAY_OF_DEFENDER_23_FEB,
+    DAY_OF_WOMAN_8_MARCH,
+    UKRAINIAN,
+    ACAB
 }

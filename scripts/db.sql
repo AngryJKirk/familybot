@@ -77,27 +77,6 @@ CREATE TABLE IF NOT EXISTS function_settings
         FOREIGN KEY (function_id) REFERENCES functions
 );
 
-CREATE TABLE IF NOT EXISTS phrase_theme
-(
-    phrase_theme_id   SERIAL       NOT NULL,
-    description       VARCHAR(200) NOT NULL,
-    active_by_default BOOLEAN DEFAULT FALSE,
-    CONSTRAINT phrase_theme_pkey
-        PRIMARY KEY (phrase_theme_id)
-);
-
-CREATE UNIQUE INDEX IF NOT EXISTS phrase_theme_active_by_default_idx
-    ON phrase_theme (active_by_default)
-    WHERE (active_by_default = TRUE);
-
-CREATE TABLE IF NOT EXISTS phrase_theme_settings
-(
-    phrase_theme_id BIGINT,
-    since           TIMESTAMP NOT NULL,
-    till            TIMESTAMP NOT NULL,
-    CONSTRAINT phrase_theme_settings_phrase_theme_id_fkey
-        FOREIGN KEY (phrase_theme_id) REFERENCES phrase_theme
-);
 
 CREATE TABLE IF NOT EXISTS users
 (
@@ -364,13 +343,6 @@ VALUES (1, 'Хуификация'),
        (7, 'Приветствия и прощания'),
        (8, 'Реакция на обращения')
 ;
-
-INSERT INTO phrase_theme (description, active_by_default)
-VALUES ('DEFAULT', TRUE),
-       ('DAY_OF_DEFENDER_23_FEB', FALSE),
-       ('DAY_OF_WOMAN_8_MARCH', FALSE),
-       ('UKRAINIAN', FALSE);
-
 
 INSERT INTO bans_entity_types (entity_type_id, entity_description)
 VALUES (1, 'User'),

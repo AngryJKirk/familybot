@@ -7,16 +7,14 @@ import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.PhraseTheme
-import space.yaroslav.familybot.repos.PhraseSettingsRepository
-import space.yaroslav.familybot.repos.PhraseThemeSetting
 import space.yaroslav.familybot.services.settings.ChatSettingsKey
 import space.yaroslav.familybot.services.settings.EasySettingsService
 import space.yaroslav.familybot.services.settings.UkrainianLanguage
-import java.time.Instant
+import java.time.LocalDate
+import java.time.Month
 
 @Component
 class Dictionary(
-    private val settingsRepository: PhraseSettingsRepository,
     private val settingsService: EasySettingsService,
     private val dictionaryReader: DictionaryReader
 ) {
@@ -38,23 +36,26 @@ class Dictionary(
 
     fun getInternal(phrase: Phrase, settingsKey: ChatSettingsKey): String {
         val isUkrainian = settingsService.get(UkrainianLanguage, settingsKey)
-        val now = Instant.now()
         val theme = if (isUkrainian == true) {
             PhraseTheme.UKRAINIAN
         } else {
-            settingsRepository.getPhraseSettings()
-                .find { isCurrentSetting(now, it) }
-                ?.theme
-                ?: PhraseTheme.DEFAULT
+            getHolidayTheme() ?: PhraseTheme.DEFAULT
         }
 
         return dictionaryReader.getPhrases(phrase, theme).random()
     }
 
-    private fun isCurrentSetting(
-        now: Instant,
-        it: PhraseThemeSetting
-    ) = now.isAfter(it.since) and now.isBefore(it.till)
+    private fun getHolidayTheme(): PhraseTheme? {
+        val now = LocalDate.now()
+        if (now.month == Month.MARCH && now.dayOfMonth == 8) {
+            return PhraseTheme.DAY_OF_WOMAN_8_MARCH
+        }
+        if (now.month == Month.FEBRUARY && now.dayOfMonth == 23) {
+            return PhraseTheme.DAY_OF_DEFENDER_23_FEB
+        }
+
+        return null
+    }
 }
 
 class DictionaryContext(
