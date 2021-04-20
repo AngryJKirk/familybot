@@ -33,7 +33,7 @@ class PidorStatsStrikesExecutor(
             .map {
                 val user = users[it.key]
                 if (user != null) {
-                    (0..it.value.maxStrike).map { user }
+                    (1..it.value.maxStrike).map { user }
                 } else {
                     emptyList()
                 }
