@@ -20,9 +20,9 @@ class PatchNoteExecutor(private val botConfig: BotConfig, private val commonRepo
     private val log = getLogger()
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         return { sender ->
-            commonRepository
-                .getChats()
-                .forEach { tryToSendMessage(sender, it, update) }
+            val chats = commonRepository.getChats()
+            log.info("Sending in {} chats", chats.size)
+            chats.forEach { tryToSendMessage(sender, it, update) }
         }
     }
 
@@ -43,6 +43,7 @@ class PatchNoteExecutor(private val botConfig: BotConfig, private val commonRepo
             launch {
                 runCatching {
                     sender.execute(SendMessage(chat.idString, update.message.text.removePrefix(patchNotePrefix)))
+                    log.info("Sent patchnote to chatId={}", chat.idString)
                 }.onFailure { throwable ->
                     log.warn("Can not send message by patchnote executor", throwable)
                     markChatAsInactive(chat) }
