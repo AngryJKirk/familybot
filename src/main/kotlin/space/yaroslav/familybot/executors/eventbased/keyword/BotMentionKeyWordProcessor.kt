@@ -13,6 +13,7 @@ import space.yaroslav.familybot.services.settings.FuckOffTolerance
 import space.yaroslav.familybot.services.talking.TalkingService
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Duration
+import java.util.concurrent.ThreadLocalRandom
 
 @Component
 class BotMentionKeyWordProcessor(
@@ -41,7 +42,10 @@ class BotMentionKeyWordProcessor(
             return fuckOff(update)
         }
         return {
-            val reply = talkingService.getReplyToUser(update, shouldBeQuestion)
+            val reply = talkingService.getReplyToUser(
+                update,
+                ThreadLocalRandom.current().nextBoolean() && shouldBeQuestion
+            )
             it.send(update, reply, replyToUpdate = true, shouldTypeBeforeSend = true)
         }
     }
