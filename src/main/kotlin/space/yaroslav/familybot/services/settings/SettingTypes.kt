@@ -31,3 +31,7 @@ object UkrainianLanguage : BooleanSetting<ChatSettingsKey>() {
 object AskWorldDensity : StringEasySetting<ChatSettingsKey>() {
     override fun settingType() = ChatSettingsKey::class
 }
+
+object PidorStrikeStats : StringEasySetting<ChatSettingsKey>() {
+    override fun settingType() = ChatSettingsKey::class
+}

@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.services.settings
 
+import org.checkerframework.checker.units.qual.K
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.telegram.FamilyBot

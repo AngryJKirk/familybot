@@ -350,7 +350,8 @@ VALUES (1, '/stats_month'),
        (20, '/ban'),
        (21, '/play'),
        (22, '/hampik'),
-       (23, '/advanced_settings')
+       (23, '/advanced_settings'),
+       (24, '/stats_strikes')
 ;
 
 INSERT INTO functions (function_id, description)

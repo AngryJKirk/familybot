@@ -25,7 +25,7 @@ class PidorCompetitionService(
     private val dictionary: Dictionary
 ) {
 
-    fun pidorCompetition(update: Update): (suspend (AbsSender) -> Unit)? {
+    fun pidorCompetition(update: Update): suspend (AbsSender) -> Unit {
         val context = dictionary.createContext(update)
         if (isEndOfMonth()) {
             val thisMonthPidors = getPidorsOfThisMonth(update)
@@ -42,7 +42,7 @@ class PidorCompetitionService(
                 }
             }
         }
-        return null
+        return { }
     }
 
     private fun getPidorsOfThisMonth(update: Update): List<Pidor> {

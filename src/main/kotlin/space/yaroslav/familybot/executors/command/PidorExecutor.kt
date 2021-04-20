@@ -26,6 +26,7 @@ import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.repos.CommandHistoryRepository
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.misc.PidorCompetitionService
+import space.yaroslav.familybot.services.misc.PidorStrikesService
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.services.talking.DictionaryContext
 import space.yaroslav.familybot.telegram.BotConfig
@@ -37,6 +38,7 @@ class PidorExecutor(
     private val pidorCompetitionService: PidorCompetitionService,
     private val dictionary: Dictionary,
     private val commandHistoryRepository: CommandHistoryRepository,
+    private val pidorStrikesService: PidorStrikesService,
     config: BotConfig
 ) : CommandExecutor(config), Configurable {
     override fun getFunctionId(): FunctionId {
@@ -75,14 +77,16 @@ class PidorExecutor(
                         typeDelay = 1500L to 1501L
                     )
                 }
+            val pidor = nextPidor.await()
             sender.send(
                 update,
-                nextPidor.await().getGeneralName(),
+                pidor.getGeneralName(),
                 enableHtml = true,
                 shouldTypeBeforeSend = true,
                 typeDelay = 1500L to 1501L
             )
-            pidorCompetitionService.pidorCompetition(update)?.invoke(sender)
+            pidorStrikesService.calculateStrike(update, pidor).invoke(sender)
+            pidorCompetitionService.pidorCompetition(update).invoke(sender)
         }
     }
 
