@@ -36,12 +36,17 @@ class TalkingService(
     }
 
     @Timed("service.TalkingService.getReplyToUser")
-    suspend fun getReplyToUser(update: Update): String {
+    suspend fun getReplyToUser(update: Update, shouldBeQuestion: Boolean = false): String {
         val message = coroutineScope {
             async {
                 val userMessages = getMessagesForUser(update.toUser())
                     ?: messages
-                return@async userMessages.random()
+                return@async if (shouldBeQuestion) {
+                    userMessages.filter { message -> message.endsWith("?") }.randomOrNull()
+                        ?: userMessages.random()
+                } else {
+                    userMessages.random()
+                }
             }
         }
 
