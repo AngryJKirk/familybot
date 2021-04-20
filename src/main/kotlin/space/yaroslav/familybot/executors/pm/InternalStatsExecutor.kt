@@ -15,6 +15,7 @@ class InternalStatsExecutor(
     private val commonRepository: CommonRepository
 ) : PrivateMessageExecutor {
 
+    private val prefix = "debug"
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val chats = commonRepository.getChats()
         return {
@@ -23,7 +24,7 @@ class InternalStatsExecutor(
     }
 
     override fun canExecute(message: Message): Boolean {
-        return botConfig.developer == message.from.userName
+        return botConfig.developer == message.from.userName && message.text.startsWith(prefix)
     }
 
     override fun priority(update: Update): Priority {
