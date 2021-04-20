@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.Chat
+import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.telegram.BotConfig
@@ -16,7 +17,7 @@ import space.yaroslav.familybot.telegram.BotConfig
 class PatchNoteExecutor(private val botConfig: BotConfig, private val commonRepository: CommonRepository) :
     PrivateMessageExecutor {
     private val patchNotePrefix = "PATCHNOTE "
-
+    private val log = getLogger()
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         return { sender ->
             commonRepository
@@ -42,7 +43,9 @@ class PatchNoteExecutor(private val botConfig: BotConfig, private val commonRepo
             launch {
                 runCatching {
                     sender.execute(SendMessage(chat.idString, update.message.text.removePrefix(patchNotePrefix)))
-                }.onFailure { markChatAsInactive(chat) }
+                }.onFailure { throwable ->
+                    log.warn("Can not send message by patchnote executor", throwable)
+                    markChatAsInactive(chat) }
             }
         }
     }
