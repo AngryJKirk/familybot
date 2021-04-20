@@ -53,7 +53,9 @@ class Dictionary(
         if (now.month == Month.FEBRUARY && now.dayOfMonth == 23) {
             return PhraseTheme.DAY_OF_DEFENDER_23_FEB
         }
-
+        if (now.month == Month.APRIL && listOf(20, 21, 22).contains(now.dayOfMonth)) {
+            return PhraseTheme.ACAB
+        }
         return null
     }
 }

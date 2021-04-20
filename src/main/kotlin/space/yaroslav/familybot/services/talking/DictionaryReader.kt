@@ -21,9 +21,14 @@ class DictionaryReader {
     }
 
     fun getPhrases(phrase: Phrase, theme: PhraseTheme): List<String> {
-        val byThemes = getPhraseContent(phrase)
-        return byThemes[theme] ?: byThemes[PhraseTheme.DEFAULT]
-            ?: throw FamilyBot.InternalException("Default value for phrase $phrase is missing")
+        val phrasesByTheme = getPhraseContent(phrase)
+        val requiredPhrases = phrasesByTheme[theme]
+        return if (requiredPhrases.isNullOrEmpty()) {
+            phrasesByTheme[PhraseTheme.DEFAULT]
+                ?: throw FamilyBot.InternalException("Default value for phrase $phrase is missing")
+        } else {
+            requiredPhrases
+        }
     }
 
     fun getAllPhrases(phrase: Phrase): List<String> {
