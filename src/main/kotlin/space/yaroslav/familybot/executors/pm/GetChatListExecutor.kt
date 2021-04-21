@@ -17,7 +17,7 @@ class GetChatListExecutor(
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val chats = commonRepository.getChats()
         return {
-            it.send(update, "Chats=$chats")
+            it.send(update, "Active chats count=${chats.size}")
         }
     }
 

@@ -24,15 +24,17 @@ class FindUserExecutor(
             .findUsersByName(tokens[1])
             .associateWith { user -> commonRepository.getChatsByUser(user) }
         return { sender ->
-            sender.send(update, format(usersToChats))
+            usersToChats.toList().chunked(10).forEach { chunk ->
+                sender.send(update, format(chunk))
+            }
         }
     }
 
-    private fun format(userToChats: Map<User, List<Chat>>): String {
+    private fun format(userToChats: List<Pair<User, List<Chat>>>): String {
 
-        return "Search user result:\n" + userToChats
-            .map { entry -> "User: ${formatUser(entry.key)} in chats [${formatChats(entry.value)}]" }
-            .joinToString(separator = delimiter)
+        return "Search user result:\n" + userToChats.joinToString(separator = delimiter) { pair ->
+            "User: ${formatUser(pair.first)} in chats [${formatChats(pair.second)}]"
+        }
     }
 
     private fun formatUser(user: User): String {
