@@ -21,18 +21,6 @@ CREATE TABLE IF NOT EXISTS commands
         UNIQUE (command)
 );
 
-CREATE TABLE IF NOT EXISTS custom_message_delivery
-(
-    id           SERIAL         NOT NULL,
-    chat_id      BIGINT         NOT NULL,
-    message      VARCHAR(20000) NOT NULL,
-    is_delivered BOOLEAN DEFAULT FALSE,
-    CONSTRAINT custom_message_delivery_pkey
-        PRIMARY KEY (id),
-    CONSTRAINT custom_message_delivery_chat_id_fkey
-        FOREIGN KEY (chat_id) REFERENCES chats
-);
-
 CREATE TABLE IF NOT EXISTS functions
 (
     function_id INTEGER NOT NULL,

@@ -55,5 +55,3 @@ data class AskWorldReply(
     val chat: Chat,
     val date: Instant
 )
-
-data class CustomMessage(val id: Long, val chat: Chat, val message: String)
