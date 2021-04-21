@@ -25,8 +25,12 @@ class FindUserExecutor(
             .distinctBy(User::id)
             .associateWith { user -> commonRepository.getChatsByUser(user) }
         return { sender ->
-            usersToChats.toList().chunked(5).forEach { chunk ->
-                sender.send(update, format(chunk))
+            if (usersToChats.isEmpty()) {
+                sender.send(update, "No one found, master")
+            } else {
+                usersToChats.toList().chunked(5).forEach { chunk ->
+                    sender.send(update, format(chunk))
+                }
             }
         }
     }
