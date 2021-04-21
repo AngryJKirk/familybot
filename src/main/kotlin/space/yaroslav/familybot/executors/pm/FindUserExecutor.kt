@@ -24,7 +24,7 @@ class FindUserExecutor(
             .findUsersByName(tokens[1])
             .associateWith { user -> commonRepository.getChatsByUser(user) }
         return { sender ->
-            usersToChats.toList().chunked(10).forEach { chunk ->
+            usersToChats.toList().chunked(5).forEach { chunk ->
                 sender.send(update, format(chunk))
             }
         }
