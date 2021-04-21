@@ -29,7 +29,6 @@ import space.yaroslav.familybot.repos.FunctionsConfigureRepository
 import space.yaroslav.familybot.services.settings.AskWorldDensity
 import space.yaroslav.familybot.services.settings.EasySettingsService
 import space.yaroslav.familybot.services.talking.Dictionary
-import space.yaroslav.familybot.services.talking.DictionaryContext
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 import java.time.ZonedDateTime
@@ -95,7 +94,7 @@ class AskWorldInitialExecutor(
                         val result = sender.execute(
                             SendMessage(
                                 it.idString,
-                                formatMessage(chat, question, context)
+                                formatMessage(chat, question)
                             ).also { it.enableHtml(true) }
                         )
                         markQuestionDelivered(question, questionId, result, it)
