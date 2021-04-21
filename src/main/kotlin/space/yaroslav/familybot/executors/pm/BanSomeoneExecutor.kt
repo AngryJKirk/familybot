@@ -3,11 +3,9 @@ package space.yaroslav.familybot.executors.pm
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.send
-import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.misc.BanService
 import space.yaroslav.familybot.telegram.BotConfig
@@ -15,12 +13,13 @@ import kotlin.coroutines.coroutineContext
 
 @Component
 class BanSomeoneExecutor(
-    private val botConfig: BotConfig,
     private val banService: BanService,
-    private val commonRepository: CommonRepository
-) :
-    PrivateMessageExecutor {
+    private val commonRepository: CommonRepository,
+    botConfig: BotConfig
+) : OnlyBotOwnerExecutor(botConfig) {
+
     private val banPrefix = "BAN1488"
+
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
 
         val command = update.message.text.split("|")
@@ -55,9 +54,5 @@ class BanSomeoneExecutor(
         }
     }
 
-    override fun canExecute(message: Message): Boolean {
-        return botConfig.developer == message.from.userName && message.text.startsWith(banPrefix)
-    }
-
-    override fun priority(update: Update) = Priority.HIGH
+    override fun getMessagePrefix() = banPrefix
 }

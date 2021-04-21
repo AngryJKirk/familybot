@@ -76,9 +76,9 @@ fun Message.getCommand(botName: () -> String): Command? {
     return Command.values().find { command -> command.command == textCommand }
 }
 
-fun Update.getMessageTokens(): List<String> {
+fun Update.getMessageTokens(delimiter: String = " "): List<String> {
     return if (message.hasText()) {
-        message.text.split(" ")
+        message.text.split(delimiter)
     } else {
         emptyList()
     }

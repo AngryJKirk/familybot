@@ -128,4 +128,20 @@ class CommonRepository(datasource: DataSource) {
     fun disableUsersInChat(chat: Chat) {
         template.update("UPDATE users2chats SET active = FALSE WHERE chat_id = ?", chat.id)
     }
+
+    @Timed("repository.CommonRepository.findUsersByName")
+    fun findUsersByName(namePart: String): List<User> {
+        return template.query(
+            "SELECT * FROM users INNER JOIN users2chats u2c ON users.id = u2c.user_id WHERE LOWER(name) LIKE LOWER(?) OR LOWER(name) LIKE ?",
+            { rs, _ -> rs.toUser() }, "%$namePart%", "%$namePart%"
+        )
+    }
+
+    @Timed("repository.CommonRepository.getChatsByUser")
+    fun getChatsByUser(user: User): List<Chat> {
+        return template.query(
+            "SELECT * FROM chats INNER JOIN users2chats u2c ON chats.id = u2c.chat_id WHERE u2c.user_id = ? ",
+            { rs, _ -> rs.toChat() }, user.id
+        )
+    }
 }
