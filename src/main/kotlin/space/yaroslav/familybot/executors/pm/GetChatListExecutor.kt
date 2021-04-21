@@ -19,7 +19,8 @@ class GetChatListExecutor(
         val chats = commonRepository.getChats()
         return { sender ->
             sender.send(update, "Active chats count=${chats.size}")
-            val totalUsersCount = chats.sumOf { chat -> runCatching { sender.execute(GetChatMembersCount()) }.getOrElse { 0 } }
+            val totalUsersCount =
+                chats.sumOf { chat -> runCatching { sender.execute(GetChatMembersCount(chat.idString)) }.getOrElse { 0 } }
             sender.send(update, "Total users count=$totalUsersCount")
         }
     }
