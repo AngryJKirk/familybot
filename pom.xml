@@ -20,8 +20,8 @@
         <micrometer-registry.version>1.6.5</micrometer-registry.version>
         <aspectjweaver.version>1.9.6</aspectjweaver.version>
         <yandex-translate-api.version>1.4.2</yandex-translate-api.version>
-        <toml4j.version>0.7.2</toml4j.version>
         <jackson-module-kotlin.version>2.12.0</jackson-module-kotlin.version>
+        <tomlj.version>1.0.0</tomlj.version>
     </properties>
 
 
@@ -98,9 +98,9 @@
             <version>${aspectjweaver.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.moandjiezana.toml</groupId>
-            <artifactId>toml4j</artifactId>
-            <version>${toml4j.version}</version>
+            <groupId>org.tomlj</groupId>
+            <artifactId>tomlj</artifactId>
+            <version>${tomlj.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>

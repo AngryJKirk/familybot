@@ -1,17 +1,22 @@
 package space.yaroslav.familybot.services.talking
 
-import com.moandjiezana.toml.Toml
 import org.springframework.stereotype.Component
+import org.tomlj.Toml
+import org.tomlj.TomlTable
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.PhraseTheme
 import space.yaroslav.familybot.telegram.FamilyBot
-
 @Component
 class DictionaryReader {
     private val dictionary: Map<Phrase, Map<PhraseTheme, List<String>>>
 
     init {
-        val toml = Toml().read(this::class.java.classLoader.getResourceAsStream("static/dictionary.toml"))
+        val resourceAsStream = this::class.java.classLoader
+            .getResourceAsStream("static/dictionary.toml")
+            ?: throw FamilyBot.InternalException("dictionary.toml is missing")
+
+        val toml = Toml.parse(resourceAsStream)
+
         dictionary = Phrase.values()
             .map { phrase ->
                 phrase to (toml.getTable(phrase.name) ?: throw FamilyBot.InternalException("Phrase $phrase is missing"))
@@ -41,10 +46,21 @@ class DictionaryReader {
             ?: throw FamilyBot.InternalException("Phrase $phrase is missing")
     }
 
-    private fun parsePhrasesByTheme(table: Toml): Map<PhraseTheme, List<String>> {
+    private fun parsePhrasesByTheme(table: TomlTable): Map<PhraseTheme, List<String>> {
         return PhraseTheme
             .values()
-            .associate { theme -> theme to (table.getList(theme.name) ?: emptyList()) }
+            .associate { theme -> theme to tableToList(table, theme) }
+    }
+
+    private fun tableToList(
+        table: TomlTable,
+        theme: PhraseTheme
+    ): List<String> {
+        return table
+            .getArray(theme.name)
+            ?.toList()
+            ?.map(Any::toString)
+            ?: emptyList()
     }
 
     private fun checkDefaults(dictionary: Map<Phrase, Map<PhraseTheme, List<String>>>) {
@@ -60,3 +76,4 @@ class DictionaryReader {
         }
     }
 }
+
