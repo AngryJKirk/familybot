@@ -3,36 +3,57 @@ package space.yaroslav.familybot.services.misc
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
-import space.yaroslav.familybot.repos.BanEntity
-import space.yaroslav.familybot.repos.BanEntityType
-import space.yaroslav.familybot.repos.BanRepository
+import space.yaroslav.familybot.common.utils.key
+import space.yaroslav.familybot.services.settings.Ban
+import space.yaroslav.familybot.services.settings.EasySettingsService
+import space.yaroslav.familybot.services.settings.SettingsKey
+import java.time.Duration
 import java.time.Instant
-import java.util.UUID
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @Component
-class BanService(private val banRepository: BanRepository) {
-    fun isUserBanned(user: User): Ban? {
-        return banRepository.getByEntity(toEntity(user))
+class BanService(
+    private val easySettingsService: EasySettingsService
+) {
+    val dateTimeFormatter: DateTimeFormatter =
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault())
+
+    fun isUserBanned(user: User): String? {
+        return findBanByKey(user.key())
     }
 
-    fun isChatBanned(chat: Chat): Ban? {
-        return banRepository.getByEntity(toEntity(chat))
+    fun isChatBanned(chat: Chat): String? {
+        return findBanByKey(chat.key())
     }
 
-    fun banUser(user: User, ban: Ban) {
-        banRepository.addBan(toEntity(user), ban)
+    fun banUser(user: User, description: String) {
+        banByKey(user.key(), description)
     }
 
-    fun banChat(chat: Chat, ban: Ban) {
-        banRepository.addBan(toEntity(chat), ban)
+    fun banChat(chat: Chat, description: String) {
+        banByKey(chat.key(), description)
     }
 
-    fun unban(ban: Ban) {
-        banRepository.reduceBan(ban)
+    fun findBanByKey(settingsKey: SettingsKey): String? {
+        return easySettingsService.get(
+            Ban,
+            settingsKey
+        )
     }
 
-    private fun toEntity(user: User) = BanEntity(user.id, BanEntityType.USER)
-    private fun toEntity(chat: Chat) = BanEntity(chat.id, BanEntityType.CHAT)
+    fun reduceBan(settingsKey: SettingsKey) {
+        easySettingsService.remove(Ban, settingsKey)
+    }
+
+    private fun banByKey(settingsKey: SettingsKey, description: String) {
+        val duration = Duration.ofDays(7)
+        val until = Instant.now().plusSeconds(duration.seconds)
+        easySettingsService.put(
+            Ban,
+            settingsKey,
+            "Бан нахуй по причине \"$description\" до ${dateTimeFormatter.format(until)}",
+            duration = duration
+        )
+    }
 }
-
-data class Ban(val banId: UUID = UUID.randomUUID(), val description: String, val till: Instant)

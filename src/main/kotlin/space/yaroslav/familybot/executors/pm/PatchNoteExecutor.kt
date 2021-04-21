@@ -46,7 +46,8 @@ class PatchNoteExecutor(private val botConfig: BotConfig, private val commonRepo
                     log.info("Sent patchnote to chatId={}", chat.idString)
                 }.onFailure { throwable ->
                     log.warn("Can not send message by patchnote executor", throwable)
-                    markChatAsInactive(chat) }
+                    markChatAsInactive(chat)
+                }
             }
         }
     }

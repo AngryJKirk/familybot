@@ -1,27 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 ------------------- TABLES ----------------------
-CREATE TABLE IF NOT EXISTS bans_entity_types
-(
-    entity_type_id     INTEGER       NOT NULL,
-    entity_description VARCHAR(1000) NOT NULL,
-    CONSTRAINT bans_entity_types_pkey
-        PRIMARY KEY (entity_type_id)
-);
-
-CREATE TABLE IF NOT EXISTS bans
-(
-    ban_uuid        UUID                    NOT NULL,
-    ban_date        TIMESTAMP DEFAULT NOW() NOT NULL,
-    ban_till_date   TIMESTAMP               NOT NULL,
-    ban_description VARCHAR(2000)           NOT NULL,
-    entity_id       BIGINT                  NOT NULL,
-    entity_type_id  INTEGER                 NOT NULL,
-    CONSTRAINT bans_pkey
-        PRIMARY KEY (ban_uuid),
-    CONSTRAINT bans_entity_type_id_fkey
-        FOREIGN KEY (entity_type_id) REFERENCES bans_entity_types
-);
 
 CREATE TABLE IF NOT EXISTS chats
 (
@@ -344,6 +323,3 @@ VALUES (1, 'Хуификация'),
        (8, 'Реакция на обращения')
 ;
 
-INSERT INTO bans_entity_types (entity_type_id, entity_description)
-VALUES (1, 'User'),
-       (2, 'Chat');

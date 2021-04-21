@@ -4,6 +4,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Ignore
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -13,15 +14,15 @@ import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
+import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.executors.pm.BanSomeoneExecutor
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.randomUUID
 import space.yaroslav.familybot.models.Priority
-import space.yaroslav.familybot.repos.BanEntity
-import space.yaroslav.familybot.repos.BanEntityType
-import space.yaroslav.familybot.repos.BanRepository
+import space.yaroslav.familybot.services.misc.BanService
+import space.yaroslav.familybot.services.settings.SettingsKey
 import space.yaroslav.familybot.suits.ExecutorTest
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
@@ -36,11 +37,11 @@ class BanSomeoneExecutorTest : ExecutorTest() {
             val chatToBan = update.toChat()
             val userToBan = update.toUser()
             return Stream.of(
-                Arguments.of(BanTestModel(userToBan.name, BanEntity(userToBan.id, BanEntityType.USER))),
-                Arguments.of(BanTestModel(userToBan.nickname, BanEntity(userToBan.id, BanEntityType.USER))),
-                Arguments.of(BanTestModel(userToBan.id.toString(), BanEntity(userToBan.id, BanEntityType.USER))),
-                Arguments.of(BanTestModel(chatToBan.id.toString(), BanEntity(chatToBan.id, BanEntityType.CHAT))),
-                Arguments.of(BanTestModel(chatToBan.name, BanEntity(chatToBan.id, BanEntityType.CHAT)))
+                Arguments.of(BanTestModel(userToBan.name, userToBan.key())),
+                Arguments.of(BanTestModel(userToBan.nickname, userToBan.key())),
+                Arguments.of(BanTestModel(userToBan.id.toString(), userToBan.key())),
+                Arguments.of(BanTestModel(chatToBan.id.toString(), chatToBan.key())),
+                Arguments.of(BanTestModel(chatToBan.name, chatToBan.key()))
             )
         }
     }
@@ -52,7 +53,7 @@ class BanSomeoneExecutorTest : ExecutorTest() {
     lateinit var botConfig: BotConfig
 
     @Autowired
-    lateinit var banRepository: BanRepository
+    lateinit var banService: BanService
 
     override fun priorityTest() {
         val priority = banSomeoneExecutor.priority(Update())
@@ -86,10 +87,32 @@ class BanSomeoneExecutorTest : ExecutorTest() {
         runBlocking { banSomeoneExecutor.execute(update).invoke(sender) }
         verify(sender).execute(any<SendMessage>())
 
-        val ban = banRepository.getByEntity(banModel.banEntity)
+        banService.findBanByKey(banModel.seetingsKey)
             ?: throw AssertionError("Should be a new ban")
 
-        banRepository.reduceBan(ban)
+        banService.reduceBan(banModel.seetingsKey)
+    }
+
+    @Test
+    fun `user should be banned without chat`() {
+        val update = createSimpleUpdate()
+        val user = update.toUser()
+        val chat = update.toChat()
+        val description = randomUUID()
+        banService.banUser(user, description)
+        Assertions.assertTrue(banService.isUserBanned(user)?.contains(description) ?: false)
+        Assertions.assertTrue(banService.isChatBanned(chat) == null)
+        Assertions.assertTrue(banService.findBanByKey(update.key()) == null)
+        Assertions.assertTrue(banService.findBanByKey(chat.key()) == null)
+        Assertions.assertTrue(banService.findBanByKey(user.key()) != null)
+        banService.reduceBan(user.key())
+        banService.banChat(chat, description)
+        Assertions.assertTrue(banService.isChatBanned(chat)?.contains(description) ?: false)
+        Assertions.assertTrue(banService.isUserBanned(user) == null)
+        Assertions.assertTrue(banService.findBanByKey(update.key()) == null)
+        Assertions.assertTrue(banService.findBanByKey(chat.key()) != null)
+        Assertions.assertTrue(banService.findBanByKey(user.key()) == null)
+        banService.reduceBan(user.key())
     }
 
     private fun updateFromDeveloper(messageText: String): Update {
@@ -106,6 +129,6 @@ class BanSomeoneExecutorTest : ExecutorTest() {
 
     data class BanTestModel(
         val key: String?,
-        val banEntity: BanEntity
+        val seetingsKey: SettingsKey
     )
 }

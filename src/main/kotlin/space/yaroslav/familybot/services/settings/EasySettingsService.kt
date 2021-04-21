@@ -30,4 +30,8 @@ class EasySettingsService(private val easySettingRepository: EasySettingsReposit
     fun <K : SettingsKey> increment(easySetting: EasySetting<Long, K>, key: K): Long {
         return easySettingRepository.increment(easySetting, key)
     }
+
+    fun <T : Any, K : SettingsKey> remove(easySetting: EasySetting<T, K>, key: K) {
+        return easySettingRepository.remove(easySetting, key)
+    }
 }

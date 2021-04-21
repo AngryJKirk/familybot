@@ -35,3 +35,7 @@ object AskWorldDensity : StringEasySetting<ChatSettingsKey>() {
 object PidorStrikeStats : StringEasySetting<ChatSettingsKey>() {
     override fun settingType() = ChatSettingsKey::class
 }
+
+object Ban : StringEasySetting<SettingsKey>() {
+    override fun settingType() = SettingsKey::class
+}

@@ -40,6 +40,10 @@ class EasySettingsRepository(
         return redisTemplate.opsForValue().increment(getKeyValue(easySetting, key)) ?: 0
     }
 
+    fun <T : Any, K : SettingsKey> remove(easySetting: EasySetting<T, K>, key: K) {
+        redisTemplate.delete(getKeyValue(easySetting, key))
+    }
+
     private fun <T : Any, K : SettingsKey> getKeyValue(easySetting: EasySetting<T, K>, key: K): String {
         return "${easySetting.getName()}:${key.value()}"
     }

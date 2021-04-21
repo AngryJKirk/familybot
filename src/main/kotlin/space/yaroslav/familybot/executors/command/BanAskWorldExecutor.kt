@@ -9,11 +9,9 @@ import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.repos.AskWorldRepository
-import space.yaroslav.familybot.services.misc.Ban
 import space.yaroslav.familybot.services.misc.BanService
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 @Component
 class BanAskWorldExecutor(
@@ -46,11 +44,7 @@ class BanAskWorldExecutor(
     }
 
     override fun canExecute(message: Message): Boolean {
-        return if (super.canExecute(message)) {
-            message.from.userName == botConfig.developer
-        } else {
-            false
-        }
+        return message.from.userName == botConfig.developer && super.canExecute(message)
     }
 
     private fun ban(update: Update, question: AskWorldQuestion): suspend (AbsSender) -> Unit {
@@ -58,12 +52,11 @@ class BanAskWorldExecutor(
         val tokens = update.message.text.split(" ")
         val banReason = tokens[1]
         val isChat = tokens.getOrNull(2) == "chat"
-        val ban = Ban(description = banReason, till = Instant.now().plus(7, ChronoUnit.DAYS))
         if (isChat) {
-            banService.banChat(question.chat, ban)
+            banService.banChat(question.chat, banReason)
             return { it.send(update, "${question.chat} is banned, my master", replyToUpdate = true) }
         } else {
-            banService.banUser(question.user, ban)
+            banService.banUser(question.user, banReason)
             return {
                 it.send(update, "${question.user} is banned, my master", replyToUpdate = true)
             }
