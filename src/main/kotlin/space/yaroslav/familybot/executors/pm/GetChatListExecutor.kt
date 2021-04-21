@@ -1,6 +1,7 @@
 package space.yaroslav.familybot.executors.pm
 
 import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMembersCount
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.send
@@ -16,8 +17,10 @@ class GetChatListExecutor(
     private val prefix = "chats"
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val chats = commonRepository.getChats()
-        return {
-            it.send(update, "Active chats count=${chats.size}")
+        return { sender ->
+            sender.send(update, "Active chats count=${chats.size}")
+            val totalUsersCount = chats.sumOf { chat -> runCatching { sender.execute(GetChatMembersCount()) }.getOrElse { 0 } }
+            sender.send(update, "Total users count=$totalUsersCount")
         }
     }
 
