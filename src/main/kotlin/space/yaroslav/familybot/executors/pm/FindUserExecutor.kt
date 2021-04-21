@@ -22,6 +22,7 @@ class FindUserExecutor(
         val tokens = update.getMessageTokens("|")
         val usersToChats = commonRepository
             .findUsersByName(tokens[1])
+            .distinctBy(User::id)
             .associateWith { user -> commonRepository.getChatsByUser(user) }
         return { sender ->
             usersToChats.toList().chunked(5).forEach { chunk ->
