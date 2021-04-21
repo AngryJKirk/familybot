@@ -126,8 +126,8 @@ class AskWorldInitialExecutor(
         askWorldRepository.addQuestionDeliver(questionWithIds, chat)
     }
 
-    private fun formatMessage(chat: Chat, question: AskWorldQuestion, context: DictionaryContext): String {
-        val messagePrefix = context.get(Phrase.ASK_WORLD_QUESTION_FROM_CHAT)
+    private fun formatMessage(chat: Chat, question: AskWorldQuestion): String {
+        val messagePrefix = dictionary.get(Phrase.ASK_WORLD_QUESTION_FROM_CHAT, chat.key())
         val boldChatName = chat.name.boldNullable()
         val italicMessage = question.message.italic()
         return "$messagePrefix $boldChatName: $italicMessage"
