@@ -6,6 +6,8 @@ import org.telegram.telegrambots.meta.api.objects.Chat
 import java.time.Duration
 import java.time.Instant
 import java.time.Month
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 fun Instant.isToday(): Boolean {
@@ -73,3 +75,8 @@ fun Duration.toHourMinuteString(): String {
 
     return "$hour $hourPluralized и $minute $minutePluralized"
 }
+
+private val dateTimeFormatter =
+    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault())
+
+fun Instant.prettyFormat(): String = dateTimeFormatter.format(this)

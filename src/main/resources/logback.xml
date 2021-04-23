@@ -9,9 +9,11 @@
             </pattern>
         </encoder>
     </appender>
+    <appender name="deferred-errors" class="space.yaroslav.familybot.common.utils.ErrorLogsDeferredAppender"/>
 
     <root level="INFO">
         <appender-ref ref="${STDOUT_APPENDER_NAME}"/>
+        <appender-ref ref="deferred-errors"/>
     </root>
 
 </configuration>
