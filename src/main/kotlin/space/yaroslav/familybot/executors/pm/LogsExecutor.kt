@@ -13,8 +13,12 @@ class LogsExecutor(botConfig: BotConfig) : OnlyBotOwnerExecutor(botConfig) {
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         return { sender ->
-            ErrorLogsDeferredAppender.errors.forEach { errorLog ->
-                sender.send(update, errorLog)
+            if (ErrorLogsDeferredAppender.errors.isEmpty()) {
+                sender.send(update, "No errors yet")
+            } else {
+                ErrorLogsDeferredAppender.errors.forEach { errorLog ->
+                    sender.send(update, errorLog)
+                }
             }
         }
     }
