@@ -11,7 +11,7 @@ import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.services.talking.Dictionary
 
 @Component
-class UserHelpExecutor(
+class PrivateMessageHelpExecutor(
     private val helpExecutor: HelpCommandExecutor,
     private val dictionary: Dictionary
 ) : PrivateMessageExecutor {

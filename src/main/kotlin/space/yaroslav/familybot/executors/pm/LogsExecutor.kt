@@ -17,14 +17,14 @@ class LogsExecutor(botConfig: BotConfig) : OnlyBotOwnerExecutor(botConfig) {
         if (tokens.getOrNull(1) == "clear") {
             ErrorLogsDeferredAppender.errors.clear()
             return { sender -> sender.send(update, "Cleared") }
-        } else {
-            return { sender ->
-                if (ErrorLogsDeferredAppender.errors.isEmpty()) {
-                    sender.send(update, "No errors yet")
-                } else {
-                    ErrorLogsDeferredAppender.errors.forEach { errorLog ->
-                        sender.send(update, errorLog)
-                    }
+        }
+
+        return { sender ->
+            if (ErrorLogsDeferredAppender.errors.isEmpty()) {
+                sender.send(update, "No errors yet")
+            } else {
+                ErrorLogsDeferredAppender.errors.forEach { errorLog ->
+                    sender.send(update, errorLog)
                 }
             }
         }

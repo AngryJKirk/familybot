@@ -18,7 +18,7 @@ class BanSomeoneExecutor(
     botConfig: BotConfig
 ) : OnlyBotOwnerExecutor(botConfig) {
 
-    private val banPrefix = "BAN1488"
+    private val banPrefix = "BAN1488|"
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
 

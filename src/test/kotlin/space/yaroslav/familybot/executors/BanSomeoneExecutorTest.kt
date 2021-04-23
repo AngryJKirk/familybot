@@ -61,7 +61,7 @@ class BanSomeoneExecutorTest : ExecutorTest() {
     }
 
     override fun canExecuteTest() {
-        val validMessage = updateFromDeveloper("BAN1488").message
+        val validMessage = updateFromDeveloper("BAN1488|").message
 
         val canExecuteValid = banSomeoneExecutor.canExecute(validMessage)
 
