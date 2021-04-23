@@ -94,7 +94,7 @@ class RouletteContinious(
                 )
             }
             delay(2000)
-            pidorCompetitionService.pidorCompetition(update)?.invoke(it)
+            pidorCompetitionService.pidorCompetition(update).invoke(it)
         }
     }
 }

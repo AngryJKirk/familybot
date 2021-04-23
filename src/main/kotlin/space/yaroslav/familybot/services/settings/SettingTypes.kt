@@ -13,29 +13,29 @@ abstract class StringEasySetting<K : SettingsKey> : EasySetting<String, K> {
 }
 
 object FuckOffTolerance : BooleanSetting<UserAndChatSettingsKey>() {
-    override fun settingType() = UserAndChatSettingsKey::class
+    override fun keyType() = UserAndChatSettingsKey::class
 }
 
 object RageMode : LongSetting<ChatSettingsKey>() {
-    override fun settingType() = ChatSettingsKey::class
+    override fun keyType() = ChatSettingsKey::class
 }
 
 object TalkingDensity : LongSetting<ChatSettingsKey>() {
-    override fun settingType() = ChatSettingsKey::class
+    override fun keyType() = ChatSettingsKey::class
 }
 
 object UkrainianLanguage : BooleanSetting<ChatSettingsKey>() {
-    override fun settingType() = ChatSettingsKey::class
+    override fun keyType() = ChatSettingsKey::class
 }
 
 object AskWorldDensity : StringEasySetting<ChatSettingsKey>() {
-    override fun settingType() = ChatSettingsKey::class
+    override fun keyType() = ChatSettingsKey::class
 }
 
 object PidorStrikeStats : StringEasySetting<ChatSettingsKey>() {
-    override fun settingType() = ChatSettingsKey::class
+    override fun keyType() = ChatSettingsKey::class
 }
 
 object Ban : StringEasySetting<SettingsKey>() {
-    override fun settingType() = SettingsKey::class
+    override fun keyType() = SettingsKey::class
 }

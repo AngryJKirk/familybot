@@ -7,7 +7,7 @@ import space.yaroslav.familybot.services.settings.BooleanSetting
 import space.yaroslav.familybot.services.settings.ChatSettingsKey
 
 abstract class ChatFunctionSetting : BooleanSetting<ChatSettingsKey>() {
-    override fun settingType() = ChatSettingsKey::class
+    override fun keyType() = ChatSettingsKey::class
 }
 
 object Huificate : ChatFunctionSetting()

@@ -6,5 +6,5 @@ interface EasySetting<T : Any, K : SettingsKey> {
 
     fun getName(): String = this::class.java.simpleName
     fun getType(): KClass<T>
-    fun settingType(): KClass<K>
+    fun keyType(): KClass<K>
 }
