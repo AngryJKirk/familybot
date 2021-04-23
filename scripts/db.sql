@@ -99,14 +99,6 @@ CREATE TABLE IF NOT EXISTS ask_world_replies
         FOREIGN KEY (user_id) REFERENCES users
 );
 
-CREATE TABLE IF NOT EXISTS ask_world_replies_delivery
-(
-    id   INTEGER,
-    date TIMESTAMP DEFAULT NOW() NOT NULL,
-    CONSTRAINT ask_world_replies_delivery_id_fkey
-        FOREIGN KEY (id) REFERENCES ask_world_replies
-);
-
 CREATE TABLE IF NOT EXISTS chat_log
 (
     chat_id BIGINT,

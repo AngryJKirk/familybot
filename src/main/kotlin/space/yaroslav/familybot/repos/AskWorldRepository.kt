@@ -8,7 +8,6 @@ import space.yaroslav.familybot.common.AskWorldReply
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.toAskWorldQuestion
-import space.yaroslav.familybot.common.utils.toAskWorldReply
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.sql.Timestamp
 import java.time.Instant
@@ -67,27 +66,6 @@ class AskWorldRepository(val template: JdbcTemplate) {
         )
     }
 
-    @Timed("repository.AskWorldRepository.getReplies")
-    fun getReplies(askWorldQuestion: AskWorldQuestion): List<AskWorldReply> {
-        return template.query(
-            """SELECT
-                          ask_world_replies.id,
-                          ask_world_replies.reply,
-                          ask_world_replies.chat_id,
-                          ask_world_replies.user_id,
-                          ask_world_replies.date,
-                          ask_world_replies.question_id,
-                          c2.name as chat_name,
-                          u.name as common_name,
-                          u.username
-                            from ask_world_replies
-                            INNER JOIN chats c2 on ask_world_replies.chat_id = c2.id
-                            INNER JOIN users u on ask_world_replies.user_id = u.id where question_id = ?""",
-            { rs, _ -> rs.toAskWorldReply() },
-            askWorldQuestion.id
-        )
-    }
-
     @Timed("repository.AskWorldRepository.findQuestionByMessageId")
     fun findQuestionByMessageId(messageId: Long, chat: Chat): AskWorldQuestion {
         return template.query(
@@ -134,10 +112,6 @@ class AskWorldRepository(val template: JdbcTemplate) {
         )
     }
 
-    @Timed("repository.AskWorldRepository.addReplyDeliver")
-    fun addReplyDeliver(reply: AskWorldReply) {
-        template.update("INSERT INTO ask_world_replies_delivery (id) values (?)", reply.id)
-    }
 
     @Timed("repository.AskWorldRepository.addQuestionDeliver")
     fun addQuestionDeliver(question: AskWorldQuestion, chat: Chat) {

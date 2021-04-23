@@ -1,6 +1,5 @@
 package space.yaroslav.familybot.executors.eventbased
 
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
@@ -83,7 +82,7 @@ class AskWorldReceiveReplyExecutor(
 
         return {
             runCatching {
-                val id = coroutineScope { async { askWorldRepository.addReply(askWorldReply) } }
+                coroutineScope { launch { askWorldRepository.addReply(askWorldReply) } }
                 val questionTitle = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
                 val chatIdToReply = question.chat.idString
 
@@ -110,13 +109,22 @@ class AskWorldReceiveReplyExecutor(
                     when (contentType) {
                         MessageContentType.PHOTO ->
                             it.execute(SendPhoto(chatIdToReply, InputFile(message.photo.first().fileId)))
+                                .apply {
+                                    if (message.hasText()) {
+                                        caption = message.text
+                                    }
+                                }
 
                         MessageContentType.AUDIO ->
                             it.execute(
                                 SendAudio(
                                     chatIdToReply,
                                     InputFile(message.audio.fileId)
-                                )
+                                ).apply {
+                                    if (message.hasText()) {
+                                        caption = message.text
+                                    }
+                                }
                             )
 
                         MessageContentType.ANIMATION -> it.execute(
@@ -124,14 +132,26 @@ class AskWorldReceiveReplyExecutor(
                         )
 
                         MessageContentType.DOCUMENT -> it.execute(
-                            SendDocument(chatIdToReply, InputFile(message.document.fileId))
+                            SendDocument(chatIdToReply, InputFile(message.document.fileId)).apply {
+                                if (message.hasText()) {
+                                    caption = message.text
+                                }
+                            }
                         )
 
                         MessageContentType.VOICE ->
-                            it.execute(SendVoice(chatIdToReply, InputFile(message.voice.fileId)))
+                            it.execute(SendVoice(chatIdToReply, InputFile(message.voice.fileId))).apply {
+                                if (message.hasText()) {
+                                    caption = message.text
+                                }
+                            }
 
                         MessageContentType.VIDEO_NOTE ->
-                            it.execute(SendVideoNote(chatIdToReply, InputFile(message.videoNote.fileId)))
+                            it.execute(SendVideoNote(chatIdToReply, InputFile(message.videoNote.fileId))).apply {
+                                if (message.hasText()) {
+                                    caption = message.text
+                                }
+                            }
 
                         MessageContentType.LOCATION -> it.execute(
                             SendLocation(
@@ -155,12 +175,15 @@ class AskWorldReceiveReplyExecutor(
                             SendVideo(
                                 chatIdToReply,
                                 InputFile(message.video.fileId)
-                            )
+                            ).apply {
+                                if (message.hasText()) {
+                                    caption = message.text
+                                }
+                            }
                         )
                         else -> log.warn("Something went wrong with content type detection logic")
                     }
                 }
-                coroutineScope { launch { askWorldRepository.addReplyDeliver(askWorldReply.copy(id = id.await())) } }
                 it.send(update, "Принято и отправлено")
             }.onFailure { e ->
                 it.send(update, "Принято")

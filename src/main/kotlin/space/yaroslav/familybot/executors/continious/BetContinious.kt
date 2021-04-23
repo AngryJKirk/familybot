@@ -93,7 +93,7 @@ class BetContinious(
                 it.send(update, explainPhrase(number, context), shouldTypeBeforeSend = true)
             }
             delay(2000)
-            pidorCompetitionService.pidorCompetition(update)?.invoke(it)
+            pidorCompetitionService.pidorCompetition(update).invoke(it)
         }
     }
 
