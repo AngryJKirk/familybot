@@ -13,7 +13,9 @@ class LogsExecutor(botConfig: BotConfig) : OnlyBotOwnerExecutor(botConfig) {
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         return { sender ->
-            sender.send(update, ErrorLogsDeferredAppender.errors.toString())
+            ErrorLogsDeferredAppender.errors.forEach { errorLog ->
+                sender.send(update, errorLog)
+            }
         }
     }
 }
