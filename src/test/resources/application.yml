@@ -8,7 +8,6 @@ spring:
     driver-class-name: "org.postgresql.Driver"
     password: testPassword
     username: postgres
-  profiles: testing
   redis:
     host: localhost
     port: 6379

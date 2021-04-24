@@ -132,7 +132,7 @@ class CommonRepository(datasource: DataSource) {
     @Timed("repository.CommonRepository.findUsersByName")
     fun findUsersByName(namePart: String): List<User> {
         return template.query(
-            "SELECT * FROM users INNER JOIN users2chats u2c ON users.id = u2c.user_id WHERE LOWER(name) LIKE LOWER(?) OR LOWER(username) LIKE ?",
+            "SELECT * FROM users INNER JOIN users2chats u2c ON users.id = u2c.user_id WHERE LOWER(name) LIKE LOWER(?) OR LOWER(username) LIKE LOWER(?)",
             { rs, _ -> rs.toUser() }, "%$namePart%", "%$namePart%"
         )
     }
