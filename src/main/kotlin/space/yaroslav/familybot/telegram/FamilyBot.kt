@@ -57,14 +57,20 @@ class FamilyBot(
         val user = update.toUser()
         MDC.put("chat", "${user.chat.name}:${user.chat.id}")
         MDC.put("user", "${user.name}:${user.id}")
-        MDC.put("update_id", update.updateId.toString())
         try {
             router.processUpdate(update).invoke(this@FamilyBot)
         } catch (e: TelegramApiRequestException) {
-            log.error("Telegram error: ${e.apiResponse}, ${e.errorCode}, ${e.parameters}, update is $update", e)
+            val logMessage = "Telegram error: ${e.apiResponse}, ${e.errorCode}, update is $update"
+            if (e.errorCode == 400) {
+                log.warn(logMessage, e)
+            } else {
+                log.error(logMessage, e)
+            }
         } catch (e: Exception) {
             log.error("Unexpected error, update is $update", e)
-        }.also { MDC.clear() }
+        } finally {
+            MDC.clear()
+        }
     }
 
     private fun proceedPollAnswer(update: Update) {
