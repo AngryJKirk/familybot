@@ -21,30 +21,6 @@ CREATE TABLE IF NOT EXISTS commands
         UNIQUE (command)
 );
 
-CREATE TABLE IF NOT EXISTS functions
-(
-    function_id INTEGER NOT NULL,
-    description VARCHAR(200),
-    CONSTRAINT functions_pkey
-        PRIMARY KEY (function_id)
-);
-
-CREATE TABLE IF NOT EXISTS function_settings
-(
-    function_id INTEGER                NOT NULL,
-    chat_id     BIGINT,
-    active      BOOLEAN   DEFAULT TRUE NOT NULL,
-    date_from   TIMESTAMP DEFAULT NOW(),
-    id          SERIAL                 NOT NULL,
-    CONSTRAINT function_settings_pkey
-        PRIMARY KEY (id),
-    CONSTRAINT function_settings_chat_id_fkey
-        FOREIGN KEY (chat_id) REFERENCES chats,
-    CONSTRAINT function_settings_function_id_fkey
-        FOREIGN KEY (function_id) REFERENCES functions
-);
-
-
 CREATE TABLE IF NOT EXISTS users
 (
     id       BIGINT NOT NULL,
@@ -291,15 +267,3 @@ VALUES (1, '/stats_month'),
        (23, '/advanced_settings'),
        (24, '/stats_strikes')
 ;
-
-INSERT INTO functions (function_id, description)
-VALUES (1, 'Хуификация'),
-       (2, 'Общение'),
-       (3, 'Пидор дня'),
-       (4, 'Рейдж'),
-       (5, 'АнтиДДос'),
-       (6, 'Вопросы миру'),
-       (7, 'Приветствия и прощания'),
-       (8, 'Реакция на обращения')
-;
-
