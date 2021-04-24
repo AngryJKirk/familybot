@@ -60,8 +60,8 @@ fun Update.from(): TelegramUser {
     }
 }
 
-fun Message.getCommand(botName: () -> String): Command? {
-    val botNameValue = botName()
+fun Message.getCommand(botName: () -> String?): Command? {
+    val botNameValue = botName() ?: throw FamilyBot.InternalException("Bot name should be set up")
     val textCommand = this
         .entities
         ?.asSequence()
@@ -85,7 +85,11 @@ fun Update.getMessageTokens(delimiter: String = " "): List<String> {
 }
 
 fun Update.key(): UserAndChatSettingsKey {
-    return UserAndChatSettingsKey(this.chatId(), this.toUser().id)
+    return UserAndChatSettingsKey(this.toUser().id, this.chatId())
+}
+
+fun Message.key(): UserAndChatSettingsKey {
+    return UserAndChatSettingsKey(from.id, chatId)
 }
 
 fun User.key(): UserSettingsKey {

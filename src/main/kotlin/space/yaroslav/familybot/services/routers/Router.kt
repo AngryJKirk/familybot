@@ -31,9 +31,13 @@ import space.yaroslav.familybot.repos.CommandHistoryRepository
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.repos.FunctionsConfigureRepository
 import space.yaroslav.familybot.services.misc.RawUpdateLogger
+import space.yaroslav.familybot.services.settings.CommandLimit
+import space.yaroslav.familybot.services.settings.EasySettingsService
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
+import java.time.Duration
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 @Component
 class Router(
@@ -45,7 +49,8 @@ class Router(
     private val rawUpdateLogger: RawUpdateLogger,
     private val botConfig: BotConfig,
     private val dictionary: Dictionary,
-    private val meterRegistry: MeterRegistry
+    private val meterRegistry: MeterRegistry,
+    private val easySettingsService: EasySettingsService
 ) {
 
     private val logger = getLogger()
@@ -147,6 +152,13 @@ class Router(
         coroutineScope {
             launch {
                 if (executor is CommandExecutor && executor.isLoggable()) {
+                    val key = update.key()
+                    val currentValue = easySettingsService.get(CommandLimit, key)
+                    if (currentValue == null) {
+                        easySettingsService.put(CommandLimit, key, 1, Duration.of(5, ChronoUnit.MINUTES))
+                    } else {
+                        easySettingsService.increment(CommandLimit, key)
+                    }
                     commandHistoryRepository.add(
                         CommandByUser(
                             update.toUser(),

@@ -39,3 +39,7 @@ object PidorStrikeStats : StringEasySetting<ChatSettingsKey>() {
 object Ban : StringEasySetting<SettingsKey>() {
     override fun keyType() = SettingsKey::class
 }
+
+object CommandLimit : LongSetting<UserAndChatSettingsKey>() {
+    override fun keyType() = UserAndChatSettingsKey::class
+}

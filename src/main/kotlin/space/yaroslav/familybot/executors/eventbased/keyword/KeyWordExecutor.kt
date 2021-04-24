@@ -16,14 +16,14 @@ class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Config
 
     private val log = getLogger()
 
-    private val actionFastAccess = HashMap<Int, (Update) -> suspend (AbsSender) -> Unit>()
+    private val processorsForMessage = HashMap<Int, KeyWordProcessor>()
 
     override fun priority(update: Update) = Priority.LOW
 
     override fun getFunctionId() = FunctionId.TALK_BACK
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        return actionFastAccess.remove(update.message.messageId)?.invoke(update) ?: {}
+        return processorsForMessage.remove(update.message.messageId)?.process(update) ?: {}
     }
 
     override fun canExecute(message: Message): Boolean {
@@ -32,7 +32,7 @@ class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Config
             ?.takeIf { isPassingRandomCheck(it, message) }
         return if (keyWordProcessor != null) {
             log.info("Key word processor is found: ${keyWordProcessor::class.simpleName}")
-            actionFastAccess[message.messageId] = { update -> keyWordProcessor.process(update) }
+            processorsForMessage[message.messageId] = keyWordProcessor
             true
         } else {
             false

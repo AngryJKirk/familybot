@@ -8,25 +8,24 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.utils.getCommand
+import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.send
-import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.Executor
 import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.Priority
-import space.yaroslav.familybot.repos.CommandHistoryRepository
+import space.yaroslav.familybot.services.settings.CommandLimit
+import space.yaroslav.familybot.services.settings.EasySettingsService
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
-import space.yaroslav.familybot.telegram.FamilyBot
 
 @Component
 class AntiDdosExecutor(
-    private val repositoryCommand: CommandHistoryRepository,
     private val config: BotConfig,
-    private val dictionary: Dictionary
+    private val dictionary: Dictionary,
+    private val easySettingsService: EasySettingsService
 ) : Executor, Configurable {
     override fun getFunctionId(): FunctionId {
         return FunctionId.ANTIDDOS
@@ -42,15 +41,11 @@ class AntiDdosExecutor(
     }
 
     override fun canExecute(message: Message): Boolean {
-        val command =
-            message.getCommand { config.botname ?: throw FamilyBot.InternalException("Bot name should be set up") }
-                ?: return false
-        return repositoryCommand
-            .get(selectUser(message).toUser(telegramChat = message.chat))
-            .groupBy(CommandByUser::command)
-            .filterValues { it.size >= 5 }
-            .keys
-            .contains(command)
+        return if (message.getCommand { config.botname } != null) {
+            easySettingsService.get(CommandLimit, message.key(), 0) >= 5
+        } else {
+            false
+        }
     }
 
     override fun priority(update: Update): Priority {
