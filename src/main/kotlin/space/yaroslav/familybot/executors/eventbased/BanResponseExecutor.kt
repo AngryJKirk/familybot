@@ -20,7 +20,7 @@ class BanResponseExecutor(private val banService: BanService) : Executor {
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val banMessage = banService.isChatBanned(update.toChat()) ?: banService.isUserBanned(update.toUser())
-        ?: throw FamilyBot.InternalException("Some logic mistake: executor should not be chosen in case of there are no ban")
+            ?: throw FamilyBot.InternalException("Some logic mistake: executor should not be chosen in case of there are no ban")
         if (isCommand(update.message)) {
             return {
                 it.send(

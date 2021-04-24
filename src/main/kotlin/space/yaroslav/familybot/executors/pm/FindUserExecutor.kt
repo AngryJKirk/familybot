@@ -46,14 +46,14 @@ class FindUserExecutor(
         val parts = listOfNotNull(
             "id=${user.id}",
             user.nickname?.let { nickname -> "username=$nickname" },
-            user.name?.let { name -> "name=$name" })
+            user.name?.let { name -> "name=$name" }
+        )
 
         return "[${parts.joinToString(separator = ", ")}]"
     }
 
     private fun formatChats(chats: List<Chat>): String {
         return chats
-            .joinToString(separator = ",\n")
-            { chat: Chat -> "id=${chat.id}, chatname=${chat.name}" }
+            .joinToString(separator = ",\n") { chat: Chat -> "id=${chat.id}, chatname=${chat.name}" }
     }
 }

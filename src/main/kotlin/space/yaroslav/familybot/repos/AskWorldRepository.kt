@@ -112,7 +112,6 @@ class AskWorldRepository(val template: JdbcTemplate) {
         )
     }
 
-
     @Timed("repository.AskWorldRepository.addQuestionDeliver")
     fun addQuestionDeliver(question: AskWorldQuestion, chat: Chat) {
         template.update(
