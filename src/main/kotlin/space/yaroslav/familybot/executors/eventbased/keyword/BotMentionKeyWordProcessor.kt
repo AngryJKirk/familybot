@@ -63,8 +63,9 @@ class BotMentionKeyWordProcessor(
     }
 
     fun isFuckOff(update: Update): Boolean {
+        val text = update.message.text ?: return false
         return if (!isUserUnderTolerance(update)) {
-            fuckOffPhrases.any { it.matches(update.message.text) }
+            fuckOffPhrases.any { it.matches(text) }
         } else {
             false
         }

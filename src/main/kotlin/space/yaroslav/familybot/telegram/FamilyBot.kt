@@ -40,12 +40,13 @@ class FamilyBot(
         if (update.hasPoll()) {
             return
         }
+        if (update.hasMessage() || update.hasCallbackQuery() || update.hasEditedMessage()) {
+            val chat = update.toChat()
 
-        val chat = update.toChat()
+            val channel = channels.computeIfAbsent(chat.id) { createChannel() }
 
-        val channel = channels.computeIfAbsent(chat.id) { createChannel() }
-
-        routerScope.launch { channel.send(update) }
+            routerScope.launch { channel.send(update) }
+        }
     }
 
     override fun getBotUsername(): String {
