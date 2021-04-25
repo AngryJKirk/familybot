@@ -2,7 +2,8 @@ FROM maven:3.6.0-jdk-11-slim AS build
 
 COPY ./pom.xml /home/app/pom.xml
 
-RUN mvn -f /home/app/pom.xml clean dependency:go-offline
+# verify --fail-never works much better than dependency:resolve or dependency:go-offline
+RUN mvn -f /home/app/pom.xml clean verify --fail-never
 
 COPY ./src /home/app/src
 
