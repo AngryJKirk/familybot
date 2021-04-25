@@ -33,10 +33,11 @@ class BanSomeoneExecutor(
             return {
                 if (isUnban) {
                     banService.reduceBan(chat.key())
+                    it.send(update, "Unbanned chat: $chat")
                 } else {
                     banService.banChat(chat, description)
+                    it.send(update, "Banned chat: $chat")
                 }
-                it.send(update, "Banned chat: $chat")
             }
         }
 
@@ -49,10 +50,11 @@ class BanSomeoneExecutor(
             return {
                 if (isUnban) {
                     banService.reduceBan(user.key())
+                    it.send(update, "Unbanned user: $user")
                 } else {
                     banService.banUser(user, description)
+                    it.send(update, "Banned user: $user")
                 }
-                it.send(update, "Banned user: $user")
             }
         }
 
