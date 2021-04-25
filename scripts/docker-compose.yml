@@ -14,6 +14,8 @@ services:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
       - "127.0.0.1:16379:6379"
+    command:
+      - "--appendonly yes"
 
   family-db:
     networks:
