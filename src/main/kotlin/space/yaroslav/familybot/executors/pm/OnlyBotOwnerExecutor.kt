@@ -8,8 +8,8 @@ import space.yaroslav.familybot.telegram.BotConfig
 abstract class OnlyBotOwnerExecutor(private val botConfig: BotConfig) : PrivateMessageExecutor {
 
     override fun canExecute(message: Message): Boolean {
-        return botConfig.developer == message.from.userName
-            && message.text.startsWith(getMessagePrefix(), ignoreCase = true)
+        return botConfig.developer == message.from.userName &&
+            message.text.startsWith(getMessagePrefix(), ignoreCase = true)
     }
 
     override fun priority(update: Update) = Priority.HIGH

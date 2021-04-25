@@ -6,8 +6,8 @@ import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.prettyFormat
 import space.yaroslav.familybot.services.settings.Ban
-import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.EasyKey
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import java.time.Duration
 import java.time.Instant
 

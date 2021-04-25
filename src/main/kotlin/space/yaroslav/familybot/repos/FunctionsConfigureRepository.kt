@@ -1,7 +1,6 @@
 package space.yaroslav.familybot.repos
 
 import io.micrometer.core.annotation.Timed
-import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.utils.key
@@ -9,7 +8,6 @@ import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.services.settings.EasyKeyValueRepository
 
 @Component
-@Primary
 class FunctionsConfigureRepository(
     private val keyValueRepository: EasyKeyValueRepository
 ) {

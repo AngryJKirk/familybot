@@ -1,15 +1,14 @@
 package space.yaroslav.familybot.executors.pm
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.common.utils.getMessageTokens
+import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.misc.BanService
 import space.yaroslav.familybot.telegram.BotConfig
-import kotlin.coroutines.coroutineContext
 
 @Component
 class BanSomeoneExecutor(
@@ -18,34 +17,42 @@ class BanSomeoneExecutor(
     botConfig: BotConfig
 ) : OnlyBotOwnerExecutor(botConfig) {
 
-    private val banPrefix = "BAN1488|"
+    private val banPrefix = "ban|"
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
 
-        val command = update.message.text.split("|")
+        val command = update.getMessageTokens(delimiter = "|")
         val identification = command[1]
-
+        val isUnban = command.getOrNull(4) == "unban"
         val chats = commonRepository.getChats()
 
-        val chatToBan = chats.find { it.name == identification || it.id == identification.toLongOrNull() }
+        val chat = chats.find { it.name == identification || it.id == identification.toLongOrNull() }
 
         val description = command[2]
-        if (chatToBan != null) {
+        if (chat != null) {
             return {
-                CoroutineScope(coroutineContext).launch { banService.banChat(chatToBan, description) }
-                it.send(update, "Banned chat: $chatToBan")
+                if (isUnban) {
+                    banService.reduceBan(chat.key())
+                } else {
+                    banService.banChat(chat, description)
+                }
+                it.send(update, "Banned chat: $chat")
             }
         }
 
-        val userToBan = chats
+        val user = chats
             .asSequence()
             .flatMap { commonRepository.getUsers(it, activeOnly = true).asSequence() }
             .firstOrNull { it.nickname == identification || it.name == identification || it.id == identification.toLongOrNull() }
 
-        if (userToBan != null) {
+        if (user != null) {
             return {
-                CoroutineScope(coroutineContext).launch { banService.banUser(userToBan, description) }
-                it.send(update, "Banned user: $userToBan")
+                if (isUnban) {
+                    banService.reduceBan(user.key())
+                } else {
+                    banService.banUser(user, description)
+                }
+                it.send(update, "Banned user: $user")
             }
         }
 

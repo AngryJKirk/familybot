@@ -17,7 +17,7 @@ class PatchNoteExecutor(
     botConfig: BotConfig
 ) : OnlyBotOwnerExecutor(botConfig) {
 
-    private val patchNotePrefix = "PATCHNOTE|"
+    private val patchNotePrefix = "patch_note|"
     private val log = getLogger()
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
