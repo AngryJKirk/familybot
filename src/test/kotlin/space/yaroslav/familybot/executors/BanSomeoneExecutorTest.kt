@@ -61,7 +61,7 @@ class BanSomeoneExecutorTest : ExecutorTest() {
     }
 
     override fun canExecuteTest() {
-        val validMessage = updateFromDeveloper("BAN1488|").message
+        val validMessage = updateFromDeveloper(banSomeoneExecutor.getMessagePrefix()).message
 
         val canExecuteValid = banSomeoneExecutor.canExecute(validMessage)
 
@@ -83,14 +83,14 @@ class BanSomeoneExecutorTest : ExecutorTest() {
     fun executeTest(banModel: BanTestModel) {
         clearInvocations(sender)
         val description = randomUUID()
-        val update = updateFromDeveloper("BAN1488|${banModel.key}|$description")
+        val update = updateFromDeveloper("${banSomeoneExecutor.getMessagePrefix()}${banModel.key}|$description")
         runBlocking { banSomeoneExecutor.execute(update).invoke(sender) }
         verify(sender).execute(any<SendMessage>())
 
-        banService.findBanByKey(banModel.seetingsKey)
+        banService.findBanByKey(banModel.easyKey)
             ?: throw AssertionError("Should be a new ban")
 
-        banService.reduceBan(banModel.seetingsKey)
+        banService.reduceBan(banModel.easyKey)
     }
 
     @Test
@@ -129,6 +129,6 @@ class BanSomeoneExecutorTest : ExecutorTest() {
 
     data class BanTestModel(
         val key: String?,
-        val seetingsKey: EasyKey
+        val easyKey: EasyKey
     )
 }
