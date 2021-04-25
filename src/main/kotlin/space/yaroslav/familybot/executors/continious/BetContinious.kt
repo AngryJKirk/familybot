@@ -8,7 +8,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendDice
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.Pluralization
 import space.yaroslav.familybot.common.User
@@ -16,25 +15,26 @@ import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
+import space.yaroslav.familybot.common.utils.untilNextMonth
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.repos.CommandHistoryRepository
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.misc.PidorCompetitionService
+import space.yaroslav.familybot.services.settings.BetTolerance
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
+import space.yaroslav.familybot.services.settings.UserAndChatEasyKey
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.services.talking.DictionaryContext
 import space.yaroslav.familybot.telegram.BotConfig
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.ZoneOffset
 
 @Component
 class BetContinious(
     private val dictionary: Dictionary,
-    private val commandHistoryRepository: CommandHistoryRepository,
     private val pidorRepository: CommonRepository,
     private val pidorCompetitionService: PidorCompetitionService,
+    private val easyKeyValueService: EasyKeyValueService,
     private val botConfig: BotConfig
 ) : ContiniousConversation(botConfig) {
     private val diceNumbers = listOf(1, 2, 3, 4, 5, 6)
@@ -52,15 +52,11 @@ class BetContinious(
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val context = dictionary.createContext(update)
-        val now = LocalDate.now()
         val user = update.toUser()
         val chatId = update.message.chatId
-        val commands = commandHistoryRepository.get(
-            user,
-            LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
-                .toInstant(ZoneOffset.UTC)
-        )
-        if (isBetAlreadyDone(commands)) {
+        val key = update.key()
+
+        if (isBetAlreadyDone(key)) {
             return {
                 it.send(update, context.get(Phrase.BET_ALREADY_WAS), shouldTypeBeforeSend = true)
             }
@@ -92,6 +88,7 @@ class BetContinious(
                 it.send(update, context.get(Phrase.BET_LOSE), shouldTypeBeforeSend = true)
                 it.send(update, explainPhrase(number, context), shouldTypeBeforeSend = true)
             }
+            easyKeyValueService.put(BetTolerance, key, true, untilNextMonth())
             delay(2000)
             pidorCompetitionService.pidorCompetition(update).invoke(it)
         }
@@ -118,8 +115,8 @@ class BetContinious(
     private fun extractBetNumber(update: Update) =
         update.message.text.split(" ")[0].toIntOrNull()
 
-    private fun isBetAlreadyDone(commands: List<CommandByUser>) =
-        commands.any { it.command == command() }
+    private fun isBetAlreadyDone(key: UserAndChatEasyKey) =
+        easyKeyValueService.get(BetTolerance, key, false)
 
     private fun winEndPhrase(betNumber: Int, context: DictionaryContext): String {
         val plur = Pluralization.getPlur(betNumber)

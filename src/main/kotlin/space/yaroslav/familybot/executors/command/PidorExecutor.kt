@@ -15,18 +15,20 @@ import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.isToday
+import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.send
-import space.yaroslav.familybot.common.utils.startOfDay
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
+import space.yaroslav.familybot.common.utils.untilNextDay
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.repos.CommandHistoryRepository
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.misc.PidorCompetitionService
 import space.yaroslav.familybot.services.misc.PidorStrikesService
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
+import space.yaroslav.familybot.services.settings.PidorTolerance
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.services.talking.DictionaryContext
 import space.yaroslav.familybot.telegram.BotConfig
@@ -37,8 +39,8 @@ class PidorExecutor(
     private val repository: CommonRepository,
     private val pidorCompetitionService: PidorCompetitionService,
     private val dictionary: Dictionary,
-    private val commandHistoryRepository: CommandHistoryRepository,
     private val pidorStrikesService: PidorStrikesService,
+    private val easyKeyValueService: EasyKeyValueService,
     config: BotConfig
 ) : CommandExecutor(config), Configurable {
     override fun getFunctionId(): FunctionId {
@@ -52,7 +54,9 @@ class PidorExecutor(
         val context = dictionary.createContext(chat)
         log.info("Getting pidors from chat $chat")
         val users = repository.getUsers(chat, activeOnly = true)
-        if (isLimitOfPidorsExceeded(users, chat)) {
+        val key = chat.key()
+        val pidorToleranceValue = easyKeyValueService.get(PidorTolerance, key)
+        if (isLimitOfPidorsExceeded(users, pidorToleranceValue ?: 0)) {
             log.info("Pidors are already found")
             val message = getMessageForPidors(chat, context)
             return { it.execute(message) }
@@ -85,6 +89,11 @@ class PidorExecutor(
                 shouldTypeBeforeSend = true,
                 typeDelay = 1500L to 1501L
             )
+            if (pidorToleranceValue == null) {
+                easyKeyValueService.put(PidorTolerance, key, 1, untilNextDay())
+            } else {
+                easyKeyValueService.increment(PidorTolerance, key)
+            }
             pidorStrikesService.calculateStrike(update, pidor).invoke(sender)
             pidorCompetitionService.pidorCompetition(update).invoke(sender)
         }
@@ -150,13 +159,10 @@ class PidorExecutor(
 
     private fun isLimitOfPidorsExceeded(
         usersInChat: List<User>,
-        chat: Chat
+        pidorToleranceValue: Long
     ): Boolean {
         val limit = if (usersInChat.size >= 50) 2 else 1
-        return commandHistoryRepository
-            .getAll(chat, Instant.now().startOfDay())
-            .filter { todayCommand -> todayCommand.command == command() }
-            .size >= limit
+        return pidorToleranceValue >= limit
     }
 
     private fun getUserFromChat(user: User, absSender: AbsSender): User? {

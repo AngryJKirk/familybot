@@ -13,14 +13,14 @@ import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ChatLogRepository
 import space.yaroslav.familybot.services.dictionary.TranslateService
-import space.yaroslav.familybot.services.settings.EasySettingsService
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.UkrainianLanguage
 
 @Component
 class TalkingService(
     private val chatLogRepository: ChatLogRepository,
     private val translateService: TranslateService,
-    private val easySettingsService: EasySettingsService
+    private val easyKeyValueService: EasyKeyValueService
 ) {
 
     companion object {
@@ -50,7 +50,7 @@ class TalkingService(
             }
         }
 
-        return if (easySettingsService.get(UkrainianLanguage, update.toChat().key()) == true) {
+        return if (easyKeyValueService.get(UkrainianLanguage, update.toChat().key()) == true) {
             translateService.translate(message.await())
         } else {
             message.await()

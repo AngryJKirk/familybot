@@ -13,21 +13,15 @@ import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.executors.command.ROULETTE_MESSAGE
 import space.yaroslav.familybot.models.Command
-import space.yaroslav.familybot.repos.CommandHistoryRepository
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.misc.PidorCompetitionService
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneOffset
 import java.util.concurrent.ThreadLocalRandom
 
 @Component
 @Deprecated(message = "Replaced with BetContinious")
 class RouletteContinious(
-    private val commandHistoryRepository: CommandHistoryRepository,
     private val botConfig: BotConfig,
     private val pidorRepository: CommonRepository,
     private val pidorCompetitionService: PidorCompetitionService
@@ -50,21 +44,9 @@ class RouletteContinious(
     }
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        val now = LocalDate.now()
         val user = update.toUser()
         val chatId = update.message.chatId.toString()
-        val commands = commandHistoryRepository.get(
-            user,
-            LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
-                .toInstant(ZoneOffset.UTC)
-        )
-        if (commands.any { it.command == command() }) {
-            return {
-                it.execute(SendMessage(chatId, "Ты уже крутил рулетку."))
-                delay(2000)
-                it.execute(SendMessage(chatId, "Пидор."))
-            }
-        }
+
         val number = update.message.text.split(" ")[0].toIntOrNull()
         if (number !in 1..6) {
             return {

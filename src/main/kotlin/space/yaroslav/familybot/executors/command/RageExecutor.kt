@@ -9,26 +9,23 @@ import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
+import space.yaroslav.familybot.common.utils.untilNextDay
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.repos.CommandHistoryRepository
-import space.yaroslav.familybot.services.settings.EasySettingsService
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
+import space.yaroslav.familybot.services.settings.FirstTimeInChat
 import space.yaroslav.familybot.services.settings.RageMode
+import space.yaroslav.familybot.services.settings.RageTolerance
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Duration
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
 
 @Component
 class RageExecutor(
-    private val commandHistoryRepository: CommandHistoryRepository,
     private val dictionary: Dictionary,
-    private val easySettingsService: EasySettingsService,
+    private val easyKeyValueService: EasyKeyValueService,
     config: BotConfig
 ) : CommandExecutor(config), Configurable {
 
@@ -49,9 +46,10 @@ class RageExecutor(
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val chat = update.toChat()
         val context = dictionary.createContext(chat)
+        val key = chat.key()
         if (isRageForced(update)) {
             log.warn("Someone forced ${command()}")
-            easySettingsService.put(RageMode, chat.key(), AMOUNT_OF_RAGE_MESSAGES, Duration.ofMinutes(10))
+            easyKeyValueService.put(RageMode, key, AMOUNT_OF_RAGE_MESSAGES, Duration.ofMinutes(10))
             return {
                 it.send(update, context.get(Phrase.RAGE_INITIAL), shouldTypeBeforeSend = true)
             }
@@ -70,30 +68,19 @@ class RageExecutor(
                 it.send(update, context.get(Phrase.RAGE_DONT_CARE_ABOUT_YOU), shouldTypeBeforeSend = true)
             }
         }
-        easySettingsService.put(RageMode, chat.key(), AMOUNT_OF_RAGE_MESSAGES, Duration.ofMinutes(10))
+        easyKeyValueService.put(RageMode, key, AMOUNT_OF_RAGE_MESSAGES, Duration.ofMinutes(10))
+        easyKeyValueService.put(RageTolerance, key, true, untilNextDay())
         return {
             it.send(update, context.get(Phrase.RAGE_INITIAL), shouldTypeBeforeSend = true)
         }
     }
 
     private fun isCooldown(update: Update): Boolean {
-        val commands = commandHistoryRepository.get(
-            update.toUser(),
-            from = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
-        )
-        return commands.any { it.command == command() }
+        return easyKeyValueService.get(RageTolerance, update.toChat().key(), false)
     }
 
     private fun isFirstLaunch(chat: Chat): Boolean {
-        val command = commandHistoryRepository
-            .getTheFirst(chat) ?: return true
-
-        val oneDayAgoDate = LocalDateTime
-            .now()
-            .minusDays(1)
-            .toInstant(ZoneOffset.UTC)
-
-        return command.date.isAfter(oneDayAgoDate)
+        return easyKeyValueService.get(FirstTimeInChat, chat.key(), false)
     }
 
     private fun isRageForced(update: Update): Boolean {

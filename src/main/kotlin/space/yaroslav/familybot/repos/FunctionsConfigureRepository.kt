@@ -6,12 +6,12 @@ import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.models.FunctionId
-import space.yaroslav.familybot.services.settings.EasySettingsRepository
+import space.yaroslav.familybot.services.settings.EasyKeyValueRepository
 
 @Component
 @Primary
 class FunctionsConfigureRepository(
-    private val settingsRepository: EasySettingsRepository
+    private val keyValueRepository: EasyKeyValueRepository
 ) {
 
     @Timed("repository.RedisFunctionsConfigureRepository.isEnabled")
@@ -34,14 +34,14 @@ class FunctionsConfigureRepository(
         id: FunctionId,
         chat: Chat
     ): Boolean {
-        return settingsRepository.get(id.easySetting, chat.key()) ?: true
+        return keyValueRepository.get(id.easySetting, chat.key()) ?: true
     }
 
     private fun switchInternal(
         id: FunctionId,
         chat: Chat
     ) {
-        val currentValue = settingsRepository.get(id.easySetting, chat.key()) ?: true
-        settingsRepository.put(id.easySetting, chat.key(), currentValue.not())
+        val currentValue = keyValueRepository.get(id.easySetting, chat.key()) ?: true
+        keyValueRepository.put(id.easySetting, chat.key(), currentValue.not())
     }
 }

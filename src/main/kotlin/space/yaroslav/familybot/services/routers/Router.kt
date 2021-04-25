@@ -16,6 +16,7 @@ import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.meteredCanExecute
 import space.yaroslav.familybot.common.utils.meteredExecute
 import space.yaroslav.familybot.common.utils.meteredPriority
+import space.yaroslav.familybot.common.utils.prettyFormat
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.executors.Configurable
@@ -32,7 +33,9 @@ import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.repos.FunctionsConfigureRepository
 import space.yaroslav.familybot.services.misc.RawUpdateLogger
 import space.yaroslav.familybot.services.settings.CommandLimit
-import space.yaroslav.familybot.services.settings.EasySettingsService
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
+import space.yaroslav.familybot.services.settings.FirstBotInteraction
+import space.yaroslav.familybot.services.settings.FirstTimeInChat
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Duration
@@ -50,7 +53,7 @@ class Router(
     private val botConfig: BotConfig,
     private val dictionary: Dictionary,
     private val meterRegistry: MeterRegistry,
-    private val easySettingsService: EasySettingsService
+    private val easyKeyValueService: EasyKeyValueService
 ) {
 
     private val logger = getLogger()
@@ -153,11 +156,11 @@ class Router(
             launch {
                 if (executor is CommandExecutor && executor.isLoggable()) {
                     val key = update.key()
-                    val currentValue = easySettingsService.get(CommandLimit, key)
+                    val currentValue = easyKeyValueService.get(CommandLimit, key)
                     if (currentValue == null) {
-                        easySettingsService.put(CommandLimit, key, 1, Duration.of(5, ChronoUnit.MINUTES))
+                        easyKeyValueService.put(CommandLimit, key, 1, Duration.of(5, ChronoUnit.MINUTES))
                     } else {
-                        easySettingsService.increment(CommandLimit, key)
+                        easyKeyValueService.increment(CommandLimit, key)
                     }
                     commandHistoryRepository.add(
                         CommandByUser(
@@ -202,6 +205,12 @@ class Router(
         val chat = message.chat.toChat()
 
         repository.addChat(chat)
+        val key = chat.key()
+        val firstBotInteractionDate = easyKeyValueService.get(FirstBotInteraction, key)
+        if (firstBotInteractionDate == null) {
+            easyKeyValueService.put(FirstBotInteraction, key, Instant.now().prettyFormat())
+            easyKeyValueService.put(FirstTimeInChat, key, true, Duration.of(1, ChronoUnit.DAYS))
+        }
         val leftChatMember = message.leftChatMember
         val newChatMembers = message.newChatMembers
 

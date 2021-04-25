@@ -13,9 +13,9 @@ import space.yaroslav.familybot.executors.command.settings.AdvancedSettingsExecu
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.randomLong
 import space.yaroslav.familybot.models.Command
-import space.yaroslav.familybot.services.settings.ChatSettingsKey
-import space.yaroslav.familybot.services.settings.EasySetting
-import space.yaroslav.familybot.services.settings.EasySettingsService
+import space.yaroslav.familybot.services.settings.ChatEasyKey
+import space.yaroslav.familybot.services.settings.EasyKeyType
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.TalkingDensity
 import space.yaroslav.familybot.services.settings.UkrainianLanguage
 import space.yaroslav.familybot.suits.CommandExecutorTest
@@ -44,7 +44,7 @@ class AdvancedSettingsExecutorTest : CommandExecutorTest() {
     lateinit var advancedSettingsExecutor: AdvancedSettingsExecutor
 
     @Autowired
-    lateinit var easySettingsService: EasySettingsService
+    lateinit var easyKeyValueService: EasyKeyValueService
 
     override fun getCommandExecutor() = advancedSettingsExecutor
 
@@ -56,12 +56,12 @@ class AdvancedSettingsExecutorTest : CommandExecutorTest() {
     @MethodSource("valuesProvider")
     fun <T : Any> executeTest(
         command: String,
-        easySetting: EasySetting<T, ChatSettingsKey>,
+        easyKeyType: EasyKeyType<T, ChatEasyKey>,
         expectedSettingValue: T
     ) {
         val update = createSimpleUpdate(command)
         runBlocking { advancedSettingsExecutor.execute(update).invoke(sender) }
-        val actualSettingValue = easySettingsService.get(easySetting, update.toChat().key())
+        val actualSettingValue = easyKeyValueService.get(easyKeyType, update.toChat().key())
         Assertions.assertEquals(expectedSettingValue, actualSettingValue)
     }
 }

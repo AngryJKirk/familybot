@@ -29,16 +29,6 @@ class CommandHistoryRepository(val template: JdbcTemplate) {
         )
     }
 
-    @Timed("repository.CommandHistoryRepository.getTheFirst")
-    fun getTheFirst(chat: Chat): CommandByUser? {
-        return template.query(
-            "SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ? " +
-                "order by command_date limit 1",
-            { rs, _ -> rs.toCommandByUser(null) },
-            chat.id
-        ).firstOrNull()
-    }
-
     @Timed("repository.CommandHistoryRepository.add")
     fun add(commandByUser: CommandByUser) {
         template.update(

@@ -7,15 +7,11 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import space.yaroslav.familybot.common.CommandByUser
 import space.yaroslav.familybot.common.utils.toChat
-import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.executors.command.PidorExecutor
 import space.yaroslav.familybot.infrastructure.createSimpleCommand
-import space.yaroslav.familybot.repos.CommandHistoryRepository
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.suits.CommandExecutorTest
-import java.time.Instant
 
 class PidorExecutorTest : CommandExecutorTest() {
 
@@ -24,9 +20,6 @@ class PidorExecutorTest : CommandExecutorTest() {
 
     @Autowired
     lateinit var commonRepository: CommonRepository
-
-    @Autowired
-    lateinit var commandHistoryRepository: CommandHistoryRepository
 
     override fun getCommandExecutor() = pidorExecutor
 
@@ -63,7 +56,6 @@ class PidorExecutorTest : CommandExecutorTest() {
             lastPidorAfterFirstInvoke.user.getGeneralName(true),
             "Pidor in message and in database should match"
         )
-        commandHistoryRepository.add(CommandByUser(update.toUser(), pidorExecutor.command(), Instant.now()))
         val secondCaptor = ArgumentCaptor.forClass(SendMessage::class.java)
         runBlocking { pidorExecutor.execute(update).invoke(sender) }
         verify(sender, times(12)).execute(secondCaptor.capture())

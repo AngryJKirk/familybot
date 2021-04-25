@@ -6,18 +6,18 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.toChat
-import space.yaroslav.familybot.services.settings.EasySettingsService
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.PidorStrikeStats
 
 @Component
 class PidorStrikeStorage(
-    private val easySettingsService: EasySettingsService
+    private val easyKeyValueService: EasyKeyValueService
 ) {
     private val objectMapper = ObjectMapper()
 
     fun get(update: Update): PidorStrikes {
         val key = update.toChat().key()
-        val rawValue = easySettingsService.get(PidorStrikeStats, key)
+        val rawValue = easyKeyValueService.get(PidorStrikeStats, key)
         return if (rawValue.isNullOrBlank()) {
             PidorStrikes(mutableMapOf())
         } else {
@@ -26,7 +26,7 @@ class PidorStrikeStorage(
     }
 
     fun save(update: Update, strikes: PidorStrikes) {
-        easySettingsService.put(PidorStrikeStats, update.toChat().key(), serialize(strikes))
+        easyKeyValueService.put(PidorStrikeStats, update.toChat().key(), serialize(strikes))
     }
 
     private fun deserialize(raw: String): PidorStrikes {

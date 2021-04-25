@@ -22,7 +22,7 @@ import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.randomUUID
 import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.services.misc.BanService
-import space.yaroslav.familybot.services.settings.SettingsKey
+import space.yaroslav.familybot.services.settings.EasyKey
 import space.yaroslav.familybot.suits.ExecutorTest
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
@@ -129,6 +129,6 @@ class BanSomeoneExecutorTest : ExecutorTest() {
 
     data class BanTestModel(
         val key: String?,
-        val seetingsKey: SettingsKey
+        val seetingsKey: EasyKey
     )
 }

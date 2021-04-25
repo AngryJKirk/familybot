@@ -1,45 +1,65 @@
 package space.yaroslav.familybot.services.settings
 
-abstract class BooleanSetting<K : SettingsKey> : EasySetting<Boolean, K> {
+abstract class BooleanKeyType<K : EasyKey> : EasyKeyType<Boolean, K> {
     override fun getType() = Boolean::class
 }
 
-abstract class LongSetting<K : SettingsKey> : EasySetting<Long, K> {
+abstract class LongKeyType<K : EasyKey> : EasyKeyType<Long, K> {
     override fun getType() = Long::class
 }
 
-abstract class StringEasySetting<K : SettingsKey> : EasySetting<String, K> {
+abstract class StringKeyType<K : EasyKey> : EasyKeyType<String, K> {
     override fun getType() = String::class
 }
 
-object FuckOffTolerance : BooleanSetting<UserAndChatSettingsKey>() {
-    override fun keyType() = UserAndChatSettingsKey::class
+object FuckOffTolerance : BooleanKeyType<UserAndChatEasyKey>() {
+    override fun keyType() = UserAndChatEasyKey::class
 }
 
-object RageMode : LongSetting<ChatSettingsKey>() {
-    override fun keyType() = ChatSettingsKey::class
+object RageMode : LongKeyType<ChatEasyKey>() {
+    override fun keyType() = ChatEasyKey::class
 }
 
-object TalkingDensity : LongSetting<ChatSettingsKey>() {
-    override fun keyType() = ChatSettingsKey::class
+object TalkingDensity : LongKeyType<ChatEasyKey>() {
+    override fun keyType() = ChatEasyKey::class
 }
 
-object UkrainianLanguage : BooleanSetting<ChatSettingsKey>() {
-    override fun keyType() = ChatSettingsKey::class
+object UkrainianLanguage : BooleanKeyType<ChatEasyKey>() {
+    override fun keyType() = ChatEasyKey::class
 }
 
-object AskWorldDensity : StringEasySetting<ChatSettingsKey>() {
-    override fun keyType() = ChatSettingsKey::class
+object AskWorldDensity : StringKeyType<ChatEasyKey>() {
+    override fun keyType() = ChatEasyKey::class
 }
 
-object PidorStrikeStats : StringEasySetting<ChatSettingsKey>() {
-    override fun keyType() = ChatSettingsKey::class
+object PidorStrikeStats : StringKeyType<ChatEasyKey>() {
+    override fun keyType() = ChatEasyKey::class
 }
 
-object Ban : StringEasySetting<SettingsKey>() {
-    override fun keyType() = SettingsKey::class
+object Ban : StringKeyType<EasyKey>() {
+    override fun keyType() = EasyKey::class
 }
 
-object CommandLimit : LongSetting<UserAndChatSettingsKey>() {
-    override fun keyType() = UserAndChatSettingsKey::class
+object CommandLimit : LongKeyType<UserAndChatEasyKey>() {
+    override fun keyType() = UserAndChatEasyKey::class
+}
+
+object FirstBotInteraction : StringKeyType<ChatEasyKey>() {
+    override fun keyType() = ChatEasyKey::class
+}
+
+object FirstTimeInChat : BooleanKeyType<ChatEasyKey>() {
+    override fun keyType() = ChatEasyKey::class
+}
+
+object RageTolerance : BooleanKeyType<ChatEasyKey>() {
+    override fun keyType() = ChatEasyKey::class
+}
+
+object PidorTolerance : LongKeyType<ChatEasyKey>() {
+    override fun keyType() = ChatEasyKey::class
+}
+
+object BetTolerance : BooleanKeyType<UserAndChatEasyKey>() {
+    override fun keyType() = UserAndChatEasyKey::class
 }

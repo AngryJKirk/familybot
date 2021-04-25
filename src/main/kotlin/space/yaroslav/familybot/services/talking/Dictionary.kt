@@ -7,15 +7,15 @@ import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.PhraseTheme
-import space.yaroslav.familybot.services.settings.ChatSettingsKey
-import space.yaroslav.familybot.services.settings.EasySettingsService
+import space.yaroslav.familybot.services.settings.ChatEasyKey
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.UkrainianLanguage
 import java.time.LocalDate
 import java.time.Month
 
 @Component
 class Dictionary(
-    private val settingsService: EasySettingsService,
+    private val keyValueService: EasyKeyValueService,
     private val dictionaryReader: DictionaryReader
 ) {
     fun getAll(phrase: Phrase): List<String> {
@@ -32,10 +32,10 @@ class Dictionary(
 
     fun get(phrase: Phrase, update: Update) = getInternal(phrase, update.toChat().key())
 
-    fun get(phrase: Phrase, settingsKey: ChatSettingsKey) = getInternal(phrase, settingsKey)
+    fun get(phrase: Phrase, settingsKey: ChatEasyKey) = getInternal(phrase, settingsKey)
 
-    fun getInternal(phrase: Phrase, settingsKey: ChatSettingsKey): String {
-        val isUkrainian = settingsService.get(UkrainianLanguage, settingsKey)
+    fun getInternal(phrase: Phrase, settingsKey: ChatEasyKey): String {
+        val isUkrainian = keyValueService.get(UkrainianLanguage, settingsKey)
         val theme = if (isUkrainian == true) {
             PhraseTheme.UKRAINIAN
         } else {
@@ -61,8 +61,8 @@ class Dictionary(
 }
 
 class DictionaryContext(
-    private val settingsKey: ChatSettingsKey,
-    private val callback: (Phrase, ChatSettingsKey) -> String
+    private val settingsKey: ChatEasyKey,
+    private val callback: (Phrase, ChatEasyKey) -> String
 ) {
     fun get(phrase: Phrase) = callback(phrase, settingsKey)
 }

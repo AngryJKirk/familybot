@@ -6,14 +6,14 @@ import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.prettyFormat
 import space.yaroslav.familybot.services.settings.Ban
-import space.yaroslav.familybot.services.settings.EasySettingsService
-import space.yaroslav.familybot.services.settings.SettingsKey
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
+import space.yaroslav.familybot.services.settings.EasyKey
 import java.time.Duration
 import java.time.Instant
 
 @Component
 class BanService(
-    private val easySettingsService: EasySettingsService
+    private val easyKeyValueService: EasyKeyValueService
 ) {
 
     fun isUserBanned(user: User): String? {
@@ -32,23 +32,23 @@ class BanService(
         banByKey(chat.key(), description)
     }
 
-    fun findBanByKey(settingsKey: SettingsKey): String? {
-        return easySettingsService.get(
+    fun findBanByKey(easyKey: EasyKey): String? {
+        return easyKeyValueService.get(
             Ban,
-            settingsKey
+            easyKey
         )
     }
 
-    fun reduceBan(settingsKey: SettingsKey) {
-        easySettingsService.remove(Ban, settingsKey)
+    fun reduceBan(easyKey: EasyKey) {
+        easyKeyValueService.remove(Ban, easyKey)
     }
 
-    private fun banByKey(settingsKey: SettingsKey, description: String) {
+    private fun banByKey(easyKey: EasyKey, description: String) {
         val duration = Duration.ofDays(7)
         val until = Instant.now().plusSeconds(duration.seconds)
-        easySettingsService.put(
+        easyKeyValueService.put(
             Ban,
-            settingsKey,
+            easyKey,
             "Бан нахуй по причине \"$description\" до ${until.prettyFormat()}",
             duration = duration
         )

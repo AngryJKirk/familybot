@@ -8,13 +8,13 @@ import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.services.settings.EasySettingsService
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.TalkingDensity
 import space.yaroslav.familybot.services.talking.Dictionary
 
 @Component
 class TalkingDensitySettingProcessor(
-    private val easySettingsService: EasySettingsService,
+    private val easyKeyValueService: EasyKeyValueService,
     private val dictionary: Dictionary
 ) : SettingProcessor {
 
@@ -41,7 +41,7 @@ class TalkingDensitySettingProcessor(
             }
         }
 
-        easySettingsService.put(TalkingDensity, update.toChat().key(), amountOfDensity)
+        easyKeyValueService.put(TalkingDensity, update.toChat().key(), amountOfDensity)
         return {
             it.send(update, context.get(Phrase.ADVANCED_SETTINGS_OK))
         }

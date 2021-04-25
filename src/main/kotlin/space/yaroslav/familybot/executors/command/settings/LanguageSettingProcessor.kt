@@ -8,13 +8,13 @@ import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.services.settings.EasySettingsService
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.UkrainianLanguage
 import space.yaroslav.familybot.services.talking.Dictionary
 
 @Component
 class LanguageSettingProcessor(
-    private val easySettingsService: EasySettingsService,
+    private val easyKeyValueService: EasyKeyValueService,
     private val dictionary: Dictionary
 ) : SettingProcessor {
 
@@ -34,7 +34,7 @@ class LanguageSettingProcessor(
             }
         }
         val setting = value == "вкл"
-        easySettingsService.put(UkrainianLanguage, update.toChat().key(), setting)
+        easyKeyValueService.put(UkrainianLanguage, update.toChat().key(), setting)
         return {
             it.send(update, context.get(Phrase.ADVANCED_SETTINGS_OK))
         }

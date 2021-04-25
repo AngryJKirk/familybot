@@ -8,7 +8,7 @@ import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.models.FunctionId
-import space.yaroslav.familybot.services.settings.EasySettingsService
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.FuckOffTolerance
 import space.yaroslav.familybot.services.talking.TalkingService
 import space.yaroslav.familybot.telegram.BotConfig
@@ -19,7 +19,7 @@ import java.util.concurrent.ThreadLocalRandom
 class BotMentionKeyWordProcessor(
     private val botConfig: BotConfig,
     private val talkingService: TalkingService,
-    private val easySettingsService: EasySettingsService
+    private val easyKeyValueService: EasyKeyValueService
 ) : KeyWordProcessor {
 
     private val defaultFuckOffDuration = Duration.ofMinutes(15)
@@ -79,17 +79,17 @@ class BotMentionKeyWordProcessor(
             FunctionId.HUIFICATE
         )
             .forEach { function ->
-                easySettingsService.put(
+                easyKeyValueService.put(
                     function.easySetting,
                     update.toChat().key(),
                     false,
                     defaultFuckOffDuration
                 )
             }
-        easySettingsService.put(FuckOffTolerance, update.key(), true, defaultToleranceDuration)
+        easyKeyValueService.put(FuckOffTolerance, update.key(), true, defaultToleranceDuration)
         return {}
     }
 
     private fun isUserUnderTolerance(update: Update) =
-        easySettingsService.get(FuckOffTolerance, update.key(), defaultValue = false)
+        easyKeyValueService.get(FuckOffTolerance, update.key(), defaultValue = false)
 }

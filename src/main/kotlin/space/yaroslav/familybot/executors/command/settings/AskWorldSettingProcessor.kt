@@ -11,13 +11,13 @@ import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.repos.FunctionsConfigureRepository
 import space.yaroslav.familybot.services.settings.AskWorldDensity
-import space.yaroslav.familybot.services.settings.EasySettingsService
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.talking.Dictionary
 
 @Component
 class AskWorldSettingProcessor(
     private val dictionary: Dictionary,
-    private val easySettingsService: EasySettingsService,
+    private val easyKeyValueService: EasyKeyValueService,
     private val functionsConfigureRepository: FunctionsConfigureRepository
 ) : SettingProcessor {
 
@@ -42,7 +42,7 @@ class AskWorldSettingProcessor(
                 chat,
                 isEnabled = density != AskWorldDensityValue.NONE
             )
-            easySettingsService.put(AskWorldDensity, chat.key(), density.text)
+            easyKeyValueService.put(AskWorldDensity, chat.key(), density.text)
             sender.send(update, context.get(Phrase.ADVANCED_SETTINGS_OK))
         }
     }

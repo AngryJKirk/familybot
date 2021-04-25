@@ -17,7 +17,7 @@ import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.services.settings.CommandLimit
-import space.yaroslav.familybot.services.settings.EasySettingsService
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 
@@ -25,7 +25,7 @@ import space.yaroslav.familybot.telegram.BotConfig
 class AntiDdosExecutor(
     private val config: BotConfig,
     private val dictionary: Dictionary,
-    private val easySettingsService: EasySettingsService
+    private val easyKeyValueService: EasyKeyValueService
 ) : Executor, Configurable {
     override fun getFunctionId(): FunctionId {
         return FunctionId.ANTIDDOS
@@ -42,7 +42,7 @@ class AntiDdosExecutor(
 
     override fun canExecute(message: Message): Boolean {
         return if (message.getCommand { config.botname } != null) {
-            easySettingsService.get(CommandLimit, message.key(), 0) >= 5
+            easyKeyValueService.get(CommandLimit, message.key(), 0) >= 5
         } else {
             false
         }

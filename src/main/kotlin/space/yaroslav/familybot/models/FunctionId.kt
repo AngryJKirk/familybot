@@ -3,23 +3,23 @@ package space.yaroslav.familybot.models
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 import space.yaroslav.familybot.common.utils.toEmoji
-import space.yaroslav.familybot.services.settings.BooleanSetting
-import space.yaroslav.familybot.services.settings.ChatSettingsKey
+import space.yaroslav.familybot.services.settings.BooleanKeyType
+import space.yaroslav.familybot.services.settings.ChatEasyKey
 
-abstract class ChatFunctionSetting : BooleanSetting<ChatSettingsKey>() {
-    override fun keyType() = ChatSettingsKey::class
+abstract class ChatFunctionKeyType : BooleanKeyType<ChatEasyKey>() {
+    override fun keyType() = ChatEasyKey::class
 }
 
-object Huificate : ChatFunctionSetting()
-object Chatting : ChatFunctionSetting()
-object Pidor : ChatFunctionSetting()
-object Rage : ChatFunctionSetting()
-object AntiDdos : ChatFunctionSetting()
-object AskWorld : ChatFunctionSetting()
-object Greetings : ChatFunctionSetting()
-object TalkBack : ChatFunctionSetting()
+object Huificate : ChatFunctionKeyType()
+object Chatting : ChatFunctionKeyType()
+object Pidor : ChatFunctionKeyType()
+object Rage : ChatFunctionKeyType()
+object AntiDdos : ChatFunctionKeyType()
+object AskWorld : ChatFunctionKeyType()
+object Greetings : ChatFunctionKeyType()
+object TalkBack : ChatFunctionKeyType()
 
-enum class FunctionId(val id: Int, val desc: String, val easySetting: ChatFunctionSetting) {
+enum class FunctionId(val id: Int, val desc: String, val easySetting: ChatFunctionKeyType) {
     HUIFICATE(1, "Хуификация", Huificate),
     CHATTING(2, "Влезание в диалог", Chatting),
     PIDOR(3, "Пидор-детектор", Pidor),

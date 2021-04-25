@@ -13,13 +13,13 @@ import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.Executor
 import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Priority
-import space.yaroslav.familybot.services.settings.EasySettingsService
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.TalkingDensity
 import java.util.concurrent.ThreadLocalRandom
 import java.util.regex.Pattern
 
 @Component
-class HuificatorExecutor(private val easySettingsService: EasySettingsService) : Executor, Configurable {
+class HuificatorExecutor(private val easyKeyValueService: EasyKeyValueService) : Executor, Configurable {
     override fun getFunctionId(): FunctionId {
         return FunctionId.HUIFICATE
     }
@@ -87,7 +87,7 @@ class HuificatorExecutor(private val easySettingsService: EasySettingsService) :
     }
 
     private fun getTalkingDensity(chat: Chat): Long {
-        return easySettingsService.get(TalkingDensity, chat.key(), 7)
+        return easyKeyValueService.get(TalkingDensity, chat.key(), 7)
     }
 
     companion object {

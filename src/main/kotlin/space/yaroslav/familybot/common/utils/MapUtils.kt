@@ -7,9 +7,9 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.models.Command
-import space.yaroslav.familybot.services.settings.ChatSettingsKey
-import space.yaroslav.familybot.services.settings.UserAndChatSettingsKey
-import space.yaroslav.familybot.services.settings.UserSettingsKey
+import space.yaroslav.familybot.services.settings.ChatEasyKey
+import space.yaroslav.familybot.services.settings.UserAndChatEasyKey
+import space.yaroslav.familybot.services.settings.UserEasyKey
 import space.yaroslav.familybot.telegram.FamilyBot
 import org.telegram.telegrambots.meta.api.objects.Chat as TelegramChat
 import org.telegram.telegrambots.meta.api.objects.User as TelegramUser
@@ -84,18 +84,18 @@ fun Update.getMessageTokens(delimiter: String = " "): List<String> {
     }
 }
 
-fun Update.key(): UserAndChatSettingsKey {
-    return UserAndChatSettingsKey(this.toUser().id, this.chatId())
+fun Update.key(): UserAndChatEasyKey {
+    return UserAndChatEasyKey(this.toUser().id, this.chatId())
 }
 
-fun Message.key(): UserAndChatSettingsKey {
-    return UserAndChatSettingsKey(from.id, chatId)
+fun Message.key(): UserAndChatEasyKey {
+    return UserAndChatEasyKey(from.id, chatId)
 }
 
-fun User.key(): UserSettingsKey {
-    return UserSettingsKey(userId = this.id)
+fun User.key(): UserEasyKey {
+    return UserEasyKey(userId = this.id)
 }
 
-fun Chat.key(): ChatSettingsKey {
-    return ChatSettingsKey(chatId = this.id)
+fun Chat.key(): ChatEasyKey {
+    return ChatEasyKey(chatId = this.id)
 }

@@ -27,7 +27,7 @@ import space.yaroslav.familybot.repos.AskWorldRepository
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.repos.FunctionsConfigureRepository
 import space.yaroslav.familybot.services.settings.AskWorldDensity
-import space.yaroslav.familybot.services.settings.EasySettingsService
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
@@ -41,7 +41,7 @@ class AskWorldInitialExecutor(
     private val configureRepository: FunctionsConfigureRepository,
     private val botConfig: BotConfig,
     private val dictionary: Dictionary,
-    private val easySettingsService: EasySettingsService
+    private val easyKeyValueService: EasyKeyValueService
 ) : CommandExecutor(botConfig), Configurable {
     private val log = getLogger()
     override fun getFunctionId(): FunctionId {
@@ -198,7 +198,7 @@ class AskWorldInitialExecutor(
     }
 
     private fun getDensity(chat: Chat): AskWorldDensityValue {
-        val settingValue = easySettingsService.get(
+        val settingValue = easyKeyValueService.get(
             AskWorldDensity,
             chat.key()
         ) ?: return AskWorldDensityValue.LESS
