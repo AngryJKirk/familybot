@@ -1,10 +1,12 @@
 FROM maven:3.6.0-jdk-11-slim AS build
 
+COPY ./pom.xml /home/app/pom.xml
+
+RUN mvn -f /home/app/pom.xml clean dependency:go-offline
+
 COPY ./src /home/app/src
 
-COPY ./pom.xml /home/app
-
-RUN mvn -f /home/app/pom.xml clean package -DskipTests
+RUN mvn -f /home/app/pom.xml package -DskipTests
 
 FROM openjdk:11-jre-slim
 
