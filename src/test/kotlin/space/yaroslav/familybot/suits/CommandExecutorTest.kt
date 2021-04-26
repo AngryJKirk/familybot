@@ -5,7 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.executors.command.CommandExecutor
 import space.yaroslav.familybot.infrastructure.createSimpleCommand
 import space.yaroslav.familybot.infrastructure.createSimpleMessage
-import space.yaroslav.familybot.infrastructure.randomUUID
+import space.yaroslav.familybot.infrastructure.randomString
 import space.yaroslav.familybot.models.Priority
 
 abstract class CommandExecutorTest : ExecutorTest() {
@@ -21,12 +21,12 @@ abstract class CommandExecutorTest : ExecutorTest() {
             "Command executor should be able to execute only if message starts with command"
         )
         val messageWithCommandInMiddle =
-            createSimpleCommand(prefix = randomUUID(), postfix = randomUUID(), command = command)
+            createSimpleCommand(prefix = randomString(), postfix = randomString(), command = command)
         Assertions.assertFalse(
             commandExecutor.canExecute(messageWithCommandInMiddle.message),
             "Command executor should not react to command in the middle"
         )
-        val messageForOtherBot = createSimpleCommand(command = command, postfix = "@${randomUUID()}")
+        val messageForOtherBot = createSimpleCommand(command = command, postfix = "@${randomString()}")
         Assertions.assertFalse(
             commandExecutor.canExecute(messageForOtherBot.message),
             "Should not react for command which addressed to another bot"
@@ -36,7 +36,7 @@ abstract class CommandExecutorTest : ExecutorTest() {
             commandExecutor.canExecute(messageForSuchara.message),
             "Should not react for command which addressed to another bot"
         )
-        val messageWithoutCommand = createSimpleMessage(randomUUID())
+        val messageWithoutCommand = createSimpleMessage(randomString())
         Assertions.assertFalse(
             commandExecutor.canExecute(messageWithoutCommand),
             "Any others messages should never let executor be assigned to work"

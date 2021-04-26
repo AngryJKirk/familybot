@@ -19,7 +19,7 @@ import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.executors.pm.BanSomeoneExecutor
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
-import space.yaroslav.familybot.infrastructure.randomUUID
+import space.yaroslav.familybot.infrastructure.randomString
 import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.services.misc.BanService
 import space.yaroslav.familybot.services.settings.EasyKey
@@ -67,7 +67,7 @@ class BanSomeoneExecutorTest : ExecutorTest() {
 
         Assert.assertTrue(canExecuteValid)
 
-        val notValidMessage = updateFromDeveloper(randomUUID()).message
+        val notValidMessage = updateFromDeveloper(randomString()).message
 
         val canExecuteNotValid = banSomeoneExecutor.canExecute(notValidMessage)
 
@@ -82,7 +82,7 @@ class BanSomeoneExecutorTest : ExecutorTest() {
     @MethodSource("valuesProvider")
     fun executeTest(banModel: BanTestModel) {
         clearInvocations(sender)
-        val description = randomUUID()
+        val description = randomString()
         val update = updateFromDeveloper("${banSomeoneExecutor.getMessagePrefix()}${banModel.key}|$description")
         runBlocking { banSomeoneExecutor.execute(update).invoke(sender) }
         verify(sender).execute(any<SendMessage>())
@@ -98,7 +98,7 @@ class BanSomeoneExecutorTest : ExecutorTest() {
         val update = createSimpleUpdate()
         val user = update.toUser()
         val chat = update.toChat()
-        val description = randomUUID()
+        val description = randomString()
         banService.banUser(user, description)
         Assertions.assertTrue(banService.isUserBanned(user)?.contains(description) ?: false)
         Assertions.assertTrue(banService.isChatBanned(chat) == null)

@@ -12,7 +12,7 @@
         <guava.version>30.1-jre</guava.version>
         <postgresql.version>42.2.20</postgresql.version>
         <spring-boot.version>2.4.5</spring-boot.version>
-        <telegrambots.version>5.1.1</telegrambots.version>
+        <telegrambots.version>5.2.0</telegrambots.version>
         <lettuce-core.version>6.0.2.RELEASE</lettuce-core.version>
         <kotlinx-coroutines.version>1.4.2</kotlinx-coroutines.version>
         <testcontainers.version>1.15.3</testcontainers.version>

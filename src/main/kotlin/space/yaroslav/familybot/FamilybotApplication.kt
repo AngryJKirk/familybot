@@ -13,10 +13,11 @@ import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
+import space.yaroslav.familybot.telegram.PaymentConfig
 
 @SpringBootApplication
 @EnableScheduling
-@EnableConfigurationProperties(BotConfig::class)
+@EnableConfigurationProperties(BotConfig::class, PaymentConfig::class)
 class FamilybotApplication {
 
     @Bean

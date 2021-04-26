@@ -81,5 +81,8 @@ class PidorExecutorTest : CommandExecutorTest() {
             firstPidorName.text.contains(lastPidorAfterSecondInvoke.user.getGeneralName(true)),
             "Pidor in message and in database should match"
         )
+        commonRepository.getAllPidors().forEach { pidor ->
+            commonRepository.removePidorRecord(pidor.user)
+        }
     }
 }

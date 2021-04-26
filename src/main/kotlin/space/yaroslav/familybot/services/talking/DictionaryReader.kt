@@ -60,6 +60,7 @@ class DictionaryReader {
             .getArray(theme.name)
             ?.toList()
             ?.map(Any::toString)
+            ?.map { line -> line.replace("\r", "") }
             ?: emptyList()
     }
 

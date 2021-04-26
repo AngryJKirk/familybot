@@ -2,6 +2,7 @@ settings:
   botname: ${BOT_NAME:BotName}
   token: ${BOT_TOKEN}
   developer: ${BOT_OWNER_NAME}
+  developer-id: ${BOT_OWNER_TELEGRAM_ID}
   yandex-key: ${YANDEX_API_TOKEN}
 spring:
   redis:
@@ -19,3 +20,5 @@ management:
     export:
       graphite:
         enabled: false
+payments:
+  token: ${PAYMENT_TOKEN}
