@@ -61,7 +61,7 @@ class FamilyBot(
             router.processUpdate(update).invoke(this@FamilyBot)
         } catch (e: TelegramApiRequestException) {
             val logMessage = "Telegram error: ${e.apiResponse}, ${e.errorCode}, update is $update"
-            if (e.errorCode == 400) {
+            if (e.errorCode in 400..499) {
                 log.warn(logMessage, e)
             } else {
                 log.error(logMessage, e)
