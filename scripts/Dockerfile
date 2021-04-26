@@ -1,6 +1,7 @@
 FROM maven:3.6.0-jdk-11-slim AS build
+ENV WORK_DIR /app
 
-WORKDIR /app
+WORKDIR ${WORK_DIR}
 
 COPY ./pom.xml .
 
@@ -15,6 +16,6 @@ FROM openjdk:11-jre-slim
 
 ENV SPRING_PROFILES_ACTIVE production
 
-COPY --from=build /app/target/familybot.jar /usr/local/lib/familybot.jar
+COPY --from=build ${WORK_DIR}/target/familybot.jar /usr/local/lib/familybot.jar
 
 ENTRYPOINT ["java","-jar","/usr/local/lib/familybot.jar"]
