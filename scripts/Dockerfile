@@ -7,7 +7,7 @@ COPY ./pom.xml .
 # verify --fail-never works much better than dependency:resolve or dependency:go-offline
 RUN mvn clean verify --fail-never
 
-COPY ./src .
+COPY ./src ./src
 
 RUN mvn package -DskipTests
 
