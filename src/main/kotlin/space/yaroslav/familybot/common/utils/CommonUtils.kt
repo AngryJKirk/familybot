@@ -94,3 +94,5 @@ fun untilNextMonth(): Duration =
             .plusMonths(1)
             .toInstant()
     )
+
+fun Int.rubles() = this * 100
