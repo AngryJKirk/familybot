@@ -42,10 +42,7 @@ class PidorResetProcessorTest : PaymentProcessorTest() {
         easyKeyValueService.put(PidorTolerance, key, 1)
         processor.processSuccess(payload)
         Assertions.assertNull(easyKeyValueService.get(PidorTolerance, key))
-        val size = commonRepository.getPidorsByChat(user.chat).size
-        if(size != 0){
-            print("")
-        }
-        Assertions.assertEquals(0, size)
+        val pidors = commonRepository.getPidorsByChat(user.chat)
+        Assertions.assertEquals(0, pidors.size)
     }
 }

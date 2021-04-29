@@ -12,6 +12,7 @@ import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.payment.PaymentProcessor
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.PidorTolerance
+import java.time.Instant
 
 @Component
 class ResetPidorPaymentProcessor(
@@ -38,7 +39,7 @@ class ResetPidorPaymentProcessor(
     override fun processSuccess(shopPayload: ShopPayload): Phrase {
         val chat = Chat(shopPayload.chatId, null)
         commonRepository
-            .getPidorsByChat(chat)
+            .getPidorsByChat(chat, endDate = Instant.now().plusSeconds(100))
             .filter { pidor -> pidor.date.isToday() }
             .distinctBy { pidor -> pidor.user.id }
             .forEach { pidor ->

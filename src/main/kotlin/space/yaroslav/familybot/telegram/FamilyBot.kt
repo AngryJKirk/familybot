@@ -49,7 +49,7 @@ class FamilyBot(
         if (update.message?.hasSuccessfulPayment() == true) {
             routerScope.launch { proceedSuccessfulPayment(update).invoke(this@FamilyBot) }
             return
-        } // 1111 1111 1111 1026, 12/22, CVC 000
+        }
 
         if (update.hasPoll()) {
             return
