@@ -18,6 +18,7 @@ import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
+import space.yaroslav.familybot.common.utils.untilNextDay
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.command.settings.AskWorldDensityValue
 import space.yaroslav.familybot.models.Command
@@ -26,12 +27,13 @@ import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.repos.AskWorldRepository
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.repos.FunctionsConfigureRepository
+import space.yaroslav.familybot.services.settings.AskWorldChatUsages
 import space.yaroslav.familybot.services.settings.AskWorldDensity
+import space.yaroslav.familybot.services.settings.AskWorldUserUsages
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
-import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
 @Component
@@ -61,18 +63,22 @@ class AskWorldInitialExecutor(
             ?.removePrefix("@${botConfig.botname}")
             ?.removePrefix(" ")
             ?.takeIf(String::isNotEmpty) ?: return { it.send(update, context.get(Phrase.ASK_WORLD_HELP)) }
-
-        if (isLimitForChatExceed(currentChat)) {
+        val chatEasyKey = currentChat.key()
+        val chatUsages = easyKeyValueService.get(AskWorldChatUsages, chatEasyKey)
+        if (chatUsages != null && chatUsages > 0L) {
             return {
                 log.info("Limit was exceed for chat")
                 it.send(update, context.get(Phrase.ASK_WORLD_LIMIT_BY_CHAT), replyToUpdate = true)
             }
         }
+        val userEasyKey = update.toUser().key()
+        val userUsages = easyKeyValueService.get(AskWorldUserUsages, userEasyKey)
+        val isLimitForUserExceeded = userUsages != null && userUsages > 5
 
         val isScam = containsUrl(message) ||
             isSpam(message) ||
             containsLongWords(message) ||
-            isLimitForUserExceed(update)
+            isLimitForUserExceeded
 
         if (message.length > 2000) {
             return {
@@ -107,6 +113,16 @@ class AskWorldInitialExecutor(
                         markQuestionDelivered(question, questionId, result, chatToSend)
                     }.onFailure { e -> markChatInactive(chatToSend, questionId, e) }
                 }
+            if (chatUsages == null) {
+                easyKeyValueService.put(AskWorldChatUsages, chatEasyKey, 1, untilNextDay())
+            } else {
+                easyKeyValueService.increment(AskWorldChatUsages, chatEasyKey)
+            }
+            if (userUsages == null) {
+                easyKeyValueService.put(AskWorldUserUsages, userEasyKey, 1, untilNextDay())
+            } else {
+                easyKeyValueService.increment(AskWorldUserUsages, userEasyKey)
+            }
         }
     }
 
@@ -140,23 +156,6 @@ class AskWorldInitialExecutor(
     }
 
     private fun isEnabledInChat(it: Chat) = configureRepository.isEnabled(getFunctionId(), it)
-
-    private fun isLimitForChatExceed(chat: Chat): Boolean {
-        return askWorldRepository.getQuestionsFromChat(
-            chat,
-            date = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
-        ).isNotEmpty()
-    }
-
-    private fun isLimitForUserExceed(
-        update: Update
-    ): Boolean {
-        val questionFromUserAllChats = askWorldRepository.getQuestionFromUserAllChats(
-            update.toUser(),
-            ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant()
-        )
-        return questionFromUserAllChats.size >= 3
-    }
 
     private fun getChatsToSendQuestion(currentChat: Chat, isScam: Boolean): List<Chat> {
         if (isScam) {

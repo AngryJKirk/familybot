@@ -33,7 +33,7 @@ class TestSender {
             ChatMember().apply {
                 user = User()
                 user.id = arg.userId
-                user.userName = randomUUID()
+                user.userName = randomString()
                 status = "member"
             }
         }
@@ -44,7 +44,7 @@ class TestSender {
                 ChatMember().apply {
                     user = User()
                     user.id = it
-                    user.userName = randomUUID()
+                    user.userName = randomString()
                     status = "administrator"
                 }
             }
@@ -57,7 +57,7 @@ class TestSender {
             .map { sticker ->
                 TelegramSticker().apply {
                     emoji = sticker.stickerEmoji
-                    fileId = randomUUID()
+                    fileId = randomString()
                     setName = sticker.pack.packName
                 }
             }

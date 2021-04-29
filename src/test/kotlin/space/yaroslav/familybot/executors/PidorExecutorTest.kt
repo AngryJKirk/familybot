@@ -6,6 +6,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.redis.core.StringRedisTemplate
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.executors.command.PidorExecutor
@@ -20,6 +21,9 @@ class PidorExecutorTest : CommandExecutorTest() {
 
     @Autowired
     lateinit var commonRepository: CommonRepository
+
+    @Autowired
+    lateinit var redisTemplate: StringRedisTemplate
 
     override fun getCommandExecutor() = pidorExecutor
 
@@ -81,5 +85,11 @@ class PidorExecutorTest : CommandExecutorTest() {
             firstPidorName.text.contains(lastPidorAfterSecondInvoke.user.getGeneralName(true)),
             "Pidor in message and in database should match"
         )
+        commonRepository.getAllPidors().forEach { pidor ->
+            commonRepository.removePidorRecord(pidor.user)
+        }
+
+        redisTemplate.delete(redisTemplate.keys("*"))
+
     }
 }

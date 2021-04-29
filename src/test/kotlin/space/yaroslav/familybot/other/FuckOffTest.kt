@@ -8,7 +8,7 @@ import space.yaroslav.familybot.executors.eventbased.keyword.BotMentionKeyWordPr
 import space.yaroslav.familybot.infrastructure.createSimpleMessage
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.createSimpleUser
-import space.yaroslav.familybot.infrastructure.randomUUID
+import space.yaroslav.familybot.infrastructure.randomString
 import space.yaroslav.familybot.suits.FamilybotApplicationTest
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
@@ -37,7 +37,7 @@ class FuckOffTest : FamilybotApplicationTest() {
     )
     fun `should be able to process valid message`(value: String) {
         val botName = botConfig.botname ?: throw FamilyBot.InternalException("Wrong test configuration")
-        val phrase = value.let { set -> set.plus(set.map { randomUUID() + it + randomUUID() }) }
+        val phrase = value.let { set -> set.plus(set.map { randomString() + it + randomString() }) }
         val update = createSimpleUpdate(phrase)
         update.message.replyToMessage = createSimpleMessage()
         update.message.replyToMessage.from = createSimpleUser(true, botName)

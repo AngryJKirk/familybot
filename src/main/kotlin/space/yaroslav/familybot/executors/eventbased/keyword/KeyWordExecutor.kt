@@ -27,6 +27,9 @@ class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Config
     }
 
     override fun canExecute(message: Message): Boolean {
+        if (message.from.isBot) {
+            return false
+        }
         val keyWordProcessor = processors
             .find { it.canProcess(message) }
             ?.takeIf { isPassingRandomCheck(it, message) }

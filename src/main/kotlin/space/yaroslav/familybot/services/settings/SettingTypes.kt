@@ -63,3 +63,13 @@ object PidorTolerance : LongKeyType<ChatEasyKey>() {
 object BetTolerance : BooleanKeyType<UserAndChatEasyKey>() {
     override fun keyType() = UserAndChatEasyKey::class
 }
+
+object AskWorldChatUsages : LongKeyType<ChatEasyKey>() {
+    override fun keyType() = ChatEasyKey::class
+}
+
+object AskWorldUserUsages : LongKeyType<UserEasyKey>() {
+    override fun keyType() = UserEasyKey::class
+}
+
+

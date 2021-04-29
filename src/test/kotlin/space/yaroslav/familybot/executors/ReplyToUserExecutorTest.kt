@@ -13,7 +13,7 @@ import space.yaroslav.familybot.executors.eventbased.keyword.KeyWordExecutor
 import space.yaroslav.familybot.infrastructure.createSimpleMessage
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.createSimpleUser
-import space.yaroslav.familybot.infrastructure.randomUUID
+import space.yaroslav.familybot.infrastructure.randomString
 import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.suits.ExecutorTest
 import kotlin.test.assertNotNull
@@ -52,9 +52,9 @@ class ReplyToUserExecutorTest : ExecutorTest() {
     }
 
     private fun updateWithReplyToBotMessage(): Update {
-        return createSimpleUpdate(randomUUID())
+        return createSimpleUpdate(randomString())
             .apply {
-                message.replyToMessage = createSimpleMessage(text = randomUUID(), chat = message.chat)
+                message.replyToMessage = createSimpleMessage(text = randomString(), chat = message.chat)
                 message.replyToMessage.from = createSimpleUser(isBot = true, botName = botName)
             }
     }

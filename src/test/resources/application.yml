@@ -2,6 +2,7 @@ settings:
   botname: IntegrationTests
   token: 123
   developer: IntegrationTestsDeveloper
+  developer-id: 123
 spring:
   datasource:
     url: REPLACED_IN_CODE_AT_START_OF_TESTS

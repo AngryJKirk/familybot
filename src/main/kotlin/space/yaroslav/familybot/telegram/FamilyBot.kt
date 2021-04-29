@@ -9,9 +9,11 @@ import org.slf4j.MDC
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.bots.AbsSender
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
+import space.yaroslav.familybot.services.routers.PaymentRouter
 import space.yaroslav.familybot.services.routers.PollRouter
 import space.yaroslav.familybot.services.routers.Router
 
@@ -19,7 +21,8 @@ import space.yaroslav.familybot.services.routers.Router
 class FamilyBot(
     val config: BotConfig,
     val router: Router,
-    val pollRouter: PollRouter
+    val pollRouter: PollRouter,
+    val paymentRouter: PaymentRouter
 ) : TelegramLongPollingBot() {
 
     private val log = LoggerFactory.getLogger(FamilyBot::class.java)
@@ -37,6 +40,17 @@ class FamilyBot(
             routerScope.launch { proceedPollAnswer(update) }
             return
         }
+
+        if (update.hasPreCheckoutQuery()) {
+            routerScope.launch { proceedPreCheckoutQuery(update).invoke(this@FamilyBot) }
+            return
+        }
+
+        if (update.message?.hasSuccessfulPayment() == true) {
+            routerScope.launch { proceedSuccessfulPayment(update).invoke(this@FamilyBot) }
+            return
+        }
+
         if (update.hasPoll()) {
             return
         }
@@ -78,6 +92,24 @@ class FamilyBot(
             pollRouter.proceed(update)
         }.onFailure {
             log.warn("Poll router failed", it)
+        }
+    }
+
+    private fun proceedPreCheckoutQuery(update: Update): suspend (AbsSender) -> Unit {
+        return runCatching {
+            paymentRouter.proceedPreCheckoutQuery(update)
+        }.getOrDefault {
+            log.warn("Poll router failed", it)
+            {}
+        }
+    }
+
+    private fun proceedSuccessfulPayment(update: Update): suspend (AbsSender) -> Unit {
+        return runCatching {
+            paymentRouter.proceedSuccessfulPayment(update)
+        }.getOrDefault {
+            log.warn("Poll router failed", it)
+            {}
         }
     }
 

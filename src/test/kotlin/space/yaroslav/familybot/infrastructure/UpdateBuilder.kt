@@ -46,7 +46,7 @@ fun singleStickerUpdate(sticker: Sticker): Update {
             message.sticker = TelegramSticker().apply {
                 emoji = sticker.stickerEmoji
                 setName = sticker.pack.packName
-                fileId = randomUUID()
+                fileId = randomString()
             }
         }
 }
@@ -69,17 +69,18 @@ private fun message(text: String?, chat: Chat): Message {
 }
 
 private fun user(): User {
-    val userId = randomLongFrom1to3()
+    val userId = randomUserId()
     return User().apply {
         id = userId
         userName = "user$userId"
         firstName = "test user"
         lastName = "#$userId"
+        isBot = false
     }
 }
 
 private fun chat(): Chat {
-    val chatId = randomLongFrom1to3() * 10
+    val chatId = randomChatId()
     return Chat().apply {
         id = chatId
         title = "Test chat #$chatId"

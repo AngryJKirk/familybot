@@ -71,8 +71,8 @@ class CommonRepository(datasource: DataSource) {
     }
 
     @Timed("repository.CommonRepository.removePidorRecord")
-    fun removePidorRecord(user: User) {
-        template.update(
+    fun removePidorRecord(user: User): Int {
+        return template.update(
             "DELETE FROM pidors WHERE id = ? AND chat_id = ? AND pidor_date = (SELECT pidor_date FROM pidors WHERE id = ? AND chat_id = ? AND pidor_date > DATE_TRUNC('month', CURRENT_DATE) LIMIT 1)",
             user.id,
             user.chat.id,
