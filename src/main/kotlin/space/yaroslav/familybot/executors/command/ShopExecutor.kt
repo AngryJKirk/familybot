@@ -38,7 +38,6 @@ class ShopExecutor(
                 update,
                 dictionary.get(Phrase.SHOP_KEYBOARD, update),
                 replyToUpdate = true,
-                enableHtml = true,
                 customization = customization(context)
             )
         }
