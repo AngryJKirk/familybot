@@ -32,6 +32,7 @@ import space.yaroslav.familybot.models.MessageContentType
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.Priority
 import space.yaroslav.familybot.repos.AskWorldRepository
+import space.yaroslav.familybot.services.settings.ChatEasyKey
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
@@ -86,11 +87,12 @@ class AskWorldReceiveReplyExecutor(
                 val questionTitle = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
                 val chatIdToReply = question.chat.idString
 
+                val answerTitle = dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT, ChatEasyKey(question.chat.id))
                 if (contentType == MessageContentType.TEXT) {
                     it.execute(
                         SendMessage(
                             chatIdToReply,
-                            "${context.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${update.toChat().name.boldNullable()} " +
+                            "$answerTitle ${update.toChat().name.boldNullable()} " +
                                 "от ${user.getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}"
                         ).apply {
                             enableHtml(true)
@@ -100,7 +102,7 @@ class AskWorldReceiveReplyExecutor(
                     it.execute(
                         SendMessage(
                             chatIdToReply,
-                            "${context.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT)} ${update.toChat().name.boldNullable()} " +
+                            "$answerTitle ${update.toChat().name.boldNullable()} " +
                                 "от ${user.getGeneralName()} на вопрос \"$questionTitle\":"
                         ).apply {
                             enableHtml(true)
