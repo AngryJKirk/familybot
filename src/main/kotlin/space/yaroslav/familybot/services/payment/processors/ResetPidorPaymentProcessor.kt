@@ -5,6 +5,7 @@ import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.isToday
 import space.yaroslav.familybot.common.utils.key
+import space.yaroslav.familybot.common.utils.startOfDay
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.models.ShopItem
 import space.yaroslav.familybot.models.ShopPayload
@@ -13,6 +14,7 @@ import space.yaroslav.familybot.services.payment.PaymentProcessor
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.PidorTolerance
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 @Component
 class ResetPidorPaymentProcessor(
@@ -38,17 +40,14 @@ class ResetPidorPaymentProcessor(
 
     override fun processSuccess(shopPayload: ShopPayload): Phrase {
         val chat = Chat(shopPayload.chatId, null)
-        commonRepository
-            .getPidorsByChat(chat, endDate = Instant.now().plusSeconds(100))
-            .filter { pidor -> pidor.date.isToday() }
-            .distinctBy { pidor -> pidor.user.id }
-            .forEach { pidor ->
-                log.info("Removing pidor $pidor")
-                val rows = commonRepository.removePidorRecord(pidor.user)
-                log.info("Pidor $pidor removed, rows affected: $rows")
-            }
+        val now = Instant.now()
+        val amountOfRemovedPidors = commonRepository.removePidorRecords(
+            chat,
+            from = now.startOfDay(),
+            until = now.plus(1, ChronoUnit.DAYS).startOfDay()
+        )
         easyKeyValueService.remove(PidorTolerance, chat.key())
-        log.info("Removed all pidors for $shopPayload")
+        log.info("Removed $amountOfRemovedPidors pidors for $shopPayload")
         return Phrase.DROP_PIDOR_DONE
     }
 }

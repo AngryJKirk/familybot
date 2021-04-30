@@ -81,6 +81,16 @@ class CommonRepository(datasource: DataSource) {
         )
     }
 
+    @Timed("repository.CommonRepository.removePidorRecords")
+    fun removePidorRecords(chat: Chat, from: Instant, until: Instant): Int {
+        return template.update(
+            "DELETE FROM pidors WHERE chat_id = ? AND pidor_date >= ? AND pidor_date <= ?",
+            chat.id,
+            Timestamp.from(from),
+            Timestamp.from(until)
+        )
+    }
+
     @Timed("repository.CommonRepository.getPidorsByChat")
     fun getPidorsByChat(
         chat: Chat,
