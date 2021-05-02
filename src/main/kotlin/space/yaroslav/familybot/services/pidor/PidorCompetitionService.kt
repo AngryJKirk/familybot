@@ -29,6 +29,9 @@ class PidorCompetitionService(
         val context = dictionary.createContext(update)
         if (isEndOfMonth()) {
             val thisMonthPidors = getPidorsOfThisMonth(update)
+            if (thisMonthPidors.size < 2) {
+                return { }
+            }
             val competitors = detectPidorCompetition(thisMonthPidors)
             if (competitors != null) {
                 return {
