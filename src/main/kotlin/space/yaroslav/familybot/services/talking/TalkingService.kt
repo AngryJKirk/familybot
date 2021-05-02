@@ -66,7 +66,6 @@ class TalkingService(
         return chatLogRepository
             .get(user)
             .takeIf { it.size > minimalDatabaseSizeThreshold }
-            ?.let(this::cleanMessages)
             ?.toList()
     }
 
@@ -74,21 +73,9 @@ class TalkingService(
         messages = runCatching {
             chatLogRepository
                 .getAll()
-                .let(this::cleanMessages)
-                .toList()
         }.getOrElse { exception ->
             log.error("Could not update message cache", exception)
             messages
         }
-    }
-
-    private fun cleanMessages(messages: List<String>): Sequence<String> {
-        return messages
-            .asSequence()
-            .filterNot { it.split(" ").size > 10 }
-            .filterNot { it.length > 600 }
-            .filterNot { it.contains("http", ignoreCase = true) }
-            .filterNot { it.contains("сучар", ignoreCase = true) }
-            .filterNot { it.contains("@") }
     }
 }

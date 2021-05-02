@@ -176,6 +176,7 @@ class Router(
 
     private fun logChatMessage(update: Update) {
         val text = update.message.text
+            ?.takeUnless { it.contains("сучар", ignoreCase = true) }
             ?.takeIf { it.split(" ").size >= 3 }
             ?.takeIf { it.split(" ").size < 8 }
             ?.takeIf { it.length < 600 }
