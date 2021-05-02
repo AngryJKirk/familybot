@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.services.misc
+package space.yaroslav.familybot.services.pidor
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper

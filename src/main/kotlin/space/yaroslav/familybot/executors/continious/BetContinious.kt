@@ -19,7 +19,7 @@ import space.yaroslav.familybot.common.utils.untilNextMonth
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.repos.CommonRepository
-import space.yaroslav.familybot.services.misc.PidorCompetitionService
+import space.yaroslav.familybot.services.pidor.PidorCompetitionService
 import space.yaroslav.familybot.services.settings.BetTolerance
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.UserAndChatEasyKey

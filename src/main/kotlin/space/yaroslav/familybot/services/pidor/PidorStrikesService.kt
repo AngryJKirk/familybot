@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.services.misc
+package space.yaroslav.familybot.services.pidor
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update

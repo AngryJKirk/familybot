@@ -12,7 +12,7 @@ import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.repos.CommonRepository
-import space.yaroslav.familybot.services.misc.PidorStrikeStorage
+import space.yaroslav.familybot.services.pidor.PidorStrikeStorage
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 

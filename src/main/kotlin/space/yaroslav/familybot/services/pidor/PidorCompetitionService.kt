@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.services.misc
+package space.yaroslav.familybot.services.pidor
 
 import kotlinx.coroutines.delay
 import org.springframework.stereotype.Service

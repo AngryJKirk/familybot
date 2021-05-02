@@ -25,8 +25,8 @@ import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.models.FunctionId
 import space.yaroslav.familybot.models.Phrase
 import space.yaroslav.familybot.repos.CommonRepository
-import space.yaroslav.familybot.services.misc.PidorCompetitionService
-import space.yaroslav.familybot.services.misc.PidorStrikesService
+import space.yaroslav.familybot.services.pidor.PidorCompetitionService
+import space.yaroslav.familybot.services.pidor.PidorStrikesService
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.PidorTolerance
 import space.yaroslav.familybot.services.talking.Dictionary
