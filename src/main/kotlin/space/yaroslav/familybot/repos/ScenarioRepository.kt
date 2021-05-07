@@ -88,24 +88,6 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
             .firstOrNull()
     }
 
-    @Timed("repository.PostgresScenarioRepository.getAllCurrentGames")
-    fun getAllCurrentGames(): Map<Chat, ScenarioMove> {
-        return template.query(
-            """SELECT *
-        FROM (
-         SELECT chat_id, scenario_move_id, MAX(state_date) AS date
-         FROM scenario_states
-         GROUP BY chat_id, scenario_move_id) gr
-         JOIN scenario_states ss ON gr.chat_id = ss.chat_id
-            AND gr.chat_id = ss.chat_id
-            AND gr.date = ss.state_date
-         JOIN chats c ON ss.chat_id = c.id
-         JOIN scenario_move sm ON ss.scenario_move_id = sm.move_id"""
-        ) { rs, rowNum ->
-            rs.toChat() to (scenarioMoveRowMapper.mapRowNotNull(rs, rowNum))
-        }.toMap()
-    }
-
     @Timed("repository.PostgresScenarioRepository.getCurrentMoveOfChat")
     fun getCurrentMoveOfChat(chat: Chat): ScenarioMove? {
         return template.query(

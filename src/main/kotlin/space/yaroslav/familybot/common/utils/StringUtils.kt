@@ -1,6 +1,7 @@
 package space.yaroslav.familybot.common.utils
 
 import space.yaroslav.familybot.common.Pluralization
+import java.util.Locale
 
 fun String?.dropLastDelimiter(): String? {
     if (this.isNullOrEmpty()) {
@@ -30,3 +31,14 @@ fun pluralize(count: Int, pluralizedWordsProvider: PluralizedWordsProvider): Str
         Pluralization.MANY -> pluralizedWordsProvider.many()
     }
 }
+
+fun String.capitalized(): String {
+    return this.replaceFirstChar { char ->
+        if (char.isLowerCase()) {
+            char.titlecase(Locale.getDefault())
+        } else {
+            char.toString()
+        }
+    }
+}
+

@@ -46,7 +46,7 @@ class HuificatorExecutor(private val easyKeyValueService: EasyKeyValueService) :
     }
 
     fun huify(word: String): String? {
-        val wordLowerCase = getLastWord(word).toLowerCase()
+        val wordLowerCase = getLastWord(word).lowercase()
 
         if (wordLowerCase.length < 5) {
             return null

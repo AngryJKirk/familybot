@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.services.dictionary
+package space.yaroslav.familybot.services.talking
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.http.HttpEntity

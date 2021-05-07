@@ -3,6 +3,7 @@ package space.yaroslav.familybot.executors.command
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.common.utils.capitalized
 import space.yaroslav.familybot.common.utils.dropLastDelimiter
 import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.send
@@ -32,7 +33,7 @@ class AnswerExecutor(
             .filter(String::isNotEmpty)
             .takeIf(this::isOptionsCountEnough)
             ?.random()
-            ?.capitalize()
+            ?.capitalized()
             ?.dropLastDelimiter()
             ?: return {
                 log.info("Bad argument was passed, text of message is [{}]", text)

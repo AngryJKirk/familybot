@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.common.utils.capitalized
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.repos.QuoteRepository
@@ -23,7 +24,7 @@ class QuoteByTagExecutor(private val quoteRepository: QuoteRepository, config: B
         return {
             val rows = quoteRepository
                 .getTags()
-                .map { tag -> InlineKeyboardButton(tag.capitalize()).apply { callbackData = tag } }
+                .map { tag -> InlineKeyboardButton(tag.capitalized()).apply { callbackData = tag } }
                 .chunked(3)
             it.send(update, QUOTE_MESSAGE, replyToUpdate = true, customization = customization(rows))
         }

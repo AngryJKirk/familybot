@@ -15,57 +15,6 @@ import java.time.Instant
 @Component
 class AskWorldRepository(val template: JdbcTemplate) {
 
-    @Timed("repository.AskWorldRepository.getQuestionFromUserAllChats")
-    fun getQuestionFromUserAllChats(
-        user: User,
-        date: Instant
-    ): List<AskWorldQuestion> {
-        return template.query(
-            """SELECT
-                          ask_world_questions.id,
-                          ask_world_questions.question,
-                          ask_world_questions.chat_id,
-                          ask_world_questions.user_id,
-                          ask_world_questions.date,
-                          c2.name as chat_name,
-                          u.name as common_name,
-                          u.username
-                            from ask_world_questions
-                            INNER JOIN chats c2 on ask_world_questions.chat_id = c2.id
-                            INNER JOIN users u on ask_world_questions.user_id = u.id
-                            where ask_world_questions.user_id = ?
-                            and ask_world_questions.date >= ?""",
-            { rs, _ -> rs.toAskWorldQuestion() },
-            user.id,
-            Timestamp.from(date)
-        )
-    }
-
-    @Timed("repository.AskWorldRepository.getQuestionsFromChat")
-    fun getQuestionsFromChat(
-        chat: Chat,
-        date: Instant
-    ): List<AskWorldQuestion> {
-        return template.query(
-            """SELECT
-                          ask_world_questions.id,
-                          ask_world_questions.question,
-                          ask_world_questions.chat_id,
-                          ask_world_questions.user_id,
-                          ask_world_questions.date,
-                          c2.name as chat_name,
-                          u.name as common_name,
-                          u.username
-                            from ask_world_questions
-                            INNER JOIN chats c2 on ask_world_questions.chat_id = c2.id
-                            INNER JOIN users u on ask_world_questions.user_id = u.id
-                            where ask_world_questions.chat_id = ? and date >= ?""",
-            { rs, _ -> rs.toAskWorldQuestion() },
-            chat.id,
-            Timestamp.from(date)
-        )
-    }
-
     @Timed("repository.AskWorldRepository.findQuestionByMessageId")
     fun findQuestionByMessageId(messageId: Long, chat: Chat): AskWorldQuestion {
         return template.query(

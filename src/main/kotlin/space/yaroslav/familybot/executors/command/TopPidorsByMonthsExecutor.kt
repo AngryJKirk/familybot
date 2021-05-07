@@ -7,6 +7,7 @@ import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.Pluralization
 import space.yaroslav.familybot.common.User
 import space.yaroslav.familybot.common.utils.bold
+import space.yaroslav.familybot.common.utils.capitalized
 import space.yaroslav.familybot.common.utils.dropLastDelimiter
 import space.yaroslav.familybot.common.utils.italic
 import space.yaroslav.familybot.common.utils.send
@@ -68,7 +69,7 @@ class TopPidorsByMonthsExecutor(
     }
 
     private fun formatLeaderBoard(context: DictionaryContext): (Map.Entry<LocalDate, PidorStat>) -> String = {
-        val month = it.key.month.toRussian().capitalize()
+        val month = it.key.month.toRussian().capitalized()
         val year = it.key.year
         val userName = it.value.user.name.dropLastDelimiter()
         val position = it.value.position

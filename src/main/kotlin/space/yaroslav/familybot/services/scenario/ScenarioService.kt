@@ -3,7 +3,6 @@ package space.yaroslav.familybot.services.scenario
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.Chat
 import space.yaroslav.familybot.common.utils.bold
-import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.italic
 import space.yaroslav.familybot.models.Command
 import space.yaroslav.familybot.repos.ScenarioRepository
@@ -13,20 +12,12 @@ class ScenarioService(
     private val scenarioRepository: ScenarioRepository
 ) {
 
-    private val log = getLogger()
-
     fun getScenarios(): List<Scenario> {
         return scenarioRepository.getScenarios()
     }
 
     fun getPreviousMove(scenarioMove: ScenarioMove): ScenarioMove? {
         return scenarioRepository.getPreviousMove(scenarioMove)
-    }
-
-    fun getAllCurrentGames(): Map<Chat, ScenarioMove> {
-        return scenarioRepository.getAllCurrentGames().also {
-            log.info("All current games are $it")
-        }
     }
 
     fun getCurrentGame(chat: Chat): ScenarioMove? {

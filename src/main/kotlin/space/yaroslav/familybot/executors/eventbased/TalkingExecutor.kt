@@ -94,7 +94,7 @@ class TalkingExecutor(
         if (message.endsWith(" ")) {
             message = message.dropLast(1)
         }
-        return message.toUpperCase() + "!!!!"
+        return message.uppercase() + "!!!!"
     }
 
     private fun getTalkingDensity(chat: Chat): Long {
