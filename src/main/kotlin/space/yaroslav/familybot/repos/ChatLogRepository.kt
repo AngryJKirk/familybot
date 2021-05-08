@@ -5,7 +5,7 @@ import com.google.common.cache.CacheLoader
 import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.User
+import space.yaroslav.familybot.models.telegram.User
 import java.util.concurrent.TimeUnit
 
 @Component

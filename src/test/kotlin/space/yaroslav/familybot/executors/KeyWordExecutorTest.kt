@@ -12,8 +12,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendSticker
 import space.yaroslav.familybot.executors.eventbased.keyword.KeyWordExecutor
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.singleStickerUpdate
-import space.yaroslav.familybot.models.Priority
-import space.yaroslav.familybot.models.stickers.Sticker
+import space.yaroslav.familybot.models.router.Priority
+import space.yaroslav.familybot.models.telegram.stickers.Sticker
 import space.yaroslav.familybot.suits.ExecutorTest
 
 @ExtendWith(SpringExtension::class)

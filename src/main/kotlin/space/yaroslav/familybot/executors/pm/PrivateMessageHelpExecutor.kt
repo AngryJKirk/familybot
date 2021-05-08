@@ -6,8 +6,8 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.executors.command.HelpCommandExecutor
-import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.models.Priority
+import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.services.talking.Dictionary
 
 @Component

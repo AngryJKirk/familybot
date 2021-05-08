@@ -3,10 +3,10 @@ package space.yaroslav.familybot.repos
 import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.AskWorldQuestion
-import space.yaroslav.familybot.common.AskWorldReply
-import space.yaroslav.familybot.common.Chat
-import space.yaroslav.familybot.common.User
+import space.yaroslav.familybot.models.askworld.AskWorldQuestion
+import space.yaroslav.familybot.models.askworld.AskWorldReply
+import space.yaroslav.familybot.models.telegram.Chat
+import space.yaroslav.familybot.models.telegram.User
 import space.yaroslav.familybot.common.utils.toAskWorldQuestion
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.sql.Timestamp

@@ -1,8 +1,8 @@
 package space.yaroslav.familybot.services.payment
 
-import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.models.ShopItem
-import space.yaroslav.familybot.models.ShopPayload
+import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.shop.ShopItem
+import space.yaroslav.familybot.models.shop.ShopPayload
 
 interface PaymentProcessor {
 

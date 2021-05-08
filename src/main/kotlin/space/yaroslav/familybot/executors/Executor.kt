@@ -3,7 +3,7 @@ package space.yaroslav.familybot.executors
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.models.Priority
+import space.yaroslav.familybot.models.router.Priority
 
 interface Executor {
 

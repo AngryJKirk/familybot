@@ -1,8 +1,8 @@
 package space.yaroslav.familybot.services.misc
 
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.Chat
-import space.yaroslav.familybot.common.User
+import space.yaroslav.familybot.models.telegram.Chat
+import space.yaroslav.familybot.models.telegram.User
 import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.prettyFormat
 import space.yaroslav.familybot.services.settings.Ban

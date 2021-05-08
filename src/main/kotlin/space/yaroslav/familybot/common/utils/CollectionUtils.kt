@@ -1,6 +1,6 @@
 package space.yaroslav.familybot.common.utils
 
-import space.yaroslav.familybot.common.User
+import space.yaroslav.familybot.models.telegram.User
 
 class PluralizedWordsProvider(
     val one: () -> String = { "раз" },

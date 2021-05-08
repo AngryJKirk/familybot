@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.models
+package space.yaroslav.familybot.models.router
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton

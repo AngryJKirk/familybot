@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.models
+package space.yaroslav.familybot.models.shop
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import space.yaroslav.familybot.services.settings.ChatEasyKey
@@ -9,16 +9,17 @@ data class ShopPayload(
     @JsonProperty("chatId") val chatId: Long,
     @JsonProperty("userId") val userId: Long,
     @JsonProperty("shopItem") val shopItem: ShopItem
-)
+) {
 
-fun ShopPayload.chatKey(): ChatEasyKey {
-    return ChatEasyKey(this.chatId)
-}
+    fun chatKey(): ChatEasyKey {
+        return ChatEasyKey(this.chatId)
+    }
 
-fun ShopPayload.userAndChatKey(): UserAndChatEasyKey {
-    return UserAndChatEasyKey(this.userId, this.chatId)
-}
+    fun userAndChatKey(): UserAndChatEasyKey {
+        return UserAndChatEasyKey(this.userId, this.chatId)
+    }
 
-fun ShopPayload.userKey(): UserEasyKey {
-    return UserEasyKey(this.userId)
+    fun userKey(): UserEasyKey {
+        return UserEasyKey(this.userId)
+    }
 }

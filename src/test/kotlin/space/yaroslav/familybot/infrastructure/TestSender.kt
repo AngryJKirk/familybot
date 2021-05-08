@@ -15,7 +15,7 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.User
 import org.telegram.telegrambots.meta.api.objects.stickers.StickerSet
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.models.stickers.Sticker
+import space.yaroslav.familybot.models.telegram.stickers.Sticker
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 
 class TestSender {

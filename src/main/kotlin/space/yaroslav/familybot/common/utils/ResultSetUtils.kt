@@ -1,11 +1,11 @@
 package space.yaroslav.familybot.common.utils
 
-import space.yaroslav.familybot.common.AskWorldQuestion
-import space.yaroslav.familybot.common.Chat
-import space.yaroslav.familybot.common.CommandByUser
-import space.yaroslav.familybot.common.Pidor
-import space.yaroslav.familybot.common.User
-import space.yaroslav.familybot.models.Command
+import space.yaroslav.familybot.models.askworld.AskWorldQuestion
+import space.yaroslav.familybot.models.telegram.Chat
+import space.yaroslav.familybot.models.telegram.CommandByUser
+import space.yaroslav.familybot.models.telegram.User
+import space.yaroslav.familybot.models.telegram.Command
+import space.yaroslav.familybot.models.telegram.Pidor
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.sql.ResultSet
 import java.util.UUID

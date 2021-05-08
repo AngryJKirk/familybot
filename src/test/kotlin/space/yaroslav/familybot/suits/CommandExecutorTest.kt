@@ -6,7 +6,7 @@ import space.yaroslav.familybot.executors.command.CommandExecutor
 import space.yaroslav.familybot.infrastructure.createSimpleCommand
 import space.yaroslav.familybot.infrastructure.createSimpleMessage
 import space.yaroslav.familybot.infrastructure.randomString
-import space.yaroslav.familybot.models.Priority
+import space.yaroslav.familybot.models.router.Priority
 
 abstract class CommandExecutorTest : ExecutorTest() {
 

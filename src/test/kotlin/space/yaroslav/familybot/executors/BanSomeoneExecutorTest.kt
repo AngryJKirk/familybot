@@ -20,7 +20,7 @@ import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.executors.pm.BanSomeoneExecutor
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.randomString
-import space.yaroslav.familybot.models.Priority
+import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.services.misc.BanService
 import space.yaroslav.familybot.services.settings.EasyKey
 import space.yaroslav.familybot.suits.ExecutorTest

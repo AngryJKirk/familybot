@@ -2,10 +2,9 @@ package space.yaroslav.familybot.services.payment.processors
 
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.utils.getLogger
-import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.models.ShopItem
-import space.yaroslav.familybot.models.ShopPayload
-import space.yaroslav.familybot.models.chatKey
+import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.shop.ShopItem
+import space.yaroslav.familybot.models.shop.ShopPayload
 import space.yaroslav.familybot.services.payment.PaymentProcessor
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.PidorTolerance

@@ -1,7 +1,7 @@
 package space.yaroslav.familybot.services.scenario
 
-import space.yaroslav.familybot.common.Chat
-import space.yaroslav.familybot.common.User
+import space.yaroslav.familybot.models.telegram.Chat
+import space.yaroslav.familybot.models.telegram.User
 import java.time.Instant
 import java.util.UUID
 

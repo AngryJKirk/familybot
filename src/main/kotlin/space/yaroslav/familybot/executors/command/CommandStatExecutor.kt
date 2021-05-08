@@ -3,13 +3,13 @@ package space.yaroslav.familybot.executors.command
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.CommandByUser
+import space.yaroslav.familybot.models.telegram.CommandByUser
 import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.formatTopList
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
-import space.yaroslav.familybot.models.Command
-import space.yaroslav.familybot.models.Phrase
+import space.yaroslav.familybot.models.telegram.Command
+import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.repos.CommandHistoryRepository
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.services.talking.DictionaryContext

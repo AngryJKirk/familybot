@@ -12,7 +12,7 @@ import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.executors.command.settings.AdvancedSettingsExecutor
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.randomLong
-import space.yaroslav.familybot.models.Command
+import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.services.settings.ChatEasyKey
 import space.yaroslav.familybot.services.settings.EasyKeyType
 import space.yaroslav.familybot.services.settings.EasyKeyValueService

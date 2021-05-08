@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.send
-import space.yaroslav.familybot.models.Command
+import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.repos.QuoteRepository
 import space.yaroslav.familybot.telegram.BotConfig
 

@@ -7,8 +7,8 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.Executor
-import space.yaroslav.familybot.models.FunctionId
-import space.yaroslav.familybot.models.Priority
+import space.yaroslav.familybot.models.router.FunctionId
+import space.yaroslav.familybot.models.router.Priority
 import java.util.concurrent.ThreadLocalRandom
 
 @Component

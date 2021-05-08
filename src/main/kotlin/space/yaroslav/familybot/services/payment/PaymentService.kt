@@ -2,8 +2,8 @@ package space.yaroslav.familybot.services.payment
 
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.utils.getLogger
-import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.models.ShopPayload
+import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.shop.ShopPayload
 import space.yaroslav.familybot.telegram.FamilyBot
 
 @Component

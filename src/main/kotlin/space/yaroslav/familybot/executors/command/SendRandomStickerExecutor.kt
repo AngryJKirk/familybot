@@ -3,12 +3,12 @@ package space.yaroslav.familybot.executors.command
 import kotlinx.coroutines.delay
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.CommandByUser
-import space.yaroslav.familybot.common.User
+import space.yaroslav.familybot.models.telegram.CommandByUser
+import space.yaroslav.familybot.models.telegram.User
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.sendRandomSticker
 import space.yaroslav.familybot.common.utils.toUser
-import space.yaroslav.familybot.models.stickers.StickerPack
+import space.yaroslav.familybot.models.telegram.stickers.StickerPack
 import space.yaroslav.familybot.repos.CommandHistoryRepository
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.LocalDate

@@ -1,7 +1,7 @@
 package space.yaroslav.familybot.infrastructure
 
-import space.yaroslav.familybot.models.ShopItem
-import space.yaroslav.familybot.models.ShopPayload
+import space.yaroslav.familybot.models.shop.ShopItem
+import space.yaroslav.familybot.models.shop.ShopPayload
 import java.util.UUID
 import java.util.concurrent.ThreadLocalRandom
 

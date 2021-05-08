@@ -6,8 +6,8 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.Chat
-import space.yaroslav.familybot.common.User
+import space.yaroslav.familybot.models.telegram.Chat
+import space.yaroslav.familybot.models.telegram.User
 import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.getUuid
 import space.yaroslav.familybot.common.utils.toChat

@@ -14,7 +14,7 @@ import space.yaroslav.familybot.infrastructure.createSimpleMessage
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.createSimpleUser
 import space.yaroslav.familybot.infrastructure.randomString
-import space.yaroslav.familybot.models.Priority
+import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.suits.ExecutorTest
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue

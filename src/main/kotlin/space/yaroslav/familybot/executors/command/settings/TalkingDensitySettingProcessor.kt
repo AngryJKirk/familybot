@@ -7,7 +7,7 @@ import space.yaroslav.familybot.common.utils.getMessageTokens
 import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
-import space.yaroslav.familybot.models.Phrase
+import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.TalkingDensity
 import space.yaroslav.familybot.services.talking.Dictionary

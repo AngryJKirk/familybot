@@ -9,9 +9,8 @@ import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMem
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.Chat
-import space.yaroslav.familybot.common.Pidor
-import space.yaroslav.familybot.common.User
+import space.yaroslav.familybot.models.telegram.Chat
+import space.yaroslav.familybot.models.telegram.User
 import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.isToday
@@ -21,9 +20,10 @@ import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.common.utils.untilNextDay
 import space.yaroslav.familybot.executors.Configurable
-import space.yaroslav.familybot.models.Command
-import space.yaroslav.familybot.models.FunctionId
-import space.yaroslav.familybot.models.Phrase
+import space.yaroslav.familybot.models.telegram.Command
+import space.yaroslav.familybot.models.router.FunctionId
+import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.telegram.Pidor
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.pidor.PidorCompetitionService
 import space.yaroslav.familybot.services.pidor.PidorStrikesService

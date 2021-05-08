@@ -1,8 +1,8 @@
 package space.yaroslav.familybot.services.scenario
 
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.Chat
-import space.yaroslav.familybot.common.User
+import space.yaroslav.familybot.models.telegram.Chat
+import space.yaroslav.familybot.models.telegram.User
 import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.repos.ScenarioRepository
 import space.yaroslav.familybot.telegram.FamilyBot

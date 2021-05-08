@@ -5,8 +5,8 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.MessageEntity
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
-import space.yaroslav.familybot.models.Command
-import space.yaroslav.familybot.models.stickers.Sticker
+import space.yaroslav.familybot.models.telegram.Command
+import space.yaroslav.familybot.models.telegram.stickers.Sticker
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 
 fun createSimpleUpdate(text: String? = null): Update {

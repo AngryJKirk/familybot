@@ -20,7 +20,7 @@ import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.executors.eventbased.HuificatorExecutor
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
-import space.yaroslav.familybot.models.Priority
+import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.TalkingDensity
 import space.yaroslav.familybot.suits.ExecutorTest

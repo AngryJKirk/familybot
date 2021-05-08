@@ -9,10 +9,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.Pidor
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.executors.command.ROULETTE_MESSAGE
-import space.yaroslav.familybot.models.Command
+import space.yaroslav.familybot.models.telegram.Command
+import space.yaroslav.familybot.models.telegram.Pidor
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.pidor.PidorCompetitionService
 import space.yaroslav.familybot.telegram.BotConfig
@@ -51,7 +51,12 @@ class RouletteContinious(
         if (number !in 1..6) {
             return {
                 it.execute(SendMessage(chatId, "Мушку спили и в следующий раз играй по правилам"))
-                coroutineScope { launch { pidorRepository.addPidor(Pidor(user, Instant.now())) } }
+                coroutineScope { launch { pidorRepository.addPidor(
+                    Pidor(
+                        user,
+                        Instant.now()
+                    )
+                ) } }
                 delay(1000)
                 it.execute(SendMessage(chatId, "В наказание твое пидорское очко уходит к остальным"))
             }
@@ -66,7 +71,12 @@ class RouletteContinious(
                 it.execute(SendMessage(chatId, "Но он пока не треснул. Свое пидорское очко можешь забрать. "))
             } else {
                 it.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
-                coroutineScope { launch { repeat(3) { pidorRepository.addPidor(Pidor(user, Instant.now())) } } }
+                coroutineScope { launch { repeat(3) { pidorRepository.addPidor(
+                    Pidor(
+                        user,
+                        Instant.now()
+                    )
+                ) } } }
                 delay(2000)
                 it.execute(
                     SendMessage(

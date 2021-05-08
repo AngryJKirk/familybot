@@ -7,9 +7,9 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.Executor
-import space.yaroslav.familybot.models.FunctionId
-import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.models.Priority
+import space.yaroslav.familybot.models.router.FunctionId
+import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 

@@ -1,14 +1,14 @@
 package space.yaroslav.familybot.services.payment.processors
 
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.Chat
+import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.isToday
 import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.startOfDay
-import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.models.ShopItem
-import space.yaroslav.familybot.models.ShopPayload
+import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.shop.ShopItem
+import space.yaroslav.familybot.models.shop.ShopPayload
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.payment.PaymentProcessor
 import space.yaroslav.familybot.services.settings.EasyKeyValueService

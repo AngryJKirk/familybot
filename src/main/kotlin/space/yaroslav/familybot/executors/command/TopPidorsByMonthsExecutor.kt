@@ -3,9 +3,9 @@ package space.yaroslav.familybot.executors.command
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.Pidor
-import space.yaroslav.familybot.common.Pluralization
-import space.yaroslav.familybot.common.User
+import space.yaroslav.familybot.models.telegram.Pidor
+import space.yaroslav.familybot.models.dictionary.Pluralization
+import space.yaroslav.familybot.models.telegram.User
 import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.capitalized
 import space.yaroslav.familybot.common.utils.dropLastDelimiter
@@ -14,9 +14,9 @@ import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toRussian
 import space.yaroslav.familybot.executors.Configurable
-import space.yaroslav.familybot.models.Command
-import space.yaroslav.familybot.models.FunctionId
-import space.yaroslav.familybot.models.Phrase
+import space.yaroslav.familybot.models.telegram.Command
+import space.yaroslav.familybot.models.router.FunctionId
+import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.services.talking.DictionaryContext

@@ -2,11 +2,11 @@ package space.yaroslav.familybot.services.talking
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
-import space.yaroslav.familybot.common.Chat
+import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.toChat
-import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.models.PhraseTheme
+import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.dictionary.PhraseTheme
 import space.yaroslav.familybot.services.settings.ChatEasyKey
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.UkrainianLanguage

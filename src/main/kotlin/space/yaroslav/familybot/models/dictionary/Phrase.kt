@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.models
+package space.yaroslav.familybot.models.dictionary
 
 enum class Phrase {
     BAD_COMMAND_USAGE,
@@ -132,10 +132,3 @@ enum class Phrase {
     SHOP_PRE_CHECKOUT_FAIL
 }
 
-enum class PhraseTheme {
-    DEFAULT,
-    DAY_OF_DEFENDER_23_FEB,
-    DAY_OF_WOMAN_8_MARCH,
-    UKRAINIAN,
-    ACAB
-}

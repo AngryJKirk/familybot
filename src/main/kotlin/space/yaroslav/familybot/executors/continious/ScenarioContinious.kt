@@ -6,8 +6,8 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.isFromAdmin
-import space.yaroslav.familybot.models.Command
-import space.yaroslav.familybot.models.Phrase
+import space.yaroslav.familybot.models.telegram.Command
+import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.services.scenario.ScenarioService
 import space.yaroslav.familybot.services.scenario.ScenarioSessionManagementService
 import space.yaroslav.familybot.services.talking.Dictionary

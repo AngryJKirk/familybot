@@ -1,6 +1,6 @@
 package space.yaroslav.familybot.executors
 
-import space.yaroslav.familybot.models.FunctionId
+import space.yaroslav.familybot.models.router.FunctionId
 
 interface Configurable {
 

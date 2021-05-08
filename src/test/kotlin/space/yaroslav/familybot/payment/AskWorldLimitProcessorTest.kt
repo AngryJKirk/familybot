@@ -3,9 +3,7 @@ package space.yaroslav.familybot.payment
 import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
 import space.yaroslav.familybot.infrastructure.payload
-import space.yaroslav.familybot.models.ShopItem
-import space.yaroslav.familybot.models.chatKey
-import space.yaroslav.familybot.models.userKey
+import space.yaroslav.familybot.models.shop.ShopItem
 import space.yaroslav.familybot.services.payment.processors.AskWorldLimitPaymentProcessor
 import space.yaroslav.familybot.services.settings.AskWorldChatUsages
 import space.yaroslav.familybot.services.settings.AskWorldUserUsages

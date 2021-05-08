@@ -4,9 +4,9 @@ import org.telegram.telegrambots.meta.api.objects.EntityType
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.MessageEntity
 import org.telegram.telegrambots.meta.api.objects.Update
-import space.yaroslav.familybot.common.Chat
-import space.yaroslav.familybot.common.User
-import space.yaroslav.familybot.models.Command
+import space.yaroslav.familybot.models.telegram.Chat
+import space.yaroslav.familybot.models.telegram.User
+import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.services.settings.ChatEasyKey
 import space.yaroslav.familybot.services.settings.UserAndChatEasyKey
 import space.yaroslav.familybot.services.settings.UserEasyKey

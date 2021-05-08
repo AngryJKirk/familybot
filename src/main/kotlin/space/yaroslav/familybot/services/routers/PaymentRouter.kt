@@ -8,8 +8,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.getLogger
-import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.models.ShopPayload
+import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.shop.ShopPayload
 import space.yaroslav.familybot.services.payment.PaymentService
 import space.yaroslav.familybot.services.settings.ChatEasyKey
 import space.yaroslav.familybot.services.talking.Dictionary

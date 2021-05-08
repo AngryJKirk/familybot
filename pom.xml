@@ -14,7 +14,7 @@
         <spring-boot.version>2.4.5</spring-boot.version>
         <telegrambots.version>5.2.0</telegrambots.version>
         <lettuce-core.version>6.0.2.RELEASE</lettuce-core.version>
-        <kotlinx-coroutines.version>1.4.2</kotlinx-coroutines.version>
+        <kotlinx-coroutines.version>1.5.0-RC</kotlinx-coroutines.version>
         <testcontainers.version>1.15.3</testcontainers.version>
         <mockito-kotlin.version>2.2.11</mockito-kotlin.version>
         <micrometer-registry.version>1.6.5</micrometer-registry.version>

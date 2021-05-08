@@ -16,7 +16,7 @@ import space.yaroslav.familybot.common.utils.italic
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toHourMinuteString
-import space.yaroslav.familybot.models.Phrase
+import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.services.talking.DictionaryContext
 import space.yaroslav.familybot.telegram.FamilyBot

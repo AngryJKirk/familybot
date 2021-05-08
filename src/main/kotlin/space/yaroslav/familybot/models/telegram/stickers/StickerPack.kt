@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.models.stickers
+package space.yaroslav.familybot.models.telegram.stickers
 
 enum class StickerPack(val packName: String) {
     FAMILY_PACK("FamiliGayPack"),

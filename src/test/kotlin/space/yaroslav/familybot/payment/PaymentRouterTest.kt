@@ -25,8 +25,8 @@ import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.payload
 import space.yaroslav.familybot.infrastructure.randomInt
 import space.yaroslav.familybot.infrastructure.randomString
-import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.models.ShopItem
+import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.shop.ShopItem
 import space.yaroslav.familybot.services.payment.PaymentService
 import space.yaroslav.familybot.services.routers.PaymentRouter
 import space.yaroslav.familybot.suits.FamilybotApplicationTest

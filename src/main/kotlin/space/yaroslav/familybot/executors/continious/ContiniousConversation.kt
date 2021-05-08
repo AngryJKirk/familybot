@@ -3,7 +3,7 @@ package space.yaroslav.familybot.executors.continious
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.executors.command.CommandExecutor
-import space.yaroslav.familybot.models.Priority
+import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.telegram.BotConfig
 
 abstract class ContiniousConversation(private val config: BotConfig) : CommandExecutor(config) {

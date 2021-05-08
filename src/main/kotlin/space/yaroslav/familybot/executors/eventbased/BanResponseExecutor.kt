@@ -4,14 +4,14 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.Chat
-import space.yaroslav.familybot.common.User
+import space.yaroslav.familybot.models.telegram.Chat
+import space.yaroslav.familybot.models.telegram.User
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.executors.Executor
-import space.yaroslav.familybot.models.Command
-import space.yaroslav.familybot.models.Priority
+import space.yaroslav.familybot.models.telegram.Command
+import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.services.misc.BanService
 import space.yaroslav.familybot.telegram.FamilyBot
 

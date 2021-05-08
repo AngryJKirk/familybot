@@ -5,8 +5,8 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.utils.sendSticker
-import space.yaroslav.familybot.models.stickers.Sticker
-import space.yaroslav.familybot.models.stickers.StickerPack
+import space.yaroslav.familybot.models.telegram.stickers.Sticker
+import space.yaroslav.familybot.models.telegram.stickers.StickerPack
 
 @Component
 class ZigaKeyWordProcessor : KeyWordProcessor {

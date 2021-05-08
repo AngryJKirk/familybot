@@ -5,7 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.executors.Executor
-import space.yaroslav.familybot.models.Priority
+import space.yaroslav.familybot.models.router.Priority
 
 fun Executor.meteredExecute(update: Update, meterRegistry: MeterRegistry): suspend (AbsSender) -> Unit {
 

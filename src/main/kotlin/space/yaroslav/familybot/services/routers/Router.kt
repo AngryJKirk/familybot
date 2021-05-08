@@ -9,7 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.Chat
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.CommandByUser
+import space.yaroslav.familybot.models.telegram.CommandByUser
 import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.isGroup
 import space.yaroslav.familybot.common.utils.key
@@ -24,9 +24,8 @@ import space.yaroslav.familybot.executors.Executor
 import space.yaroslav.familybot.executors.command.CommandExecutor
 import space.yaroslav.familybot.executors.eventbased.AntiDdosExecutor
 import space.yaroslav.familybot.executors.pm.PrivateMessageExecutor
-import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.models.Priority
-import space.yaroslav.familybot.models.higherThan
+import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.repos.ChatLogRepository
 import space.yaroslav.familybot.repos.CommandHistoryRepository
 import space.yaroslav.familybot.repos.CommonRepository

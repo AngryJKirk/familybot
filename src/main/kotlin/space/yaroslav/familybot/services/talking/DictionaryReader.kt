@@ -3,8 +3,8 @@ package space.yaroslav.familybot.services.talking
 import org.springframework.stereotype.Component
 import org.tomlj.Toml
 import org.tomlj.TomlTable
-import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.models.PhraseTheme
+import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.dictionary.PhraseTheme
 import space.yaroslav.familybot.telegram.FamilyBot
 @Component
 class DictionaryReader {

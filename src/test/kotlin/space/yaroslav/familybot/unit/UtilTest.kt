@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import space.yaroslav.familybot.common.Pluralization
+import space.yaroslav.familybot.models.dictionary.Pluralization
 import java.util.stream.Stream
 
 class UtilTest {

@@ -4,11 +4,11 @@ import kotlinx.coroutines.delay
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.Chat
+import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.common.utils.from
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
-import space.yaroslav.familybot.models.Command
+import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.services.scenario.ScenarioGameplayService
 import space.yaroslav.familybot.services.scenario.ScenarioService
 import space.yaroslav.familybot.services.scenario.ScenarioSessionManagementService

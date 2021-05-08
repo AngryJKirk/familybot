@@ -1,10 +1,10 @@
 package space.yaroslav.familybot.services.scenario
 
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.Chat
+import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.common.utils.bold
 import space.yaroslav.familybot.common.utils.italic
-import space.yaroslav.familybot.models.Command
+import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.repos.ScenarioRepository
 
 @Component

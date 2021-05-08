@@ -9,8 +9,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.AskWorldQuestion
-import space.yaroslav.familybot.common.Chat
+import space.yaroslav.familybot.models.askworld.AskWorldQuestion
+import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.common.utils.boldNullable
 import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.italic
@@ -21,9 +21,9 @@ import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.common.utils.untilNextDay
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.command.settings.AskWorldDensityValue
-import space.yaroslav.familybot.models.Command
-import space.yaroslav.familybot.models.FunctionId
-import space.yaroslav.familybot.models.Phrase
+import space.yaroslav.familybot.models.telegram.Command
+import space.yaroslav.familybot.models.router.FunctionId
+import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.repos.AskWorldRepository
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.repos.FunctionsConfigureRepository

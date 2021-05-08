@@ -7,8 +7,8 @@ import space.yaroslav.familybot.common.utils.getMessageTokens
 import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.common.utils.toChat
-import space.yaroslav.familybot.models.FunctionId
-import space.yaroslav.familybot.models.Phrase
+import space.yaroslav.familybot.models.router.FunctionId
+import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.repos.FunctionsConfigureRepository
 import space.yaroslav.familybot.services.settings.AskWorldDensity
 import space.yaroslav.familybot.services.settings.EasyKeyValueService

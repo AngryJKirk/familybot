@@ -12,8 +12,8 @@ import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.models.stickers.Sticker
-import space.yaroslav.familybot.models.stickers.StickerPack
+import space.yaroslav.familybot.models.telegram.stickers.Sticker
+import space.yaroslav.familybot.models.telegram.stickers.StickerPack
 import space.yaroslav.familybot.telegram.BotConfig
 import java.util.concurrent.ThreadLocalRandom
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker

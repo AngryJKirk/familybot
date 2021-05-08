@@ -7,8 +7,8 @@ import space.yaroslav.familybot.common.utils.capitalized
 import space.yaroslav.familybot.common.utils.dropLastDelimiter
 import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.common.utils.send
-import space.yaroslav.familybot.models.Command
-import space.yaroslav.familybot.models.Phrase
+import space.yaroslav.familybot.models.telegram.Command
+import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import java.util.regex.Pattern

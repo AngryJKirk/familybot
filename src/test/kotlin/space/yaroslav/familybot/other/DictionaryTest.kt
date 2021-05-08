@@ -3,7 +3,7 @@ package space.yaroslav.familybot.other
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import space.yaroslav.familybot.models.Phrase
+import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.services.talking.DictionaryReader
 import space.yaroslav.familybot.suits.FamilybotApplicationTest
 

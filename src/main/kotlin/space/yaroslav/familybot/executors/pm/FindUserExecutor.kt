@@ -3,8 +3,8 @@ package space.yaroslav.familybot.executors.pm
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.Chat
-import space.yaroslav.familybot.common.User
+import space.yaroslav.familybot.models.telegram.Chat
+import space.yaroslav.familybot.models.telegram.User
 import space.yaroslav.familybot.common.utils.getMessageTokens
 import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.repos.CommonRepository

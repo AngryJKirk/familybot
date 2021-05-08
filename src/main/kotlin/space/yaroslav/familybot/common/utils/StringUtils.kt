@@ -1,6 +1,6 @@
 package space.yaroslav.familybot.common.utils
 
-import space.yaroslav.familybot.common.Pluralization
+import space.yaroslav.familybot.models.dictionary.Pluralization
 import java.util.Locale
 
 fun String?.dropLastDelimiter(): String? {

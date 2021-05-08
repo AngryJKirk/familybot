@@ -12,10 +12,10 @@ import space.yaroslav.familybot.common.utils.chatId
 import space.yaroslav.familybot.common.utils.key
 import space.yaroslav.familybot.common.utils.toChat
 import space.yaroslav.familybot.common.utils.toUser
-import space.yaroslav.familybot.models.Command
-import space.yaroslav.familybot.models.Phrase
-import space.yaroslav.familybot.models.ShopItem
-import space.yaroslav.familybot.models.ShopPayload
+import space.yaroslav.familybot.models.telegram.Command
+import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.shop.ShopItem
+import space.yaroslav.familybot.models.shop.ShopPayload
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.PaymentConfig
