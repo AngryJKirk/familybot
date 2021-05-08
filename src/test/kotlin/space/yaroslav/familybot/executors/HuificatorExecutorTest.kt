@@ -16,8 +16,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
-import space.yaroslav.familybot.common.utils.key
-import space.yaroslav.familybot.common.utils.toChat
+import space.yaroslav.familybot.common.extensions.key
+import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.executors.eventbased.HuificatorExecutor
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.models.router.Priority

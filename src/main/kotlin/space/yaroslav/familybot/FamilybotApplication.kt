@@ -2,6 +2,8 @@ package space.yaroslav.familybot
 
 import io.micrometer.core.aop.TimedAspect
 import io.micrometer.core.instrument.MeterRegistry
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.WebApplicationType
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -36,6 +38,10 @@ class FamilybotApplication {
     fun timedAspect(registry: MeterRegistry): TimedAspect {
         return TimedAspect(registry)
     }
+}
+
+inline fun <reified T> T.getLogger(): Logger {
+    return LoggerFactory.getLogger(T::class.java)
 }
 
 fun main() {

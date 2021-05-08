@@ -8,7 +8,7 @@ import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import space.yaroslav.familybot.common.utils.toChat
+import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.executors.command.PidorExecutor
 import space.yaroslav.familybot.infrastructure.createSimpleCommand
 import space.yaroslav.familybot.repos.CommonRepository
@@ -90,6 +90,5 @@ class PidorExecutorTest : CommandExecutorTest() {
         }
 
         redisTemplate.delete(redisTemplate.keys("*"))
-
     }
 }

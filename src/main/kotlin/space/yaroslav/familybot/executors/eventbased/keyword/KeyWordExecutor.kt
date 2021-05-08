@@ -4,9 +4,9 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.Executor
+import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.router.FunctionId
 import space.yaroslav.familybot.models.router.Priority
 import java.util.concurrent.ThreadLocalRandom

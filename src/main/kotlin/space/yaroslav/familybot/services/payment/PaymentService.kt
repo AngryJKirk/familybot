@@ -1,7 +1,7 @@
 package space.yaroslav.familybot.services.payment
 
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.utils.getLogger
+import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.models.shop.ShopPayload
 import space.yaroslav.familybot.telegram.FamilyBot
@@ -22,8 +22,10 @@ class PaymentService(
     }
 
     private fun getProcessor(shopPayload: ShopPayload): PaymentProcessor {
-        val paymentProcessor = (processors[shopPayload.shopItem]
-            ?: throw FamilyBot.InternalException("Can't find proper payment processor for ${shopPayload.shopItem}"))
+        val paymentProcessor = (
+            processors[shopPayload.shopItem]
+                ?: throw FamilyBot.InternalException("Can't find proper payment processor for ${shopPayload.shopItem}")
+            )
         log.info("Payment processor for shopPayload=$shopPayload is ${paymentProcessor::class.java.simpleName}")
         return paymentProcessor
     }

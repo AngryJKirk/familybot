@@ -6,7 +6,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
-import space.yaroslav.familybot.common.utils.getLogger
+import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component

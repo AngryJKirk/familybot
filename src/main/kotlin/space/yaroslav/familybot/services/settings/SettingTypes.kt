@@ -71,5 +71,3 @@ object AskWorldChatUsages : LongKeyType<ChatEasyKey>() {
 object AskWorldUserUsages : LongKeyType<UserEasyKey>() {
     override fun keyType() = UserEasyKey::class
 }
-
-

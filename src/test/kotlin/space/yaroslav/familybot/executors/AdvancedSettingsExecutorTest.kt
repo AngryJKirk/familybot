@@ -7,8 +7,8 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
-import space.yaroslav.familybot.common.utils.key
-import space.yaroslav.familybot.common.utils.toChat
+import space.yaroslav.familybot.common.extensions.key
+import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.executors.command.settings.AdvancedSettingsExecutor
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.randomLong

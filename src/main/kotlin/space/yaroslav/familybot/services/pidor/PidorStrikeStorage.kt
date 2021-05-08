@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
-import space.yaroslav.familybot.common.utils.key
-import space.yaroslav.familybot.common.utils.toChat
+import space.yaroslav.familybot.common.extensions.key
+import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.PidorStrikeStats
 

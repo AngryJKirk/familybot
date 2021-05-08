@@ -19,7 +19,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.payments.PreCheckoutQuery
 import org.telegram.telegrambots.meta.api.objects.payments.SuccessfulPayment
-import space.yaroslav.familybot.common.utils.from
+import space.yaroslav.familybot.common.extensions.from
 import space.yaroslav.familybot.infrastructure.TestSender
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.payload

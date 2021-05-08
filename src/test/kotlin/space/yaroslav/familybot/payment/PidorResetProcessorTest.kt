@@ -2,11 +2,11 @@ package space.yaroslav.familybot.payment
 
 import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
-import space.yaroslav.familybot.models.telegram.Chat
-import space.yaroslav.familybot.common.utils.toUser
+import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.payload
 import space.yaroslav.familybot.models.shop.ShopItem
+import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.models.telegram.Pidor
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.payment.processors.ResetPidorPaymentProcessor
@@ -30,7 +30,6 @@ class PidorResetProcessorTest : PaymentProcessorTest() {
 
         Assertions.assertNull(processor.preCheckOut(payload))
         easyKeyValueService.remove(PidorTolerance, key)
-
     }
 
     override fun processSuccessTest() {

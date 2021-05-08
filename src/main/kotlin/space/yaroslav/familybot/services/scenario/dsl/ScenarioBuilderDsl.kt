@@ -21,6 +21,7 @@ class Scenario {
     }
 }
 
+@Suppress("unused")
 class Move {
 
     val id: UUID = UUID.randomUUID()

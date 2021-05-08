@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.services.scenario.dsl
 
+@Suppress("unused")
 fun notmain() {
     val imagineWays =
         mutableListOf(

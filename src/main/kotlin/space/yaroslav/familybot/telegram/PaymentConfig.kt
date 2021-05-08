@@ -6,6 +6,3 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 class PaymentConfig {
     var token: String? = null
 }
-
-
-

@@ -131,4 +131,3 @@ enum class Phrase {
     DROP_ASK_WORLD_LIMIT_INVALID,
     SHOP_PRE_CHECKOUT_FAIL
 }
-

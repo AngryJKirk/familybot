@@ -4,8 +4,8 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMembersCount
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.models.telegram.Chat
-import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.telegram.BotConfig
 

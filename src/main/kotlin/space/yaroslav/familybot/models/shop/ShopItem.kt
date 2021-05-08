@@ -2,7 +2,7 @@ package space.yaroslav.familybot.models.shop
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
-import space.yaroslav.familybot.common.utils.rubles
+import space.yaroslav.familybot.common.extensions.rubles
 import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.services.talking.DictionaryContext
 

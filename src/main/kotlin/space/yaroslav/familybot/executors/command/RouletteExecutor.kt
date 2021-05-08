@@ -6,9 +6,9 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.executors.Configurable
-import space.yaroslav.familybot.models.telegram.Command
-import space.yaroslav.familybot.models.router.FunctionId
 import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.router.FunctionId
+import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 

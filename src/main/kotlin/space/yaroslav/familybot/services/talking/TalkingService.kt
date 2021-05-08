@@ -6,11 +6,11 @@ import kotlinx.coroutines.coroutineScope
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
+import space.yaroslav.familybot.common.extensions.key
+import space.yaroslav.familybot.common.extensions.toChat
+import space.yaroslav.familybot.common.extensions.toUser
+import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.telegram.User
-import space.yaroslav.familybot.common.utils.getLogger
-import space.yaroslav.familybot.common.utils.key
-import space.yaroslav.familybot.common.utils.toChat
-import space.yaroslav.familybot.common.utils.toUser
 import space.yaroslav.familybot.repos.ChatLogRepository
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.UkrainianLanguage

@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.common.utils
+package space.yaroslav.familybot.common
 
 import io.micrometer.core.instrument.MeterRegistry
 import org.telegram.telegrambots.meta.api.objects.Message

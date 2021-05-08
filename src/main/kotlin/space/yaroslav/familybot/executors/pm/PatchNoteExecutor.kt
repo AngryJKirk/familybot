@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.telegram.Chat
-import space.yaroslav.familybot.common.utils.getLogger
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.telegram.BotConfig
 

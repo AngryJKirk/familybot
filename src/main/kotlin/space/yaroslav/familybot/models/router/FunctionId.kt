@@ -2,7 +2,7 @@ package space.yaroslav.familybot.models.router
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
-import space.yaroslav.familybot.common.utils.toEmoji
+import space.yaroslav.familybot.common.extensions.toEmoji
 import space.yaroslav.familybot.services.settings.BooleanKeyType
 import space.yaroslav.familybot.services.settings.ChatEasyKey
 

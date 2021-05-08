@@ -7,7 +7,7 @@ import ch.qos.logback.core.Context
 import ch.qos.logback.core.filter.Filter
 import ch.qos.logback.core.spi.FilterReply
 import ch.qos.logback.core.status.Status
-import space.yaroslav.familybot.common.utils.prettyFormat
+import space.yaroslav.familybot.common.extensions.prettyFormat
 import java.time.Instant
 
 class ErrorLogsDeferredAppender : Appender<ILoggingEvent> {

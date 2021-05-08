@@ -8,13 +8,13 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.utils.getCommand
-import space.yaroslav.familybot.common.utils.key
-import space.yaroslav.familybot.common.utils.send
+import space.yaroslav.familybot.common.extensions.getCommand
+import space.yaroslav.familybot.common.extensions.key
+import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.Executor
-import space.yaroslav.familybot.models.router.FunctionId
 import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.router.FunctionId
 import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.services.settings.CommandLimit
 import space.yaroslav.familybot.services.settings.EasyKeyValueService

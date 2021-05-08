@@ -6,6 +6,7 @@ import org.tomlj.TomlTable
 import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.models.dictionary.PhraseTheme
 import space.yaroslav.familybot.telegram.FamilyBot
+
 @Component
 class DictionaryReader {
     private val dictionary: Map<Phrase, Map<PhraseTheme, List<String>>>

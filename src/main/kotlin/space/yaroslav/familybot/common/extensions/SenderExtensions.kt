@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.common.utils
+package space.yaroslav.familybot.common.extensions
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker
 import org.telegram.telegrambots.meta.api.methods.stickers.GetStickerSet
+import org.telegram.telegrambots.meta.api.objects.Chat
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -95,4 +96,8 @@ private suspend fun sendStickerInternal(
         sendSticker.replyToMessageId = update.message.messageId
     }
     return sender.execute(sendSticker)
+}
+
+fun Chat.isGroup(): Boolean {
+    return this.isSuperGroupChat || this.isGroupChat
 }

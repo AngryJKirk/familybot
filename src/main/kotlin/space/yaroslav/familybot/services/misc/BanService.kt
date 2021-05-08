@@ -1,10 +1,10 @@
 package space.yaroslav.familybot.services.misc
 
 import org.springframework.stereotype.Component
+import space.yaroslav.familybot.common.extensions.key
+import space.yaroslav.familybot.common.extensions.prettyFormat
 import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.models.telegram.User
-import space.yaroslav.familybot.common.utils.key
-import space.yaroslav.familybot.common.utils.prettyFormat
 import space.yaroslav.familybot.services.settings.Ban
 import space.yaroslav.familybot.services.settings.EasyKey
 import space.yaroslav.familybot.services.settings.EasyKeyValueService

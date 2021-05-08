@@ -23,6 +23,4 @@ abstract class PaymentProcessorTest : FamilybotApplicationTest() {
     abstract fun preCheckOutTest()
 
     abstract fun processSuccessTest()
-
-
 }

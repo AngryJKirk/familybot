@@ -2,9 +2,9 @@ package space.yaroslav.familybot.repos
 
 import io.micrometer.core.annotation.Timed
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.models.telegram.Chat
-import space.yaroslav.familybot.common.utils.key
+import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.models.router.FunctionId
+import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.services.settings.EasyKeyValueRepository
 
 @Component

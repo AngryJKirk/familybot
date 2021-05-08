@@ -4,9 +4,9 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.utils.key
-import space.yaroslav.familybot.common.utils.send
-import space.yaroslav.familybot.common.utils.toChat
+import space.yaroslav.familybot.common.extensions.key
+import space.yaroslav.familybot.common.extensions.send
+import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.models.router.FunctionId
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.FuckOffTolerance

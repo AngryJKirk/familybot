@@ -11,8 +11,8 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException
-import space.yaroslav.familybot.common.utils.toChat
-import space.yaroslav.familybot.common.utils.toUser
+import space.yaroslav.familybot.common.extensions.toChat
+import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.services.routers.PaymentRouter
 import space.yaroslav.familybot.services.routers.PollRouter
 import space.yaroslav.familybot.services.routers.Router
@@ -99,8 +99,7 @@ class FamilyBot(
         return runCatching {
             paymentRouter.proceedPreCheckoutQuery(update)
         }.getOrDefault {
-            log.warn("Poll router failed", it)
-            {}
+            log.warn("Poll router failed", it) {}
         }
     }
 
@@ -108,8 +107,7 @@ class FamilyBot(
         return runCatching {
             paymentRouter.proceedSuccessfulPayment(update)
         }.getOrDefault {
-            log.warn("Poll router failed", it)
-            {}
+            log.warn("Poll router failed", it) {}
         }
     }
 

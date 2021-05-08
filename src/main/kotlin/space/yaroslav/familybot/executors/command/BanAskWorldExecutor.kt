@@ -4,9 +4,9 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.common.extensions.send
+import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.askworld.AskWorldQuestion
-import space.yaroslav.familybot.common.utils.getLogger
-import space.yaroslav.familybot.common.utils.send
 import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.repos.AskWorldRepository
 import space.yaroslav.familybot.services.misc.BanService

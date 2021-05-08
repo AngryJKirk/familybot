@@ -4,13 +4,13 @@ import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
+import space.yaroslav.familybot.common.extensions.map
+import space.yaroslav.familybot.common.extensions.toChat
+import space.yaroslav.familybot.common.extensions.toPidor
+import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.models.telegram.Pidor
 import space.yaroslav.familybot.models.telegram.User
-import space.yaroslav.familybot.common.utils.map
-import space.yaroslav.familybot.common.utils.toChat
-import space.yaroslav.familybot.common.utils.toPidor
-import space.yaroslav.familybot.common.utils.toUser
 import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.Instant

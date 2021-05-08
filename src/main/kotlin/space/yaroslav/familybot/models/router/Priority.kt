@@ -12,4 +12,3 @@ enum class Priority(val priorityValue: Int) {
         return this.priorityValue > other.priorityValue
     }
 }
-

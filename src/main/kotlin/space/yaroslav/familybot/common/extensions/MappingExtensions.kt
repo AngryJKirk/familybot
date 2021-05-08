@@ -1,16 +1,17 @@
-package space.yaroslav.familybot.common.utils
+package space.yaroslav.familybot.common.extensions
 
 import org.telegram.telegrambots.meta.api.objects.EntityType
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.MessageEntity
 import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.models.telegram.Chat
-import space.yaroslav.familybot.models.telegram.User
 import space.yaroslav.familybot.models.telegram.Command
+import space.yaroslav.familybot.models.telegram.User
 import space.yaroslav.familybot.services.settings.ChatEasyKey
 import space.yaroslav.familybot.services.settings.UserAndChatEasyKey
 import space.yaroslav.familybot.services.settings.UserEasyKey
 import space.yaroslav.familybot.telegram.FamilyBot
+import java.time.Month
 import org.telegram.telegrambots.meta.api.objects.Chat as TelegramChat
 import org.telegram.telegrambots.meta.api.objects.User as TelegramUser
 
@@ -99,3 +100,31 @@ fun User.key(): UserEasyKey {
 fun Chat.key(): ChatEasyKey {
     return ChatEasyKey(chatId = this.id)
 }
+
+val monthMap = mapOf(
+    Month.JANUARY to "январь",
+    Month.FEBRUARY to "февраль",
+    Month.MARCH to "март",
+    Month.APRIL to "апрель",
+    Month.MAY to "май",
+    Month.JUNE to "июнь",
+    Month.JULY to "июль",
+    Month.AUGUST to "август",
+    Month.SEPTEMBER to "сентябрь",
+    Month.OCTOBER to "октябрь",
+    Month.NOVEMBER to "ноябрь",
+    Month.DECEMBER to "декабрь"
+)
+
+fun Month.toRussian(): String {
+    return monthMap.getValue(this)
+}
+
+fun Boolean.toEmoji(): String {
+    return when (this) {
+        true -> "✅"
+        false -> "❌"
+    }
+}
+
+fun Int.rubles() = this * 100

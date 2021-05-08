@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.common.utils
+package space.yaroslav.familybot.common.extensions
 
 import space.yaroslav.familybot.models.telegram.User
 

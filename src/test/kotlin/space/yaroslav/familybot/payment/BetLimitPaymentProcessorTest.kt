@@ -12,7 +12,6 @@ class BetLimitPaymentProcessorTest : PaymentProcessorTest() {
     @Autowired
     lateinit var processor: BetLimitPaymentProcessor
 
-
     override fun preCheckOutTest() {
         val payload = payload(ShopItem.DROP_BET_LIMIT)
         Assertions.assertNotNull(processor.preCheckOut(payload))
@@ -29,6 +28,5 @@ class BetLimitPaymentProcessorTest : PaymentProcessorTest() {
         easyKeyValueService.put(BetTolerance, key, true)
         processor.processSuccess(payload)
         Assertions.assertNull(easyKeyValueService.get(BetTolerance, key))
-
     }
 }

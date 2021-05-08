@@ -14,9 +14,9 @@ import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
-import space.yaroslav.familybot.common.utils.key
-import space.yaroslav.familybot.common.utils.toChat
-import space.yaroslav.familybot.common.utils.toUser
+import space.yaroslav.familybot.common.extensions.key
+import space.yaroslav.familybot.common.extensions.toChat
+import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.executors.pm.BanSomeoneExecutor
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.randomString

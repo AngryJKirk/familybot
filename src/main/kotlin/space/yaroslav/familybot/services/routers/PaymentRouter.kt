@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.utils.getLogger
+import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.models.shop.ShopPayload
 import space.yaroslav.familybot.services.payment.PaymentService
@@ -53,9 +53,7 @@ class PaymentRouter(
                         sender.execute(AnswerPreCheckoutQuery(update.preCheckoutQuery.id, true))
                         log.info("Pre checkout query is valid")
                     }
-
                 }
-
         }
     }
 

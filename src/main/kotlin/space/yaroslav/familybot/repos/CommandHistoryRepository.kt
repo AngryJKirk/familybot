@@ -4,11 +4,11 @@ import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
+import space.yaroslav.familybot.common.extensions.map
+import space.yaroslav.familybot.common.extensions.toCommandByUser
 import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.models.telegram.CommandByUser
 import space.yaroslav.familybot.models.telegram.User
-import space.yaroslav.familybot.common.utils.map
-import space.yaroslav.familybot.common.utils.toCommandByUser
 import java.sql.Timestamp
 import java.time.Instant
 import java.time.temporal.ChronoUnit
