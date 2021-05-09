@@ -57,7 +57,7 @@ class AskWorldReceiveReplyExecutor(
         val user = update.toUser()
         val question =
             askWorldRepository.findQuestionByMessageId(message.replyToMessage.messageId + chat.id, chat)
-
+                ?: return {}
         if (askWorldRepository.isReplied(question, chat, user)) {
             return {
                 it.execute(

@@ -16,7 +16,7 @@ import java.time.Instant
 class AskWorldRepository(val template: JdbcTemplate) {
 
     @Timed("repository.AskWorldRepository.findQuestionByMessageId")
-    fun findQuestionByMessageId(messageId: Long, chat: Chat): AskWorldQuestion {
+    fun findQuestionByMessageId(messageId: Long, chat: Chat): AskWorldQuestion? {
         return template.query(
             """SELECT
                           ask_world_questions.id,
@@ -36,7 +36,7 @@ class AskWorldRepository(val template: JdbcTemplate) {
             { rs, _ -> rs.toAskWorldQuestion() },
             messageId,
             chat.id
-        ).first()
+        ).firstOrNull()
     }
 
     @Timed("repository.AskWorldRepository.findQuestionByText")

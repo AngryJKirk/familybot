@@ -5,6 +5,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.methods.ForwardMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -20,6 +21,9 @@ import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.command.settings.AskWorldDensityValue
 import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.askworld.AskWorldQuestion
+import space.yaroslav.familybot.models.askworld.AskWorldQuestionData
+import space.yaroslav.familybot.models.askworld.Success
+import space.yaroslav.familybot.models.askworld.ValidationError
 import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.models.router.FunctionId
 import space.yaroslav.familybot.models.telegram.Chat
@@ -32,6 +36,7 @@ import space.yaroslav.familybot.services.settings.AskWorldDensity
 import space.yaroslav.familybot.services.settings.AskWorldUserUsages
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.talking.Dictionary
+import space.yaroslav.familybot.services.talking.DictionaryContext
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -57,12 +62,7 @@ class AskWorldInitialExecutor(
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val context = dictionary.createContext(update)
         val currentChat = update.toChat()
-        val message = update.message
-            ?.text
-            ?.removePrefix(command().command)
-            ?.removePrefix("@${botConfig.botname}")
-            ?.removePrefix(" ")
-            ?.takeIf(String::isNotEmpty) ?: return { it.send(update, context.get(Phrase.ASK_WORLD_HELP)) }
+
         val chatEasyKey = currentChat.key()
         val chatUsages = easyKeyValueService.get(AskWorldChatUsages, chatEasyKey)
         if (chatUsages != null && chatUsages > 0L) {
@@ -74,25 +74,15 @@ class AskWorldInitialExecutor(
         val userEasyKey = update.toUser().key()
         val userUsages = easyKeyValueService.get(AskWorldUserUsages, userEasyKey)
         val isLimitForUserExceeded = userUsages != null && userUsages > 5
-
-        val isScam = containsUrl(message) ||
-            isSpam(message) ||
-            containsLongWords(message) ||
-            isLimitForUserExceeded
-
-        if (message.length > 2000) {
-            return {
-                it.send(
-                    update,
-                    context.get(Phrase.ASK_WORLD_QUESTION_TOO_LONG),
-                    replyToUpdate = true
-                )
-            }
+        val askWorldData = getAskWorldData(update, context)
+        if (askWorldData is ValidationError) {
+            return askWorldData.invalidQuestionAction
         }
 
+        val successData = askWorldData as Success
         val question = AskWorldQuestion(
             null,
-            message,
+            successData.questionTitle,
             update.toUser(),
             currentChat,
             Instant.now(),
@@ -101,15 +91,10 @@ class AskWorldInitialExecutor(
         return { sender ->
             val questionId = coroutineScope { async { askWorldRepository.addQuestion(question) } }
             sender.send(update, context.get(Phrase.DATA_CONFIRM))
-            getChatsToSendQuestion(currentChat, isScam)
+            getChatsToSendQuestion(currentChat, successData.isScam || isLimitForUserExceeded)
                 .forEach { chatToSend ->
                     runCatching {
-                        val result = sender.execute(
-                            SendMessage(
-                                chatToSend.idString,
-                                formatMessage(currentChat, question, chatToSend)
-                            ).also { it.enableHtml(true) }
-                        )
+                        val result = successData.action.invoke(sender, chatToSend, currentChat)
                         markQuestionDelivered(question, questionId, result, chatToSend)
                     }.onFailure { e -> markChatInactive(chatToSend, questionId, e) }
                 }
@@ -122,6 +107,66 @@ class AskWorldInitialExecutor(
                 easyKeyValueService.put(AskWorldUserUsages, userEasyKey, 1, untilNextDay())
             } else {
                 easyKeyValueService.increment(AskWorldUserUsages, userEasyKey)
+            }
+        }
+    }
+
+    private fun getAskWorldData(update: Update, context: DictionaryContext): AskWorldQuestionData {
+        val replyToMessage = update.message.replyToMessage
+        val isPoll = update.message.isReply && replyToMessage.hasPoll()
+        if (isPoll) {
+            val poll = replyToMessage.poll
+            return Success(
+                poll.question,
+                false
+            ) { sender, chatToSend, currentChat ->
+                sender.execute(
+                    SendMessage(
+                        chatToSend.idString,
+                        formatPollMessage(currentChat, chatToSend)
+                    ).also { it.enableHtml(true) }
+                )
+                sender.execute(
+                    ForwardMessage(
+                        chatToSend.idString,
+                        currentChat.idString,
+                        replyToMessage.messageId
+                    )
+                )
+            }
+        } else {
+            val message = update.message
+                ?.text
+                ?.removePrefix(command().command)
+                ?.removePrefix("@${botConfig.botname}")
+                ?.removePrefix(" ")
+                ?.takeIf(String::isNotEmpty) ?: return ValidationError {
+                it.send(
+                    update,
+                    context.get(Phrase.ASK_WORLD_HELP)
+                )
+            }
+
+            val isScam = containsUrl(message) ||
+                isSpam(message) ||
+                containsLongWords(message)
+
+            if (message.length > 2000) {
+                return ValidationError {
+                    it.send(
+                        update,
+                        context.get(Phrase.ASK_WORLD_QUESTION_TOO_LONG),
+                        replyToUpdate = true
+                    )
+                }
+            }
+            return Success(message, isScam) { sender, chatToSend, currentChat ->
+                sender.execute(
+                    SendMessage(
+                        chatToSend.idString,
+                        formatMessage(currentChat, message, chatToSend)
+                    ).also { it.enableHtml(true) }
+                )
             }
         }
     }
@@ -148,11 +193,17 @@ class AskWorldInitialExecutor(
         askWorldRepository.addQuestionDeliver(questionWithIds, chat)
     }
 
-    private fun formatMessage(currentChat: Chat, question: AskWorldQuestion, chatToSend: Chat): String {
+    private fun formatMessage(currentChat: Chat, question: String, chatToSend: Chat): String {
         val messagePrefix = dictionary.get(Phrase.ASK_WORLD_QUESTION_FROM_CHAT, chatToSend.key())
         val boldChatName = currentChat.name.boldNullable()
-        val italicMessage = question.message.italic()
+        val italicMessage = question.italic()
         return "$messagePrefix $boldChatName: $italicMessage"
+    }
+
+    private fun formatPollMessage(currentChat: Chat, chatToSend: Chat): String {
+        val messagePrefix = dictionary.get(Phrase.ASK_WORLD_QUESTION_FROM_CHAT, chatToSend.key())
+        val boldChatName = currentChat.name.boldNullable()
+        return "$messagePrefix $boldChatName:"
     }
 
     private fun isEnabledInChat(it: Chat) = configureRepository.isEnabled(getFunctionId(), it)
