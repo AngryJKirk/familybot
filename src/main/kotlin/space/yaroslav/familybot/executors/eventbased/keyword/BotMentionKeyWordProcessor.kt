@@ -7,8 +7,8 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.common.extensions.toChat
-import space.yaroslav.familybot.models.router.FunctionId
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
+import space.yaroslav.familybot.services.settings.FuckOffOverride
 import space.yaroslav.familybot.services.settings.FuckOffTolerance
 import space.yaroslav.familybot.services.talking.TalkingService
 import space.yaroslav.familybot.telegram.BotConfig
@@ -72,20 +72,7 @@ class BotMentionKeyWordProcessor(
     }
 
     fun fuckOff(update: Update): suspend (AbsSender) -> Unit {
-        setOf(
-            FunctionId.TALK_BACK,
-            FunctionId.GREETINGS,
-            FunctionId.CHATTING,
-            FunctionId.HUIFICATE
-        )
-            .forEach { function ->
-                easyKeyValueService.put(
-                    function.easySetting,
-                    update.toChat().key(),
-                    false,
-                    defaultFuckOffDuration
-                )
-            }
+        easyKeyValueService.put(FuckOffOverride, update.toChat().key(), true, defaultFuckOffDuration)
         easyKeyValueService.put(FuckOffTolerance, update.key(), true, defaultToleranceDuration)
         return {}
     }

@@ -113,8 +113,9 @@ class AskWorldInitialExecutor(
 
     private fun getAskWorldData(update: Update, context: DictionaryContext): AskWorldQuestionData {
         val replyToMessage = update.message.replyToMessage
-        val isPoll = update.message.isReply && replyToMessage.hasPoll()
-        if (isPoll) {
+        val isReply = update.message.isReply
+
+        if (isReply && replyToMessage.hasPoll()) {
             val poll = replyToMessage.poll
             return Success(
                 poll.question,
@@ -135,11 +136,15 @@ class AskWorldInitialExecutor(
                 )
             }
         } else {
-            val message = update.message
-                ?.text
-                ?.removePrefix(command().command)
-                ?.removePrefix("@${botConfig.botname}")
-                ?.removePrefix(" ")
+            val message = if (isReply && replyToMessage.from.id == update.message.from.id) {
+                replyToMessage.text
+            } else {
+                update.message
+                    ?.text
+                    ?.removePrefix(command().command)
+                    ?.removePrefix("@${botConfig.botname}")
+                    ?.removePrefix(" ")
+            }
                 ?.takeIf(String::isNotEmpty) ?: return ValidationError {
                 it.send(
                     update,
