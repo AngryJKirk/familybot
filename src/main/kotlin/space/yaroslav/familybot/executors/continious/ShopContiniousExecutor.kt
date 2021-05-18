@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.payments.LabeledPrice
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.chatId
 import space.yaroslav.familybot.common.extensions.key
+import space.yaroslav.familybot.common.extensions.rubles
 import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.models.dictionary.Phrase
@@ -55,8 +56,8 @@ class ShopContiniousExecutor(
                     "RUB",
                     listOf(LabeledPrice(context.get(Phrase.SHOP_PAY_LABEL), shopItem.price))
                 ).apply {
-                    maxTipAmount = 500
-                    suggestedTipAmounts = listOf(100, 200, 300, 500)
+                    maxTipAmount = 100.rubles()
+                    suggestedTipAmounts = listOf(10.rubles(), 20.rubles(), 50.rubles(), 100.rubles())
                 }
             )
         }
