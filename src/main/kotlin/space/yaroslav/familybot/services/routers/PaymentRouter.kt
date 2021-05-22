@@ -95,8 +95,10 @@ class PaymentRouter(
                 .find { shopPayload.chatId == it.id }
                 ?.name ?: "[???]"
             val message =
-                "+${shopPayload.shopItem.price / 100}₽ от ${user.getGeneralName()} из чата $chat за ${shopPayload.shopItem}"
-            sender.execute(SendMessage(developerId, message))
+                "<b>+${shopPayload.shopItem.price / 100}₽</b> от ${user.getGeneralName()} из чата <b>$chat</b> за <b>${shopPayload.shopItem}</b>"
+            sender.execute(SendMessage(developerId, message).apply {
+                enableHtml(true)
+            })
         } else {
             log.warn("Developer ID is not set, can not send successful payment, so logging")
             log.warn("Successful payment: $update")
