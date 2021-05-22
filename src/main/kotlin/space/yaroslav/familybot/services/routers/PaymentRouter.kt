@@ -7,9 +7,11 @@ import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.models.shop.ShopPayload
+import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.payment.PaymentService
 import space.yaroslav.familybot.services.settings.ChatEasyKey
 import space.yaroslav.familybot.services.talking.Dictionary
@@ -19,6 +21,7 @@ import space.yaroslav.familybot.telegram.BotConfig
 @Component
 class PaymentRouter(
     private val paymentService: PaymentService,
+    private val commonRepository: CommonRepository,
     private val dictionary: Dictionary,
     private val botConfig: BotConfig
 ) {
@@ -86,7 +89,14 @@ class PaymentRouter(
         sender.execute(SendMessage(chatId, text))
         sender.execute(SendMessage(chatId, context.get(phrase)))
         if (developerId != null) {
-            sender.execute(SendMessage(developerId, "MONIES $update"))
+            val user = update.toUser()
+            val chat = commonRepository
+                .getChatsByUser(user)
+                .find { shopPayload.chatId == it.id }
+                ?.name ?: "[???]"
+            val message =
+                "+${shopPayload.shopItem.price / 100}₽ от ${user.getGeneralName()} из чата $chat за ${shopPayload.shopItem}"
+            sender.execute(SendMessage(developerId, message))
         } else {
             log.warn("Developer ID is not set, can not send successful payment, so logging")
             log.warn("Successful payment: $update")
