@@ -146,12 +146,12 @@ class PidorExecutor(
             0 -> null
             1 -> SendMessage(
                 chat.idString,
-                context.get(Phrase.PIROR_DISCOVERED_ONE) + ": " +
+                context.get(Phrase.PIROR_DISCOVERED_ONE) + " " +
                     pidorsByChat.first().user.getGeneralName()
             ).apply { enableHtml(true) }
             else -> SendMessage(
                 chat.idString,
-                context.get(Phrase.PIROR_DISCOVERED_MANY) + ": " +
+                context.get(Phrase.PIROR_DISCOVERED_MANY) + " " +
                     pidorsByChat.joinToString { it.user.getGeneralName() }
             ).apply { enableHtml(true) }
         }
