@@ -1,7 +1,5 @@
 package space.yaroslav.familybot.executors.continious
 
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendInvoice
@@ -13,6 +11,7 @@ import space.yaroslav.familybot.common.extensions.chatId
 import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.rubles
 import space.yaroslav.familybot.common.extensions.toChat
+import space.yaroslav.familybot.common.extensions.toJson
 import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.models.shop.ShopItem
@@ -64,12 +63,10 @@ class ShopContiniousExecutor(
     }
 
     private fun createPayload(update: Update, shopItem: ShopItem): String {
-        val payload = ShopPayload(
+        return ShopPayload(
             update.chatId(),
             update.toUser().id,
             shopItem
-        )
-
-        return Json.encodeToString(payload)
+        ).toJson()
     }
 }

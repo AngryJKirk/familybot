@@ -1,13 +1,12 @@
 package space.yaroslav.familybot.services.pidor
 
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.common.extensions.key
+import space.yaroslav.familybot.common.extensions.parseJson
 import space.yaroslav.familybot.common.extensions.toChat
+import space.yaroslav.familybot.common.extensions.toJson
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.PidorStrikeStats
 
@@ -31,21 +30,19 @@ class PidorStrikeStorage(
     }
 
     private fun deserialize(raw: String): PidorStrikes {
-        return Json.decodeFromString(raw)
+        return raw.parseJson()
     }
 
     private fun serialize(pidorStrikes: PidorStrikes): String {
-        return Json.encodeToString(pidorStrikes)
+        return pidorStrikes.toJson()
     }
 }
 
-@Serializable
 data class PidorStrikes(
-    val stats: Map<Long, PidorStrikeStat>
+    @JsonProperty("stats") val stats: Map<Long, PidorStrikeStat>
 )
 
-@Serializable
 data class PidorStrikeStat(
-    val currentStrike: Int,
-    val maxStrike: Int
+    @JsonProperty("currentStrike") val currentStrike: Int,
+    @JsonProperty("maxStrike") val maxStrike: Int
 )

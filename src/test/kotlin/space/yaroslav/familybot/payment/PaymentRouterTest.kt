@@ -1,8 +1,6 @@
 package space.yaroslav.familybot.payment
 
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
@@ -21,6 +19,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.payments.PreCheckoutQuery
 import org.telegram.telegrambots.meta.api.objects.payments.SuccessfulPayment
 import space.yaroslav.familybot.common.extensions.from
+import space.yaroslav.familybot.common.extensions.toJson
 import space.yaroslav.familybot.infrastructure.TestSender
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.payload
@@ -123,5 +122,5 @@ class PaymentRouterTest : FamilybotApplicationTest() {
     }
 
     private fun createPayloadJson() =
-        Json.encodeToString(payload(ShopItem.values().random()))
+        payload(ShopItem.values().random()).toJson()
 }

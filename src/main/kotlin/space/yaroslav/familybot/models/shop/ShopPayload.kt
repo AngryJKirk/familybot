@@ -1,15 +1,14 @@
 package space.yaroslav.familybot.models.shop
 
-import kotlinx.serialization.Serializable
+import com.fasterxml.jackson.annotation.JsonProperty
 import space.yaroslav.familybot.services.settings.ChatEasyKey
 import space.yaroslav.familybot.services.settings.UserAndChatEasyKey
 import space.yaroslav.familybot.services.settings.UserEasyKey
 
-@Serializable
 data class ShopPayload(
-    val chatId: Long,
-    val userId: Long,
-    val shopItem: ShopItem
+    @JsonProperty("chatId") val chatId: Long,
+    @JsonProperty("userId") val userId: Long,
+    @JsonProperty("shopItem") val shopItem: ShopItem
 ) {
 
     fun chatKey(): ChatEasyKey {

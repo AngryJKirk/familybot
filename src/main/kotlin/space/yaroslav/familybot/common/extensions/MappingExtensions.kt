@@ -1,5 +1,7 @@
 package space.yaroslav.familybot.common.extensions
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.telegram.telegrambots.meta.api.objects.EntityType
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.MessageEntity
@@ -128,3 +130,9 @@ fun Boolean.toEmoji(): String {
 }
 
 fun Int.rubles() = this * 100
+
+private val objectMapper = jacksonObjectMapper()
+fun mapper() = objectMapper
+
+fun Any.toJson(): String = objectMapper.writeValueAsString(this)
+inline fun <reified T> String.parseJson(): T = mapper().readValue(this, T::class.java)
