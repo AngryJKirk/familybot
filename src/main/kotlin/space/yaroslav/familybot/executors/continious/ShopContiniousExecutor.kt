@@ -1,6 +1,7 @@
 package space.yaroslav.familybot.executors.continious
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendInvoice
@@ -27,7 +28,6 @@ class ShopContiniousExecutor(
     private val dictionary: Dictionary,
     botConfig: BotConfig
 ) : ContiniousConversation(botConfig) {
-    private val objectMapper = ObjectMapper()
 
     override fun getDialogMessage(message: Message): String {
         return dictionary.get(Phrase.SHOP_KEYBOARD, message.chat.toChat().key())
@@ -70,6 +70,6 @@ class ShopContiniousExecutor(
             shopItem
         )
 
-        return objectMapper.writeValueAsString(payload)
+        return Json.encodeToString(payload)
     }
 }

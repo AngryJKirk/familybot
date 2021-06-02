@@ -1,7 +1,8 @@
 package space.yaroslav.familybot.payment
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
@@ -121,6 +122,6 @@ class PaymentRouterTest : FamilybotApplicationTest() {
             }
     }
 
-    private fun createPayloadJson() = jacksonObjectMapper()
-        .writeValueAsString(payload(ShopItem.values().random()))
+    private fun createPayloadJson() =
+        Json.encodeToString(payload(ShopItem.values().random()))
 }

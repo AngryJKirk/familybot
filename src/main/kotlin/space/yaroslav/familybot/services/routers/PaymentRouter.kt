@@ -1,7 +1,7 @@
 package space.yaroslav.familybot.services.routers
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -26,7 +26,6 @@ class PaymentRouter(
     private val botConfig: BotConfig
 ) {
     private val log = getLogger()
-    private val objectMapper = jacksonObjectMapper()
 
     fun proceedPreCheckoutQuery(update: Update): suspend (AbsSender) -> Unit {
         val shopPayload = getPayload(update.preCheckoutQuery.invoicePayload)
@@ -96,9 +95,11 @@ class PaymentRouter(
                 ?.name ?: "[???]"
             val message =
                 "<b>+${shopPayload.shopItem.price / 100}₽</b> от ${user.getGeneralName()} из чата <b>$chat</b> за <b>${shopPayload.shopItem}</b>"
-            sender.execute(SendMessage(developerId, message).apply {
-                enableHtml(true)
-            })
+            sender.execute(
+                SendMessage(developerId, message).apply {
+                    enableHtml(true)
+                }
+            )
         } else {
             log.warn("Developer ID is not set, can not send successful payment, so logging")
             log.warn("Successful payment: $update")
@@ -124,6 +125,6 @@ class PaymentRouter(
     }
 
     private fun getPayload(invoicePayload: String): ShopPayload {
-        return objectMapper.readValue(invoicePayload)
+        return Json.decodeFromString(invoicePayload)
     }
 }

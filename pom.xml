@@ -7,14 +7,19 @@
     <artifactId>familybot</artifactId>
     <version>2.0.0</version>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.5.0</version>
+    </parent>
+
     <properties>
         <kotlin.version>1.5.0</kotlin.version>
         <guava.version>30.1-jre</guava.version>
         <postgresql.version>42.2.20</postgresql.version>
-        <spring-boot.version>2.4.5</spring-boot.version>
         <telegrambots.version>5.2.0</telegrambots.version>
         <lettuce-core.version>6.0.2.RELEASE</lettuce-core.version>
-        <kotlinx-coroutines.version>1.5.0-RC</kotlinx-coroutines.version>
+        <kotlinx-coroutines.version>1.5.0</kotlinx-coroutines.version>
         <testcontainers.version>1.15.3</testcontainers.version>
         <mockito-kotlin.version>2.2.11</mockito-kotlin.version>
         <micrometer-registry.version>1.6.5</micrometer-registry.version>
@@ -22,6 +27,7 @@
         <yandex-translate-api.version>1.4.2</yandex-translate-api.version>
         <jackson-module-kotlin.version>2.12.0</jackson-module-kotlin.version>
         <tomlj.version>1.0.0</tomlj.version>
+        <serialization.version>1.2.1</serialization.version>
     </properties>
 
 
@@ -39,17 +45,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
-            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-redis</artifactId>
-            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
@@ -65,7 +68,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.telegram</groupId>
@@ -107,7 +109,11 @@
             <artifactId>jackson-module-kotlin</artifactId>
             <version>${jackson-module-kotlin.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-serialization-json</artifactId>
+            <version>${serialization.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.testcontainers</groupId>
@@ -118,7 +124,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>${spring-boot.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -140,15 +145,15 @@
         <plugins>
 
             <plugin>
-                <groupId>com.github.gantsign.maven</groupId>
+                <groupId>com.github.z3d1k</groupId>
                 <artifactId>ktlint-maven-plugin</artifactId>
-                <version>1.8.0</version>
+                <version>0.5.2</version>
                 <executions>
                     <execution>
-                        <id>format-and-check</id>
+                        <id>ktlint-lint</id>
+                        <phase>verify</phase>
                         <goals>
-                            <goal>format</goal>
-                            <goal>check</goal>
+                            <goal>lint</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -176,6 +181,7 @@
                 <configuration>
                     <jvmTarget>11</jvmTarget>
                     <compilerPlugins>
+                        <plugin>kotlinx-serialization</plugin>
                         <plugin>spring</plugin>
                     </compilerPlugins>
                 </configuration>
@@ -185,22 +191,16 @@
                         <artifactId>kotlin-maven-allopen</artifactId>
                         <version>${kotlin.version}</version>
                     </dependency>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-maven-serialization</artifactId>
+                        <version>${kotlin.version}</version>
+                    </dependency>
                 </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>space.yaroslav.familybot.FamilybotApplicationKt</mainClass>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-
             </plugin>
         </plugins>
         <sourceDirectory>src/main/kotlin</sourceDirectory>
