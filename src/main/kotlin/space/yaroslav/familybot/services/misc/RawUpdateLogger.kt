@@ -1,7 +1,6 @@
 package space.yaroslav.familybot.services.misc
 
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.common.extensions.toChat
@@ -35,7 +34,7 @@ class RawUpdateLogger(private val rawChatLogRepository: RawChatLogRepository) {
             ?.let { Instant.ofEpochSecond(it) }
             ?: Instant.now()
 
-        val rawUpdate = Json.encodeToString(update)
+        val rawUpdate = ObjectMapper().writeValueAsString(update)
         rawChatLogRepository.add(update.toChat(), update.toUser(), text, fileId, rawUpdate, date)
     }
 }
