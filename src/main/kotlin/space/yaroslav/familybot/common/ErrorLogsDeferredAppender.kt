@@ -19,9 +19,11 @@ class ErrorLogsDeferredAppender : Appender<ILoggingEvent> {
     }
 
     override fun start() {
+        // useless method for this appender
     }
 
     override fun stop() {
+        // useless method for this appender
     }
 
     override fun isStarted() = true
@@ -33,30 +35,39 @@ class ErrorLogsDeferredAppender : Appender<ILoggingEvent> {
     override fun getContext() = context
 
     override fun addStatus(status: Status?) {
+        // useless method for this appender
     }
 
     override fun addInfo(msg: String?) {
+        // useless method for this appender
     }
 
     override fun addInfo(msg: String?, ex: Throwable?) {
+        // useless method for this appender
     }
 
     override fun addWarn(msg: String?) {
+        // useless method for this appender
     }
 
     override fun addWarn(msg: String?, ex: Throwable?) {
+        // useless method for this appender
     }
 
     override fun addError(msg: String?) {
+        // useless method for this appender
     }
 
     override fun addError(msg: String?, ex: Throwable?) {
+        // useless method for this appender
     }
 
     override fun addFilter(newFilter: Filter<ILoggingEvent>?) {
+        // useless method for this appender
     }
 
     override fun clearAllFilters() {
+        // useless method for this appender
     }
 
     override fun getCopyOfAttachedFiltersList(): MutableList<Filter<ILoggingEvent>> {

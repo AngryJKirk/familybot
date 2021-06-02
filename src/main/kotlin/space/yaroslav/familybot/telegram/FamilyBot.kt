@@ -91,7 +91,7 @@ class FamilyBot(
         runCatching {
             pollRouter.proceed(update)
         }.onFailure {
-            log.warn("Poll router failed", it)
+            log.warn("pollRouter.proceed failed", it)
         }
     }
 
@@ -99,7 +99,7 @@ class FamilyBot(
         return runCatching {
             paymentRouter.proceedPreCheckoutQuery(update)
         }.getOrDefault {
-            log.warn("Poll router failed", it) {}
+            log.warn("paymentRouter.proceedPreCheckoutQuery failed", it) {}
         }
     }
 
@@ -107,7 +107,7 @@ class FamilyBot(
         return runCatching {
             paymentRouter.proceedSuccessfulPayment(update)
         }.getOrDefault {
-            log.warn("Poll router failed", it) {}
+            log.warn("paymentRouter.proceedSuccessfulPayment failed", it) {}
         }
     }
 

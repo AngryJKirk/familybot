@@ -81,7 +81,7 @@ class AskWorldReceiveReplyExecutor(
             Instant.now()
         )
 
-        return {
+        return { sender ->
             runCatching {
                 coroutineScope { launch { askWorldRepository.addReply(askWorldReply) } }
                 val questionTitle = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
@@ -89,109 +89,188 @@ class AskWorldReceiveReplyExecutor(
 
                 val answerTitle = dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT, ChatEasyKey(question.chat.id))
                 if (contentType == MessageContentType.TEXT) {
-                    it.execute(
-                        SendMessage(
-                            chatIdToReply,
-                            "$answerTitle ${update.toChat().name.boldNullable()} " +
-                                "от ${user.getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}"
-                        ).apply {
-                            enableHtml(true)
-                        }
-                    )
+                    sendAnswerWithQuestion(sender, chatIdToReply, answerTitle, update, questionTitle, reply)
                 } else {
-                    it.execute(
-                        SendMessage(
-                            chatIdToReply,
-                            "$answerTitle ${update.toChat().name.boldNullable()} " +
-                                "от ${user.getGeneralName()} на вопрос \"$questionTitle\":"
-                        ).apply {
-                            enableHtml(true)
-                        }
-                    )
-                    when (contentType) {
-                        MessageContentType.PHOTO ->
-                            it.execute(SendPhoto(chatIdToReply, InputFile(message.photo.first().fileId)))
-                                .apply {
-                                    if (message.hasText()) {
-                                        caption = message.text
-                                    }
-                                }
-
-                        MessageContentType.AUDIO ->
-                            it.execute(
-                                SendAudio(
-                                    chatIdToReply,
-                                    InputFile(message.audio.fileId)
-                                ).apply {
-                                    if (message.hasText()) {
-                                        caption = message.text
-                                    }
-                                }
-                            )
-
-                        MessageContentType.ANIMATION -> it.execute(
-                            SendAnimation(chatIdToReply, InputFile(message.animation.fileId))
-                        )
-
-                        MessageContentType.DOCUMENT -> it.execute(
-                            SendDocument(chatIdToReply, InputFile(message.document.fileId)).apply {
-                                if (message.hasText()) {
-                                    caption = message.text
-                                }
-                            }
-                        )
-
-                        MessageContentType.VOICE ->
-                            it.execute(SendVoice(chatIdToReply, InputFile(message.voice.fileId))).apply {
-                                if (message.hasText()) {
-                                    caption = message.text
-                                }
-                            }
-
-                        MessageContentType.VIDEO_NOTE ->
-                            it.execute(SendVideoNote(chatIdToReply, InputFile(message.videoNote.fileId))).apply {
-                                if (message.hasText()) {
-                                    caption = message.text
-                                }
-                            }
-
-                        MessageContentType.LOCATION -> it.execute(
-                            SendLocation(
-                                chatIdToReply,
-                                message.location.latitude,
-                                message.location.longitude
-                            )
-                        )
-
-                        MessageContentType.STICKER -> it.execute(
-                            SendSticker(chatIdToReply, InputFile(message.sticker.fileId))
-                        )
-
-                        MessageContentType.CONTACT -> it.execute(
-                            SendContact(chatIdToReply, message.contact.phoneNumber, message.contact.firstName).apply {
-                                lastName = message.contact.lastName
-                            }
-                        )
-
-                        MessageContentType.VIDEO -> it.execute(
-                            SendVideo(
-                                chatIdToReply,
-                                InputFile(message.video.fileId)
-                            ).apply {
-                                if (message.hasText()) {
-                                    caption = message.text
-                                }
-                            }
-                        )
-                        else -> log.warn("Something went wrong with content type detection logic")
-                    }
+                    sendOnlyQuestion(sender, chatIdToReply, answerTitle, update, questionTitle)
+                    dispatchMedia(sender, contentType, chatIdToReply, message)
                 }
-                it.send(update, "Принято и отправлено")
+                sender.send(update, "Принято и отправлено")
             }.onFailure { e ->
-                it.send(update, "Принято")
+                sender.send(update, "Принято")
                 log.info("Could not send reply instantly", e)
             }
         }
+    }
+
+    private fun dispatchMedia(
+        sender: AbsSender,
+        contentType: MessageContentType,
+        chatIdToReply: String,
+        message: Message
+    ) {
+        when (contentType) {
+            MessageContentType.PHOTO ->
+                sender.execute(sendPhoto(chatIdToReply, message))
+
+            MessageContentType.AUDIO ->
+                sender.execute(sendAudio(chatIdToReply, message))
+
+            MessageContentType.ANIMATION -> sender.execute(sendAnimation(chatIdToReply, message))
+
+            MessageContentType.DOCUMENT -> sender.execute(sendDocument(chatIdToReply, message))
+
+            MessageContentType.VOICE ->
+                sender.execute(sendVoice(chatIdToReply, message))
+
+            MessageContentType.VIDEO_NOTE ->
+                sender.execute(sendVideoNote(chatIdToReply, message))
+
+            MessageContentType.LOCATION -> sender.execute(sendLocation(chatIdToReply, message))
+
+            MessageContentType.STICKER -> sender.execute(sendSticker(chatIdToReply, message))
+
+            MessageContentType.CONTACT -> sender.execute(sendContact(chatIdToReply, message))
+
+            MessageContentType.VIDEO -> sender.execute(sendVideo(chatIdToReply, message))
+            else -> log.warn("Something went wrong with content type detection logic")
+        }
+    }
+
+    private fun sendVideo(
+        chatIdToReply: String,
+        message: Message
+    ): SendVideo {
+
+        return SendVideo(
+            chatIdToReply,
+            InputFile(message.video.fileId)
+        ).apply {
+            if (message.hasText()) {
+                caption = message.text
+            }
+        }
+    }
+
+    private fun sendContact(
+        chatIdToReply: String,
+        message: Message
+    ): SendContact {
+        return SendContact(chatIdToReply, message.contact.phoneNumber, message.contact.firstName).apply {
+            lastName = message.contact.lastName
+        }
+    }
+
+    private fun sendSticker(
+        chatIdToReply: String,
+        message: Message
+    ): SendSticker {
+        return SendSticker(chatIdToReply, InputFile(message.sticker.fileId))
+    }
+
+    private fun sendLocation(
+        chatIdToReply: String,
+        message: Message
+    ): SendLocation {
+        return SendLocation(
+            chatIdToReply,
+            message.location.latitude,
+            message.location.longitude
+        )
+    }
+
+    private fun sendVideoNote(
+        chatIdToReply: String,
+        message: Message
+    ): SendVideoNote {
+        return SendVideoNote(chatIdToReply, InputFile(message.videoNote.fileId))
+    }
+
+    private fun sendVoice(
+        chatIdToReply: String,
+        message: Message
+    ): SendVoice {
+        return SendVoice(chatIdToReply, InputFile(message.voice.fileId))
+    }
+
+    private fun sendDocument(
+        chatIdToReply: String,
+        message: Message
+    ): SendDocument {
+        return SendDocument(chatIdToReply, InputFile(message.document.fileId)).apply {
+            if (message.hasText()) {
+                caption = message.text
+            }
+        }
+    }
+
+    private fun sendAnimation(
+        chatIdToReply: String,
+        message: Message
+    ): SendAnimation {
+        return SendAnimation(chatIdToReply, InputFile(message.animation.fileId))
+    }
+
+    private fun sendAudio(
+        chatIdToReply: String,
+        message: Message
+    ): SendAudio {
+        return SendAudio(
+            chatIdToReply,
+            InputFile(message.audio.fileId)
+        ).apply {
+            if (message.hasText()) {
+                caption = message.text
+            }
+        }
+    }
+
+    private fun sendPhoto(
+        chatIdToReply: String,
+        message: Message
+    ): SendPhoto {
+        return SendPhoto(chatIdToReply, InputFile(message.photo.first().fileId))
+            .apply {
+                if (message.hasText()) {
+                    caption = message.text
+                }
+            }
+    }
+
+    private fun sendOnlyQuestion(
+        it: AbsSender,
+        chatIdToReply: String,
+        answerTitle: String,
+        update: Update,
+        questionTitle: String
+    ) {
+        it.execute(
+            SendMessage(
+                chatIdToReply,
+                "$answerTitle ${update.toChat().name.boldNullable()} " +
+                    "от ${update.toUser().getGeneralName()} на вопрос \"$questionTitle\":"
+            ).apply {
+                enableHtml(true)
+            }
+        )
+    }
+
+    private fun sendAnswerWithQuestion(
+        it: AbsSender,
+        chatIdToReply: String,
+        answerTitle: String,
+        update: Update,
+        questionTitle: String,
+        reply: String
+    ) {
+        it.execute(
+            SendMessage(
+                chatIdToReply,
+                "$answerTitle ${update.toChat().name.boldNullable()} " +
+                    "от ${update.toUser().getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}"
+            ).apply {
+                enableHtml(true)
+            }
+        )
     }
 
     override fun canExecute(message: Message): Boolean {

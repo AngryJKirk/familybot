@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
-import org.telegram.telegrambots.meta.api.objects.User
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.getCommand
 import space.yaroslav.familybot.common.extensions.key
@@ -50,15 +49,6 @@ class AntiDdosExecutor(
 
     override fun priority(update: Update): Priority {
         return Priority.HIGH
-    }
-
-    private fun selectUser(message: Message): User {
-        val user = message.from
-        return if (user.userName == config.botname) {
-            message.replyToMessage.from
-        } else {
-            user
-        }
     }
 
     private fun messageCase(
