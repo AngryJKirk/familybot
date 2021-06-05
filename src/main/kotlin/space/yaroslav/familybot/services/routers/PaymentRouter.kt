@@ -82,12 +82,14 @@ class PaymentRouter(
         shopPayload: ShopPayload
     ) {
         val developerId = botConfig.developerId
-        val text = context.get(Phrase.SHOP_THANKS).replace("$1", "@" + botConfig.developer)
+        val user = update.toUser()
+        val text = context.get(Phrase.SHOP_THANKS)
+            .replace("$0", user.getGeneralName())
+            .replace("$1", "@" + botConfig.developer)
         val chatId = shopPayload.chatId.toString()
         sender.execute(SendMessage(chatId, text))
         sender.execute(SendMessage(chatId, context.get(phrase)))
         if (developerId != null) {
-            val user = update.toUser()
             val chat = commonRepository
                 .getChatsByUser(user)
                 .find { shopPayload.chatId == it.id }
