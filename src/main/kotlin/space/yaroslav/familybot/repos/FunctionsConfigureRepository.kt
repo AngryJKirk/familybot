@@ -22,8 +22,8 @@ class FunctionsConfigureRepository(
 
     @Timed("repository.RedisFunctionsConfigureRepository.isEnabled")
     fun isEnabled(id: FunctionId, chat: Chat): Boolean {
-        if (id in fuckOffFunctions
-            && keyValueRepository.get(FuckOffOverride, chat.key()) == true
+        if (id in fuckOffFunctions &&
+            keyValueRepository.get(FuckOffOverride, chat.key()) == true
         ) {
             return false
         }

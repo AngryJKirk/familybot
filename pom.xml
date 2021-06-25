@@ -16,19 +16,11 @@
     <properties>
         <kotlin.version>1.5.0</kotlin.version>
         <guava.version>30.1-jre</guava.version>
-        <postgresql.version>42.2.20</postgresql.version>
         <telegrambots.version>5.2.0</telegrambots.version>
-        <lettuce-core.version>6.0.2.RELEASE</lettuce-core.version>
-        <kotlinx-coroutines.version>1.5.0</kotlinx-coroutines.version>
         <testcontainers.version>1.15.3</testcontainers.version>
         <mockito-kotlin.version>2.2.11</mockito-kotlin.version>
-        <micrometer-registry.version>1.6.5</micrometer-registry.version>
-        <aspectjweaver.version>1.9.6</aspectjweaver.version>
-        <yandex-translate-api.version>1.4.2</yandex-translate-api.version>
-        <jackson-module-kotlin.version>2.12.0</jackson-module-kotlin.version>
         <tomlj.version>1.0.0</tomlj.version>
     </properties>
-
 
     <dependencies>
         <!--Spring-->
@@ -61,37 +53,40 @@
             <version>${kotlin.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.lettuce</groupId>
-            <artifactId>lettuce-core</artifactId>
-            <version>${lettuce-core.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-core-jvm</artifactId>
-            <version>${kotlinx-coroutines.version}</version>
         </dependency>
 
-
         <!--Other-->
+
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>${postgresql.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-core</artifactId>
-            <version>${micrometer-registry.version}</version>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-graphite</artifactId>
-            <version>${micrometer-registry.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-kotlin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
         </dependency>
         <dependency>
             <groupId>org.telegram</groupId>
@@ -99,31 +94,21 @@
             <version>${telegrambots.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <version>${aspectjweaver.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.tomlj</groupId>
             <artifactId>tomlj</artifactId>
             <version>${tomlj.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-kotlin</artifactId>
-            <version>${jackson-module-kotlin.version}</version>
-        </dependency>
 
         <!--Test-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
             <version>${testcontainers.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -141,9 +126,7 @@
     </dependencies>
 
     <build>
-
         <plugins>
-
             <plugin>
                 <groupId>com.github.z3d1k</groupId>
                 <artifactId>ktlint-maven-plugin</artifactId>
