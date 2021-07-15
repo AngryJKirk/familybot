@@ -9,11 +9,13 @@ import space.yaroslav.familybot.executors.command.HelpCommandExecutor
 import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.services.talking.Dictionary
+import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
 class PrivateMessageHelpExecutor(
     private val helpExecutor: HelpCommandExecutor,
-    private val dictionary: Dictionary
+    private val dictionary: Dictionary,
+    private val botConfig: BotConfig
 ) : PrivateMessageExecutor {
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         if (helpExecutor.canExecute(update.message)) {
@@ -29,7 +31,9 @@ class PrivateMessageHelpExecutor(
         }
     }
 
-    override fun canExecute(message: Message) = true
+    override fun canExecute(message: Message): Boolean {
+        return botConfig.developer != message.from.userName
+    }
 
     override fun priority(update: Update): Priority {
         return Priority.VERY_LOW

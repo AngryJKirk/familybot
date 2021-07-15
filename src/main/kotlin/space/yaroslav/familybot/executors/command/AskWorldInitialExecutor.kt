@@ -73,7 +73,12 @@ class AskWorldInitialExecutor(
         }
         val userEasyKey = update.toUser().key()
         val userUsages = easyKeyValueService.get(AskWorldUserUsages, userEasyKey)
-        val isLimitForUserExceeded = userUsages != null && userUsages > 5
+        if (userUsages != null && userUsages > 5) {
+            return {
+                log.info("Limit was exceed for user")
+                it.send(update, context.get(Phrase.ASK_WORLD_LIMIT_BY_USER), replyToUpdate = true)
+            }
+        }
         val askWorldData = getAskWorldData(update, context)
         if (askWorldData is ValidationError) {
             return askWorldData.invalidQuestionAction
@@ -91,7 +96,7 @@ class AskWorldInitialExecutor(
         return { sender ->
             val questionId = coroutineScope { async { askWorldRepository.addQuestion(question) } }
             sender.send(update, context.get(Phrase.DATA_CONFIRM))
-            getChatsToSendQuestion(currentChat, successData.isScam || isLimitForUserExceeded)
+            getChatsToSendQuestion(currentChat, successData.isScam)
                 .forEach { chatToSend ->
                     runCatching {
                         val result = successData.action.invoke(sender, chatToSend, currentChat)

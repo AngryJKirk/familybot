@@ -49,15 +49,41 @@ class AskWorldReceiveReplyExecutor(
         return FunctionId.ASK_WORLD
     }
 
+    override fun canExecute(message: Message): Boolean {
+        if (message.isReply.not()) {
+            return false
+        }
+
+        val chatId = message.chatId
+        val messageId = message.replyToMessage.messageId
+        if (message.replyToMessage.hasPoll()) {
+            return askWorldRepository.findQuestionByMessageId(messageId + chatId, chatId) != null
+        }
+
+        val text = message.replyToMessage
+            .takeIf { it.from.isBot && it.from.userName == botConfig.botname }
+            ?.text
+            ?: return false
+
+        val allPrefixes = dictionary.getAll(Phrase.ASK_WORLD_QUESTION_FROM_CHAT)
+
+        return allPrefixes.map { "$it " }.any { text.startsWith(it) }
+    }
+
+    override fun priority(update: Update): Priority {
+        return Priority.LOW
+    }
+
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val context = dictionary.createContext(update)
         val message = update.message
         val reply = message.text ?: "MEDIA: $message"
         val chat = update.toChat()
         val user = update.toUser()
+        val chatId = chat.id
+        val messageId = message.replyToMessage.messageId
         val question =
-            askWorldRepository.findQuestionByMessageId(message.replyToMessage.messageId + chat.id, chat)
-                ?: return {}
+            askWorldRepository.findQuestionByMessageId(messageId + chatId, chatId) ?: return {}
         if (askWorldRepository.isReplied(question, chat, user)) {
             return {
                 it.execute(
@@ -271,20 +297,6 @@ class AskWorldReceiveReplyExecutor(
                 enableHtml(true)
             }
         )
-    }
-
-    override fun canExecute(message: Message): Boolean {
-        val text = message.replyToMessage
-            ?.takeIf { it.from.isBot && it.from.userName == botConfig.botname }
-            ?.text ?: return false
-
-        val allPrefixes = dictionary.getAll(Phrase.ASK_WORLD_QUESTION_FROM_CHAT)
-
-        return allPrefixes.map { "$it " }.any { text.startsWith(it) }
-    }
-
-    override fun priority(update: Update): Priority {
-        return Priority.LOW
     }
 
     private fun detectContentType(message: Message): MessageContentType {
