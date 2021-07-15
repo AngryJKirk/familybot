@@ -1,6 +1,7 @@
 package space.yaroslav.familybot.executors.pm
 
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage
@@ -42,6 +43,7 @@ class PatchNoteExecutor(
     private suspend fun tryToSendMessage(sender: AbsSender, chat: Chat, update: Update) {
         coroutineScope {
             launch {
+                delay(500)
                 runCatching {
                     sender.execute(
                         ForwardMessage(
