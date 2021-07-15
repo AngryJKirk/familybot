@@ -3,6 +3,7 @@ package space.yaroslav.familybot.executors.command
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage
@@ -99,6 +100,7 @@ class AskWorldInitialExecutor(
             getChatsToSendQuestion(currentChat, successData.isScam)
                 .forEach { chatToSend ->
                     runCatching {
+                        delay(100)
                         val result = successData.action.invoke(sender, chatToSend, currentChat)
                         markQuestionDelivered(question, questionId, result, chatToSend)
                     }.onFailure { e -> markChatInactive(chatToSend, questionId, e) }
