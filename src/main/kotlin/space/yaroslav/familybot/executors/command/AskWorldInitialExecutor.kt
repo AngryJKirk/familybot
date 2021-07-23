@@ -74,7 +74,7 @@ class AskWorldInitialExecutor(
         }
         val userEasyKey = update.toUser().key()
         val userUsages = easyKeyValueService.get(AskWorldUserUsages, userEasyKey)
-        if (userUsages != null && userUsages > 5) {
+        if (userUsages != null && userUsages > 1) {
             return {
                 log.info("Limit was exceed for user")
                 it.send(update, context.get(Phrase.ASK_WORLD_LIMIT_BY_USER), replyToUpdate = true)
