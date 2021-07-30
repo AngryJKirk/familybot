@@ -79,3 +79,7 @@ object FuckOffOverride : BooleanKeyType<ChatEasyKey>() {
 object PshenitsinTolerance : BooleanKeyType<ChatEasyKey>() {
     override fun keyType() = ChatEasyKey::class
 }
+
+object ProposalTo : LongKeyType<UserAndChatEasyKey>() {
+    override fun keyType() = UserAndChatEasyKey::class
+}

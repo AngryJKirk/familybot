@@ -14,12 +14,10 @@ import space.yaroslav.familybot.models.telegram.User
 import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.Instant
-import javax.sql.DataSource
 
 @Component
-class CommonRepository(datasource: DataSource) {
+class CommonRepository(private val template: JdbcTemplate) {
 
-    private val template = JdbcTemplate(datasource)
 
     @Timed("repository.CommonRepository.addUser")
     fun addUser(user: User) {

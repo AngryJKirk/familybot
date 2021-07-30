@@ -239,6 +239,17 @@ CREATE TABLE IF NOT EXISTS scenario_states
         FOREIGN KEY (scenario_move_id) REFERENCES scenario_move
 );
 
+CREATE TABLE IF NOT EXISTS marriages
+(
+    marriage_id         UUID      DEFAULT gen_random_uuid() NOT NULL,
+    marriage_start_date TIMESTAMP                           NOT NULL,
+    marriage_end_date   TIMESTAMP DEFAULT NULL,
+    chat_id             BIGINT                              NOT NULL REFERENCES chats,
+    first_user          BIGINT                              NOT NULL REFERENCES users,
+    second_user         BIGINT                              NOT NULL REFERENCES users
+
+);
+
 
 ------------------- DATA ----------------------
 INSERT INTO commands (id, command)
@@ -266,5 +277,7 @@ VALUES (1, '/stats_month'),
        (22, '/hampik'),
        (23, '/advanced_settings'),
        (24, '/stats_strikes'),
-       (25, '/shop')
+       (25, '/shop'),
+       (26, '/marry'),
+       (27, '/marry_list')
 ;

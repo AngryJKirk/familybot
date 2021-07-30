@@ -25,5 +25,7 @@ enum class Command(val command: String, val id: Int) {
     HAMPIK("/hampik", 22),
     ADVANCED_SETTINGS("/advanced_settings", 23),
     STATS_STRIKES("/stats_strikes", 24),
-    SHOP("/shop", 25)
+    SHOP("/shop", 25),
+    MARRY("/marry", 26),
+    MARRY_LIST("/marry_list", 27)
 }
