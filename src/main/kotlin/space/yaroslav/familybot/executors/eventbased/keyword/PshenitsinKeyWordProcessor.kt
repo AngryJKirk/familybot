@@ -25,14 +25,10 @@ class PshenitsinKeyWordProcessor(
                 .getReplyToUser(update)
                 .toCharArray()
                 .map { ch ->
-                    if (ch.isLetter()) {
-                        if (ch.isUpperCase()) {
-                            'Ы'
-                        } else {
-                            'ы'
-                        }
-                    } else {
-                        ch
+                    when {
+                        ch.isLetter() && ch.isUpperCase() -> 'Ы'
+                        ch.isLetter() && ch.isLowerCase() -> 'ы'
+                        else -> ch
                     }
                 }
                 .toCharArray()
