@@ -21,10 +21,10 @@ grammar or anything you would like to.
 # Stats
 
 Total amount of chats and users that have been seen by the bot:
-![](https://storozhenko.dev/stats1.png)
+![](https://storozhenko.dev/images/stats1.png)
 
 Amount of everyday messages passed through the bot:
-![](https://storozhenko.dev/stats2.png)
+![](https://storozhenko.dev/images/stats2.png)
 
 # Build & deploy
 
