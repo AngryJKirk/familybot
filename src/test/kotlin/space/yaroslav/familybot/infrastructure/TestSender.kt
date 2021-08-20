@@ -10,9 +10,11 @@ import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMem
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker
 import org.telegram.telegrambots.meta.api.methods.stickers.GetStickerSet
-import org.telegram.telegrambots.meta.api.objects.ChatMember
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.User
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberAdministrator
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberMember
 import org.telegram.telegrambots.meta.api.objects.stickers.StickerSet
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.models.telegram.stickers.Sticker
@@ -27,25 +29,23 @@ class TestSender {
         on { execute(any<GetChatAdministrators>()) } doReturn requestedAdmins()
     }
 
-    private fun requestedChatMember(): (InvocationOnMock) -> ChatMember? =
+    private fun requestedChatMember(): (InvocationOnMock) -> ChatMemberMember? =
         {
             val arg = it.arguments.first() as GetChatMember
-            ChatMember().apply {
+            ChatMemberMember().apply {
                 user = User()
                 user.id = arg.userId
                 user.userName = randomString()
-                status = "member"
             }
         }
 
     private fun requestedAdmins(): ArrayList<ChatMember> {
         return ArrayList(
             (1L..3L).map {
-                ChatMember().apply {
+                ChatMemberAdministrator().apply {
                     user = User()
                     user.id = it
                     user.userName = randomString()
-                    status = "administrator"
                 }
             }
         )

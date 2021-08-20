@@ -40,7 +40,13 @@ class BetExecutor(
                 context.get(Phrase.BET_INITIAL_MESSAGE),
                 replyToUpdate = true,
                 shouldTypeBeforeSend = true,
-                customization = { replyMarkup = ForceReplyKeyboard(true, true) }
+                customization = {
+                    replyMarkup = ForceReplyKeyboard
+                        .builder()
+                        .forceReply(true)
+                        .selective(true)
+                        .build()
+                }
             )
         }
     }

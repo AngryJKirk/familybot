@@ -12,10 +12,19 @@ import org.telegram.telegrambots.meta.api.objects.Chat
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.api.objects.User
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberAdministrator
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberBanned
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberLeft
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberMember
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberOwner
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberRestricted
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.models.telegram.stickers.Sticker
 import space.yaroslav.familybot.models.telegram.stickers.StickerPack
 import space.yaroslav.familybot.telegram.BotConfig
+import space.yaroslav.familybot.telegram.FamilyBot
 import java.util.concurrent.ThreadLocalRandom
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 
@@ -72,7 +81,8 @@ fun AbsSender.isFromAdmin(update: Update, botConfig: BotConfig): Boolean {
     }
     return this
         .execute(GetChatAdministrators(update.toChat().idString))
-        .any { admin -> admin.user.id == user.id }
+        .filter { chatMember -> chatMember.status == "administrator" }
+        .any { admin -> admin.user().id == user.id }
 }
 
 private suspend fun sendStickerInternal(
@@ -100,4 +110,23 @@ private suspend fun sendStickerInternal(
 
 fun Chat.isGroup(): Boolean {
     return this.isSuperGroupChat || this.isGroupChat
+}
+
+private val chatMemberAdministrator = ChatMemberAdministrator()
+private val chatMemberBanned = ChatMemberBanned()
+private val chatMemberLeft = ChatMemberLeft()
+private val chatMemberMember = ChatMemberMember()
+private val chatMemberOwner = ChatMemberOwner()
+private val chatMemberRestricted = ChatMemberRestricted()
+
+fun ChatMember.user(): User {
+    return when (status) {
+        chatMemberAdministrator.status -> (this as ChatMemberAdministrator).user
+        chatMemberBanned.status -> (this as ChatMemberBanned).user
+        chatMemberLeft.status -> (this as ChatMemberLeft).user
+        chatMemberMember.status -> (this as ChatMemberMember).user
+        chatMemberOwner.status -> (this as ChatMemberOwner).user
+        chatMemberRestricted.status -> (this as ChatMemberRestricted).user
+        else -> throw FamilyBot.InternalException("Can't find mapping for user $this ")
+    }
 }

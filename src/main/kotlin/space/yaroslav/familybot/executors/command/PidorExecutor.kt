@@ -16,6 +16,7 @@ import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.common.extensions.untilNextDay
+import space.yaroslav.familybot.common.extensions.user
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.dictionary.Phrase
@@ -170,7 +171,7 @@ class PidorExecutor(
         return runCatching {
             absSender.execute(getChatMemberCall)
                 .takeIf { member -> member.status != "left" && member.status != "kicked" }
-                ?.user
+                ?.user()
                 ?.toUser(user.chat)
         }.getOrNull()
     }
