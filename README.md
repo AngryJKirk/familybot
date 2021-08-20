@@ -21,10 +21,10 @@ grammar or anything you would like to.
 # Stats
 
 Total amount of chats and users that have been seen by the bot:
-![](https://i.vas3k.club/55da4748769193f336ee7e3a0fb4bbef777e5be61aa740f3b216f4eff00bc901.jpg)
+![](https://storozhenko.dev/images/stats1.png)
 
 Amount of everyday messages passed through the bot:
-![](https://i.vas3k.club/7a130c5979d2f84dc55b1416ecd1d7b4d22c14c34a6892af4d060d585fc31d89.jpg)
+![](https://storozhenko.dev/images/stats2.png)
 
 # Build & deploy
 
