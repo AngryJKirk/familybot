@@ -159,9 +159,11 @@ class AskWorldInitialExecutor(
                 )
             }
 
-            val isScam = containsUrl(message) ||
-                isSpam(message) ||
-                containsLongWords(message)
+            val isScam =
+                containsUrl(message)
+                    || containsUrl(update.toChat().name ?: "")
+                    || isSpam(message)
+                    || containsLongWords(message)
 
             if (message.length > 2000) {
                 return ValidationError {
