@@ -2,6 +2,7 @@ package space.yaroslav.familybot.common
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.classic.spi.StackTraceElementProxy
 import ch.qos.logback.core.Appender
 import ch.qos.logback.core.Context
 import ch.qos.logback.core.filter.Filter
@@ -83,7 +84,11 @@ class ErrorLogsDeferredAppender : Appender<ILoggingEvent> {
             val exceptionMessage = if (event.throwableProxy != null) {
                 val className = event.throwableProxy.className
                 val message = event.throwableProxy.message
-                "\nException: $className : $message"
+                val stackTrace = event.throwableProxy.stackTraceElementProxyArray.joinToString(
+                    separator = "\n",
+                    transform = StackTraceElementProxy::getSTEAsString
+                )
+                "\nException: $className : $message \nStack trace:\n$stackTrace"
             } else {
                 ""
             }
