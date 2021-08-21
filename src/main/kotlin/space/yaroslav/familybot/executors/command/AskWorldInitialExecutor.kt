@@ -252,8 +252,8 @@ class AskWorldInitialExecutor(
             message.contains("bmp", ignoreCase = true) ||
             message.contains("gif", ignoreCase = true) ||
             message.contains("_bot", ignoreCase = true) ||
-            message.contains("@", ignoreCase = true) ||
-            message.contains("Bot", ignoreCase = true)
+            message.contains("t.me", ignoreCase = true) ||
+            message.contains("Bot", ignoreCase = false)
     }
 
     private fun isSpam(message: String): Boolean {
