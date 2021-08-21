@@ -38,7 +38,7 @@ class UserListExecutor(private val dictionary: Dictionary, private val botConfig
     private fun isUserLeft(message: Message) = message.leftChatMember != null
     private fun isUserEntered(message: Message) = message.newChatMembers?.isNotEmpty() ?: false
     private fun isSucharaEntered(message: Message) =
-        message.newChatMembers.any { it.isBot && it.userName == botConfig.botname }
+        message.newChatMembers.any { it.isBot && it.userName == botConfig.botName }
 
     override fun getFunctionId() = FunctionId.GREETINGS
 }

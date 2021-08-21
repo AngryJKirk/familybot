@@ -19,13 +19,11 @@ import space.yaroslav.familybot.models.shop.ShopPayload
 import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
-import space.yaroslav.familybot.telegram.PaymentConfig
 
 @Component
 class ShopContiniousExecutor(
-    private val paymentConfig: PaymentConfig,
+    private val botConfig: BotConfig,
     private val dictionary: Dictionary,
-    botConfig: BotConfig
 ) : ContiniousConversation(botConfig) {
 
     override fun getDialogMessage(message: Message): String {
@@ -35,7 +33,7 @@ class ShopContiniousExecutor(
     override fun command() = Command.SHOP
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        val providerToken = paymentConfig.token ?: return {}
+        val providerToken = botConfig.paymentToken ?: return {}
         val chat = update.toChat()
         val context = dictionary.createContext(update)
         val callbackQuery = update.callbackQuery

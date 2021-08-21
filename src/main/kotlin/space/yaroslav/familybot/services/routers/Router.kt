@@ -216,7 +216,7 @@ class Router(
 
         when {
             leftChatMember != null -> {
-                if (leftChatMember.isBot && leftChatMember.userName == botConfig.botname) {
+                if (leftChatMember.isBot && leftChatMember.userName == botConfig.botName) {
                     logger.info("Bot was removed from $chat")
                     repository.changeChatActiveStatus(chat, false)
                     repository.disableUsersInChat(chat)
@@ -226,7 +226,7 @@ class Router(
                 }
             }
             newChatMembers?.isNotEmpty() == true -> {
-                if (newChatMembers.any { it.isBot && it.userName == botConfig.botname }) {
+                if (newChatMembers.any { it.isBot && it.userName == botConfig.botName }) {
                     logger.info("Bot was added to $chat")
                     repository.changeChatActiveStatus(chat, true)
                 } else {

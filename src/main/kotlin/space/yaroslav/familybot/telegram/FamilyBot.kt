@@ -30,7 +30,7 @@ class FamilyBot(
     private val channels = HashMap<Long, Channel<Update>>()
 
     override fun getBotToken(): String {
-        return config.token ?: throw InternalException("Expression 'config.token' must not be null")
+        return config.botToken
     }
 
     override fun onUpdateReceived(tgUpdate: Update?) {
@@ -64,7 +64,7 @@ class FamilyBot(
     }
 
     override fun getBotUsername(): String {
-        return config.botname ?: throw InternalException("Expression 'config.botname' must not be null")
+        return config.botName
     }
 
     private suspend fun proceed(update: Update) {

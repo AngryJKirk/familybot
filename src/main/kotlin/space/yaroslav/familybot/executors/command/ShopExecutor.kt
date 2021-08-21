@@ -12,15 +12,13 @@ import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.services.talking.DictionaryContext
 import space.yaroslav.familybot.telegram.BotConfig
-import space.yaroslav.familybot.telegram.PaymentConfig
 
 @Component
 class ShopExecutor(
     private val dictionary: Dictionary,
-    paymentConfig: PaymentConfig,
     botConfig: BotConfig
 ) : CommandExecutor(botConfig) {
-    private val isEnabled = paymentConfig.token != null
+    private val isEnabled = botConfig.paymentToken != null
 
     override fun command() = Command.SHOP
 

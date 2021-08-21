@@ -149,7 +149,7 @@ class AskWorldInitialExecutor(
                 update.message
                     ?.text
                     ?.removePrefix(command().command)
-                    ?.removePrefix("@${botConfig.botname}")
+                    ?.removePrefix("@${botConfig.botName}")
                     ?.removePrefix(" ")
             }
                 ?.takeIf(String::isNotEmpty) ?: return ValidationError {
@@ -160,10 +160,10 @@ class AskWorldInitialExecutor(
             }
 
             val isScam =
-                containsUrl(message)
-                    || containsUrl(update.toChat().name ?: "")
-                    || isSpam(message)
-                    || containsLongWords(message)
+                containsUrl(message) ||
+                    containsUrl(update.toChat().name ?: "") ||
+                    isSpam(message) ||
+                    containsLongWords(message)
 
             if (message.length > 2000) {
                 return ValidationError {

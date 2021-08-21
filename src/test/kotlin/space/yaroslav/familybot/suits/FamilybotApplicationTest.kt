@@ -8,12 +8,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.images.builder.ImageFromDockerfile
+import space.yaroslav.familybot.telegram.BotStarter
 import java.nio.file.Paths
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 
 @SpringBootTest
-@ActiveProfiles("testing")
+@ActiveProfiles(BotStarter.TESTING_PROFILE_NAME)
 @ExtendWith(SpringExtension::class)
 abstract class FamilybotApplicationTest {
 

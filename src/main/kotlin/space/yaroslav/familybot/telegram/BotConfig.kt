@@ -1,12 +1,10 @@
 package space.yaroslav.familybot.telegram
 
-import org.springframework.boot.context.properties.ConfigurationProperties
-
-@ConfigurationProperties("settings")
-class BotConfig {
-    var token: String? = null
-    var botname: String? = null
-    var developer: String? = null
-    var developerId: String? = null
-    var yandexKey: String? = null
-}
+data class BotConfig(
+    val botToken: String,
+    val botName: String,
+    val developer: String,
+    val developerId: String,
+    val yandexKey: String?,
+    val paymentToken: String?
+)

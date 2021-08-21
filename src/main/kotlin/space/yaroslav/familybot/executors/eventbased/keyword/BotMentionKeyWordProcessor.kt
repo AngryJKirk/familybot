@@ -51,7 +51,7 @@ class BotMentionKeyWordProcessor(
     }
 
     private fun isBotMention(message: Message): Boolean {
-        return message.text?.contains("@${botConfig.botname}") ?: false
+        return message.text?.contains("@${botConfig.botName}") ?: false
     }
 
     private fun isBotNameMention(message: Message): Boolean {
@@ -59,7 +59,7 @@ class BotMentionKeyWordProcessor(
     }
 
     private fun isReplyToBot(message: Message): Boolean {
-        return message.isReply && message.replyToMessage.from.userName == botConfig.botname
+        return message.isReply && message.replyToMessage.from.userName == botConfig.botName
     }
 
     fun isFuckOff(update: Update): Boolean {

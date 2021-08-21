@@ -36,7 +36,7 @@ class FuckOffTest : FamilybotApplicationTest() {
         ]
     )
     fun `should be able to process valid message`(value: String) {
-        val botName = botConfig.botname ?: throw FamilyBot.InternalException("Wrong test configuration")
+        val botName = botConfig.botName ?: throw FamilyBot.InternalException("Wrong test configuration")
         val phrase = value.let { set -> set.plus(set.map { randomString() + it + randomString() }) }
         val update = createSimpleUpdate(phrase)
         update.message.replyToMessage = createSimpleMessage()

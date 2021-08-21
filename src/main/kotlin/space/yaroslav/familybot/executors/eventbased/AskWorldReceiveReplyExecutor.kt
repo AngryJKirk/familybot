@@ -61,7 +61,7 @@ class AskWorldReceiveReplyExecutor(
         }
 
         val text = message.replyToMessage
-            .takeIf { it.from.isBot && it.from.userName == botConfig.botname }
+            .takeIf { it.from.isBot && it.from.userName == botConfig.botName }
             ?.text
             ?: return false
 

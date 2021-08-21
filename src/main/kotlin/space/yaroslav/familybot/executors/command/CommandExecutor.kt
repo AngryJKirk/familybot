@@ -7,13 +7,10 @@ import space.yaroslav.familybot.executors.Executor
 import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.telegram.BotConfig
-import space.yaroslav.familybot.telegram.FamilyBot
 
 abstract class CommandExecutor(private val config: BotConfig) : Executor {
     override fun canExecute(message: Message): Boolean {
-        return command() == message.getCommand {
-            config.botname ?: throw FamilyBot.InternalException("Bot name should be set up")
-        }
+        return command() == message.getCommand(config.botName)
     }
 
     override fun priority(update: Update): Priority {

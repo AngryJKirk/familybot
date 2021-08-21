@@ -13,8 +13,8 @@ abstract class ContiniousConversation(private val config: BotConfig) : CommandEx
     }
 
     override fun canExecute(message: Message): Boolean {
-        return message.from.userName == config.botname &&
-            message.text ?: "" == getDialogMessage(message)
+        return message.from.userName == config.botName &&
+            (message.text ?: "") == getDialogMessage(message)
     }
 
     abstract fun getDialogMessage(message: Message): String

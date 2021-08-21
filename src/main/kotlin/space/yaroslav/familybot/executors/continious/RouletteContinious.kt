@@ -39,7 +39,7 @@ class RouletteContinious(
 
     override fun canExecute(message: Message): Boolean {
         return message.isReply &&
-            message.replyToMessage.from.userName == botConfig.botname &&
+            message.replyToMessage.from.userName == botConfig.botName &&
             message.replyToMessage.text ?: "" == getDialogMessage(message)
     }
 

@@ -1,0 +1,47 @@
+{
+  "groups": [
+    {
+      "name": "settings",
+      "type": "space.yaroslav.familybot.telegram.BotConfig",
+      "sourceType": "space.yaroslav.familybot.telegram.BotConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "settings.bot-token",
+      "type": "java.lang.String",
+      "description": "Token given by @BotFather.",
+      "sourceType": "space.yaroslav.familybot.telegram.BotConfig"
+    },
+    {
+      "name": "settings.developer",
+      "type": "java.lang.String",
+      "description": "Developer's Telegram nickname. Must starts without @, e.g BigDickBoy.",
+      "sourceType": "space.yaroslav.familybot.telegram.BotConfig"
+    },
+    {
+      "name": "settings.developer-id",
+      "type": "java.lang.String",
+      "description": "Developer's Telegram ID.",
+      "sourceType": "space.yaroslav.familybot.telegram.BotConfig"
+    },
+    {
+      "name": "settings.yandex-key",
+      "type": "java.lang.String",
+      "description": "Token for translating. Allowed to be empty, but translations will not work. You can get it there: https://yandex.com/dev/translate/.",
+      "sourceType": "space.yaroslav.familybot.telegram.BotConfig"
+    },
+    {
+      "name": "settings.bot-name",
+      "type": "java.lang.String",
+      "description": "Bot's Telegram nickname. Must starts without @, e.g FamilyBot.",
+      "sourceType": "space.yaroslav.familybot.telegram.BotConfig"
+    },
+    {
+      "name": "settings.payment-token",
+      "type": "java.lang.String",
+      "description": "Payment token, you can get it from @BotFather. Optional.",
+      "sourceType": "space.yaroslav.familybot.telegram.BotConfig"
+    }
+  ]
+}

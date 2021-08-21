@@ -62,8 +62,7 @@ fun Update.from(): TelegramUser {
     }
 }
 
-fun Message.getCommand(botName: () -> String?): Command? {
-    val botNameValue = botName() ?: throw FamilyBot.InternalException("Bot name should be set up")
+fun Message.getCommand(botName: String): Command? {
     val textCommand = this
         .entities
         ?.asSequence()
@@ -71,7 +70,7 @@ fun Message.getCommand(botName: () -> String?): Command? {
         ?.filter { entity -> entity.type == EntityType.BOTCOMMAND }
         ?.map(MessageEntity::getText)
         ?.map { command -> command.split("@") }
-        ?.filter { commandParts -> commandParts.size == 1 || commandParts[1] == botNameValue }
+        ?.filter { commandParts -> commandParts.size == 1 || commandParts[1] == botName }
         ?.map { commandParts -> commandParts.first() }
         ?.firstOrNull() ?: return null
 

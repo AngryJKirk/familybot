@@ -40,7 +40,7 @@ class AntiDdosExecutor(
     }
 
     override fun canExecute(message: Message): Boolean {
-        return if (message.getCommand { config.botname } != null) {
+        return if (message.getCommand(config.botName) != null) {
             easyKeyValueService.get(CommandLimit, message.key(), 0) >= 5
         } else {
             false
