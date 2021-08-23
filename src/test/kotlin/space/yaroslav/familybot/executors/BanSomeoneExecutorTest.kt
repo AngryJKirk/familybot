@@ -5,7 +5,7 @@ import org.junit.Assert
 import org.junit.Ignore
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.any
@@ -25,7 +25,6 @@ import space.yaroslav.familybot.services.misc.BanService
 import space.yaroslav.familybot.services.settings.EasyKey
 import space.yaroslav.familybot.suits.ExecutorTest
 import space.yaroslav.familybot.telegram.BotConfig
-import space.yaroslav.familybot.telegram.FamilyBot
 import java.util.stream.Stream
 
 class BanSomeoneExecutorTest : ExecutorTest() {
@@ -78,7 +77,7 @@ class BanSomeoneExecutorTest : ExecutorTest() {
     override fun executeTest() {
     }
 
-    @TestFactory
+    @ParameterizedTest
     @MethodSource("valuesProvider")
     fun executeTest(banModel: BanTestModel) {
         clearInvocations(sender)
@@ -101,23 +100,22 @@ class BanSomeoneExecutorTest : ExecutorTest() {
         val description = randomString()
         banService.banUser(user, description)
         Assertions.assertTrue(banService.isUserBanned(user)?.contains(description) ?: false)
-        Assertions.assertTrue(banService.isChatBanned(chat) == null)
-        Assertions.assertTrue(banService.findBanByKey(update.key()) == null)
-        Assertions.assertTrue(banService.findBanByKey(chat.key()) == null)
-        Assertions.assertTrue(banService.findBanByKey(user.key()) != null)
+        Assertions.assertNull(banService.isChatBanned(chat))
+        Assertions.assertNull(banService.findBanByKey(update.key()))
+        Assertions.assertNull(banService.findBanByKey(chat.key()))
+        Assertions.assertNotNull(banService.findBanByKey(user.key()))
         banService.reduceBan(user.key())
         banService.banChat(chat, description)
         Assertions.assertTrue(banService.isChatBanned(chat)?.contains(description) ?: false)
-        Assertions.assertTrue(banService.isUserBanned(user) == null)
-        Assertions.assertTrue(banService.findBanByKey(update.key()) == null)
-        Assertions.assertTrue(banService.findBanByKey(chat.key()) != null)
-        Assertions.assertTrue(banService.findBanByKey(user.key()) == null)
+        Assertions.assertNull(banService.isUserBanned(user))
+        Assertions.assertNull(banService.findBanByKey(update.key()))
+        Assertions.assertNotNull(banService.findBanByKey(chat.key()))
+        Assertions.assertNull(banService.findBanByKey(user.key()))
         banService.reduceBan(user.key())
     }
 
     private fun updateFromDeveloper(messageText: String): Update {
-        val developerUsername =
-            botConfig.developer ?: throw FamilyBot.InternalException("Someone wrong with tests setup")
+        val developerUsername = botConfig.developer
         return createSimpleUpdate(messageText).apply {
             message.from.userName = developerUsername
             message.chat.apply {

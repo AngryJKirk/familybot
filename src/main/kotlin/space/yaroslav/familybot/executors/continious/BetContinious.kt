@@ -47,7 +47,7 @@ class BetContinious(
     override fun canExecute(message: Message): Boolean {
         return message.isReply &&
             message.replyToMessage.from.userName == botConfig.botName &&
-            message.replyToMessage.text ?: "" == getDialogMessage(message)
+            (message.replyToMessage.text ?: "") == getDialogMessage(message)
     }
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {

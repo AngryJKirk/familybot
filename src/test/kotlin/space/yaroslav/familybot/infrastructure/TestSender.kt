@@ -32,20 +32,25 @@ class TestSender {
     private fun requestedChatMember(): (InvocationOnMock) -> ChatMemberMember? =
         {
             val arg = it.arguments.first() as GetChatMember
+            val userId = arg.userId
             ChatMemberMember().apply {
                 user = User()
-                user.id = arg.userId
-                user.userName = randomString()
+                user.id = userId
+                user.userName = "user$userId"
+                user.firstName = "Test user"
+                user.lastName = "#$userId"
             }
         }
 
     private fun requestedAdmins(): ArrayList<ChatMember> {
         return ArrayList(
-            (1L..3L).map {
+            (1L..3L).map { userId ->
                 ChatMemberAdministrator().apply {
                     user = User()
-                    user.id = it
-                    user.userName = randomString()
+                    user.id = userId
+                    user.userName = "user$userId"
+                    user.firstName = "Test user"
+                    user.lastName = "#$userId"
                 }
             }
         )

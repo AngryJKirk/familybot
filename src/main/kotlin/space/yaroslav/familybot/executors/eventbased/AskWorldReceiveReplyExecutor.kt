@@ -110,7 +110,7 @@ class AskWorldReceiveReplyExecutor(
         return { sender ->
             runCatching {
                 coroutineScope { launch { askWorldRepository.addReply(askWorldReply) } }
-                val questionTitle = question.message.takeIf { it.length < 100 } ?: question.message.take(100) + "..."
+                val questionTitle = question.message.takeIf { it.length < 100 } ?: (question.message.take(100) + "...")
                 val chatIdToReply = question.chat.idString
 
                 val answerTitle = dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT, ChatEasyKey(question.chat.id))

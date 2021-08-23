@@ -96,7 +96,7 @@ class TopPidorsByMonthsExecutor(
             .groupBy { it.user }
             .maxByOrNull { it.value.size }
             ?: throw FamilyBot.InternalException("List of pidors should be not empty to calculate stats")
-        return PidorStat(pidor.key, pidors.filter { it.user == pidor.key }.count())
+        return PidorStat(pidor.key, pidors.count { it.user == pidor.key })
     }
 
     private fun getLeaderboardPhrase(pluralization: Pluralization, context: DictionaryContext): String {

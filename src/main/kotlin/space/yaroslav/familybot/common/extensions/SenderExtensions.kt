@@ -81,7 +81,7 @@ fun AbsSender.isFromAdmin(update: Update, botConfig: BotConfig): Boolean {
     }
     return this
         .execute(GetChatAdministrators(update.toChat().idString))
-        .filter { chatMember -> chatMember.status == "administrator" }
+        .filter { chatMember -> chatMember.status == "administrator" || chatMember.status == "creator" }
         .any { admin -> admin.user().id == user.id }
 }
 

@@ -50,7 +50,7 @@ class DictionaryReader {
     private fun parsePhrasesByTheme(table: TomlTable): Map<PhraseTheme, List<String>> {
         return PhraseTheme
             .values()
-            .associate { theme -> theme to tableToList(table, theme) }
+            .associateWith { theme -> tableToList(table, theme) }
     }
 
     private fun tableToList(

@@ -73,7 +73,7 @@ private fun user(): User {
     return User().apply {
         id = userId
         userName = "user$userId"
-        firstName = "test user"
+        firstName = "Test user"
         lastName = "#$userId"
         isBot = false
     }
