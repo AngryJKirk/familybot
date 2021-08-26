@@ -8,10 +8,8 @@ import space.yaroslav.familybot.executors.eventbased.keyword.BotMentionKeyWordPr
 import space.yaroslav.familybot.infrastructure.createSimpleMessage
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.createSimpleUser
-import space.yaroslav.familybot.infrastructure.randomString
 import space.yaroslav.familybot.suits.FamilybotApplicationTest
 import space.yaroslav.familybot.telegram.BotConfig
-import space.yaroslav.familybot.telegram.FamilyBot
 
 class FuckOffTest : FamilybotApplicationTest() {
 
@@ -32,12 +30,15 @@ class FuckOffTest : FamilybotApplicationTest() {
             "завали ебало",
             "завали бля ебало",
             "завали, бля, ебало",
+            "пес, завали, бля, ебало",
+            "пес, завали, бля, ебало, епта",
+            "пес, завали, бля, ебало епта",
+            "завали, бля, ебало епта",
             "завали    ебало"
         ]
     )
-    fun `should be able to process valid message`(value: String) {
-        val botName = botConfig.botName ?: throw FamilyBot.InternalException("Wrong test configuration")
-        val phrase = value.let { set -> set.plus(set.map { randomString() + it + randomString() }) }
+    fun `should be able to process valid message`(phrase: String) {
+        val botName = botConfig.botName
         val update = createSimpleUpdate(phrase)
         update.message.replyToMessage = createSimpleMessage()
         update.message.replyToMessage.from = createSimpleUser(true, botName)

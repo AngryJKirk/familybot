@@ -14,7 +14,14 @@ class DictionaryTest : FamilybotApplicationTest() {
 
     @Test
     fun `all phrases should have at least default values`() {
-        val isAllPresent = Phrase.values().all { phrase -> dictionaryReader.getAllPhrases(phrase).isNotEmpty() }
-        Assertions.assertTrue(isAllPresent)
+        Phrase
+            .values()
+            .map { phrase -> phrase to dictionaryReader.getAllPhrases(phrase).isNotEmpty() }
+            .forEach { (phrase, isNotEmpty) ->
+                Assertions.assertTrue(
+                    isNotEmpty,
+                    "Phrase $phrase does not have even default value"
+                )
+            }
     }
 }
