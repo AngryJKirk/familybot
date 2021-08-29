@@ -23,8 +23,8 @@ class BanSomeoneExecutor(
 
         val command = update.getMessageTokens(delimiter = "|")
         val identification = command[1]
-        val isUnban = command.getOrNull(4) == "unban"
-        val isForever = command.getOrNull(4) == "forever"
+        val isUnban = command.getOrNull(3) == "unban"
+        val isForever = command.getOrNull(3) == "forever"
         val chats = commonRepository.getChats()
 
         val chat = chats.find { it.name == identification || it.id == identification.toLongOrNull() }
