@@ -89,7 +89,7 @@ class BanSomeoneExecutorTest : ExecutorTest() {
         banService.findBanByKey(banModel.easyKey)
             ?: throw AssertionError("Should be a new ban")
 
-        banService.reduceBan(banModel.easyKey)
+        banService.removeBan(banModel.easyKey)
     }
 
     @Test
@@ -104,14 +104,14 @@ class BanSomeoneExecutorTest : ExecutorTest() {
         Assertions.assertNull(banService.findBanByKey(update.key()))
         Assertions.assertNull(banService.findBanByKey(chat.key()))
         Assertions.assertNotNull(banService.findBanByKey(user.key()))
-        banService.reduceBan(user.key())
+        banService.removeBan(user.key())
         banService.banChat(chat, description)
         Assertions.assertTrue(banService.isChatBanned(chat)?.contains(description) ?: false)
         Assertions.assertNull(banService.isUserBanned(user))
         Assertions.assertNull(banService.findBanByKey(update.key()))
         Assertions.assertNotNull(banService.findBanByKey(chat.key()))
         Assertions.assertNull(banService.findBanByKey(user.key()))
-        banService.reduceBan(user.key())
+        banService.removeBan(user.key())
     }
 
     private fun updateFromDeveloper(messageText: String): Update {

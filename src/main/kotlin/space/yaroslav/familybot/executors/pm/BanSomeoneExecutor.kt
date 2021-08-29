@@ -24,6 +24,7 @@ class BanSomeoneExecutor(
         val command = update.getMessageTokens(delimiter = "|")
         val identification = command[1]
         val isUnban = command.getOrNull(4) == "unban"
+        val isForever = command.getOrNull(4) == "forever"
         val chats = commonRepository.getChats()
 
         val chat = chats.find { it.name == identification || it.id == identification.toLongOrNull() }
@@ -32,10 +33,10 @@ class BanSomeoneExecutor(
         if (chat != null) {
             return {
                 if (isUnban) {
-                    banService.reduceBan(chat.key())
+                    banService.removeBan(chat.key())
                     it.send(update, "Unbanned chat: $chat")
                 } else {
-                    banService.banChat(chat, description)
+                    banService.banChat(chat, description, isForever)
                     it.send(update, "Banned chat: $chat")
                 }
             }
@@ -49,10 +50,10 @@ class BanSomeoneExecutor(
         if (user != null) {
             return {
                 if (isUnban) {
-                    banService.reduceBan(user.key())
+                    banService.removeBan(user.key())
                     it.send(update, "Unbanned user: $user")
                 } else {
-                    banService.banUser(user, description)
+                    banService.banUser(user, description, isForever)
                     it.send(update, "Banned user: $user")
                 }
             }

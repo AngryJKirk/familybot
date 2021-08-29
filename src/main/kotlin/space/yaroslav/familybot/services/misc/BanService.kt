@@ -24,12 +24,12 @@ class BanService(
         return findBanByKey(chat.key())
     }
 
-    fun banUser(user: User, description: String) {
-        banByKey(user.key(), description)
+    fun banUser(user: User, description: String, isForever: Boolean = false) {
+        banByKey(user.key(), description, calculateDuration(isForever))
     }
 
-    fun banChat(chat: Chat, description: String) {
-        banByKey(chat.key(), description)
+    fun banChat(chat: Chat, description: String, isForever: Boolean = false) {
+        banByKey(chat.key(), description, calculateDuration(isForever))
     }
 
     fun findBanByKey(easyKey: EasyKey): String? {
@@ -39,12 +39,15 @@ class BanService(
         )
     }
 
-    fun reduceBan(easyKey: EasyKey) {
+    fun removeBan(easyKey: EasyKey) {
         easyKeyValueService.remove(Ban, easyKey)
     }
 
-    private fun banByKey(easyKey: EasyKey, description: String) {
-        val duration = Duration.ofDays(7)
+    private fun calculateDuration(isForever: Boolean): Duration {
+        return if (isForever) Duration.ofDays(9999) else Duration.ofDays(7)
+    }
+
+    private fun banByKey(easyKey: EasyKey, description: String, duration: Duration) {
         val until = Instant.now().plusSeconds(duration.seconds)
         easyKeyValueService.put(
             Ban,
