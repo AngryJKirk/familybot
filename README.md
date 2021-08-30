@@ -1,6 +1,6 @@
 # familybot
 
-Bot for my friends
+Telegram Bot for my friends
 
 ![](https://storozhenko.dev/images/jesus_final-min.jpg)
 
@@ -8,10 +8,6 @@ Wake up Neo
 
 You obosralsya
 
-# Disclaimer
-
-This project may seem offensive. You have been warned. It was made just for fun, I don't have any negative feelings
-towards anyone.
 
 # Documentation
 
@@ -55,6 +51,11 @@ To re-deploy only the app run `make redeploy-prod`.
 1. Old versions of docker-compose do not support `--env-file` which is required for production.
 
 3. If you have issues installing `make`, just copy commands from `scripts/Makefile`
+
+# Disclaimer
+
+This project may seem offensive. You have been warned. It was made just for fun, I don't have any negative feelings
+towards anyone.
 
 # Thanks
 
