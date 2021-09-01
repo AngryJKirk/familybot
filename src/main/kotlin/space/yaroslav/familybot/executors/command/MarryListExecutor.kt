@@ -63,13 +63,7 @@ class MarryListExecutor(
         "👩‍❤️‍👩",
         "🏩",
         "💒",
-        "♥️",
-        "❦",
-        "☙",
-        "♡",
-        "🎔",
-        "❧",
-        "❥"
+        "♥️"
     )
 
     override fun command() = Command.MARRY_LIST
