@@ -17,6 +17,7 @@ import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.ProposalTo
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.suits.CommandExecutorTest
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -41,7 +42,7 @@ class MarriageExecutorTest : CommandExecutorTest() {
         runBlocking { marriageExecutor.execute(updateNoReply).invoke(sender) }
         argumentCaptor<SendMessage> {
             verify(sender, times(1)).execute(capture())
-            assertEquals(phrase(Phrase.MARRY_RULES), firstValue.text)
+            assertContains(phrases(Phrase.MARRY_RULES), firstValue.text)
         }
 
         val firstUser = createSimpleUser().apply { id = 1 }
@@ -59,7 +60,7 @@ class MarriageExecutorTest : CommandExecutorTest() {
             verify(sender, times(2)).execute(capture())
             val proposalTo = keyValueService.get(ProposalTo, updateProposal.message.replyToMessage.key())
             assertEquals(proposalTo, firstUser.id)
-            assertEquals(phrase(Phrase.MARRY_PROPOSED), secondValue.text)
+            assertContains(phrases(Phrase.MARRY_PROPOSED), secondValue.text)
         }
 
         val updateProposalReply = createSimpleCommand(marriageExecutor.command())
@@ -74,11 +75,11 @@ class MarriageExecutorTest : CommandExecutorTest() {
         runBlocking { marriageExecutor.execute(updateProposalReply).invoke(sender) }
         argumentCaptor<SendMessage> {
             verify(sender, times(3)).execute(capture())
-            assertEquals(phrase(Phrase.MARRY_CONGRATS), thirdValue.text)
+            assertContains(phrases(Phrase.MARRY_CONGRATS), thirdValue.text)
             assertNotNull(marriagesRepository.getMarriage(chatId = updateProposal.message.chatId, firstUser.id))
             assertNotNull(marriagesRepository.getMarriage(chatId = updateProposal.message.chatId, secondUser.id))
         }
     }
 
-    private fun phrase(phrase: Phrase) = dictionary.getAll(phrase).first()
+    private fun phrases(phrase: Phrase) = dictionary.getAll(phrase)
 }
