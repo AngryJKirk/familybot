@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.key
+import space.yaroslav.familybot.common.extensions.randomBoolean
 import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
@@ -13,7 +14,6 @@ import space.yaroslav.familybot.services.settings.FuckOffTolerance
 import space.yaroslav.familybot.services.talking.TalkingService
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Duration
-import java.util.concurrent.ThreadLocalRandom
 
 @Component
 class BotMentionKeyWordProcessor(
@@ -44,7 +44,7 @@ class BotMentionKeyWordProcessor(
         return {
             val reply = talkingService.getReplyToUser(
                 update,
-                ThreadLocalRandom.current().nextBoolean() && shouldBeQuestion
+                randomBoolean() && shouldBeQuestion
             )
             it.send(update, reply, replyToUpdate = true, shouldTypeBeforeSend = true)
         }

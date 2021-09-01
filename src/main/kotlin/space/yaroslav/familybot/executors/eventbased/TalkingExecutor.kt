@@ -5,6 +5,8 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.key
+import space.yaroslav.familybot.common.extensions.randomBoolean
+import space.yaroslav.familybot.common.extensions.randomInt
 import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.executors.Configurable
@@ -16,7 +18,6 @@ import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.RageMode
 import space.yaroslav.familybot.services.settings.TalkingDensity
 import space.yaroslav.familybot.services.talking.TalkingService
-import java.util.concurrent.ThreadLocalRandom
 
 @Component
 class TalkingExecutor(
@@ -24,8 +25,12 @@ class TalkingExecutor(
     private val easyKeyValueService: EasyKeyValueService
 ) : Executor, Configurable {
 
-    override fun getFunctionId(): FunctionId {
-        return FunctionId.CHATTING
+    override fun getFunctionId(update: Update): FunctionId {
+        return if (isRageModeEnabled(update.toChat())) {
+            FunctionId.RAGE
+        } else {
+            FunctionId.CHATTING
+        }
     }
 
     override fun priority(update: Update): Priority {
@@ -45,9 +50,9 @@ class TalkingExecutor(
                 val messageText = talkingService.getReplyToUser(update)
                     .let { message -> if (rageModEnabled) rageModeFormat(message) else message }
                 val delay = if (rageModEnabled.not()) {
-                    1000L to 2000L
+                    1000 to 2000
                 } else {
-                    100L to 500L
+                    100 to 500
                 }
                 it.send(
                     update,
@@ -85,7 +90,7 @@ class TalkingExecutor(
         return if (density == 0L) {
             true
         } else {
-            ThreadLocalRandom.current().nextLong(0, density) == 0L
+            randomBoolean(density)
         }
     }
 
@@ -94,7 +99,7 @@ class TalkingExecutor(
         if (message.endsWith(" ")) {
             message = message.dropLast(1)
         }
-        return message.uppercase() + "!!!!"
+        return message.uppercase() + "!".repeat(randomInt(2, 5))
     }
 
     private fun getTalkingDensity(chat: Chat): Long {

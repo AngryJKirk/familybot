@@ -75,3 +75,7 @@ object AskWorldUserUsages : LongKeyType<UserEasyKey>() {
 object FuckOffOverride : BooleanKeyType<ChatEasyKey>() {
     override fun keyType() = ChatEasyKey::class
 }
+
+object PshenitsinTolerance : BooleanKeyType<ChatEasyKey>() {
+    override fun keyType() = ChatEasyKey::class
+}

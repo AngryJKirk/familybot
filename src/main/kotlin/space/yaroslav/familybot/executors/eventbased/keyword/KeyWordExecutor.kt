@@ -4,12 +4,12 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.common.extensions.randomInt
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.Executor
 import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.router.FunctionId
 import space.yaroslav.familybot.models.router.Priority
-import java.util.concurrent.ThreadLocalRandom
 
 @Component
 class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Configurable {
@@ -20,7 +20,7 @@ class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Config
 
     override fun priority(update: Update) = Priority.LOW
 
-    override fun getFunctionId() = FunctionId.TALK_BACK
+    override fun getFunctionId(update: Update) = FunctionId.TALK_BACK
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         return processorsForMessage.remove(update.message.messageId)?.process(update) ?: {}
@@ -44,7 +44,7 @@ class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Config
 
     private fun isPassingRandomCheck(processor: KeyWordProcessor, message: Message): Boolean {
         return if (processor.isRandom(message)) {
-            ThreadLocalRandom.current().nextInt(0, 5) == 0
+            randomInt(1, 5) == 0
         } else {
             true
         }

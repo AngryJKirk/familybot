@@ -26,7 +26,7 @@ class AntiDdosExecutor(
     private val dictionary: Dictionary,
     private val easyKeyValueService: EasyKeyValueService
 ) : Executor, Configurable {
-    override fun getFunctionId(): FunctionId {
+    override fun getFunctionId(update: Update): FunctionId {
         return FunctionId.ANTIDDOS
     }
 

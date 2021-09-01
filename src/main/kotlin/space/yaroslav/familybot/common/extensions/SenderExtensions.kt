@@ -25,7 +25,7 @@ import space.yaroslav.familybot.models.telegram.stickers.Sticker
 import space.yaroslav.familybot.models.telegram.stickers.StickerPack
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
-import java.util.concurrent.ThreadLocalRandom
+import kotlin.time.ExperimentalTime
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 
 suspend fun AbsSender.send(
@@ -36,7 +36,7 @@ suspend fun AbsSender.send(
     replyToUpdate: Boolean = false,
     customization: SendMessage.() -> Unit = { },
     shouldTypeBeforeSend: Boolean = false,
-    typeDelay: Pair<Long, Long> = 1000L to 2000L
+    typeDelay: Pair<Int, Int> = 1000 to 2000
 ): Message {
     val messageObj = SendMessage(update.chatIdString(), text).apply { enableHtml(enableHtml) }
 
@@ -48,7 +48,7 @@ suspend fun AbsSender.send(
     }
     if (shouldTypeBeforeSend) {
         this.execute(SendChatAction(update.chatIdString(), "typing"))
-        delay(ThreadLocalRandom.current().nextLong(typeDelay.first, typeDelay.second))
+        delay(randomInt(typeDelay.first, typeDelay.second).toLong())
     }
 
     return this.execute(messageObj.apply(customization))

@@ -44,7 +44,7 @@ class PidorExecutor(
     private val easyKeyValueService: EasyKeyValueService,
     config: BotConfig
 ) : CommandExecutor(config), Configurable {
-    override fun getFunctionId(): FunctionId {
+    override fun getFunctionId(update: Update): FunctionId {
         return FunctionId.PIDOR
     }
 
@@ -79,7 +79,7 @@ class PidorExecutor(
                         phrase,
                         enableHtml = true,
                         shouldTypeBeforeSend = true,
-                        typeDelay = 1500L to 1501L
+                        typeDelay = 1500 to 1501
                     )
                 }
             val pidor = nextPidor.await()
@@ -88,7 +88,7 @@ class PidorExecutor(
                 pidor.getGeneralName(),
                 enableHtml = true,
                 shouldTypeBeforeSend = true,
-                typeDelay = 1500L to 1501L
+                typeDelay = 1500 to 1501
             )
             if (pidorToleranceValue == null) {
                 easyKeyValueService.put(PidorTolerance, key, 1, untilNextDay())

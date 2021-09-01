@@ -23,7 +23,7 @@ class BetExecutor(
     config: BotConfig
 ) : CommandExecutor(config), Configurable {
 
-    override fun getFunctionId() = FunctionId.PIDOR
+    override fun getFunctionId(update: Update) = FunctionId.PIDOR
 
     override fun command() = Command.BET
 

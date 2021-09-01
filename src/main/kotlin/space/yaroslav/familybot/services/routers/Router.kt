@@ -84,7 +84,7 @@ class Router(
 
         logger.info("Executor to apply: ${executor.javaClass.simpleName}")
 
-        return if (isExecutorDisabled(executor, chat)) {
+        return if (isExecutorDisabled(executor, update)) {
             when (executor) {
                 is CommandExecutor -> disabledCommand(chat)
                 is AntiDdosExecutor -> antiDdosSkip(message, update)
@@ -121,7 +121,7 @@ class Router(
         val executor = executors
             .filterIsInstance<CommandExecutor>()
             .find { it.meteredCanExecute(message, meterRegistry) } ?: return@marker
-        val function = if (isExecutorDisabled(executor, message.chat)) {
+        val function = if (isExecutorDisabled(executor, update)) {
             disabledCommand(message.chat)
         } else {
             executor.meteredExecute(update, meterRegistry)
@@ -138,11 +138,11 @@ class Router(
         }
     }
 
-    private fun isExecutorDisabled(executor: Executor, chat: Chat): Boolean {
+    private fun isExecutorDisabled(executor: Executor, update: Update): Boolean {
         if (executor !is Configurable) return false
 
-        val functionId = executor.getFunctionId()
-        val isExecutorDisabled = !configureRepository.isEnabled(functionId, chat.toChat())
+        val functionId = executor.getFunctionId(update)
+        val isExecutorDisabled = !configureRepository.isEnabled(functionId, update.toChat())
 
         if (isExecutorDisabled) {
             logger.info("Executor ${executor::class.simpleName} is disabled")

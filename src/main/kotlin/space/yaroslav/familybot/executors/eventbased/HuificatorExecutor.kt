@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.dropLastDelimiter
 import space.yaroslav.familybot.common.extensions.key
+import space.yaroslav.familybot.common.extensions.randomBoolean
 import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.executors.Configurable
@@ -15,12 +16,11 @@ import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.TalkingDensity
-import java.util.concurrent.ThreadLocalRandom
 import java.util.regex.Pattern
 
 @Component
 class HuificatorExecutor(private val easyKeyValueService: EasyKeyValueService) : Executor, Configurable {
-    override fun getFunctionId(): FunctionId {
+    override fun getFunctionId(update: Update): FunctionId {
         return FunctionId.HUIFICATE
     }
 
@@ -82,7 +82,7 @@ class HuificatorExecutor(private val easyKeyValueService: EasyKeyValueService) :
         return if (density == 0L) {
             true
         } else {
-            ThreadLocalRandom.current().nextLong(0, density) == 0L
+            randomBoolean(density)
         }
     }
 

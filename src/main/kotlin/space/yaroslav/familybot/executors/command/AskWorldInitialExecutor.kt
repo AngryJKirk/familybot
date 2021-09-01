@@ -52,7 +52,7 @@ class AskWorldInitialExecutor(
     private val easyKeyValueService: EasyKeyValueService
 ) : CommandExecutor(botConfig), Configurable {
     private val log = getLogger()
-    override fun getFunctionId(): FunctionId {
+    override fun getFunctionId(update: Update): FunctionId {
         return FunctionId.ASK_WORLD
     }
 
@@ -97,7 +97,7 @@ class AskWorldInitialExecutor(
         return { sender ->
             val questionId = coroutineScope { async { askWorldRepository.addQuestion(question) } }
             sender.send(update, context.get(Phrase.DATA_CONFIRM))
-            getChatsToSendQuestion(currentChat, successData.isScam)
+            getChatsToSendQuestion(update, currentChat, successData.isScam)
                 .forEach { chatToSend ->
                     runCatching {
                         delay(100)
@@ -220,17 +220,15 @@ class AskWorldInitialExecutor(
         return "$messagePrefix $boldChatName:"
     }
 
-    private fun isEnabledInChat(it: Chat) = configureRepository.isEnabled(getFunctionId(), it)
-
-    private fun getChatsToSendQuestion(currentChat: Chat, isScam: Boolean): List<Chat> {
+    private fun getChatsToSendQuestion(update: Update, currentChat: Chat, isScam: Boolean): List<Chat> {
         if (isScam) {
             log.info("Some scam message was found and it won't be sent")
             return emptyList()
         }
 
         val chatsWithFeatureEnabled = commonRepository.getChats()
-            .filterNot { it == currentChat }
-            .filter(this@AskWorldInitialExecutor::isEnabledInChat)
+            .filterNot { chat -> chat == currentChat }
+            .filter { chat -> configureRepository.isEnabled(getFunctionId(update), chat) }
             .shuffled()
         log.info("Number of chats with feature enabled: ${chatsWithFeatureEnabled.size}")
         val acceptAllChats = chatsWithFeatureEnabled

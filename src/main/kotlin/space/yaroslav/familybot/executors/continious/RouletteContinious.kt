@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.common.extensions.randomInt
 import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.executors.command.ROULETTE_MESSAGE
 import space.yaroslav.familybot.models.telegram.Command
@@ -17,7 +18,6 @@ import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.pidor.PidorCompetitionService
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
-import java.util.concurrent.ThreadLocalRandom
 
 @Component
 @Deprecated(message = "Replaced with BetContinious")
@@ -65,7 +65,7 @@ class RouletteContinious(
                 it.execute(SendMessage(chatId, "В наказание твое пидорское очко уходит к остальным"))
             }
         }
-        val rouletteNumber = ThreadLocalRandom.current().nextInt(1, 7)
+        val rouletteNumber = randomInt(1, 7)
         log.info("Roulette win number is $rouletteNumber and guessed number is $number")
         return {
             if (rouletteNumber == number) {

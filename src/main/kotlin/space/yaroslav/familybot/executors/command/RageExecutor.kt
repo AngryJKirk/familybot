@@ -35,7 +35,7 @@ class RageExecutor(
         const val AMOUNT_OF_RAGE_MESSAGES = 20L
     }
 
-    override fun getFunctionId(): FunctionId {
+    override fun getFunctionId(update: Update): FunctionId {
         return FunctionId.RAGE
     }
 

@@ -45,7 +45,7 @@ class AskWorldReceiveReplyExecutor(
     private val dictionary: Dictionary
 ) : Executor, Configurable {
     private val log = LoggerFactory.getLogger(AskWorldReceiveReplyExecutor::class.java)
-    override fun getFunctionId(): FunctionId {
+    override fun getFunctionId(update: Update): FunctionId {
         return FunctionId.ASK_WORLD
     }
 

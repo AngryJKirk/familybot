@@ -21,7 +21,7 @@ class RouletteExecutor(
     config: BotConfig
 ) : CommandExecutor(config), Configurable {
 
-    override fun getFunctionId(): FunctionId {
+    override fun getFunctionId(update: Update): FunctionId {
         return FunctionId.PIDOR
     }
 
