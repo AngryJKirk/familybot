@@ -57,7 +57,9 @@ class MarriageExecutor(
                 )
             }
         }
-
+        if(proposalTarget.from.isBot){
+            return { sender -> sender.send(update, context.get(Phrase.MARRY_PROPOSED_TO_BOT), replyToUpdate = true) }
+        }
         if (isMarriedAlready(chat, proposalSource)) {
             return { sender -> sender.send(update, context.get(Phrase.MARRY_SOURCE_IS_MARRIED), replyToUpdate = true) }
         }

@@ -107,6 +107,6 @@ class MarryListExecutor(
             many = { context.get(Phrase.PLURALIZED_DAY_MANY) }
         )
         val emojiId = (marriage.firstUser.id + marriage.secondUser.id) % loveEmojis.size
-        return pluralize(amountOfDays.toInt(), pluralization) + (loveEmojis.getOrNull(emojiId.toInt()) ?: "")
+        return pluralize(amountOfDays.toInt(), pluralization) + " " + (loveEmojis.getOrNull(emojiId.toInt()) ?: "")
     }
 }
