@@ -32,7 +32,16 @@ services:
       - POSTGRES_PASSWORD
     ports:
       - "127.0.0.1:5432:5432"
-
+   
+  family-pgadmin:
+    container_name: family-pgadmin
+    image: dpage/pgadmin4
+    networks:
+      family-net:
+    restart: always
+    ports:
+      - "127.0.0.1:5081:80"
+    
   family:
     container_name: family
     networks:
