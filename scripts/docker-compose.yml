@@ -38,7 +38,7 @@ services:
     image: dpage/pgadmin4
     networks:
       family-net:
-    envinronment: 
+    environment: 
       - PGADMIN_DEFAULT_EMAIL
       - PGADMIN_DEFAULT_PASSWORD
     restart: always
