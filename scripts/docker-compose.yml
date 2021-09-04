@@ -38,6 +38,9 @@ services:
     image: dpage/pgadmin4
     networks:
       family-net:
+    envinronment: 
+      - PGADMIN_DEFAULT_EMAIL
+      - PGADMIN_DEFAULT_PASSWORD
     restart: always
     ports:
       - "127.0.0.1:5081:80"
