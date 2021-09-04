@@ -134,6 +134,10 @@ CREATE INDEX IF NOT EXISTS idx_raw_chat_log_chat_id
 CREATE INDEX IF NOT EXISTS raw_chat_log_date_idx
     ON raw_chat_log (date);
 
+CREATE INDEX IF NOT EXISTS raw_chat_log_user_id_idx
+    ON raw_chat_log (user_id);
+
+
 CREATE TABLE IF NOT EXISTS users2chats
 (
     chat_id BIGINT               NOT NULL,
