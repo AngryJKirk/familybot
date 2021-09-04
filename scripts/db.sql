@@ -164,6 +164,13 @@ CREATE TABLE IF NOT EXISTS users2chats
         FOREIGN KEY (user_id) REFERENCES users
 );
 
+
+CREATE INDEX IF NOT EXISTS users2chats_chat_id_idx
+    ON users2chats (chat_id);
+
+CREATE INDEX IF NOT EXISTS users2chats_user_id_idx
+    ON users2chats (user_id);
+
 CREATE TABLE IF NOT EXISTS scenario_move
 (
     move_id                   UUID    DEFAULT gen_random_uuid() NOT NULL,
