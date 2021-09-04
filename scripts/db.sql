@@ -103,6 +103,13 @@ CREATE TABLE IF NOT EXISTS history
         FOREIGN KEY (user_id) REFERENCES users
 );
 
+
+CREATE INDEX IF NOT EXISTS history_chat_id_idx
+    ON history (chat_id);
+
+CREATE INDEX IF NOT EXISTS history_user_id_idx
+    ON history (user_id);
+
 CREATE TABLE IF NOT EXISTS pidors
 (
     id         BIGINT,
@@ -113,6 +120,12 @@ CREATE TABLE IF NOT EXISTS pidors
     CONSTRAINT pidors_id_fkey
         FOREIGN KEY (id) REFERENCES users
 );
+
+CREATE INDEX IF NOT EXISTS pidors_chat_id_idx
+    ON pidors (chat_id);
+
+CREATE INDEX IF NOT EXISTS pidors_user_id_idx
+    ON pidors (id);
 
 CREATE TABLE IF NOT EXISTS raw_chat_log
 (
