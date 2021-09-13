@@ -11,27 +11,26 @@ import java.util.concurrent.TimeUnit
 @Component
 class ChatLogRepository(val template: JdbcTemplate) {
 
-    private val defaultBuilder = CacheBuilder
+    private val allByUserCache = CacheBuilder
         .newBuilder()
-        .expireAfterWrite(5, TimeUnit.MINUTES)
-
-    private val allByUserCache = defaultBuilder.build(
-        CacheLoader.from { user: User? ->
-            template.queryForList(
-                "SELECT message FROM chat_log where user_id = ? and chat_id = ?",
-                String::class.java,
-                user?.id,
-                user?.chat?.id
-            ).toList()
-        }
-    )
+        .expireAfterWrite(30, TimeUnit.MINUTES)
+        .build(
+            CacheLoader.from { user: User? ->
+                template.queryForList(
+                    "SELECT message FROM chat_log WHERE user_id = ? AND chat_id = ?",
+                    String::class.java,
+                    user?.id,
+                    user?.chat?.id
+                ).toList()
+            }
+        )
 
     @Timed("repository.ChatLogRepository.getAll")
     fun getAll(): List<String> {
         return template.queryForList(
             "SELECT message FROM chat_log",
             String::class.java
-        ).toList().sortedByDescending { it.length }
+        )
     }
 
     @Timed("repository.ChatLogRepository.add")

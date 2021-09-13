@@ -28,6 +28,4 @@ class ZigaKeyWordProcessor : KeyWordProcessor {
             it.sendSticker(update, stickerToSend, replyToUpdate = true)
         }
     }
-
-    override fun isRandom(message: Message) = false
 }

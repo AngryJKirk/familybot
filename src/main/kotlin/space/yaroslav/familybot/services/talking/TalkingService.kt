@@ -23,12 +23,12 @@ class TalkingService(
 ) {
 
     companion object {
-        const val cacheUpdateDelay = 1000L * 60L * 60L
+        const val cacheUpdateDelay = 1000L * 60L * 60L // 1 hour
         const val minimalDatabaseSizeThreshold = 300
     }
 
     private val log = getLogger()
-    private lateinit var messages: List<String>
+    private lateinit var commonMessages: List<String>
 
     init {
         updateCommonMessagesList()
@@ -39,9 +39,10 @@ class TalkingService(
         val message = coroutineScope {
             async {
                 val userMessages = getMessagesForUser(update.toUser())
-                    ?: messages
                 return@async if (shouldBeQuestion) {
-                    userMessages.filter { message -> message.endsWith("?") }.randomOrNull()
+                    userMessages
+                        .filter { message -> message.endsWith("?") }
+                        .randomOrNull()
                         ?: userMessages.random()
                 } else {
                     userMessages.random()
@@ -61,20 +62,18 @@ class TalkingService(
         updateCommonMessagesList()
     }
 
-    private fun getMessagesForUser(user: User): List<String>? {
+    private fun getMessagesForUser(user: User): List<String> {
         return chatLogRepository
             .get(user)
-            .takeIf { it.size > minimalDatabaseSizeThreshold }
-            ?.toList()
+            .takeIf { messages -> messages.size > minimalDatabaseSizeThreshold }
+            ?: commonMessages
     }
 
     private fun updateCommonMessagesList() {
-        messages = runCatching {
-            chatLogRepository
-                .getAll()
-        }.getOrElse { exception ->
-            log.error("Could not update message cache", exception)
-            messages
-        }
+        commonMessages = runCatching { chatLogRepository.getAll() }
+            .getOrElse { exception ->
+                log.error("Could not update message cache", exception)
+                commonMessages
+            }
     }
 }

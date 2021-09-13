@@ -37,10 +37,10 @@ class BotMentionKeyWordProcessor(
     }
 
     override fun process(update: Update): suspend (AbsSender) -> Unit {
-        val shouldBeQuestion = isBotMention(update.message) || isBotNameMention(update.message)
         if (isFuckOff(update)) {
             return fuckOff(update)
         }
+        val shouldBeQuestion = isBotMention(update.message) || isBotNameMention(update.message)
         return {
             val reply = talkingService.getReplyToUser(
                 update,

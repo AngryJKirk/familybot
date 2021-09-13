@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.telegram.BotConfig
+import space.yaroslav.familybot.telegram.FamilyBot
 
 @Component
 class TranslateService(private val botConfig: BotConfig) {
@@ -39,12 +40,11 @@ class TranslateService(private val botConfig: BotConfig) {
             ),
             headers
         )
-        return restTemplate
+        val response = restTemplate
             .exchange(yandexUrl, HttpMethod.POST, entity, YandexTranslateResponse::class.java)
-            .body
-            .translations
-            .first()
-            .text
+            .body ?: throw FamilyBot.InternalException("Can't deserialize response from Yandex")
+
+        return response.translations.first().text
     }
 }
 
