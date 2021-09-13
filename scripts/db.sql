@@ -24,8 +24,8 @@ CREATE TABLE IF NOT EXISTS commands
 CREATE TABLE IF NOT EXISTS users
 (
     id       BIGINT NOT NULL,
-    name     VARCHAR(100),
-    username VARCHAR(100),
+    name     VARCHAR(1000),
+    username VARCHAR(1000),
     CONSTRAINT users_pkey
         PRIMARY KEY (id)
 );
