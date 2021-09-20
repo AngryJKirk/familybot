@@ -33,7 +33,7 @@ class LogsExecutor(botConfig: BotConfig) : OnlyBotOwnerExecutor(botConfig) {
                 sender.execute(
                     SendDocument(
                         update.chatIdString(),
-                        InputFile(errors, "ErrorLogs")
+                        InputFile(errors, "error_logs.txt")
                     )
                 )
             }
