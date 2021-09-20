@@ -36,9 +36,8 @@ class FamilyBotApplication {
     }
 }
 
-inline fun <reified T> T.getLogger(): Logger {
-    return LoggerFactory.getLogger(T::class.java)
-}
+@Suppress("unused")
+inline fun <reified T> T.getLogger(): Logger = LoggerFactory.getLogger(T::class.java)
 
 fun main() {
     val app = SpringApplication(FamilyBotApplication::class.java)

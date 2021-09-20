@@ -68,7 +68,7 @@ class DictionaryReader {
     private fun checkDefaults(dictionary: Map<Phrase, Map<PhraseTheme, List<String>>>) {
         val missingDefaultPhrases = dictionary
             .filter { entry -> entry.value[PhraseTheme.DEFAULT].isNullOrEmpty() }
-            .map { entry -> entry.key }
+            .map { (key) -> key }
 
         if (missingDefaultPhrases.isNotEmpty()) {
             throw FamilyBot.InternalException(

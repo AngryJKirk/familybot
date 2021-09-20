@@ -12,8 +12,8 @@ class MarriagesRepository(private val jdbcTemplate: JdbcTemplate) {
 
     fun getMarriage(chatId: Long, userId: Long): Marriage? {
         return getAllMarriages(chatId)
-            .find { marriage ->
-                marriage.firstUser.id == userId || marriage.secondUser.id == userId
+            .find { (_, firstUser, secondUser) ->
+                firstUser.id == userId || secondUser.id == userId
             }
     }
 

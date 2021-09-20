@@ -23,8 +23,8 @@ class TalkingService(
 ) {
 
     companion object {
-        const val cacheUpdateDelay = 1000L * 60L * 60L // 1 hour
-        const val minimalDatabaseSizeThreshold = 300
+        private const val cacheUpdateDelay = 1000L * 60L * 60L // 1 hour
+        private const val minimalDatabaseSizeThreshold = 300
     }
 
     private val log = getLogger()

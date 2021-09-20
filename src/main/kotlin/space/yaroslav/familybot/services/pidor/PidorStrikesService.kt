@@ -41,8 +41,8 @@ class PidorStrikesService(
         return PidorStrikes(
             stats
                 .stats
-                .filter { entry -> entry.key != pidor.id }
-                .map { entry -> entry.key to PidorStrikeStat(0, entry.value.maxStrike) }
+                .filter { (key) -> key != pidor.id }
+                .map { (key, value) -> key to PidorStrikeStat(0, value.maxStrike) }
                 .plus(
                     pidor.id to PidorStrikeStat(
                         nextStrikeValue,

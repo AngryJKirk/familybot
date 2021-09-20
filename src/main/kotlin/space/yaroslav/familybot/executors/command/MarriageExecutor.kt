@@ -57,7 +57,7 @@ class MarriageExecutor(
                 )
             }
         }
-        if(proposalTarget.from.isBot){
+        if (proposalTarget.from.isBot) {
             return { sender -> sender.send(update, context.get(Phrase.MARRY_PROPOSED_TO_BOT), replyToUpdate = true) }
         }
         if (isMarriedAlready(chat, proposalSource)) {
@@ -103,7 +103,13 @@ class MarriageExecutor(
             value = proposalSource.from.id,
             duration = Duration.ofMinutes(10)
         )
-        return { sender -> sender.send(update, dictionary.get(Phrase.MARRY_PROPOSED, update), replyMessageId = proposalTarget.messageId) }
+        return { sender ->
+            sender.send(
+                update,
+                dictionary.get(Phrase.MARRY_PROPOSED, update),
+                replyMessageId = proposalTarget.messageId
+            )
+        }
     }
 
     private fun marry(update: Update): suspend (AbsSender) -> Unit {

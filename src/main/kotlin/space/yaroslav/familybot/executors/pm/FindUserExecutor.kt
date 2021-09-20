@@ -54,6 +54,6 @@ class FindUserExecutor(
 
     private fun formatChats(chats: List<Chat>): String {
         return chats
-            .joinToString(separator = ",\n") { chat: Chat -> "id=${chat.id}, chatname=${chat.name}" }
+            .joinToString(separator = ",\n") { (id, name): Chat -> "id=${id}, chatname=${name}" }
     }
 }

@@ -184,9 +184,9 @@ class ScenarioSessionManagementService(
                         .getScenarios()
                         .chunked(1)
                         .map {
-                            it.map { scenario ->
-                                InlineKeyboardButton(scenario.name)
-                                    .apply { callbackData = scenario.id.toString() }
+                            it.map { (id, name) ->
+                                InlineKeyboardButton(name)
+                                    .apply { callbackData = id.toString() }
                             }
                         }
                 )

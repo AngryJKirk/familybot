@@ -25,7 +25,6 @@ import space.yaroslav.familybot.models.telegram.stickers.Sticker
 import space.yaroslav.familybot.models.telegram.stickers.StickerPack
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
-import kotlin.time.ExperimentalTime
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 
 suspend fun AbsSender.send(

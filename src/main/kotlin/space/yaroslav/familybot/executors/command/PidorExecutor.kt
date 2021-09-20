@@ -142,7 +142,7 @@ class PidorExecutor(
         val pidorsByChat = repository
             .getPidorsByChat(chat)
             .filter { pidor -> pidor.date.isToday() }
-            .distinctBy { pidor -> pidor.user.id }
+            .distinctBy { (user) -> user.id }
         return when (pidorsByChat.size) {
             0 -> null
             1 -> SendMessage(

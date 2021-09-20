@@ -85,8 +85,8 @@ class PidorExecutorTest : CommandExecutorTest() {
             firstPidorName.text.contains(lastPidorAfterSecondInvoke.user.getGeneralName(true)),
             "Pidor in message and in database should match"
         )
-        commonRepository.getAllPidors().forEach { pidor ->
-            commonRepository.removePidorRecord(pidor.user)
+        commonRepository.getAllPidors().forEach { (user) ->
+            commonRepository.removePidorRecord(user)
         }
 
         redisTemplate.delete(redisTemplate.keys("*"))

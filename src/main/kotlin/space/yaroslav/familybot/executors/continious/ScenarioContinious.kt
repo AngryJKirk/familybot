@@ -40,7 +40,7 @@ class ScenarioContinious(
                 )
             } else {
                 val scenarioToStart = scenarioService.getScenarios()
-                    .find { scenario -> scenario.id.toString() == callbackQuery.data }
+                    .find { (id) -> id.toString() == callbackQuery.data }
                     ?: throw FamilyBot.InternalException("Can't find a scenario ${callbackQuery.data}")
                 scenarioSessionManagementService.startGame(update, scenarioToStart).invoke(it)
             }

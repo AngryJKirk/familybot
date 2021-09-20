@@ -18,7 +18,6 @@ import java.time.Instant
 @Component
 class CommonRepository(private val template: JdbcTemplate) {
 
-
     @Timed("repository.CommonRepository.addUser")
     fun addUser(user: User) {
         template.update(
