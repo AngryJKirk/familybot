@@ -150,13 +150,7 @@ class BetContinious(
             Pluralization.ONE -> {
                 context.get(Phrase.BET_EXPLAIN_SINGLE_DAY)
             }
-            Pluralization.FEW -> {
-                explainTemplate
-                    .replace("$0", betNumber.toString())
-                    .replace("$1", context.get(Phrase.PLURALIZED_NEXT_FEW))
-                    .replace("$2", context.get(Phrase.PLURALIZED_DAY_FEW))
-            }
-            Pluralization.MANY -> {
+            else -> {
                 explainTemplate
                     .replace("$0", betNumber.toString())
                     .replace("$1", context.get(Phrase.PLURALIZED_NEXT_MANY))
