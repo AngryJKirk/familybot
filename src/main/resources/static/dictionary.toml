@@ -694,13 +694,13 @@ ACAB = ["Осужденный, в течение $0 $1 $2 вы будете по
 
 
 [PLURALIZED_DAY_ONE]
-DEFAULT = ["дня"]
-UKRAINIAN = ["дні"]
+DEFAULT = ["день"]
+UKRAINIAN = ["день"]
 
 
 [PLURALIZED_DAY_FEW]
-DEFAULT = ["дней"]
-UKRAINIAN = ["днів"]
+DEFAULT = ["дня"]
+UKRAINIAN = ["дні"]
 
 
 [PLURALIZED_DAY_MANY]
