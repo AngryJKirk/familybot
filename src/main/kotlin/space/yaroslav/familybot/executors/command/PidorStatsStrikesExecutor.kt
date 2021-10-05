@@ -27,7 +27,7 @@ class PidorStatsStrikesExecutor(
 
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val context = dictionary.createContext(update)
-        val strikes = pidorStrikeStorage.get(update).stats
+        val strikes = pidorStrikeStorage.get(update).stats.filter { (count, _) -> count > 1 }
         val users = commonRepository.getUsers(update.toChat()).associateBy(User::id)
         val stats = strikes
             .map {

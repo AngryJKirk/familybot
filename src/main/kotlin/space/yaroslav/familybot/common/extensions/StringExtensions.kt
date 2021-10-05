@@ -23,8 +23,10 @@ fun String?.boldNullable(): String? {
 fun String.bold(): String = "<b>$this</b>"
 
 fun String.italic(): String = "<i>$this</i>"
+fun pluralize(count: Int, pluralizedWordsProvider: PluralizedWordsProvider) =
+    pluralize(count.toLong(), pluralizedWordsProvider)
 
-fun pluralize(count: Int, pluralizedWordsProvider: PluralizedWordsProvider): String {
+fun pluralize(count: Long, pluralizedWordsProvider: PluralizedWordsProvider): String {
     return when (Pluralization.getPlur(count)) {
         Pluralization.ONE -> pluralizedWordsProvider.one()
         Pluralization.FEW -> pluralizedWordsProvider.few()

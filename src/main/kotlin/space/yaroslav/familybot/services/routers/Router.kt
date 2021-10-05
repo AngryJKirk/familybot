@@ -35,6 +35,7 @@ import space.yaroslav.familybot.services.settings.CommandLimit
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.FirstBotInteraction
 import space.yaroslav.familybot.services.settings.FirstTimeInChat
+import space.yaroslav.familybot.services.settings.MessageCounter
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Duration
@@ -174,6 +175,10 @@ class Router(
     }
 
     private fun logChatMessage(update: Update) {
+        val key = update.key()
+        if (easyKeyValueService.get(MessageCounter, key) != null) {
+            easyKeyValueService.increment(MessageCounter, key)
+        }
         val text = update.message.text
             ?.takeUnless { it.contains("сучар", ignoreCase = true) }
             ?.takeIf { it.split(" ").size >= 3 }

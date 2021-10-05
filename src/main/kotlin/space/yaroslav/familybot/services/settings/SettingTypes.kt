@@ -83,3 +83,8 @@ object PshenitsinTolerance : BooleanKeyType<ChatEasyKey>() {
 object ProposalTo : LongKeyType<UserAndChatEasyKey>() {
     override fun keyType() = UserAndChatEasyKey::class
 }
+
+object MessageCounter : LongKeyType<UserAndChatEasyKey>() {
+    override fun keyType() = UserAndChatEasyKey::class
+}
+
