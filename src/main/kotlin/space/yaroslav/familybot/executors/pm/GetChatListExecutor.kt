@@ -1,7 +1,7 @@
 package space.yaroslav.familybot.executors.pm
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMembersCount
+import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMemberCount
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.send
@@ -31,7 +31,7 @@ class GetChatListExecutor(
         sender: AbsSender,
         chat: Chat
     ): Int {
-        return runCatching { sender.execute(GetChatMembersCount(chat.idString)) }
+        return runCatching { sender.execute(GetChatMemberCount(chat.idString)) }
             .getOrElse { 0 }
     }
 }
