@@ -89,22 +89,17 @@ class PaymentRouter(
         val chatId = shopPayload.chatId.toString()
         sender.execute(SendMessage(chatId, text))
         sender.execute(SendMessage(chatId, context.get(phrase)))
-        if (developerId != null) {
-            val chat = commonRepository
-                .getChatsByUser(user)
-                .find { shopPayload.chatId == it.id }
-                ?.name ?: "[???]"
-            val message =
-                "<b>+${shopPayload.shopItem.price / 100}₽</b> от ${user.getGeneralName()} из чата <b>$chat</b> за <b>${shopPayload.shopItem}</b>"
-            sender.execute(
-                SendMessage(developerId, message).apply {
-                    enableHtml(true)
-                }
-            )
-        } else {
-            log.warn("Developer ID is not set, can not send successful payment, so logging")
-            log.warn("Successful payment: $update")
-        }
+        val chat = commonRepository
+            .getChatsByUser(user)
+            .find { shopPayload.chatId == it.id }
+            ?.name ?: "[???]"
+        val message =
+            "<b>+${shopPayload.shopItem.price / 100}₽</b> от ${user.getGeneralName()} из чата <b>$chat</b> за <b>${shopPayload.shopItem}</b>"
+        sender.execute(
+            SendMessage(developerId, message).apply {
+                enableHtml(true)
+            }
+        )
     }
 
     private fun onFailure(
@@ -117,12 +112,7 @@ class PaymentRouter(
         val text = context.get(Phrase.SHOP_ERROR).replace("$1", "@" + botConfig.developer)
         sender.execute(SendMessage(shopPayload.chatId.toString(), text))
 
-        if (developerId != null) {
-            sender.execute(SendMessage(developerId, "Payment gone wrong: $update"))
-        } else {
-            log.error("Developer ID is not set, can not send error payment, so logging")
-            log.error("Error payment: $update")
-        }
+        sender.execute(SendMessage(developerId, "Payment gone wrong: $update"))
     }
 
     private fun getPayload(invoicePayload: String): ShopPayload {

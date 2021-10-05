@@ -12,6 +12,7 @@ import space.yaroslav.familybot.repos.AskWorldRepository
 import space.yaroslav.familybot.services.misc.BanService
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 @Component
 class BanAskWorldExecutor(
@@ -26,7 +27,7 @@ class BanAskWorldExecutor(
         if (update.message.isReply.not()) return {}
 
         val replyToMessage = update.message.replyToMessage
-        val questions = askWorldRepository.getQuestionsFromDate(Instant.now().minusSeconds(60 * 60 * 24))
+        val questions = askWorldRepository.getQuestionsFromDate(Instant.now().minus(1, ChronoUnit.DAYS))
             .filter {
                 replyToMessage.text.contains(it.message, ignoreCase = true)
             }

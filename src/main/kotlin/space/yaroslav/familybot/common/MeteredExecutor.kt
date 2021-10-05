@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.executors.Executor
 import space.yaroslav.familybot.models.router.Priority
+import space.yaroslav.familybot.telegram.FamilyBot
 
 fun Executor.meteredExecute(update: Update, meterRegistry: MeterRegistry): suspend (AbsSender) -> Unit {
 
@@ -13,7 +14,7 @@ fun Executor.meteredExecute(update: Update, meterRegistry: MeterRegistry): suspe
         .timer("executors.${this::class.simpleName}.execute")
         .recordCallable {
             this.execute(update)
-        }
+        } ?: throw FamilyBot.InternalException("Something has gone wrong while calling metered executor")
 }
 
 fun Executor.meteredCanExecute(message: Message, meterRegistry: MeterRegistry): Boolean {
@@ -21,7 +22,7 @@ fun Executor.meteredCanExecute(message: Message, meterRegistry: MeterRegistry): 
         .timer("executors.${this::class.simpleName}.canExecute")
         .recordCallable {
             this.canExecute(message)
-        }
+        } ?: throw FamilyBot.InternalException("Something has gone wrong while calling metered executor")
 }
 
 fun Executor.meteredPriority(update: Update, meterRegistry: MeterRegistry): Priority {
@@ -29,5 +30,5 @@ fun Executor.meteredPriority(update: Update, meterRegistry: MeterRegistry): Prio
         .timer("executors.${this::class.simpleName}.priority")
         .recordCallable {
             this.priority(update)
-        }
+        } ?: throw FamilyBot.InternalException("Something has gone wrong while calling metered executor")
 }
