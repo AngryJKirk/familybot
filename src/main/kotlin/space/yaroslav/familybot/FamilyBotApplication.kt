@@ -25,11 +25,17 @@ class FamilyBotApplication {
 
     @Bean
     fun injectBotConfig(botConfigInjector: BotConfigInjector): BotConfig {
+        val botNameAliases = if (botConfigInjector.botNameAliases.isNullOrEmpty()) {
+            listOf(botConfigInjector.botName)
+        } else {
+            botConfigInjector.botNameAliases.split(",")
+        }
         return BotConfig(
             botConfigInjector.botToken,
             botConfigInjector.botName,
             botConfigInjector.developer,
             botConfigInjector.developerId,
+            botNameAliases,
             botConfigInjector.yandexKey?.takeIf(String::isNotBlank),
             botConfigInjector.paymentToken?.takeIf(String::isNotBlank)
         )

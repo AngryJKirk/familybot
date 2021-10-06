@@ -1,6 +1,7 @@
 settings:
   bot-name: ${BOT_NAME:}
   bot-token: ${BOT_TOKEN:}
+  bot-name-aliases: ${BOT_NAME_ALIASES:}
   developer: ${BOT_OWNER_NAME:}
   developer-id: ${BOT_OWNER_TELEGRAM_ID:}
   yandex-key: ${YANDEX_API_TOKEN:}

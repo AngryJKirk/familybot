@@ -19,13 +19,12 @@ class QuoteRepository {
         val rawArray = toml.getArray("quotes")
             ?: throw FamilyBot.InternalException("quotes.toml is missing quotes array")
         quotes = rawArray.toList()
-            .map { row -> row as TomlTable }
-            .map { row -> function(row) }
+            .map { row -> map(row as TomlTable) }
             .groupBy(Pair<String, String>::first, Pair<String, String>::second)
         flattenQuotes = quotes.values.flatten()
     }
 
-    private fun function(row: TomlTable): Pair<String, String> {
+    private fun map(row: TomlTable): Pair<String, String> {
         val tag = row["tag"] as String?
         val quote = row["quote"] as String?
         if (tag == null || quote == null) {

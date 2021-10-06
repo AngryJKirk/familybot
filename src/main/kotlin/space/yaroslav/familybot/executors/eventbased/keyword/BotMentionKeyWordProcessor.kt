@@ -55,7 +55,10 @@ class BotMentionKeyWordProcessor(
     }
 
     private fun isBotNameMention(message: Message): Boolean {
-        return message.text?.contains("сучар", ignoreCase = true) ?: false
+        val text = message.text ?: return false
+
+        return botConfig
+            .botNameAliases.any { alias -> text.contains(alias, ignoreCase = true) }
     }
 
     private fun isReplyToBot(message: Message): Boolean {

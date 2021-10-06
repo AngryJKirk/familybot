@@ -179,8 +179,9 @@ class Router(
         if (easyKeyValueService.get(MessageCounter, key) != null) {
             easyKeyValueService.increment(MessageCounter, key)
         }
+
         val text = update.message.text
-            ?.takeUnless { it.contains("сучар", ignoreCase = true) }
+            ?.takeIf { botConfig.botNameAliases.none { alias -> it.contains(alias, ignoreCase = true) } }
             ?.takeIf { it.split(" ").size >= 3 }
             ?.takeIf { it.split(" ").size < 8 }
             ?.takeIf { it.length < 600 }

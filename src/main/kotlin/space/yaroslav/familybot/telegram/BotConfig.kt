@@ -5,6 +5,7 @@ data class BotConfig(
     val botName: String,
     val developer: String,
     val developerId: String,
+    val botNameAliases: List<String>,
     val yandexKey: String?,
     val paymentToken: String?
 )

@@ -96,7 +96,7 @@ class MeCommandExecutor(
     private fun getPidorsCount(chat: Chat, user: User, context: DictionaryContext): String {
         val pidorCount = commonRepository
             .getPidorsByChat(chat, startDate = Instant.now().minusSeconds(tenYearsAgo))
-            .filter { it.user.id == user.id }
+            .filter { pidor -> pidor.user.id == user.id }
             .size
         val word = pluralize(
             pidorCount,
@@ -107,8 +107,8 @@ class MeCommandExecutor(
             )
         )
         return pidorCount
-            .takeIf { it > 0 }
-            ?.let { context.get(Phrase.YOU_WAS_PIDOR) + " $it $word." }
+            .takeIf { count -> count > 0 }
+            ?.let { count -> context.get(Phrase.YOU_WAS_PIDOR) + " $count $word." }
             ?: context.get(Phrase.YOU_WAS_NOT_PIDOR)
     }
 }
