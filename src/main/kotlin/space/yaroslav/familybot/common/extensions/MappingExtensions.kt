@@ -63,16 +63,16 @@ fun Update.from(): TelegramUser {
 }
 
 fun Message.getCommand(botName: String): Command? {
-    val textCommand = this
-        .entities
-        ?.asSequence()
-        ?.filter { entity -> entity.offset == 0 }
-        ?.filter { entity -> entity.type == EntityType.BOTCOMMAND }
-        ?.map(MessageEntity::getText)
-        ?.map { command -> command.split("@") }
-        ?.filter { commandParts -> commandParts.size == 1 || commandParts[1] == botName }
-        ?.map { commandParts -> commandParts.first() }
-        ?.firstOrNull() ?: return null
+    val entities = this.entities ?: return null
+    val textCommand = entities
+        .asSequence()
+        .filter { entity -> entity.offset == 0 }
+        .filter { entity -> entity.type == EntityType.BOTCOMMAND }
+        .map(MessageEntity::getText)
+        .map { command -> command.split("@") }
+        .filter { commandParts -> commandParts.size == 1 || commandParts[1] == botName }
+        .map { commandParts -> commandParts.first() }
+        .firstOrNull() ?: return null
 
     return Command.values().find { command -> command.command == textCommand }
 }

@@ -182,8 +182,7 @@ class Router(
 
         val text = update.message.text
             ?.takeIf { botConfig.botNameAliases.none { alias -> it.contains(alias, ignoreCase = true) } }
-            ?.takeIf { it.split(" ").size >= 3 }
-            ?.takeIf { it.split(" ").size < 8 }
+            ?.takeIf { it.split(" ").size in (3..7) }
             ?.takeIf { it.length < 600 }
             ?.takeIf { chatLogRegex.matches(it) } ?: return
 

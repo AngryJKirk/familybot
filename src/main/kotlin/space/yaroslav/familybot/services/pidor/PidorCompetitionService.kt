@@ -73,7 +73,7 @@ class PidorCompetitionService(
     }
 
     private fun isEndOfMonth(): Boolean {
-        val time = LocalDateTime.now()
-        return time.month.length(time.year % 4 == 0) == time.dayOfMonth
+        val time = LocalDate.now()
+        return time.lengthOfMonth() == time.dayOfMonth
     }
 }
