@@ -23,6 +23,6 @@ class DivorcePaymentProcessor(
 
     override fun processSuccess(shopPayload: ShopPayload): Phrase {
         marriagesRepository.removeMarriage(shopPayload.chatId, shopPayload.userId)
-        return Phrase.MERRY_DIVORCE
+        return Phrase.MARRY_DIVORCE
     }
 }
