@@ -3,7 +3,6 @@ package space.yaroslav.familybot.services.routers
 import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
@@ -110,10 +109,10 @@ class Router(
         }
     }
 
-    private suspend fun selectRandom(update: Update): Executor {
+    private fun selectRandom(update: Update): Executor {
         logger.info("No executor found, trying to find random priority executors")
 
-        coroutineScope { launch { logChatMessage(update) } }
+        loggingScope.launch { logChatMessage(update) }
         val executor = executors.filter { it.meteredPriority(update, meterRegistry) == Priority.RANDOM }.random()
 
         logger.info("Random priority executor ${executor.javaClass.simpleName} was selected")

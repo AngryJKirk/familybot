@@ -99,7 +99,8 @@ class FamilyBot(
         return runCatching {
             paymentRouter.proceedPreCheckoutQuery(update)
         }.getOrDefault {
-            log.warn("paymentRouter.proceedPreCheckoutQuery failed", it) {}
+            log.warn("paymentRouter.proceedPreCheckoutQuery failed", it)
+            {}
         }
     }
 
@@ -107,7 +108,8 @@ class FamilyBot(
         return runCatching {
             paymentRouter.proceedSuccessfulPayment(update)
         }.getOrDefault {
-            log.warn("paymentRouter.proceedSuccessfulPayment failed", it) {}
+            log.warn("paymentRouter.proceedSuccessfulPayment failed", it)
+            {}
         }
     }
 
