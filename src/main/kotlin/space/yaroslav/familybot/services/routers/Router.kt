@@ -1,6 +1,8 @@
 package space.yaroslav.familybot.services.routers
 
 import io.micrometer.core.instrument.MeterRegistry
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -59,7 +61,7 @@ class Router(
 
     private val logger = getLogger()
     private val chatLogRegex = Regex("[а-яА-Яё\\s,.!?]+")
-
+    private val loggingScope = CoroutineScope(Dispatchers.Default)
     suspend fun processUpdate(update: Update): suspend (AbsSender) -> Unit {
 
         val message = update.message
@@ -97,18 +99,14 @@ class Router(
         }.also { logChatCommand(executor, update) }
     }
 
-    private suspend fun registerUpdate(
+    private fun registerUpdate(
         message: Message,
         update: Update
     ) {
-        coroutineScope {
-            launch {
-                register(message)
-                launch {
-                    delay(3000) // temporary fix in order to check why it fails sometimes
-                    rawUpdateLogger.log(update)
-                }
-            }
+        register(message)
+        loggingScope.launch {
+            delay(3000) // temporary fix in order to check why it fails sometimes
+            rawUpdateLogger.log(update)
         }
     }
 
@@ -155,25 +153,23 @@ class Router(
         return isExecutorDisabled
     }
 
-    private suspend fun logChatCommand(executor: Executor, update: Update) {
-        coroutineScope {
-            launch {
-                if (executor is CommandExecutor && executor.isLoggable()) {
-                    val key = update.key()
-                    val currentValue = easyKeyValueService.get(CommandLimit, key)
-                    if (currentValue == null) {
-                        easyKeyValueService.put(CommandLimit, key, 1, Duration.of(5, ChronoUnit.MINUTES))
-                    } else {
-                        easyKeyValueService.increment(CommandLimit, key)
-                    }
-                    commandHistoryRepository.add(
-                        CommandByUser(
-                            update.toUser(),
-                            executor.command(),
-                            Instant.now()
-                        )
-                    )
+    private fun logChatCommand(executor: Executor, update: Update) {
+        loggingScope.launch {
+            if (executor is CommandExecutor && executor.isLoggable()) {
+                val key = update.key()
+                val currentValue = easyKeyValueService.get(CommandLimit, key)
+                if (currentValue == null) {
+                    easyKeyValueService.put(CommandLimit, key, 1, Duration.of(5, ChronoUnit.MINUTES))
+                } else {
+                    easyKeyValueService.increment(CommandLimit, key)
                 }
+                commandHistoryRepository.add(
+                    CommandByUser(
+                        update.toUser(),
+                        executor.command(),
+                        Instant.now()
+                    )
+                )
             }
         }
     }
