@@ -104,8 +104,10 @@ class Router(
         coroutineScope {
             launch {
                 register(message)
-                delay(3000) // temporary fix in order to check why it fails sometimes
-                rawUpdateLogger.log(update)
+                launch {
+                    delay(3000) // temporary fix in order to check why it fails sometimes
+                    rawUpdateLogger.log(update)
+                }
             }
         }
     }
