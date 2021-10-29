@@ -2,6 +2,7 @@ package space.yaroslav.familybot.services.routers
 
 import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -103,6 +104,7 @@ class Router(
         coroutineScope {
             launch {
                 register(message)
+                delay(3000) // temporary fix in order to check why it fails sometimes
                 rawUpdateLogger.log(update)
             }
         }

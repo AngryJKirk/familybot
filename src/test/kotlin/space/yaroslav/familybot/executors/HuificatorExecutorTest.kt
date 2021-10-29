@@ -41,7 +41,8 @@ class HuificatorExecutorTest : ExecutorTest() {
                 Arguments.of("куку шуку             петух", "хуетух"),
                 Arguments.of("удача", "хуюдача"),
                 Arguments.of("х-у-й-ня", null),
-                Arguments.of("ножик", "хуёжик")
+                Arguments.of("ножик", "хуёжик"),
+                Arguments.of("пхпхпх", "хуепхпх")
             )
         }
     }

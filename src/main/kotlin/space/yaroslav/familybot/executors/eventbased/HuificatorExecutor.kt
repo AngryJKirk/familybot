@@ -67,8 +67,9 @@ class HuificatorExecutor(private val easyKeyValueService: EasyKeyValueService) :
         }
 
         val postfix = String(wordLowerCase.toCharArray().dropWhile { !vowels.contains(it) }.toCharArray())
-
-        return if (rules.containsKey(postfix[0])) {
+        return if (postfix.isEmpty()) {
+            "хуе" + wordLowerCase.drop(2)
+        } else if (rules.containsKey(postfix[0])) {
             "ху" + rules[postfix[0]] + postfix.drop(1).dropLastDelimiter()
         } else {
             "ху$postfix"
