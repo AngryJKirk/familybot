@@ -35,7 +35,7 @@ class FunctionsConfigureRepository(
         switchInternal(id, chat)
     }
 
-    suspend fun setStatus(id: FunctionId, chat: Chat, isEnabled: Boolean) {
+    fun setStatus(id: FunctionId, chat: Chat, isEnabled: Boolean) {
         if (isEnabledInternal(id, chat) != isEnabled) {
             switchInternal(id, chat)
         }
