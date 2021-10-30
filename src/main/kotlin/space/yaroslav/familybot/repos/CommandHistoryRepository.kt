@@ -4,6 +4,7 @@ import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
+import space.yaroslav.familybot.common.extensions.DateConstants
 import space.yaroslav.familybot.common.extensions.map
 import space.yaroslav.familybot.common.extensions.toCommandByUser
 import space.yaroslav.familybot.models.telegram.Chat
@@ -16,16 +17,13 @@ import java.time.temporal.ChronoUnit
 @Component
 class CommandHistoryRepository(val template: JdbcTemplate) {
 
-    private val defaultAmountOfDaysToSubtract = 100000L // fix that in 2294 a.c. please
-
     @Timed("repository.CommandHistoryRepository.getAll")
-    fun getAll(chat: Chat, from: Instant? = null): List<CommandByUser> {
-        val fromDate = from ?: Instant.now().minus(defaultAmountOfDaysToSubtract, ChronoUnit.DAYS)
+    fun getAll(chat: Chat, from: Instant = DateConstants.theBirthDayOfFamilyBot): List<CommandByUser> {
         return template.query(
             "SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ? AND history.command_date >= ?",
             { rs, _ -> rs.toCommandByUser(null) },
             chat.id,
-            Timestamp.from(fromDate)
+            Timestamp.from(from)
         )
     }
 
@@ -43,7 +41,7 @@ class CommandHistoryRepository(val template: JdbcTemplate) {
     @Timed("repository.CommandHistoryRepository.get")
     fun get(
         user: User,
-        from: Instant = Instant.now().minusSeconds(300),
+        from: Instant = Instant.now().minus(5, ChronoUnit.MINUTES),
         to: Instant = Instant.now()
     ): List<CommandByUser> {
         return template.query(

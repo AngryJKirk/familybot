@@ -7,7 +7,6 @@ import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.services.scenario.ScenarioGameplayService
 import space.yaroslav.familybot.services.scenario.ScenarioPollManagingService
 import space.yaroslav.familybot.telegram.FamilyBot
-import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -22,7 +21,7 @@ class PollRouter(
         val answer = update.pollAnswer
         val poll = scenarioPollManagingService.findScenarioPoll(answer.pollId)
             ?: return
-        if (poll.createDate.isBefore(Instant.now().minusMillis(Duration.of(24, ChronoUnit.HOURS).toMillis()))) {
+        if (poll.createDate.isBefore(Instant.now().minus(1, ChronoUnit.DAYS))) {
             return
         }
         log.info("Trying to proceed poll $poll, answer is $answer")

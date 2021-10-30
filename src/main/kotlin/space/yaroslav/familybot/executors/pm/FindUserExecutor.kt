@@ -37,9 +37,9 @@ class FindUserExecutor(
 
     private fun format(userToChats: List<Pair<User, List<Chat>>>): String {
 
-        return "Search user result:\n" + userToChats.joinToString(separator = delimiter) { pair ->
-            "User: ${formatUser(pair.first)} in chats [${formatChats(pair.second)}]"
-        }
+        return "Search user result:\n" +
+            userToChats
+                .joinToString(separator = delimiter) { (user, chats) -> "User: ${formatUser(user)} in chats [${formatChats(chats)}]" }
     }
 
     private fun formatUser(user: User): String {
@@ -54,6 +54,6 @@ class FindUserExecutor(
 
     private fun formatChats(chats: List<Chat>): String {
         return chats
-            .joinToString(separator = ",\n") { (id, name): Chat -> "id=${id}, chatname=${name}" }
+            .joinToString(separator = ",\n") { (id, name): Chat -> "id=$id, chatname=$name" }
     }
 }

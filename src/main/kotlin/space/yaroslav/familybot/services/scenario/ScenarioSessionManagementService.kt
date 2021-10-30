@@ -101,7 +101,7 @@ class ScenarioSessionManagementService(
             }
 
         return { sender ->
-            val dayAgo = Instant.now().minusMillis(Duration.of(24, ChronoUnit.HOURS).toMillis())
+            val dayAgo = Instant.now().minus(1, ChronoUnit.DAYS)
             if (dayAgo.isAfter(recentPoll.createDate)) {
                 val nextMove = scenarioGameplayService.nextState(recentPoll.chat)
                 if (nextMove != null) {
@@ -119,7 +119,7 @@ class ScenarioSessionManagementService(
                 val timeLeft =
                     Duration.between(
                         Instant.now(),
-                        recentPoll.createDate.plusMillis(Duration.of(1, ChronoUnit.DAYS).toMillis())
+                        recentPoll.createDate.plus(1, ChronoUnit.DAYS)
                     ).toHourMinuteString()
 
                 runCatching {

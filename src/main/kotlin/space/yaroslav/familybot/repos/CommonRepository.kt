@@ -4,6 +4,7 @@ import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
+import space.yaroslav.familybot.common.extensions.DateConstants
 import space.yaroslav.familybot.common.extensions.map
 import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.common.extensions.toPidor
@@ -91,7 +92,7 @@ class CommonRepository(private val template: JdbcTemplate) {
     @Timed("repository.CommonRepository.getPidorsByChat")
     fun getPidorsByChat(
         chat: Chat,
-        startDate: Instant = Instant.ofEpochMilli(969652800000),
+        startDate: Instant = DateConstants.theBirthDayOfFamilyBot,
         endDate: Instant = Instant.now()
     ): List<Pidor> {
         return template.query(
@@ -105,7 +106,7 @@ class CommonRepository(private val template: JdbcTemplate) {
 
     @Timed("repository.CommonRepository.getAllPidors")
     fun getAllPidors(
-        startDate: Instant = Instant.ofEpochMilli(969652800000),
+        startDate: Instant = DateConstants.theBirthDayOfFamilyBot,
         endDate: Instant = Instant.now()
     ): List<Pidor> {
         return template.query(

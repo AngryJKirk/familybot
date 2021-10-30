@@ -5,6 +5,7 @@ import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.common.extensions.DateConstants
 import space.yaroslav.familybot.common.extensions.PluralizedWordsProvider
 import space.yaroslav.familybot.common.extensions.pluralize
 import space.yaroslav.familybot.common.extensions.send
@@ -23,8 +24,6 @@ import space.yaroslav.familybot.services.settings.UserAndChatEasyKey
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.services.talking.DictionaryContext
 import space.yaroslav.familybot.telegram.BotConfig
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 @Component
 class MeCommandExecutor(
@@ -35,8 +34,6 @@ class MeCommandExecutor(
     private val dictionary: Dictionary,
     config: BotConfig
 ) : CommandExecutor(config) {
-
-    private val tenYearsAgo: Long = ChronoUnit.DECADES.duration.seconds
 
     override fun command(): Command {
         return Command.ME
@@ -81,7 +78,7 @@ class MeCommandExecutor(
 
     private fun getCommandCount(user: User, context: DictionaryContext): String {
         val commandCount =
-            commandHistoryRepository.get(user, from = Instant.now().minusSeconds(tenYearsAgo)).size
+            commandHistoryRepository.get(user, from = DateConstants.theBirthDayOfFamilyBot).size
         val word = pluralize(
             commandCount,
             PluralizedWordsProvider(
@@ -95,8 +92,8 @@ class MeCommandExecutor(
 
     private fun getPidorsCount(chat: Chat, user: User, context: DictionaryContext): String {
         val pidorCount = commonRepository
-            .getPidorsByChat(chat, startDate = Instant.now().minusSeconds(tenYearsAgo))
-            .filter { pidor -> pidor.user.id == user.id }
+            .getPidorsByChat(chat, startDate = DateConstants.theBirthDayOfFamilyBot)
+            .filter { (pidor) -> pidor.id == user.id }
             .size
         val word = pluralize(
             pidorCount,

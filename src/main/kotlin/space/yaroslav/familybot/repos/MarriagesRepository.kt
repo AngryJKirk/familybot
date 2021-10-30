@@ -26,7 +26,7 @@ class MarriagesRepository(private val jdbcTemplate: JdbcTemplate) {
                                   first_user,
                                   second_user)
            VALUES (gen_random_uuid(), ?, ?, ?, ?)
-       """.trimIndent(),
+            """.trimIndent(),
             Timestamp.from(marriage.startDate),
             marriage.chatId,
             marriage.firstUser.id,
@@ -51,7 +51,8 @@ class MarriagesRepository(private val jdbcTemplate: JdbcTemplate) {
             INNER JOIN chats c ON c.id = m.chat_id
             INNER JOIN users u1 ON m.first_user = u1.id
             INNER JOIN users u2 ON m.second_user = u2.id
-            WHERE chat_id = ? AND marriage_end_date IS NULL""".trimIndent(),
+            WHERE chat_id = ? AND marriage_end_date IS NULL
+            """.trimIndent(),
             { rs, _ -> rs.toMarriage() },
             chatId
         )
@@ -64,7 +65,7 @@ class MarriagesRepository(private val jdbcTemplate: JdbcTemplate) {
             SET marriage_end_date = ?
             WHERE chat_id = ?
             AND (first_user = ? OR second_user =?)
-        """.trimIndent(),
+            """.trimIndent(),
             Timestamp.from(Instant.now()),
             chatId,
             userId,

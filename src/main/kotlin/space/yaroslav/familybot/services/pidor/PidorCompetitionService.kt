@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.bold
 import space.yaroslav.familybot.common.extensions.send
+import space.yaroslav.familybot.common.extensions.startOfCurrentMonth
 import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.models.telegram.Pidor
@@ -15,9 +16,6 @@ import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneOffset
 
 @Service
 class PidorCompetitionService(
@@ -49,11 +47,9 @@ class PidorCompetitionService(
     }
 
     private fun getPidorsOfThisMonth(update: Update): List<Pidor> {
-        val now = LocalDate.now()
         return repository.getPidorsByChat(
-            update.message.chat.toChat(),
-            startDate = LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
-                .toInstant(ZoneOffset.UTC)
+            update.toChat(),
+            startDate = startOfCurrentMonth()
         )
     }
 

@@ -3,6 +3,7 @@ package space.yaroslav.familybot.executors.command
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.common.extensions.DateConstants
 import space.yaroslav.familybot.common.extensions.PluralizedWordsProvider
 import space.yaroslav.familybot.common.extensions.bold
 import space.yaroslav.familybot.common.extensions.formatTopList
@@ -15,11 +16,6 @@ import space.yaroslav.familybot.models.telegram.Pidor
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.Month
-import java.time.ZoneOffset
 
 @Component
 class PidorStatsWorldExecutor(
@@ -27,6 +23,7 @@ class PidorStatsWorldExecutor(
     private val dictionary: Dictionary,
     config: BotConfig
 ) : CommandExecutor(config), Configurable {
+
     override fun getFunctionId(update: Update): FunctionId {
         return FunctionId.PIDOR
     }
@@ -38,10 +35,7 @@ class PidorStatsWorldExecutor(
     override fun execute(update: Update): suspend (AbsSender) -> Unit {
         val context = dictionary.createContext(update)
         val pidorsByChat = repository.getAllPidors(
-            startDate = LocalDateTime.of(
-                LocalDate.of(2000, Month.JANUARY, 1),
-                LocalTime.MIDNIGHT
-            ).toInstant(ZoneOffset.UTC)
+            startDate = DateConstants.theBirthDayOfFamilyBot
         )
             .map(Pidor::user)
             .formatTopList(

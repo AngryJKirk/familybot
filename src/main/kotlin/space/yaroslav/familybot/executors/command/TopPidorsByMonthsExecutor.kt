@@ -8,6 +8,7 @@ import space.yaroslav.familybot.common.extensions.capitalized
 import space.yaroslav.familybot.common.extensions.dropLastDelimiter
 import space.yaroslav.familybot.common.extensions.italic
 import space.yaroslav.familybot.common.extensions.send
+import space.yaroslav.familybot.common.extensions.startOfCurrentMonth
 import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.common.extensions.toRussian
 import space.yaroslav.familybot.executors.Configurable
@@ -50,7 +51,7 @@ class TopPidorsByMonthsExecutor(
         val context = dictionary.createContext(update)
         val result = commonRepository
             .getPidorsByChat(update.toChat())
-            .filter { it.date.isBefore(startOfMonth()) }
+            .filter { it.date.isBefore(startOfCurrentMonth()) }
             .groupBy { map(it.date) }
             .mapValues { monthPidors -> calculateStats(monthPidors.value) }
             .toSortedMap()
@@ -77,13 +78,6 @@ class TopPidorsByMonthsExecutor(
             Pluralization.getPlur(it.value.position), context
         )
         "$month, $year:\n".italic() + "$userName, $position $leaderboardPhrase"
-    }
-
-    private fun startOfMonth(): Instant {
-        val time = LocalDateTime.now()
-        return LocalDateTime.of(time.year, time.month, 1, 0, 0)
-            .atZone(ZoneId.systemDefault())
-            .toInstant()
     }
 
     private fun map(instant: Instant): LocalDate {

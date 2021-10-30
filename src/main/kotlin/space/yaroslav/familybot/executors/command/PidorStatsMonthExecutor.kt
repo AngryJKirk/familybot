@@ -7,6 +7,7 @@ import space.yaroslav.familybot.common.extensions.PluralizedWordsProvider
 import space.yaroslav.familybot.common.extensions.bold
 import space.yaroslav.familybot.common.extensions.formatTopList
 import space.yaroslav.familybot.common.extensions.send
+import space.yaroslav.familybot.common.extensions.startOfCurrentMonth
 import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.common.extensions.toRussian
 import space.yaroslav.familybot.executors.Configurable
@@ -18,9 +19,6 @@ import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneOffset
 
 @Component
 class PidorStatsMonthExecutor(
@@ -42,8 +40,7 @@ class PidorStatsMonthExecutor(
         val context = dictionary.createContext(update)
         val pidorsByChat = repository.getPidorsByChat(
             update.message.chat.toChat(),
-            startDate = LocalDateTime.of(LocalDate.of(now.year, now.month, 1), LocalTime.MIDNIGHT)
-                .toInstant(ZoneOffset.UTC)
+            startDate = startOfCurrentMonth()
         )
             .map(Pidor::user)
             .formatTopList(
