@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException
 import space.yaroslav.familybot.common.extensions.toChat
+import space.yaroslav.familybot.common.extensions.toJson
 import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.services.routers.PaymentRouter
 import space.yaroslav.familybot.services.routers.PollRouter
@@ -74,14 +75,14 @@ class FamilyBot(
         try {
             router.processUpdate(update).invoke(this@FamilyBot)
         } catch (e: TelegramApiRequestException) {
-            val logMessage = "Telegram error: ${e.apiResponse}, ${e.errorCode}, update is $update"
+            val logMessage = "Telegram error: ${e.apiResponse}, ${e.errorCode}, update is ${update.toJson()}"
             if (e.errorCode in 400..499) {
                 log.warn(logMessage, e)
             } else {
                 log.error(logMessage, e)
             }
         } catch (e: Exception) {
-            log.error("Unexpected error, update is $update", e)
+            log.error("Unexpected error, update is ${update.toJson()}", e)
         } finally {
             MDC.clear()
         }
