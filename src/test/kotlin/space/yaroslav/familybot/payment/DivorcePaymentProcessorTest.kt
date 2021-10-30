@@ -11,7 +11,7 @@ import space.yaroslav.familybot.models.Marriage
 import space.yaroslav.familybot.models.shop.ShopItem
 import space.yaroslav.familybot.models.shop.ShopPayload
 import space.yaroslav.familybot.repos.MarriagesRepository
-import space.yaroslav.familybot.services.payment.DivorcePaymentProcessor
+import space.yaroslav.familybot.services.payment.processors.DivorcePaymentProcessor
 
 class DivorcePaymentProcessorTest : PaymentProcessorTest() {
 

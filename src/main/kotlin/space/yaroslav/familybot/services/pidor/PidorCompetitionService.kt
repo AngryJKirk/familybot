@@ -33,7 +33,11 @@ class PidorCompetitionService(
             val competitors = detectPidorCompetition(thisMonthPidors)
             if (competitors != null) {
                 return {
-                    it.send(update, context.get(Phrase.PIDOR_COMPETITION).bold(), enableHtml = true)
+                    it.send(
+                        update,
+                        context.get(Phrase.PIDOR_COMPETITION).bold() + "\n" + formatListOfCompetitors(competitors),
+                        enableHtml = true
+                    )
                     val oneMorePidor = competitors.random()
                     repository.addPidor(Pidor(oneMorePidor, Instant.now()))
                     delay(1000)
@@ -60,16 +64,19 @@ class PidorCompetitionService(
             .maxByOrNull(Map.Entry<User, Int>::value)
             ?: throw FamilyBot.InternalException("List of pidors for competition should be never null")
 
-        val competitors = pidorsByUser.filterValues { it.size == maxCount.value }.keys
-        return if (competitors.size > 1) {
-            competitors
-        } else {
-            null
-        }
+        return pidorsByUser
+            .filterValues { it.size == maxCount.value }
+            .keys
+            .takeIf { it.size > 1 }
     }
 
     private fun isEndOfMonth(): Boolean {
         val time = LocalDate.now()
         return time.lengthOfMonth() == time.dayOfMonth
+    }
+
+    private fun formatListOfCompetitors(users: Set<User>): String {
+        return users
+            .joinToString(separator = " vs. ".bold()) { user -> user.getGeneralName() }
     }
 }

@@ -5,7 +5,6 @@ settings:
   bot-name: IntegrationTests
 spring:
   datasource:
-    url: REPLACED_IN_CODE_AT_START_OF_TESTS
     driver-class-name: "org.postgresql.Driver"
     password: testPassword
     username: postgres
