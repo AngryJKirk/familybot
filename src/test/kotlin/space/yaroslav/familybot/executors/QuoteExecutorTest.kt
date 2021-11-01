@@ -6,7 +6,7 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import space.yaroslav.familybot.executors.command.QuoteExecutor
+import space.yaroslav.familybot.executors.command.nonpublic.QuoteExecutor
 import space.yaroslav.familybot.infrastructure.createSimpleCommand
 import space.yaroslav.familybot.suits.CommandExecutorTest
 

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
-import space.yaroslav.familybot.executors.eventbased.keyword.BotMentionKeyWordProcessor
+import space.yaroslav.familybot.executors.eventbased.keyword.processor.BotMentionKeyWordProcessor
 import space.yaroslav.familybot.infrastructure.createSimpleMessage
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.createSimpleUser

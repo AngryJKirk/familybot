@@ -19,7 +19,7 @@ import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.common.extensions.untilNextDay
 import space.yaroslav.familybot.executors.Configurable
-import space.yaroslav.familybot.executors.command.settings.AskWorldDensityValue
+import space.yaroslav.familybot.executors.command.settings.processors.AskWorldDensityValue
 import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.askworld.AskWorldQuestion
 import space.yaroslav.familybot.models.askworld.AskWorldQuestionData

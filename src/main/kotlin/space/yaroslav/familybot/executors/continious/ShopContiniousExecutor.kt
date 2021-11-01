@@ -24,7 +24,7 @@ import space.yaroslav.familybot.telegram.BotConfig
 class ShopContiniousExecutor(
     private val botConfig: BotConfig,
     private val dictionary: Dictionary,
-) : ContiniousConversation(botConfig) {
+) : ContiniousConversationExecutor(botConfig) {
 
     override fun getDialogMessage(message: Message): String {
         return dictionary.get(Phrase.SHOP_KEYBOARD, message.chat.toChat().key())
