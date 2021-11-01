@@ -56,7 +56,7 @@ class AskWorldInitialExecutor(
         return FunctionId.ASK_WORLD
     }
 
-    final override fun command(): Command {
+    override fun command(): Command {
         return Command.ASK_WORLD
     }
 
@@ -160,8 +160,8 @@ class AskWorldInitialExecutor(
             }
 
             val isScam =
-                containsUrl(message) ||
-                    containsUrl(update.toChat().name ?: "") ||
+                shouldBeCensored(message) ||
+                    shouldBeCensored(update.toChat().name ?: "") ||
                     isSpam(message) ||
                     containsLongWords(message)
 
@@ -241,7 +241,7 @@ class AskWorldInitialExecutor(
         return acceptAllChats + acceptLessChats.take(acceptLessChats.size / 4)
     }
 
-    private fun containsUrl(message: String): Boolean {
+    private fun shouldBeCensored(message: String): Boolean {
         return message.contains("http", ignoreCase = true) ||
             message.contains("www", ignoreCase = true) ||
             message.contains("jpg", ignoreCase = true) ||
@@ -251,7 +251,8 @@ class AskWorldInitialExecutor(
             message.contains("gif", ignoreCase = true) ||
             message.contains("_bot", ignoreCase = true) ||
             message.contains("t.me", ignoreCase = true) ||
-            message.contains("Bot", ignoreCase = false)
+            message.contains("Bot", ignoreCase = false) ||
+            message.contains("@")
     }
 
     private fun isSpam(message: String): Boolean {
