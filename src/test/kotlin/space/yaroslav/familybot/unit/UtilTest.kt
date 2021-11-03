@@ -10,6 +10,7 @@ import space.yaroslav.familybot.common.extensions.startOfDay
 import space.yaroslav.familybot.common.extensions.startOfTheYear
 import space.yaroslav.familybot.models.dictionary.Pluralization
 import java.time.Month
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.stream.Stream
@@ -40,7 +41,7 @@ class UtilTest {
     @Test
     fun startOfDayTest() {
         val startOfDay = ZonedDateTime.ofInstant(startOfDay(), ZoneOffset.UTC)
-        val currentDate = ZonedDateTime.now()
+        val currentDate = ZonedDateTime.now(ZoneId.of("UTC"))
 
         Assertions.assertEquals(0, startOfDay.hour)
         Assertions.assertEquals(0, startOfDay.minute)
@@ -52,7 +53,7 @@ class UtilTest {
     @Test
     fun startOfMonthTest() {
         val startOfMonth = ZonedDateTime.ofInstant(startOfCurrentMonth(), ZoneOffset.UTC)
-        val currentDate = ZonedDateTime.now()
+        val currentDate = ZonedDateTime.now(ZoneId.of("UTC"))
 
         Assertions.assertEquals(0, startOfMonth.hour)
         Assertions.assertEquals(0, startOfMonth.minute)
@@ -64,7 +65,7 @@ class UtilTest {
     @Test
     fun startOfYearTest() {
         val startOfYear = ZonedDateTime.ofInstant(startOfTheYear(), ZoneOffset.UTC)
-        val currentDate = ZonedDateTime.now()
+        val currentDate = ZonedDateTime.now(ZoneId.of("UTC"))
 
         Assertions.assertEquals(0, startOfYear.hour)
         Assertions.assertEquals(0, startOfYear.minute)
