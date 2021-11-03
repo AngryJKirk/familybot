@@ -60,7 +60,9 @@ class PidorExecutor(
         if (isLimitOfPidorsExceeded(users, pidorToleranceValue ?: 0)) {
             log.info("Pidors are already found")
             val message = getMessageForPidors(chat, context)
-            return { it.execute(message) }
+            if (message != null) {
+                return { it.execute(message) }
+            }
         }
         return { sender ->
             log.info("Pidor is not found, initiating search procedure")
