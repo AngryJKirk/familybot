@@ -8,7 +8,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker
 import org.telegram.telegrambots.meta.api.methods.stickers.GetStickerSet
-import org.telegram.telegrambots.meta.api.objects.Chat
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -21,11 +20,16 @@ import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberMember
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberOwner
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberRestricted
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.telegram.stickers.Sticker
 import space.yaroslav.familybot.models.telegram.stickers.StickerPack
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
+
+object SenderLogger {
+    val log = getLogger()
+}
 
 suspend fun AbsSender.send(
     update: Update,
@@ -37,6 +41,15 @@ suspend fun AbsSender.send(
     shouldTypeBeforeSend: Boolean = false,
     typeDelay: Pair<Int, Int> = 1000 to 2000
 ): Message {
+    SenderLogger.log.info(
+        "Sending message, update=${update.toJson()}, " +
+            "text=$text, " +
+            "replyMessageId=$replyMessageId," +
+            "enableHtml=$enableHtml," +
+            "replyToUpdate=$replyToUpdate," +
+            "shouldTypeBeforeSend=$shouldTypeBeforeSend," +
+            "typeDelay=$typeDelay"
+    )
     val messageObj = SendMessage(update.chatIdString(), text).apply { enableHtml(enableHtml) }
 
     if (replyMessageId != null) {
@@ -50,7 +63,11 @@ suspend fun AbsSender.send(
         delay(randomInt(typeDelay.first, typeDelay.second).toLong())
     }
 
-    return this.execute(messageObj.apply(customization))
+    val message = messageObj.apply(customization)
+
+    SenderLogger.log.info("Sending message: ${message.toJson()}")
+
+    return this.execute(message)
 }
 
 suspend fun AbsSender.sendSticker(
@@ -105,10 +122,6 @@ private suspend fun sendStickerInternal(
         sendSticker.replyToMessageId = update.message.messageId
     }
     return sender.execute(sendSticker)
-}
-
-fun Chat.isGroup(): Boolean {
-    return this.isSuperGroupChat || this.isGroupChat
 }
 
 private val chatMemberAdministrator = ChatMemberAdministrator()

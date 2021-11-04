@@ -11,7 +11,6 @@ import org.telegram.telegrambots.meta.api.objects.Chat
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.isGroup
 import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.prettyFormat
 import space.yaroslav.familybot.common.extensions.toChat
@@ -69,7 +68,7 @@ class Router(
 
         val chat = message.chat
 
-        val isGroup = chat.isGroup()
+        val isGroup = chat.isSuperGroupChat || chat.isGroupChat
         if (!isGroup) {
             logger.warn("Someone is sending private messages: $update")
         } else {
