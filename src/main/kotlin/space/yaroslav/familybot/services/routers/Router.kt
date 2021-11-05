@@ -123,7 +123,10 @@ class Router(
     private fun selectRandom(context: ExecutorContext): Executor {
         logger.info("No executor found, trying to find random priority executors")
 
-        loggingScope.launch(loggingExceptionHandler) { logChatMessage(context) }
+        loggingScope.launch(loggingExceptionHandler) {
+            delay(3000)
+            logChatMessage(context)
+        }
         val executor = executors
             .filter { it.meteredPriority(context, meterRegistry) == Priority.RANDOM }
             .random()
