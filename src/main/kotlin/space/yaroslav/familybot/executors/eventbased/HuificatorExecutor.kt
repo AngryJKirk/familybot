@@ -25,9 +25,7 @@ class HuificatorExecutor(private val easyKeyValueService: EasyKeyValueService) :
     }
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-
-        val message = context.message
-        val text = message.text ?: return {}
+        val text = context.message.text ?: return {}
 
         if (shouldHuificate(context)) {
             val huifyed = huify(text) ?: return { }

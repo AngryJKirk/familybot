@@ -150,7 +150,7 @@ class Router(
         if (executor !is Configurable) return false
 
         val functionId = executor.getFunctionId(context)
-        val isExecutorDisabled = !configureRepository.isEnabled(functionId, context)
+        val isExecutorDisabled = !configureRepository.isEnabled(functionId, context.chat)
 
         if (isExecutorDisabled) {
             logger.info("Executor ${executor::class.simpleName} is disabled")

@@ -3,6 +3,7 @@ package space.yaroslav.familybot.services.misc
 import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.prettyFormat
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.models.telegram.User
 import space.yaroslav.familybot.services.settings.Ban
@@ -16,12 +17,12 @@ class BanService(
     private val easyKeyValueService: EasyKeyValueService
 ) {
 
-    fun isUserBanned(user: User): String? {
-        return findBanByKey(user.key())
+    fun getUserBan(context: ExecutorContext): String? {
+        return findBanByKey(context.userKey)
     }
 
-    fun isChatBanned(chat: Chat): String? {
-        return findBanByKey(chat.key())
+    fun getChatBan(context: ExecutorContext): String? {
+        return findBanByKey(context.chatKey)
     }
 
     fun banUser(user: User, description: String, isForever: Boolean = false) {

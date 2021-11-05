@@ -50,8 +50,8 @@ class SettingsContiniousExecutor(
                     .find { id -> id.desc == callbackQuery.data }
 
                 if (function != null) {
-                    configureRepository.switch(function, context)
-                    val isEnabled = { id: FunctionId -> configureRepository.isEnabled(id, context) }
+                    configureRepository.switch(function, chat)
+                    val isEnabled = { id: FunctionId -> configureRepository.isEnabled(id, chat) }
                     it.execute(AnswerCallbackQuery(callbackQuery.id))
                     it.execute(
                         EditMessageReplyMarkup().apply {

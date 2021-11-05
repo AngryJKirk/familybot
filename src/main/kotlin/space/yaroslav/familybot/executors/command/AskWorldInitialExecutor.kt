@@ -229,7 +229,7 @@ class AskWorldInitialExecutor(
         val functionId = getFunctionId(context)
         val chatsWithFeatureEnabled = commonRepository.getChats()
             .filterNot { chat -> chat == context.chat }
-            .filter { configureRepository.isEnabled(functionId, context) }
+            .filter { chat -> configureRepository.isEnabled(functionId, chat) }
             .shuffled()
         log.info("Number of chats with feature enabled: ${chatsWithFeatureEnabled.size}")
         val acceptAllChats = chatsWithFeatureEnabled

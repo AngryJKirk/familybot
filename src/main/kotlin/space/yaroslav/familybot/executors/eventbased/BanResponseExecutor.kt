@@ -3,13 +3,9 @@ package space.yaroslav.familybot.executors.eventbased
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.send
-import space.yaroslav.familybot.common.extensions.toChat
-import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.executors.Executor
 import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.router.Priority
-import space.yaroslav.familybot.models.telegram.Chat
-import space.yaroslav.familybot.models.telegram.User
 import space.yaroslav.familybot.services.misc.BanService
 
 @Component
@@ -18,8 +14,8 @@ class BanResponseExecutor(
 ) : Executor {
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        val banMessage = banService.isChatBanned(context.chat)
-            ?: banService.isUserBanned(context.user)
+        val banMessage = banService.getChatBan(context)
+            ?: banService.getUserBan(context)
             ?: "иди нахуй"
         return {
             if (context.command != null) {
@@ -29,15 +25,8 @@ class BanResponseExecutor(
     }
 
     override fun canExecute(context: ExecutorContext): Boolean {
-        val message = context.message
-        val chat = message.chat.toChat()
-        val user = message.from.toUser(chat = chat)
-        return banCheck(chat, user) != null
+        return (banService.getUserBan(context) ?: banService.getChatBan(context)) != null
     }
 
     override fun priority(context: ExecutorContext) = Priority.HIGH
-
-    private fun banCheck(chat: Chat, user: User): String? {
-        return banService.isUserBanned(user) ?: banService.isChatBanned(chat)
-    }
 }

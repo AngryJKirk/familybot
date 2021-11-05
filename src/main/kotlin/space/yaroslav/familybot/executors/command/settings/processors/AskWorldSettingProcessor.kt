@@ -34,7 +34,7 @@ class AskWorldSettingProcessor(
         return { sender ->
             functionsConfigureRepository.setStatus(
                 FunctionId.ASK_WORLD,
-                context,
+                context.chat,
                 isEnabled = density != AskWorldDensityValue.NONE
             )
             easyKeyValueService.put(AskWorldDensity, context.chatKey, density.text)

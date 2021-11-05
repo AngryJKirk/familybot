@@ -3,7 +3,6 @@ package space.yaroslav.familybot.executors.pm
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.getMessageTokens
-import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.repos.CommonRepository
@@ -33,7 +32,7 @@ class BanSomeoneExecutor(
         if (chat != null) {
             return {
                 if (isUnban) {
-                    banService.removeBan(chat.key())
+                    banService.removeBan(context.chatKey)
                     it.send(context, "Unbanned chat: $chat")
                 } else {
                     banService.banChat(chat, description, isForever)
@@ -50,7 +49,7 @@ class BanSomeoneExecutor(
         if (user != null) {
             return {
                 if (isUnban) {
-                    banService.removeBan(user.key())
+                    banService.removeBan(context.userKey)
                     it.send(context, "Unbanned user: $user")
                 } else {
                     banService.banUser(user, description, isForever)

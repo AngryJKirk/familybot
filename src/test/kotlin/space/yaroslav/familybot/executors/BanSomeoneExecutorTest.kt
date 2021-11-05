@@ -95,21 +95,21 @@ class BanSomeoneExecutorTest : ExecutorTest() {
 
     @Test
     fun `user should be banned without chat`() {
-        val update = createSimpleUpdate()
-        val user = update.toUser()
-        val chat = update.toChat()
+        val context = createSimpleContext()
+        val user = context.user
+        val chat = context.chat
         val description = randomString()
         banService.banUser(user, description)
-        Assertions.assertTrue(banService.isUserBanned(user)?.contains(description) ?: false)
-        Assertions.assertNull(banService.isChatBanned(chat))
-        Assertions.assertNull(banService.findBanByKey(update.key()))
+        Assertions.assertTrue(banService.getUserBan(context)?.contains(description) ?: false)
+        Assertions.assertNull(banService.getChatBan(context))
+        Assertions.assertNull(banService.findBanByKey(context.userAndChatKey))
         Assertions.assertNull(banService.findBanByKey(chat.key()))
         Assertions.assertNotNull(banService.findBanByKey(user.key()))
         banService.removeBan(user.key())
         banService.banChat(chat, description)
-        Assertions.assertTrue(banService.isChatBanned(chat)?.contains(description) ?: false)
-        Assertions.assertNull(banService.isUserBanned(user))
-        Assertions.assertNull(banService.findBanByKey(update.key()))
+        Assertions.assertTrue(banService.getChatBan(context)?.contains(description) ?: false)
+        Assertions.assertNull(banService.getUserBan(context))
+        Assertions.assertNull(banService.findBanByKey(context.userAndChatKey))
         Assertions.assertNotNull(banService.findBanByKey(chat.key()))
         Assertions.assertNull(banService.findBanByKey(user.key()))
         banService.removeBan(user.key())
