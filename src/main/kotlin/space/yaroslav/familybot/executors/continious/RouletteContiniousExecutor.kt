@@ -6,12 +6,10 @@ import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.randomInt
-import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.executors.command.nonpublic.ROULETTE_MESSAGE
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.models.telegram.Pidor
 import space.yaroslav.familybot.repos.CommonRepository
@@ -29,7 +27,7 @@ class RouletteContiniousExecutor(
 
     private val log = LoggerFactory.getLogger(RouletteContiniousExecutor::class.java)
 
-    override fun getDialogMessage(message: Message): String {
+    override fun getDialogMessage(executorContext: ExecutorContext): String {
         return ROULETTE_MESSAGE
     }
 
@@ -37,17 +35,18 @@ class RouletteContiniousExecutor(
         return Command.ROULETTE
     }
 
-    override fun canExecute(message: Message): Boolean {
+    override fun canExecute(executorContext: ExecutorContext): Boolean {
+        val message = executorContext.message
         return message.isReply &&
             message.replyToMessage.from.userName == botConfig.botName &&
-            (message.replyToMessage.text ?: "") == getDialogMessage(message)
+            (message.replyToMessage.text ?: "") == getDialogMessage(executorContext)
     }
 
-    override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        val user = update.toUser()
-        val chatId = update.message.chatId.toString()
+    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+        val user = executorContext.user
+        val chatId = executorContext.chat.idString
 
-        val number = update.message.text.split(" ")[0].toIntOrNull()
+        val number = executorContext.message.text.split(" ")[0].toIntOrNull()
         if (number !in 1..6) {
             return {
                 it.execute(SendMessage(chatId, "Мушку спили и в следующий раз играй по правилам"))
@@ -96,7 +95,7 @@ class RouletteContiniousExecutor(
                 )
             }
             delay(2000)
-            pidorCompetitionService.pidorCompetition(update).invoke(it)
+            pidorCompetitionService.pidorCompetition(executorContext).invoke(it)
         }
     }
 }

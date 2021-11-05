@@ -3,14 +3,16 @@ package space.yaroslav.familybot.common.extensions
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.telegram.telegrambots.meta.api.objects.EntityType
 import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.api.objects.MessageEntity
 import org.telegram.telegrambots.meta.api.objects.Update
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.models.telegram.User
 import space.yaroslav.familybot.services.settings.ChatEasyKey
 import space.yaroslav.familybot.services.settings.UserAndChatEasyKey
 import space.yaroslav.familybot.services.settings.UserEasyKey
+import space.yaroslav.familybot.services.talking.Dictionary
+import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.time.Month
 import org.telegram.telegrambots.meta.api.objects.Chat as TelegramChat
@@ -62,19 +64,39 @@ fun Update.from(): TelegramUser {
     }
 }
 
+fun Update.executorContext(botConfig: BotConfig, dictionary: Dictionary): ExecutorContext {
+    val message = this.message ?: this.editedMessage ?: this.callbackQuery.message
+    val isFromDeveloper = botConfig.developer == message.from.userName
+    val chat = this.toChat()
+    val user = this.toUser()
+    return ExecutorContext(
+        this,
+        message,
+        message.getCommand(botConfig.botName),
+        isFromDeveloper,
+        chat,
+        user,
+        dictionary,
+        this.key(),
+        user.key(),
+        chat.key()
+    )
+}
+
 fun Message.getCommand(botName: String): Command? {
     val entities = this.entities ?: return null
-    val textCommand = entities
-        .asSequence()
-        .filter { entity -> entity.offset == 0 }
-        .filter { entity -> entity.type == EntityType.BOTCOMMAND }
-        .map(MessageEntity::getText)
-        .map { command -> command.split("@") }
-        .filter { commandParts -> commandParts.size == 1 || commandParts[1] == botName }
-        .map { commandParts -> commandParts.first() }
-        .firstOrNull() ?: return null
-
-    return Command.values().find { command -> command.command == textCommand }
+    for (entity in entities) {
+        if (entity.offset == 0 && entity.type == EntityType.BOTCOMMAND) {
+            val parts = entity.text.split("@")
+            if (parts.size == 1) {
+                return Command.LOOKUP[parts[0]]
+            }
+            if (parts[1] == botName) {
+                return Command.LOOKUP[parts[0]]
+            }
+        }
+    }
+    return null
 }
 
 fun Update.getMessageTokens(delimiter: String = " "): List<String> {

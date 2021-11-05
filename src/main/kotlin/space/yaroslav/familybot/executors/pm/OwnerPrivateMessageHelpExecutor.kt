@@ -1,9 +1,9 @@
 package space.yaroslav.familybot.executors.pm
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.send
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
@@ -17,7 +17,7 @@ class OwnerPrivateMessageHelpExecutor(
         .sortedBy { (prefix, _) -> prefix }
         .joinToString("\n") { (prefix, executorName) -> "$prefix — $executorName" }
 
-    override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        return { sender -> sender.send(update, helpMessage) }
+    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+        return { sender -> sender.send(executorContext, helpMessage) }
     }
 }

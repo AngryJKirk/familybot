@@ -1,21 +1,21 @@
 package space.yaroslav.familybot.executors.continious
 
-import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.executors.command.CommandExecutor
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.telegram.BotConfig
 
-abstract class ContiniousConversationExecutor(private val config: BotConfig) : CommandExecutor(config) {
+abstract class ContiniousConversationExecutor(private val config: BotConfig) : CommandExecutor() {
 
-    override fun priority(update: Update): Priority {
+    override fun priority(executorContext: ExecutorContext): Priority {
         return Priority.MEDIUM
     }
 
-    override fun canExecute(message: Message): Boolean {
+    override fun canExecute(executorContext: ExecutorContext): Boolean {
+        val message = executorContext.message
         return message.from.userName == config.botName &&
-            (message.text ?: "") == getDialogMessage(message)
+            (message.text ?: "") == getDialogMessage(executorContext)
     }
 
-    abstract fun getDialogMessage(message: Message): String
+    abstract fun getDialogMessage(executorContext: ExecutorContext): String
 }

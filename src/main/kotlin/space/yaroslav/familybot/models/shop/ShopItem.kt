@@ -4,7 +4,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 import space.yaroslav.familybot.common.extensions.rubles
 import space.yaroslav.familybot.models.dictionary.Phrase
-import space.yaroslav.familybot.services.talking.DictionaryContext
+import space.yaroslav.familybot.models.router.ExecutorContext
 
 enum class ShopItem(val title: Phrase, val description: Phrase, val price: Int) {
 
@@ -16,11 +16,11 @@ enum class ShopItem(val title: Phrase, val description: Phrase, val price: Int) 
     I_AM_RICH(Phrase.I_AM_RICH_TITLE, Phrase.I_AM_RICH_DESC, 5000.rubles());
 
     companion object {
-        fun toKeyBoard(dictionaryContext: DictionaryContext): InlineKeyboardMarkup {
+        fun toKeyBoard(executorContext: ExecutorContext): InlineKeyboardMarkup {
             return InlineKeyboardMarkup(
                 values()
                     .map { shopItem ->
-                        InlineKeyboardButton(formatLine(dictionaryContext, shopItem))
+                        InlineKeyboardButton(formatLine(executorContext, shopItem))
                             .apply {
                                 callbackData = shopItem.name
                             }
@@ -31,8 +31,8 @@ enum class ShopItem(val title: Phrase, val description: Phrase, val price: Int) 
         }
 
         private fun formatLine(
-            dictionaryContext: DictionaryContext,
+            executorContext: ExecutorContext,
             shopItem: ShopItem
-        ) = dictionaryContext.get(shopItem.title) + " - ${shopItem.price / 100}₽"
+        ) = executorContext.phrase(shopItem.title) + " - ${shopItem.price / 100}₽"
     }
 }

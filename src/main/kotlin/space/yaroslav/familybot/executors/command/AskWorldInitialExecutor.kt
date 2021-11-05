@@ -9,14 +9,11 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.boldNullable
 import space.yaroslav.familybot.common.extensions.italic
 import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.send
-import space.yaroslav.familybot.common.extensions.toChat
-import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.common.extensions.untilNextDay
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.command.settings.processors.AskWorldDensityValue
@@ -26,6 +23,7 @@ import space.yaroslav.familybot.models.askworld.AskWorldQuestionData
 import space.yaroslav.familybot.models.askworld.Success
 import space.yaroslav.familybot.models.askworld.ValidationError
 import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.router.FunctionId
 import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.models.telegram.Command
@@ -37,7 +35,6 @@ import space.yaroslav.familybot.services.settings.AskWorldDensity
 import space.yaroslav.familybot.services.settings.AskWorldUserUsages
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.talking.Dictionary
-import space.yaroslav.familybot.services.talking.DictionaryContext
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -50,9 +47,9 @@ class AskWorldInitialExecutor(
     private val botConfig: BotConfig,
     private val dictionary: Dictionary,
     private val easyKeyValueService: EasyKeyValueService
-) : CommandExecutor(botConfig), Configurable {
+) : CommandExecutor(), Configurable {
     private val log = getLogger()
-    override fun getFunctionId(update: Update): FunctionId {
+    override fun getFunctionId(executorContext: ExecutorContext): FunctionId {
         return FunctionId.ASK_WORLD
     }
 
@@ -60,27 +57,27 @@ class AskWorldInitialExecutor(
         return Command.ASK_WORLD
     }
 
-    override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        val context = dictionary.createContext(update)
-        val currentChat = update.toChat()
+    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+
+        val currentChat = executorContext.chat
 
         val chatEasyKey = currentChat.key()
         val chatUsages = easyKeyValueService.get(AskWorldChatUsages, chatEasyKey)
         if (chatUsages != null && chatUsages > 0L) {
             return {
                 log.info("Limit was exceed for chat")
-                it.send(update, context.get(Phrase.ASK_WORLD_LIMIT_BY_CHAT), replyToUpdate = true)
+                it.send(executorContext, executorContext.phrase(Phrase.ASK_WORLD_LIMIT_BY_CHAT), replyToUpdate = true)
             }
         }
-        val userEasyKey = update.toUser().key()
+        val userEasyKey = executorContext.user.key()
         val userUsages = easyKeyValueService.get(AskWorldUserUsages, userEasyKey)
         if (userUsages != null && userUsages > 1) {
             return {
                 log.info("Limit was exceed for user")
-                it.send(update, context.get(Phrase.ASK_WORLD_LIMIT_BY_USER), replyToUpdate = true)
+                it.send(executorContext, executorContext.phrase(Phrase.ASK_WORLD_LIMIT_BY_USER), replyToUpdate = true)
             }
         }
-        val askWorldData = getAskWorldData(update, context)
+        val askWorldData = getAskWorldData(executorContext)
         if (askWorldData is ValidationError) {
             return askWorldData.invalidQuestionAction
         }
@@ -89,15 +86,15 @@ class AskWorldInitialExecutor(
         val question = AskWorldQuestion(
             null,
             successData.questionTitle,
-            update.toUser(),
+            executorContext.user,
             currentChat,
             Instant.now(),
             null
         )
         return { sender ->
             val questionId = coroutineScope { async { askWorldRepository.addQuestion(question) } }
-            sender.send(update, context.get(Phrase.DATA_CONFIRM))
-            getChatsToSendQuestion(update, currentChat, successData.isScam)
+            sender.send(executorContext, executorContext.phrase(Phrase.DATA_CONFIRM))
+            getChatsToSendQuestion(executorContext, currentChat, successData.isScam)
                 .forEach { chatToSend ->
                     runCatching {
                         delay(100)
@@ -118,9 +115,9 @@ class AskWorldInitialExecutor(
         }
     }
 
-    private fun getAskWorldData(update: Update, context: DictionaryContext): AskWorldQuestionData {
-        val replyToMessage = update.message.replyToMessage
-        val isReply = update.message.isReply
+    private fun getAskWorldData(executorContext: ExecutorContext): AskWorldQuestionData {
+        val replyToMessage = executorContext.message.replyToMessage
+        val isReply = executorContext.message.isReply
 
         if (isReply && replyToMessage.hasPoll()) {
             val poll = replyToMessage.poll
@@ -143,33 +140,33 @@ class AskWorldInitialExecutor(
                 )
             }
         } else {
-            val message = if (isReply && replyToMessage.from.id == update.message.from.id) {
+            val message = if (isReply && replyToMessage.from.id == executorContext.message.from.id) {
                 replyToMessage.text
             } else {
-                update.message
-                    ?.text
+                executorContext.message
+                    .text
                     ?.removePrefix(command().command)
                     ?.removePrefix("@${botConfig.botName}")
                     ?.removePrefix(" ")
             }
                 ?.takeIf(String::isNotEmpty) ?: return ValidationError {
                 it.send(
-                    update,
-                    context.get(Phrase.ASK_WORLD_HELP)
+                    executorContext,
+                    executorContext.phrase(Phrase.ASK_WORLD_HELP)
                 )
             }
 
             val isScam =
                 shouldBeCensored(message) ||
-                    shouldBeCensored(update.toChat().name ?: "") ||
+                    shouldBeCensored(executorContext.chat.name ?: "") ||
                     isSpam(message) ||
                     containsLongWords(message)
 
             if (message.length > 2000) {
                 return ValidationError {
                     it.send(
-                        update,
-                        context.get(Phrase.ASK_WORLD_QUESTION_TOO_LONG),
+                        executorContext,
+                        executorContext.phrase(Phrase.ASK_WORLD_QUESTION_TOO_LONG),
                         replyToUpdate = true
                     )
                 }
@@ -220,7 +217,11 @@ class AskWorldInitialExecutor(
         return "$messagePrefix $boldChatName:"
     }
 
-    private fun getChatsToSendQuestion(update: Update, currentChat: Chat, isScam: Boolean): List<Chat> {
+    private fun getChatsToSendQuestion(
+        executorContext: ExecutorContext,
+        currentChat: Chat,
+        isScam: Boolean
+    ): List<Chat> {
         if (isScam) {
             log.info("Some scam message was found and it won't be sent")
             return emptyList()
@@ -228,7 +229,7 @@ class AskWorldInitialExecutor(
 
         val chatsWithFeatureEnabled = commonRepository.getChats()
             .filterNot { chat -> chat == currentChat }
-            .filter { chat -> configureRepository.isEnabled(getFunctionId(update), chat) }
+            .filter { chat -> configureRepository.isEnabled(getFunctionId(executorContext), chat) }
             .shuffled()
         log.info("Number of chats with feature enabled: ${chatsWithFeatureEnabled.size}")
         val acceptAllChats = chatsWithFeatureEnabled

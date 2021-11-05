@@ -11,21 +11,18 @@ import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.command.CommandExecutor
 import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.router.FunctionId
 import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.models.telegram.Pidor
 import space.yaroslav.familybot.repos.CommonRepository
-import space.yaroslav.familybot.services.talking.Dictionary
-import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
 class PidorStatsWorldExecutor(
-    private val repository: CommonRepository,
-    private val dictionary: Dictionary,
-    config: BotConfig
-) : CommandExecutor(config), Configurable {
+    private val repository: CommonRepository
+) : CommandExecutor(), Configurable {
 
-    override fun getFunctionId(update: Update): FunctionId {
+    override fun getFunctionId(executorContext: ExecutorContext): FunctionId {
         return FunctionId.PIDOR
     }
 
@@ -33,22 +30,22 @@ class PidorStatsWorldExecutor(
         return Command.STATS_WORLD
     }
 
-    override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        val context = dictionary.createContext(update)
+    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+        
         val pidorsByChat = repository.getAllPidors(
             startDate = DateConstants.theBirthDayOfFamilyBot
         )
             .map(Pidor::user)
             .formatTopList(
                 PluralizedWordsProvider(
-                    one = { context.get(Phrase.PLURALIZED_COUNT_ONE) },
-                    few = { context.get(Phrase.PLURALIZED_COUNT_FEW) },
-                    many = { context.get(Phrase.PLURALIZED_COUNT_MANY) }
+                    one = { executorContext.phrase(Phrase.PLURALIZED_COUNT_ONE) },
+                    few = { executorContext.phrase(Phrase.PLURALIZED_COUNT_FEW) },
+                    many = { executorContext.phrase(Phrase.PLURALIZED_COUNT_MANY) }
                 )
             )
             .take(100)
 
-        val title = "${context.get(Phrase.PIDOR_STAT_WORLD)}:\n".bold()
-        return { it.send(update, title + pidorsByChat.joinToString("\n"), enableHtml = true) }
+        val title = "${executorContext.phrase(Phrase.PIDOR_STAT_WORLD)}:\n".bold()
+        return { it.send(executorContext, title + pidorsByChat.joinToString("\n"), enableHtml = true) }
     }
 }

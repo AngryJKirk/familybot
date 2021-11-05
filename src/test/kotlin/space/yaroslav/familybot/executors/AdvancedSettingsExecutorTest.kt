@@ -7,10 +7,8 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
-import space.yaroslav.familybot.common.extensions.key
-import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.executors.command.settings.AdvancedSettingsExecutor
-import space.yaroslav.familybot.infrastructure.createSimpleUpdate
+import space.yaroslav.familybot.infrastructure.createSimpleContext
 import space.yaroslav.familybot.infrastructure.randomLong
 import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.services.settings.ChatEasyKey
@@ -59,9 +57,9 @@ class AdvancedSettingsExecutorTest : CommandExecutorTest() {
         easyKeyType: EasyKeyType<T, ChatEasyKey>,
         expectedSettingValue: T
     ) {
-        val update = createSimpleUpdate(command)
-        runBlocking { advancedSettingsExecutor.execute(update).invoke(sender) }
-        val actualSettingValue = easyKeyValueService.get(easyKeyType, update.toChat().key())
+        val context = createSimpleContext(command)
+        runBlocking { advancedSettingsExecutor.execute(context).invoke(sender) }
+        val actualSettingValue = easyKeyValueService.get(easyKeyType, context.chatKey)
         Assertions.assertEquals(expectedSettingValue, actualSettingValue)
     }
 }

@@ -1,35 +1,32 @@
 package space.yaroslav.familybot.executors.command.nonpublic
 
 import kotlinx.coroutines.delay
-import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.common.extensions.sendRandomSticker
 import space.yaroslav.familybot.common.extensions.startOfDay
 import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.executors.command.CommandExecutor
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.telegram.CommandByUser
 import space.yaroslav.familybot.models.telegram.User
 import space.yaroslav.familybot.models.telegram.stickers.StickerPack
 import space.yaroslav.familybot.repos.CommandHistoryRepository
-import space.yaroslav.familybot.telegram.BotConfig
 
 abstract class SendRandomStickerExecutor(
-    botConfig: BotConfig,
     private val historyRepository: CommandHistoryRepository
-) :
-    CommandExecutor(botConfig) {
+) : CommandExecutor() {
 
-    override fun execute(update: Update): suspend (AbsSender) -> Unit {
+    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
 
-        if (isInvokedToday(update.toUser())) {
+        if (isInvokedToday(executorContext.update.toUser())) {
             return {}
         }
 
         return {
-            it.send(update, getMessage())
+            it.send(executorContext, getMessage())
             delay(1000)
-            it.sendRandomSticker(update, getStickerPack())
+            it.sendRandomSticker(executorContext, getStickerPack())
         }
     }
 

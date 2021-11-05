@@ -26,11 +26,11 @@ Basically, Executor is an interface, which is presented by 3 methods listed belo
 
 ```kotlin
 interface Executor {
-    fun execute(update: Update): suspend (AbsSender) -> Unit
+    fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit
 
-    fun canExecute(message: Message): Boolean
+    fun canExecute(executorContext: ExecutorContext): Boolean
 
-    fun priority(update: Update): Priority
+    fun priority(executorContext: ExecutorContext): Priority
 }
 ``` 
 

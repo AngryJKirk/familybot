@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.executors.command.MarriageExecutor
+import space.yaroslav.familybot.infrastructure.createContext
 import space.yaroslav.familybot.infrastructure.createSimpleCommand
+import space.yaroslav.familybot.infrastructure.createSimpleCommandContext
 import space.yaroslav.familybot.infrastructure.createSimpleMessage
 import space.yaroslav.familybot.infrastructure.createSimpleUser
 import space.yaroslav.familybot.models.dictionary.Phrase
@@ -38,8 +40,8 @@ class MarriageExecutorTest : CommandExecutorTest() {
     override fun getCommandExecutor() = marriageExecutor
 
     override fun executeTest() {
-        val updateNoReply = createSimpleCommand(marriageExecutor.command())
-        runBlocking { marriageExecutor.execute(updateNoReply).invoke(sender) }
+        val contextNoReply = createSimpleCommandContext(marriageExecutor.command())
+        runBlocking { marriageExecutor.execute(contextNoReply).invoke(sender) }
         argumentCaptor<SendMessage> {
             verify(sender, times(1)).execute(capture())
             assertContains(phrases(Phrase.MARRY_RULES), firstValue.text)
@@ -47,37 +49,37 @@ class MarriageExecutorTest : CommandExecutorTest() {
 
         val firstUser = createSimpleUser().apply { id = 1 }
         val secondUser = createSimpleUser().apply { id = 2 }
-        val updateProposal = createSimpleCommand(marriageExecutor.command())
-        updateProposal.apply {
+        val proposalContext = createSimpleCommand(marriageExecutor.command())
+        proposalContext.apply {
             message.from = firstUser
-            message.replyToMessage = createSimpleMessage(chat = updateProposal.message.chat)
+            message.replyToMessage = createSimpleMessage(chat = proposalContext.message.chat)
                 .apply {
                     from = secondUser
                 }
         }
-        runBlocking { marriageExecutor.execute(updateProposal).invoke(sender) }
+        runBlocking { marriageExecutor.execute(proposalContext.createContext()).invoke(sender) }
         argumentCaptor<SendMessage> {
             verify(sender, times(2)).execute(capture())
-            val proposalTo = keyValueService.get(ProposalTo, updateProposal.message.replyToMessage.key())
+            val proposalTo = keyValueService.get(ProposalTo, proposalContext.message.replyToMessage.key())
             assertEquals(proposalTo, firstUser.id)
             assertContains(phrases(Phrase.MARRY_PROPOSED), secondValue.text)
         }
 
         val updateProposalReply = createSimpleCommand(marriageExecutor.command())
         updateProposalReply.apply {
-            message.chat = updateProposal.message.chat
+            message.chat = proposalContext.message.chat
             message.from = secondUser
-            message.replyToMessage = createSimpleMessage(chat = updateProposal.message.chat)
+            message.replyToMessage = createSimpleMessage(chat = proposalContext.message.chat)
                 .apply {
                     from = firstUser
                 }
         }
-        runBlocking { marriageExecutor.execute(updateProposalReply).invoke(sender) }
+        runBlocking { marriageExecutor.execute(updateProposalReply.createContext()).invoke(sender) }
         argumentCaptor<SendMessage> {
             verify(sender, times(3)).execute(capture())
             assertContains(phrases(Phrase.MARRY_CONGRATS), thirdValue.text)
-            assertNotNull(marriagesRepository.getMarriage(chatId = updateProposal.message.chatId, firstUser.id))
-            assertNotNull(marriagesRepository.getMarriage(chatId = updateProposal.message.chatId, secondUser.id))
+            assertNotNull(marriagesRepository.getMarriage(chatId = proposalContext.message.chatId, firstUser.id))
+            assertNotNull(marriagesRepository.getMarriage(chatId = proposalContext.message.chatId, secondUser.id))
         }
     }
 

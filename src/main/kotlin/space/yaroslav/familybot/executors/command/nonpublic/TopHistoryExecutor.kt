@@ -3,18 +3,16 @@ package space.yaroslav.familybot.executors.command.nonpublic
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
-import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.parseJson
 import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.executors.command.CommandExecutor
 import space.yaroslav.familybot.getLogger
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.telegram.Command
-import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
-class TopHistoryExecutor(config: BotConfig) :
-    CommandExecutor(config) {
+class TopHistoryExecutor : CommandExecutor() {
     private val log = getLogger()
     private val lazyMamoeb: Lazy<Mamoeb?> = lazy {
         runCatching {
@@ -35,10 +33,10 @@ class TopHistoryExecutor(config: BotConfig) :
         return Command.TOP_HISTORY
     }
 
-    override fun execute(update: Update): suspend (AbsSender) -> Unit {
+    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
         val mamoeb = lazyMamoeb.value ?: return {}
 
-        return { sender -> sender.send(update, mamoeb.curses.random()) }
+        return { sender -> sender.send(executorContext, mamoeb.curses.random()) }
     }
 }
 

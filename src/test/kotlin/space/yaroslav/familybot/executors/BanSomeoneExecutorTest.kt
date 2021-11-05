@@ -13,13 +13,14 @@ import org.mockito.kotlin.clearInvocations
 import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.executors.pm.BanSomeoneExecutor
+import space.yaroslav.familybot.infrastructure.createSimpleContext
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.randomString
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.services.misc.BanService
 import space.yaroslav.familybot.services.settings.EasyKey
@@ -55,20 +56,20 @@ class BanSomeoneExecutorTest : ExecutorTest() {
     lateinit var banService: BanService
 
     override fun priorityTest() {
-        val priority = banSomeoneExecutor.priority(Update())
+        val priority = banSomeoneExecutor.priority(createSimpleContext())
         Assertions.assertEquals(Priority.HIGH, priority)
     }
 
     override fun canExecuteTest() {
-        val validMessage = updateFromDeveloper(banSomeoneExecutor.getMessagePrefix()).message
+        val validContext = updateFromDeveloper(banSomeoneExecutor.getMessagePrefix())
 
-        val canExecuteValid = banSomeoneExecutor.canExecute(validMessage)
+        val canExecuteValid = banSomeoneExecutor.canExecute(validContext)
 
         Assert.assertTrue(canExecuteValid)
 
-        val notValidMessage = updateFromDeveloper(randomString()).message
+        val notValidContext = updateFromDeveloper(randomString())
 
-        val canExecuteNotValid = banSomeoneExecutor.canExecute(notValidMessage)
+        val canExecuteNotValid = banSomeoneExecutor.canExecute(notValidContext)
 
         Assertions.assertFalse(canExecuteNotValid)
     }
@@ -114,9 +115,9 @@ class BanSomeoneExecutorTest : ExecutorTest() {
         banService.removeBan(user.key())
     }
 
-    private fun updateFromDeveloper(messageText: String): Update {
+    private fun updateFromDeveloper(messageText: String): ExecutorContext {
         val developerUsername = botConfig.developer
-        return createSimpleUpdate(messageText).apply {
+        return createSimpleContext(messageText).apply {
             message.from.userName = developerUsername
             message.chat.apply {
                 type = "private"

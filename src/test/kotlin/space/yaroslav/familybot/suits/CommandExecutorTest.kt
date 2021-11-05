@@ -1,10 +1,9 @@
 package space.yaroslav.familybot.suits
 
 import org.junit.jupiter.api.Assertions
-import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.executors.command.CommandExecutor
-import space.yaroslav.familybot.infrastructure.createSimpleCommand
-import space.yaroslav.familybot.infrastructure.createSimpleMessage
+import space.yaroslav.familybot.infrastructure.createSimpleCommandContext
+import space.yaroslav.familybot.infrastructure.createSimpleContext
 import space.yaroslav.familybot.infrastructure.randomString
 import space.yaroslav.familybot.models.router.Priority
 
@@ -15,28 +14,28 @@ abstract class CommandExecutorTest : ExecutorTest() {
     override fun canExecuteTest() {
         val commandExecutor = getCommandExecutor()
         val command = commandExecutor.command()
-        val messageWithOnlyCommand = createSimpleCommand(command)
+        val messageWithOnlyCommand = createSimpleCommandContext(command)
         Assertions.assertTrue(
-            commandExecutor.canExecute(messageWithOnlyCommand.message),
+            commandExecutor.canExecute(messageWithOnlyCommand),
             "Command executor should be able to execute only if message starts with command"
         )
         val messageWithCommandInMiddle =
-            createSimpleCommand(prefix = randomString(), postfix = randomString(), command = command)
+            createSimpleCommandContext(prefix = randomString(), postfix = randomString(), command = command)
         Assertions.assertFalse(
-            commandExecutor.canExecute(messageWithCommandInMiddle.message),
+            commandExecutor.canExecute(messageWithCommandInMiddle),
             "Command executor should not react to command in the middle"
         )
-        val messageForOtherBot = createSimpleCommand(command = command, postfix = "@${randomString()}")
+        val messageForOtherBot = createSimpleCommandContext(command = command, postfix = "@${randomString()}")
         Assertions.assertFalse(
-            commandExecutor.canExecute(messageForOtherBot.message),
+            commandExecutor.canExecute(messageForOtherBot),
             "Should not react for command which addressed to another bot"
         )
-        val messageForSuchara = createSimpleCommand(command = command, postfix = "@IntegrationTests")
+        val messageForSuchara = createSimpleCommandContext(command = command, postfix = "@IntegrationTests")
         Assertions.assertTrue(
-            commandExecutor.canExecute(messageForSuchara.message),
+            commandExecutor.canExecute(messageForSuchara),
             "Should not react for command which addressed to another bot"
         )
-        val messageWithoutCommand = createSimpleMessage(randomString())
+        val messageWithoutCommand = createSimpleContext(randomString())
         Assertions.assertFalse(
             commandExecutor.canExecute(messageWithoutCommand),
             "Any others messages should never let executor be assigned to work"
@@ -46,7 +45,7 @@ abstract class CommandExecutorTest : ExecutorTest() {
     override fun priorityTest() {
         Assertions.assertEquals(
             Priority.MEDIUM,
-            getCommandExecutor().priority(Update()),
+            getCommandExecutor().priority(createSimpleContext()),
             "Command executors should always have medium priority"
         )
     }

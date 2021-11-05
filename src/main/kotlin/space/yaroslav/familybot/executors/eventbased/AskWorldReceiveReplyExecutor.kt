@@ -17,17 +17,15 @@ import org.telegram.telegrambots.meta.api.methods.send.SendVideoNote
 import org.telegram.telegrambots.meta.api.methods.send.SendVoice
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.boldNullable
 import space.yaroslav.familybot.common.extensions.italic
 import space.yaroslav.familybot.common.extensions.send
-import space.yaroslav.familybot.common.extensions.toChat
-import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.Executor
 import space.yaroslav.familybot.models.askworld.AskWorldReply
 import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.router.FunctionId
 import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.models.telegram.MessageContentType
@@ -45,11 +43,12 @@ class AskWorldReceiveReplyExecutor(
     private val dictionary: Dictionary
 ) : Executor, Configurable {
     private val log = LoggerFactory.getLogger(AskWorldReceiveReplyExecutor::class.java)
-    override fun getFunctionId(update: Update): FunctionId {
+    override fun getFunctionId(executorContext: ExecutorContext): FunctionId {
         return FunctionId.ASK_WORLD
     }
 
-    override fun canExecute(message: Message): Boolean {
+    override fun canExecute(executorContext: ExecutorContext): Boolean {
+        val message = executorContext.message
         if (message.isReply.not()) {
             return false
         }
@@ -70,16 +69,16 @@ class AskWorldReceiveReplyExecutor(
         return allPrefixes.map { "$it " }.any { text.startsWith(it) }
     }
 
-    override fun priority(update: Update): Priority {
+    override fun priority(executorContext: ExecutorContext): Priority {
         return Priority.LOW
     }
 
-    override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        val context = dictionary.createContext(update)
-        val message = update.message
+    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+
+        val message = executorContext.message
         val reply = message.text ?: "MEDIA: $message"
-        val chat = update.toChat()
-        val user = update.toUser()
+        val chat = executorContext.chat
+        val user = executorContext.user
         val chatId = chat.id
         val messageId = message.replyToMessage.messageId
         val question =
@@ -89,7 +88,7 @@ class AskWorldReceiveReplyExecutor(
                 it.execute(
                     SendMessage(
                         chat.idString,
-                        context.get(Phrase.ASK_WORLD_ANSWER_COULD_BE_ONLY_ONE)
+                        executorContext.phrase(Phrase.ASK_WORLD_ANSWER_COULD_BE_ONLY_ONE)
                     ).apply {
                         replyToMessageId = message.messageId
                     }
@@ -115,14 +114,27 @@ class AskWorldReceiveReplyExecutor(
 
                 val answerTitle = dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT, ChatEasyKey(question.chat.id))
                 if (contentType == MessageContentType.TEXT) {
-                    sendAnswerWithQuestion(sender, chatIdToReply, answerTitle, update, questionTitle, reply)
+                    sendAnswerWithQuestion(
+                        sender,
+                        chatIdToReply,
+                        answerTitle,
+                        executorContext,
+                        questionTitle,
+                        reply
+                    )
                 } else {
-                    sendOnlyQuestion(sender, chatIdToReply, answerTitle, update, questionTitle)
+                    sendOnlyQuestion(
+                        sender,
+                        chatIdToReply,
+                        answerTitle,
+                        executorContext,
+                        questionTitle
+                    )
                     dispatchMedia(sender, contentType, chatIdToReply, message)
                 }
-                sender.send(update, "Принято и отправлено")
+                sender.send(executorContext, "Принято и отправлено")
             }.onFailure { e ->
-                sender.send(update, "Принято")
+                sender.send(executorContext, "Принято")
                 log.info("Could not send reply instantly", e)
             }
         }
@@ -266,14 +278,14 @@ class AskWorldReceiveReplyExecutor(
         it: AbsSender,
         chatIdToReply: String,
         answerTitle: String,
-        update: Update,
+        executorContext: ExecutorContext,
         questionTitle: String
     ) {
         it.execute(
             SendMessage(
                 chatIdToReply,
-                "$answerTitle ${update.toChat().name.boldNullable()} " +
-                    "от ${update.toUser().getGeneralName()} на вопрос \"$questionTitle\":"
+                "$answerTitle ${executorContext.chat.name.boldNullable()} " +
+                    "от ${executorContext.user.getGeneralName()} на вопрос \"$questionTitle\":"
             ).apply {
                 enableHtml(true)
             }
@@ -284,15 +296,15 @@ class AskWorldReceiveReplyExecutor(
         it: AbsSender,
         chatIdToReply: String,
         answerTitle: String,
-        update: Update,
+        executorContext: ExecutorContext,
         questionTitle: String,
         reply: String
     ) {
         it.execute(
             SendMessage(
                 chatIdToReply,
-                "$answerTitle ${update.toChat().name.boldNullable()} " +
-                    "от ${update.toUser().getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}"
+                "$answerTitle ${executorContext.chat.name.boldNullable()} " +
+                    "от ${executorContext.user.getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}"
             ).apply {
                 enableHtml(true)
             }

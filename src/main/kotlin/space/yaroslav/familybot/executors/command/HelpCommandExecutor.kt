@@ -1,26 +1,24 @@
 package space.yaroslav.familybot.executors.command
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.telegram.Command
-import space.yaroslav.familybot.services.talking.Dictionary
-import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
-class HelpCommandExecutor(private val dictionary: Dictionary, config: BotConfig) : CommandExecutor(config) {
+class HelpCommandExecutor : CommandExecutor() {
 
     override fun command(): Command {
         return Command.HELP
     }
 
-    override fun execute(update: Update): suspend (AbsSender) -> Unit {
+    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
         return {
             it.send(
-                update,
-                dictionary.get(Phrase.HELP_MESSAGE, update),
+                executorContext,
+                executorContext.phrase(Phrase.HELP_MESSAGE),
                 enableHtml = true,
                 customization = {
                     disableWebPagePreview = true

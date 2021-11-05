@@ -9,20 +9,17 @@ import space.yaroslav.familybot.common.extensions.dropLastDelimiter
 import space.yaroslav.familybot.common.extensions.italic
 import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.common.extensions.startOfCurrentMonth
-import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.common.extensions.toRussian
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.command.CommandExecutor
 import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.models.dictionary.Pluralization
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.router.FunctionId
 import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.models.telegram.Pidor
 import space.yaroslav.familybot.models.telegram.User
 import space.yaroslav.familybot.repos.CommonRepository
-import space.yaroslav.familybot.services.talking.Dictionary
-import space.yaroslav.familybot.services.talking.DictionaryContext
-import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.time.Instant
 import java.time.LocalDate
@@ -31,12 +28,10 @@ import java.time.ZoneId
 
 @Component
 class TopPidorsByMonthsExecutor(
-    private val commonRepository: CommonRepository,
-    private val dictionary: Dictionary,
-    config: BotConfig
-) : CommandExecutor(config), Configurable {
+    private val commonRepository: CommonRepository
+) : CommandExecutor(), Configurable {
 
-    override fun getFunctionId(update: Update): FunctionId {
+    override fun getFunctionId(executorContext: ExecutorContext): FunctionId {
         return FunctionId.PIDOR
     }
 
@@ -48,35 +43,35 @@ class TopPidorsByMonthsExecutor(
         return Command.LEADERBOARD
     }
 
-    override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        val context = dictionary.createContext(update)
+    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+        
         val result = commonRepository
-            .getPidorsByChat(update.toChat())
+            .getPidorsByChat(executorContext.chat)
             .filter { it.date.isBefore(startOfCurrentMonth()) }
             .groupBy { map(it.date) }
             .mapValues { monthPidors -> calculateStats(monthPidors.value) }
             .toSortedMap()
             .asIterable()
             .reversed()
-            .map(formatLeaderBoard(context))
+            .map(formatLeaderBoard(executorContext))
         if (result.isEmpty()) {
             return {
-                it.send(update, context.get(Phrase.LEADERBOARD_NONE))
+                it.send(executorContext, executorContext.phrase(Phrase.LEADERBOARD_NONE))
             }
         }
-        val message = "${context.get(Phrase.LEADERBOARD_TITLE)}:\n".bold()
+        val message = "${executorContext.phrase(Phrase.LEADERBOARD_TITLE)}:\n".bold()
         return {
-            it.send(update, message + "\n" + result.joinToString(delimiter), enableHtml = true)
+            it.send(executorContext, message + "\n" + result.joinToString(delimiter), enableHtml = true)
         }
     }
 
-    private fun formatLeaderBoard(context: DictionaryContext): (Map.Entry<LocalDate, PidorStat>) -> String = {
+    private fun formatLeaderBoard(executorContext: ExecutorContext): (Map.Entry<LocalDate, PidorStat>) -> String = {
         val month = it.key.month.toRussian().capitalized()
         val year = it.key.year
         val userName = it.value.user.name.dropLastDelimiter()
         val position = it.value.position
         val leaderboardPhrase = getLeaderboardPhrase(
-            Pluralization.getPlur(it.value.position), context
+            Pluralization.getPlur(it.value.position), executorContext
         )
         "$month, $year:\n".italic() + "$userName, $position $leaderboardPhrase"
     }
@@ -94,11 +89,11 @@ class TopPidorsByMonthsExecutor(
         return PidorStat(pidor.key, pidors.count { it.user == pidor.key })
     }
 
-    private fun getLeaderboardPhrase(pluralization: Pluralization, context: DictionaryContext): String {
+    private fun getLeaderboardPhrase(pluralization: Pluralization, executorContext: ExecutorContext): String {
         return when (pluralization) {
-            Pluralization.ONE -> context.get(Phrase.PLURALIZED_LEADERBOARD_ONE)
-            Pluralization.FEW -> context.get(Phrase.PLURALIZED_LEADERBOARD_FEW)
-            Pluralization.MANY -> context.get(Phrase.PLURALIZED_LEADERBOARD_MANY)
+            Pluralization.ONE -> executorContext.phrase(Phrase.PLURALIZED_LEADERBOARD_ONE)
+            Pluralization.FEW -> executorContext.phrase(Phrase.PLURALIZED_LEADERBOARD_FEW)
+            Pluralization.MANY -> executorContext.phrase(Phrase.PLURALIZED_LEADERBOARD_MANY)
         }
     }
 }

@@ -1,12 +1,8 @@
 package space.yaroslav.familybot.services.talking
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.Update
-import space.yaroslav.familybot.common.extensions.key
-import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.models.dictionary.PhraseTheme
-import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.services.settings.ChatEasyKey
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.UkrainianLanguage
@@ -21,16 +17,6 @@ class Dictionary(
     fun getAll(phrase: Phrase): List<String> {
         return dictionaryReader.getAllPhrases(phrase)
     }
-
-    fun createContext(update: Update): DictionaryContext {
-        return DictionaryContext(update.toChat().key(), this::getInternal)
-    }
-
-    fun createContext(chat: Chat): DictionaryContext {
-        return DictionaryContext(chat.key(), this::getInternal)
-    }
-
-    fun get(phrase: Phrase, update: Update) = getInternal(phrase, update.toChat().key())
 
     fun get(phrase: Phrase, settingsKey: ChatEasyKey) = getInternal(phrase, settingsKey)
 
@@ -58,11 +44,4 @@ class Dictionary(
             else -> null
         }
     }
-}
-
-class DictionaryContext(
-    private val settingsKey: ChatEasyKey,
-    private val callback: (Phrase, ChatEasyKey) -> String
-) {
-    fun get(phrase: Phrase) = callback(phrase, settingsKey)
 }

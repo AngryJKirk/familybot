@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import space.yaroslav.familybot.executors.command.CommandExecutor
 import space.yaroslav.familybot.executors.command.stats.MeCommandExecutor
-import space.yaroslav.familybot.infrastructure.createSimpleCommand
+import space.yaroslav.familybot.infrastructure.createSimpleCommandContext
 import space.yaroslav.familybot.suits.CommandExecutorTest
 
 class MeExecutorTest : CommandExecutorTest() {
@@ -19,7 +19,7 @@ class MeExecutorTest : CommandExecutorTest() {
     override fun getCommandExecutor(): CommandExecutor = meCommandExecutor
 
     override fun executeTest() {
-        val update = createSimpleCommand(meCommandExecutor.command())
+        val update = createSimpleCommandContext(meCommandExecutor.command())
         runBlocking { meCommandExecutor.execute(update).invoke(sender) }
         verify(sender, Mockito.atLeastOnce()).execute(any<SendMessage>())
     }

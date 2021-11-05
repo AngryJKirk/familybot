@@ -1,11 +1,11 @@
 package space.yaroslav.familybot.executors.pm
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.getMessageTokens
 import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.send
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.misc.BanService
 import space.yaroslav.familybot.telegram.BotConfig
@@ -19,9 +19,9 @@ class BanSomeoneExecutor(
 
     private val banPrefix = "ban|"
 
-    override fun execute(update: Update): suspend (AbsSender) -> Unit {
+    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
 
-        val command = update.getMessageTokens(delimiter = "|")
+        val command = executorContext.update.getMessageTokens(delimiter = "|")
         val identification = command[1]
         val isUnban = command.getOrNull(3) == "unban"
         val isForever = command.getOrNull(3) == "forever"
@@ -34,10 +34,10 @@ class BanSomeoneExecutor(
             return {
                 if (isUnban) {
                     banService.removeBan(chat.key())
-                    it.send(update, "Unbanned chat: $chat")
+                    it.send(executorContext, "Unbanned chat: $chat")
                 } else {
                     banService.banChat(chat, description, isForever)
-                    it.send(update, "Banned chat: $chat")
+                    it.send(executorContext, "Banned chat: $chat")
                 }
             }
         }
@@ -51,16 +51,16 @@ class BanSomeoneExecutor(
             return {
                 if (isUnban) {
                     banService.removeBan(user.key())
-                    it.send(update, "Unbanned user: $user")
+                    it.send(executorContext, "Unbanned user: $user")
                 } else {
                     banService.banUser(user, description, isForever)
-                    it.send(update, "Banned user: $user")
+                    it.send(executorContext, "Banned user: $user")
                 }
             }
         }
 
         return {
-            it.send(update, "No one found")
+            it.send(executorContext, "No one found")
         }
     }
 

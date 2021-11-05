@@ -1,16 +1,14 @@
 package space.yaroslav.familybot.executors.eventbased
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.dropLastDelimiter
 import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.randomBoolean
 import space.yaroslav.familybot.common.extensions.send
-import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.Executor
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.router.FunctionId
 import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.models.telegram.Chat
@@ -20,28 +18,28 @@ import java.util.regex.Pattern
 
 @Component
 class HuificatorExecutor(private val easyKeyValueService: EasyKeyValueService) : Executor, Configurable {
-    override fun getFunctionId(update: Update): FunctionId {
+    override fun getFunctionId(executorContext: ExecutorContext): FunctionId {
         return FunctionId.HUIFICATE
     }
 
-    override fun priority(update: Update): Priority {
+    override fun priority(executorContext: ExecutorContext): Priority {
         return Priority.RANDOM
     }
 
-    override fun execute(update: Update): suspend (AbsSender) -> Unit {
+    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
 
-        val message = update.message
+        val message = executorContext.message
         val text = message.text ?: return {}
 
-        if (shouldHuificate(update.toChat())) {
+        if (shouldHuificate(executorContext.chat)) {
             val huifyed = huify(text) ?: return { }
-            return { it -> it.send(update, huifyed, shouldTypeBeforeSend = true) }
+            return { it -> it.send(executorContext, huifyed, shouldTypeBeforeSend = true) }
         } else {
             return { }
         }
     }
 
-    override fun canExecute(message: Message): Boolean {
+    override fun canExecute(executorContext: ExecutorContext): Boolean {
         return false
     }
 

@@ -2,31 +2,29 @@ package space.yaroslav.familybot.services.pidor
 
 import kotlinx.coroutines.delay
 import org.springframework.stereotype.Service
-import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.bold
 import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.common.extensions.startOfCurrentMonth
-import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.router.ExecutorContext
+import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.models.telegram.Pidor
 import space.yaroslav.familybot.models.telegram.User
 import space.yaroslav.familybot.repos.CommonRepository
-import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.time.Instant
 import java.time.LocalDate
 
 @Service
 class PidorCompetitionService(
-    private val repository: CommonRepository,
-    private val dictionary: Dictionary
+    private val repository: CommonRepository
 ) {
 
-    fun pidorCompetition(update: Update): suspend (AbsSender) -> Unit {
-        val context = dictionary.createContext(update)
+    fun pidorCompetition(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+
         if (isEndOfMonth()) {
-            val thisMonthPidors = getPidorsOfThisMonth(update)
+            val thisMonthPidors = getPidorsOfThisMonth(executorContext.chat)
             if (thisMonthPidors.size < 2) {
                 return { }
             }
@@ -34,25 +32,28 @@ class PidorCompetitionService(
             if (competitors != null) {
                 return {
                     it.send(
-                        update,
-                        context.get(Phrase.PIDOR_COMPETITION).bold() + "\n" + formatListOfCompetitors(competitors),
+                        executorContext,
+                        executorContext.phrase(Phrase.PIDOR_COMPETITION).bold() + "\n" + formatListOfCompetitors(
+                            competitors
+                        ),
                         enableHtml = true
                     )
                     val oneMorePidor = competitors.random()
                     repository.addPidor(Pidor(oneMorePidor, Instant.now()))
                     delay(1000)
                     val oneMorePidorMessage =
-                        context.get(Phrase.COMPETITION_ONE_MORE_PIDOR).bold() + " " + oneMorePidor.getGeneralName()
-                    it.send(update, oneMorePidorMessage, enableHtml = true)
+                        executorContext.phrase(Phrase.COMPETITION_ONE_MORE_PIDOR)
+                            .bold() + " " + oneMorePidor.getGeneralName()
+                    it.send(executorContext, oneMorePidorMessage, enableHtml = true)
                 }
             }
         }
         return { }
     }
 
-    private fun getPidorsOfThisMonth(update: Update): List<Pidor> {
+    private fun getPidorsOfThisMonth(chat: Chat): List<Pidor> {
         return repository.getPidorsByChat(
-            update.toChat(),
+            chat,
             startDate = startOfCurrentMonth()
         )
     }

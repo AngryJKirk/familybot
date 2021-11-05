@@ -2,13 +2,11 @@ package space.yaroslav.familybot.executors.eventbased.keyword.processor
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.randomBoolean
 import space.yaroslav.familybot.common.extensions.send
-import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.executors.eventbased.keyword.KeyWordProcessor
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.FuckOffOverride
 import space.yaroslav.familybot.services.settings.FuckOffTolerance
@@ -33,21 +31,22 @@ class BotMentionKeyWordProcessor(
         Regex(".*пельку.{0,10}стули.*", RegexOption.IGNORE_CASE)
     )
 
-    override fun canProcess(message: Message): Boolean {
+    override fun canProcess(executorContext: ExecutorContext): Boolean {
+        val message = executorContext.message
         return isReplyToBot(message) || isBotMention(message) || isBotNameMention(message)
     }
 
-    override fun process(update: Update): suspend (AbsSender) -> Unit {
-        if (isFuckOff(update)) {
-            return fuckOff(update)
+    override fun process(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+        if (isFuckOff(executorContext)) {
+            return fuckOff(executorContext)
         }
-        val shouldBeQuestion = isBotMention(update.message) || isBotNameMention(update.message)
+        val shouldBeQuestion = isBotMention(executorContext.message) || isBotNameMention(executorContext.message)
         return {
             val reply = talkingService.getReplyToUser(
-                update,
+                executorContext,
                 randomBoolean() && shouldBeQuestion
             )
-            it.send(update, reply, replyToUpdate = true, shouldTypeBeforeSend = true)
+            it.send(executorContext, reply, replyToUpdate = true, shouldTypeBeforeSend = true)
         }
     }
 
@@ -66,21 +65,21 @@ class BotMentionKeyWordProcessor(
         return message.isReply && message.replyToMessage.from.userName == botConfig.botName
     }
 
-    fun isFuckOff(update: Update): Boolean {
-        val text = update.message.text ?: return false
-        return if (!isUserUnderTolerance(update)) {
+    fun isFuckOff(executorContext: ExecutorContext): Boolean {
+        val text = executorContext.message.text ?: return false
+        return if (!isUserUnderTolerance(executorContext)) {
             fuckOffPhrases.any { it.matches(text) }
         } else {
             false
         }
     }
 
-    fun fuckOff(update: Update): suspend (AbsSender) -> Unit {
-        easyKeyValueService.put(FuckOffOverride, update.toChat().key(), true, defaultFuckOffDuration)
-        easyKeyValueService.put(FuckOffTolerance, update.key(), true, defaultToleranceDuration)
+    fun fuckOff(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+        easyKeyValueService.put(FuckOffOverride, executorContext.chatKey, true, defaultFuckOffDuration)
+        easyKeyValueService.put(FuckOffTolerance, executorContext.userAndChatKey, true, defaultToleranceDuration)
         return {}
     }
 
-    private fun isUserUnderTolerance(update: Update) =
-        easyKeyValueService.get(FuckOffTolerance, update.key(), defaultValue = false)
+    private fun isUserUnderTolerance(executorContext: ExecutorContext) =
+        easyKeyValueService.get(FuckOffTolerance, executorContext.userAndChatKey, defaultValue = false)
 }

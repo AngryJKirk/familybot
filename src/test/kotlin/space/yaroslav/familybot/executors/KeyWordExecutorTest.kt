@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker
 import space.yaroslav.familybot.executors.eventbased.keyword.KeyWordExecutor
-import space.yaroslav.familybot.infrastructure.createSimpleUpdate
-import space.yaroslav.familybot.infrastructure.singleStickerUpdate
+import space.yaroslav.familybot.infrastructure.createSimpleContext
+import space.yaroslav.familybot.infrastructure.singleStickerContext
 import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.models.telegram.stickers.Sticker
 import space.yaroslav.familybot.suits.ExecutorTest
@@ -23,20 +23,20 @@ class KeyWordExecutorTest : ExecutorTest() {
     lateinit var keyWordExecutor: KeyWordExecutor
 
     companion object {
-        private val leftZigaSticker = singleStickerUpdate(Sticker.LEFT_ZIGA)
-        private val rightZigaSticker = singleStickerUpdate(Sticker.RIGHT_ZIGA)
-        private val noZigaSticker = singleStickerUpdate(Sticker.SWEET_DREAMS)
+        private val leftZigaSticker = singleStickerContext(Sticker.LEFT_ZIGA)
+        private val rightZigaSticker = singleStickerContext(Sticker.RIGHT_ZIGA)
+        private val noZigaSticker = singleStickerContext(Sticker.SWEET_DREAMS)
     }
 
     override fun priorityTest() {
-        val update = createSimpleUpdate()
-        Assertions.assertEquals(Priority.LOW, keyWordExecutor.priority(update))
+        val context = createSimpleContext()
+        Assertions.assertEquals(Priority.LOW, keyWordExecutor.priority(context))
     }
 
     override fun canExecuteTest() {
-        Assertions.assertTrue(keyWordExecutor.canExecute(leftZigaSticker.message))
-        Assertions.assertTrue(keyWordExecutor.canExecute(rightZigaSticker.message))
-        Assertions.assertFalse(keyWordExecutor.canExecute(noZigaSticker.message))
+        Assertions.assertTrue(keyWordExecutor.canExecute(leftZigaSticker))
+        Assertions.assertTrue(keyWordExecutor.canExecute(rightZigaSticker))
+        Assertions.assertFalse(keyWordExecutor.canExecute(noZigaSticker))
     }
 
     override fun executeTest() {

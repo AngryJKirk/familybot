@@ -7,7 +7,7 @@ import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import space.yaroslav.familybot.executors.command.nonpublic.QuoteExecutor
-import space.yaroslav.familybot.infrastructure.createSimpleCommand
+import space.yaroslav.familybot.infrastructure.createSimpleCommandContext
 import space.yaroslav.familybot.suits.CommandExecutorTest
 
 class QuoteExecutorTest : CommandExecutorTest() {
@@ -18,7 +18,7 @@ class QuoteExecutorTest : CommandExecutorTest() {
     override fun getCommandExecutor() = quoteExecutorTest
 
     override fun executeTest() {
-        val update = createSimpleCommand(quoteExecutorTest.command())
+        val update = createSimpleCommandContext(quoteExecutorTest.command())
         runBlocking { quoteExecutorTest.execute(update).invoke(sender) }
         verify(sender, times(1)).execute(any<SendMessage>())
     }

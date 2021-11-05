@@ -5,8 +5,8 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import space.yaroslav.familybot.executors.eventbased.keyword.processor.BotMentionKeyWordProcessor
+import space.yaroslav.familybot.infrastructure.createSimpleContext
 import space.yaroslav.familybot.infrastructure.createSimpleMessage
-import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.createSimpleUser
 import space.yaroslav.familybot.suits.FamilybotApplicationTest
 import space.yaroslav.familybot.telegram.BotConfig
@@ -39,10 +39,10 @@ class FuckOffTest : FamilybotApplicationTest() {
     )
     fun `should be able to process valid message`(phrase: String) {
         val botName = botConfig.botName
-        val update = createSimpleUpdate(phrase)
-        update.message.replyToMessage = createSimpleMessage()
-        update.message.replyToMessage.from = createSimpleUser(true, botName)
-        val canProcess = botMentionKeyWordProcessor.isFuckOff(update)
+        val context = createSimpleContext(phrase)
+        context.message.replyToMessage = createSimpleMessage()
+        context.message.replyToMessage.from = createSimpleUser(true, botName)
+        val canProcess = botMentionKeyWordProcessor.isFuckOff(context)
         Assertions.assertTrue(canProcess, "Should be able to process simple message to bot: $phrase")
     }
 }

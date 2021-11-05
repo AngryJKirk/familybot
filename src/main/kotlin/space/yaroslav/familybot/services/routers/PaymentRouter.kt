@@ -5,7 +5,9 @@ import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.parseJson
+import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.dictionary.Phrase
@@ -14,7 +16,6 @@ import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.payment.PaymentService
 import space.yaroslav.familybot.services.settings.ChatEasyKey
 import space.yaroslav.familybot.services.talking.Dictionary
-import space.yaroslav.familybot.services.talking.DictionaryContext
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
@@ -59,23 +60,22 @@ class PaymentRouter(
     }
 
     fun proceedSuccessfulPayment(update: Update): suspend (AbsSender) -> Unit {
-        val context = dictionary.createContext(update)
+
         val shopPayload = getPayload(update.message.successfulPayment.invoicePayload)
         return { sender ->
             runCatching { paymentService.processSuccessfulPayment(shopPayload) }
                 .onFailure { e ->
                     log.error("Can not process payment", e)
-                    onFailure(sender, update, context, shopPayload)
+                    onFailure(sender, update, shopPayload)
                 }
                 .onSuccess { phrase ->
                     log.info("Wow, payment!")
-                    onSuccess(context, sender, update, phrase, shopPayload)
+                    onSuccess(sender, update, phrase, shopPayload)
                 }
         }
     }
 
     private fun onSuccess(
-        context: DictionaryContext,
         sender: AbsSender,
         update: Update,
         phrase: Phrase,
@@ -83,12 +83,13 @@ class PaymentRouter(
     ) {
         val developerId = botConfig.developerId
         val user = update.toUser()
-        val text = context.get(Phrase.SHOP_THANKS)
+        val chatKey = update.toChat().key()
+        val text = dictionary.get(Phrase.SHOP_THANKS, chatKey)
             .replace("$0", user.getGeneralName())
             .replace("$1", "@" + botConfig.developer)
         val chatId = shopPayload.chatId.toString()
         sender.execute(SendMessage(chatId, text))
-        sender.execute(SendMessage(chatId, context.get(phrase)))
+        sender.execute(SendMessage(chatId, dictionary.get(phrase, chatKey)))
         val chat = commonRepository
             .getChatsByUser(user)
             .find { shopPayload.chatId == it.id }
@@ -105,11 +106,10 @@ class PaymentRouter(
     private fun onFailure(
         sender: AbsSender,
         update: Update,
-        context: DictionaryContext,
         shopPayload: ShopPayload
     ) {
         val developerId = botConfig.developerId
-        val text = context.get(Phrase.SHOP_ERROR).replace("$1", "@" + botConfig.developer)
+        val text = dictionary.get(Phrase.SHOP_ERROR, update.toChat().key()).replace("$1", "@" + botConfig.developer)
         sender.execute(SendMessage(shopPayload.chatId.toString(), text))
 
         sender.execute(SendMessage(developerId, "Payment gone wrong: $update"))

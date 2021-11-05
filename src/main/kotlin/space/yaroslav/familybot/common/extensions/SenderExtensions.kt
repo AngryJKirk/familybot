@@ -10,7 +10,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendSticker
 import org.telegram.telegrambots.meta.api.methods.stickers.GetStickerSet
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberAdministrator
@@ -21,9 +20,9 @@ import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberOwner
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberRestricted
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.getLogger
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.telegram.stickers.Sticker
 import space.yaroslav.familybot.models.telegram.stickers.StickerPack
-import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 
@@ -32,7 +31,7 @@ object SenderLogger {
 }
 
 suspend fun AbsSender.send(
-    update: Update,
+    executorContext: ExecutorContext,
     text: String,
     replyMessageId: Int? = null,
     enableHtml: Boolean = false,
@@ -41,6 +40,7 @@ suspend fun AbsSender.send(
     shouldTypeBeforeSend: Boolean = false,
     typeDelay: Pair<Int, Int> = 1000 to 2000
 ): Message {
+    val update = executorContext.update
     SenderLogger.log.info(
         "Sending message, update=${update.toJson()}, " +
             "text=$text, " +
@@ -71,39 +71,39 @@ suspend fun AbsSender.send(
 }
 
 suspend fun AbsSender.sendSticker(
-    update: Update,
+    executorContext: ExecutorContext,
     sticker: Sticker,
     replyToUpdate: Boolean = false
 ): Message {
-    return sendStickerInternal(this, update, replyToUpdate, sticker.pack) {
+    return sendStickerInternal(this, executorContext, replyToUpdate, sticker.pack) {
         find { it.emoji == sticker.stickerEmoji }
     }
 }
 
 suspend fun AbsSender.sendRandomSticker(
-    update: Update,
+    executorContext: ExecutorContext,
     stickerPack: StickerPack,
     replyToUpdate: Boolean = false
 ): Message {
-    return sendStickerInternal(this, update, replyToUpdate, stickerPack) {
+    return sendStickerInternal(this, executorContext, replyToUpdate, stickerPack) {
         random()
     }
 }
 
-fun AbsSender.isFromAdmin(update: Update, botConfig: BotConfig): Boolean {
-    val user = update.from()
-    if (botConfig.developer == user.userName) {
+fun AbsSender.isFromAdmin(executorContext: ExecutorContext): Boolean {
+    if (executorContext.isFromDeveloper) {
         return true
     }
+    val user = executorContext.update.from()
     return this
-        .execute(GetChatAdministrators(update.toChat().idString))
+        .execute(GetChatAdministrators(executorContext.chat.idString))
         .filter { chatMember -> chatMember.status == "administrator" || chatMember.status == "creator" }
         .any { admin -> admin.user().id == user.id }
 }
 
 private suspend fun sendStickerInternal(
     sender: AbsSender,
-    update: Update,
+    executorContext: ExecutorContext,
     replyToUpdate: Boolean = false,
     stickerPack: StickerPack,
     stickerSelector: List<TelegramSticker>.() -> TelegramSticker?
@@ -116,10 +116,10 @@ private suspend fun sendStickerInternal(
     }
     val sendSticker = SendSticker().apply {
         sticker = InputFile(stickerId.await()?.fileId)
-        chatId = update.chatIdString()
+        chatId = executorContext.update.chatIdString()
     }
     if (replyToUpdate) {
-        sendSticker.replyToMessageId = update.message.messageId
+        sendSticker.replyToMessageId = executorContext.update.message.messageId
     }
     return sender.execute(sendSticker)
 }

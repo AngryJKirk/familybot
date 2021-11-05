@@ -5,11 +5,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage
-import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.send
-import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.getLogger
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.telegram.BotConfig
@@ -23,14 +22,14 @@ class PatchNoteExecutor(
     private val patchNotePrefix = "patch_note"
     private val log = getLogger()
 
-    override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        if (update.message.isReply.not()) {
-            return { sender -> sender.send(update, "No reply message found, master") }
+    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+        if (executorContext.message.isReply.not()) {
+            return { sender -> sender.send(executorContext, "No reply message found, master") }
         }
         return { sender ->
             val chats = commonRepository.getChats()
             log.info("Sending in {} chats", chats.size)
-            chats.forEach { tryToSendMessage(sender, it, update) }
+            chats.forEach { tryToSendMessage(sender, it, executorContext) }
         }
     }
 
@@ -40,7 +39,11 @@ class PatchNoteExecutor(
         commonRepository.changeChatActiveStatus(chat, false)
     }
 
-    private suspend fun tryToSendMessage(sender: AbsSender, chat: Chat, update: Update) {
+    private suspend fun tryToSendMessage(
+        sender: AbsSender,
+        chat: Chat,
+        executorContext: ExecutorContext
+    ) {
         coroutineScope {
             launch {
                 delay(500)
@@ -48,8 +51,8 @@ class PatchNoteExecutor(
                     sender.execute(
                         ForwardMessage(
                             chat.idString,
-                            update.toUser().id.toString(),
-                            update.message.replyToMessage.messageId
+                            executorContext.user.id.toString(),
+                            executorContext.message.replyToMessage.messageId
                         )
                     )
                     log.info("Sent patchnote to chatId={}", chat.idString)

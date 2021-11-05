@@ -8,9 +8,8 @@ import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.executors.command.PidorExecutor
-import space.yaroslav.familybot.infrastructure.createSimpleCommand
+import space.yaroslav.familybot.infrastructure.createSimpleCommandContext
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.suits.CommandExecutorTest
 
@@ -28,17 +27,17 @@ class PidorExecutorTest : CommandExecutorTest() {
     override fun getCommandExecutor() = pidorExecutor
 
     override fun executeTest() {
-        val update = createSimpleCommand(pidorExecutor.command())
+        val context = createSimpleCommandContext(pidorExecutor.command())
         val pidorsBefore =
-            commonRepository.getPidorsByChat(update.toChat())
+            commonRepository.getPidorsByChat(context.chat)
         val allPidors = commonRepository.getAllPidors()
 
-        runBlocking { pidorExecutor.execute(update).invoke(sender) }
+        runBlocking { pidorExecutor.execute(context).invoke(sender) }
         val firstCaptor = ArgumentCaptor.forClass(SendMessage::class.java)
         verify(sender, times(11)).execute(firstCaptor.capture())
 
         val pidorsAfterFirstInvoke =
-            commonRepository.getPidorsByChat(update.toChat())
+            commonRepository.getPidorsByChat(context.chat)
 
         Assertions.assertEquals(
             pidorsBefore.size + 1,
@@ -61,11 +60,11 @@ class PidorExecutorTest : CommandExecutorTest() {
             "Pidor in message and in database should match"
         )
         val secondCaptor = ArgumentCaptor.forClass(SendMessage::class.java)
-        runBlocking { pidorExecutor.execute(update).invoke(sender) }
+        runBlocking { pidorExecutor.execute(context).invoke(sender) }
         verify(sender, times(12)).execute(secondCaptor.capture())
 
         val pidorsAfterSecondInvoke =
-            commonRepository.getPidorsByChat(update.toChat())
+            commonRepository.getPidorsByChat(context.chat)
 
         Assertions.assertEquals(
             pidorsAfterFirstInvoke.size,

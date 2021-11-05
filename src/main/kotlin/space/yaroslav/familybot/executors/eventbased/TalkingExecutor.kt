@@ -1,8 +1,6 @@
 package space.yaroslav.familybot.executors.eventbased
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.randomBoolean
@@ -11,6 +9,7 @@ import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.Executor
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.router.FunctionId
 import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.models.telegram.Chat
@@ -25,29 +24,29 @@ class TalkingExecutor(
     private val easyKeyValueService: EasyKeyValueService
 ) : Executor, Configurable {
 
-    override fun getFunctionId(update: Update): FunctionId {
-        return if (isRageModeEnabled(update.toChat())) {
+    override fun getFunctionId(executorContext: ExecutorContext): FunctionId {
+        return if (isRageModeEnabled(executorContext.chat)) {
             FunctionId.RAGE
         } else {
             FunctionId.CHATTING
         }
     }
 
-    override fun priority(update: Update): Priority {
-        return if (isRageModeEnabled(update.toChat())) {
+    override fun priority(executorContext: ExecutorContext): Priority {
+        return if (isRageModeEnabled(executorContext.chat)) {
             Priority.HIGH
         } else {
             Priority.RANDOM
         }
     }
 
-    override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        val chat = update.toChat()
+    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+        val chat = executorContext.chat
         val rageModEnabled = isRageModeEnabled(chat)
         if (shouldReply(rageModEnabled, chat)) {
 
             return {
-                val messageText = talkingService.getReplyToUser(update)
+                val messageText = talkingService.getReplyToUser(executorContext)
                     .let { message -> if (rageModEnabled) rageModeFormat(message) else message }
                 val delay = if (rageModEnabled.not()) {
                     1000 to 2000
@@ -55,7 +54,7 @@ class TalkingExecutor(
                     100 to 500
                 }
                 it.send(
-                    update,
+                    executorContext,
                     messageText,
                     replyToUpdate = true,
                     shouldTypeBeforeSend = true,
@@ -70,8 +69,8 @@ class TalkingExecutor(
         }
     }
 
-    override fun canExecute(message: Message): Boolean {
-        return isRageModeEnabled(message.chat.toChat())
+    override fun canExecute(executorContext: ExecutorContext): Boolean {
+        return isRageModeEnabled(executorContext.message.chat.toChat())
     }
 
     private fun isRageModeEnabled(chat: Chat): Boolean {

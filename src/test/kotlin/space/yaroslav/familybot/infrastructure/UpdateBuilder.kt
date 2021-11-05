@@ -1,13 +1,49 @@
 package space.yaroslav.familybot.infrastructure
 
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
 import org.telegram.telegrambots.meta.api.objects.Chat
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.MessageEntity
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
+import space.yaroslav.familybot.common.extensions.executorContext
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.models.telegram.stickers.Sticker
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
+import space.yaroslav.familybot.services.settings.UkrainianLanguage
+import space.yaroslav.familybot.services.talking.Dictionary
+import space.yaroslav.familybot.services.talking.DictionaryReader
+import space.yaroslav.familybot.telegram.BotConfig
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
+
+private val keyValueService = mock<EasyKeyValueService> {
+    on { get(eq(UkrainianLanguage), any()) }.thenReturn(false)
+}
+private val dictionary = Dictionary(keyValueService, DictionaryReader())
+
+private val botConfig = BotConfig(
+    botToken = "123",
+    botName = "IntegrationTests",
+    developer = "IntegrationTestsDeveloper",
+    developerId = "123",
+    botNameAliases = listOf("IntegrationTests"),
+    yandexKey = null,
+    paymentToken = null
+)
+
+fun createSimpleContext(text: String? = null): ExecutorContext {
+
+    return update(text).executorContext(botConfig, dictionary)
+}
+
+fun Update.createContext() = this.executorContext(botConfig, dictionary)
+
+fun createSimpleCommandContext(command: Command, prefix: String? = null, postfix: String? = null): ExecutorContext {
+    return createSimpleCommand(command, prefix, postfix).executorContext(botConfig, dictionary)
+}
 
 fun createSimpleUpdate(text: String? = null): Update {
     return update(text)
@@ -40,7 +76,7 @@ fun createSimpleUser(isBot: Boolean = false, botName: String? = null): User {
     return user
 }
 
-fun singleStickerUpdate(sticker: Sticker): Update {
+fun singleStickerContext(sticker: Sticker): ExecutorContext {
     return update()
         .apply {
             message.sticker = TelegramSticker().apply {
@@ -48,7 +84,7 @@ fun singleStickerUpdate(sticker: Sticker): Update {
                 setName = sticker.pack.packName
                 fileId = randomString()
             }
-        }
+        }.executorContext(botConfig, dictionary)
 }
 
 private fun update(text: String? = null): Update {

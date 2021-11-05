@@ -7,19 +7,18 @@ import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.bold
 import space.yaroslav.familybot.common.extensions.isToday
 import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.send
-import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.common.extensions.untilNextDay
 import space.yaroslav.familybot.common.extensions.user
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.router.FunctionId
 import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.models.telegram.Command
@@ -30,36 +29,31 @@ import space.yaroslav.familybot.services.pidor.PidorCompetitionService
 import space.yaroslav.familybot.services.pidor.PidorStrikesService
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.PidorTolerance
-import space.yaroslav.familybot.services.talking.Dictionary
-import space.yaroslav.familybot.services.talking.DictionaryContext
-import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 
 @Component
 class PidorExecutor(
     private val repository: CommonRepository,
     private val pidorCompetitionService: PidorCompetitionService,
-    private val dictionary: Dictionary,
     private val pidorStrikesService: PidorStrikesService,
-    private val easyKeyValueService: EasyKeyValueService,
-    config: BotConfig
-) : CommandExecutor(config), Configurable {
-    override fun getFunctionId(update: Update): FunctionId {
+    private val easyKeyValueService: EasyKeyValueService
+) : CommandExecutor(), Configurable {
+    override fun getFunctionId(executorContext: ExecutorContext): FunctionId {
         return FunctionId.PIDOR
     }
 
     private val log = getLogger()
 
-    override fun execute(update: Update): suspend (AbsSender) -> Unit {
-        val chat = update.toChat()
-        val context = dictionary.createContext(chat)
+    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+        val chat = executorContext.chat
+
         log.info("Getting pidors from chat $chat")
         val users = repository.getUsers(chat, activeOnly = true)
         val key = chat.key()
         val pidorToleranceValue = easyKeyValueService.get(PidorTolerance, key)
         if (isLimitOfPidorsExceeded(users, pidorToleranceValue ?: 0)) {
             log.info("Pidors are already found")
-            val message = getMessageForPidors(chat, context)
+            val message = getMessageForPidors(executorContext)
             if (message != null) {
                 return { it.execute(message) }
             }
@@ -73,11 +67,11 @@ class PidorExecutor(
                 Phrase.PIDOR_SEARCH_MIDDLE,
                 Phrase.PIDOR_SEARCH_FINISHER
             )
-                .map(context::get)
+                .map(executorContext::phrase)
                 .map(String::bold)
                 .forEach { phrase ->
                     sender.send(
-                        update,
+                        executorContext,
                         phrase,
                         enableHtml = true,
                         shouldTypeBeforeSend = true,
@@ -86,7 +80,7 @@ class PidorExecutor(
                 }
             val pidor = nextPidor.await()
             sender.send(
-                update,
+                executorContext,
                 pidor.getGeneralName(),
                 enableHtml = true,
                 shouldTypeBeforeSend = true,
@@ -97,8 +91,8 @@ class PidorExecutor(
             } else {
                 easyKeyValueService.increment(PidorTolerance, key)
             }
-            pidorStrikesService.calculateStrike(update, pidor).invoke(sender)
-            pidorCompetitionService.pidorCompetition(update).invoke(sender)
+            pidorStrikesService.calculateStrike(executorContext, pidor).invoke(sender)
+            pidorCompetitionService.pidorCompetition(executorContext).invoke(sender)
         }
     }
 
@@ -140,7 +134,8 @@ class PidorExecutor(
         return Command.PIDOR
     }
 
-    private fun getMessageForPidors(chat: Chat, context: DictionaryContext): SendMessage? {
+    private fun getMessageForPidors(executorContext: ExecutorContext): SendMessage? {
+        val chat = executorContext.chat
         val pidorsByChat = repository
             .getPidorsByChat(chat)
             .filter { pidor -> pidor.date.isToday() }
@@ -149,12 +144,12 @@ class PidorExecutor(
             0 -> null
             1 -> SendMessage(
                 chat.idString,
-                context.get(Phrase.PIROR_DISCOVERED_ONE) + " " +
+                executorContext.phrase(Phrase.PIROR_DISCOVERED_ONE) + " " +
                     pidorsByChat.first().user.getGeneralName()
             ).apply { enableHtml(true) }
             else -> SendMessage(
                 chat.idString,
-                context.get(Phrase.PIROR_DISCOVERED_MANY) + " " +
+                executorContext.phrase(Phrase.PIROR_DISCOVERED_MANY) + " " +
                     pidorsByChat.joinToString { it.user.getGeneralName() }
             ).apply { enableHtml(true) }
         }

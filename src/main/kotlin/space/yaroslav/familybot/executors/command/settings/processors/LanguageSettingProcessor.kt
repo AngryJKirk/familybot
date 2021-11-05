@@ -1,42 +1,40 @@
 package space.yaroslav.familybot.executors.command.settings.processors
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.getMessageTokens
 import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.UkrainianLanguage
-import space.yaroslav.familybot.services.talking.Dictionary
 
 @Component
 class LanguageSettingProcessor(
-    private val easyKeyValueService: EasyKeyValueService,
-    private val dictionary: Dictionary
+    private val easyKeyValueService: EasyKeyValueService
 ) : SettingProcessor {
 
-    override fun canProcess(update: Update): Boolean {
-        return update.getMessageTokens()[1] == "хохол"
+    override fun canProcess(executorContext: ExecutorContext): Boolean {
+        return executorContext.update.getMessageTokens()[1] == "хохол"
     }
 
-    override fun process(update: Update): suspend (AbsSender) -> Unit {
-        val context = dictionary.createContext(update)
-        val value = update.getMessageTokens()[2]
+    override fun process(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+        
+        val value = executorContext.update.getMessageTokens()[2]
         if (value != "вкл" && value != "выкл") {
             return {
                 it.send(
-                    update,
-                    context.get(Phrase.ADVANCED_SETTINGS_FAILED_UKRAINIAN_CHANGE)
+                    executorContext,
+                    executorContext.phrase(Phrase.ADVANCED_SETTINGS_FAILED_UKRAINIAN_CHANGE)
                 )
             }
         }
         val setting = value == "вкл"
-        easyKeyValueService.put(UkrainianLanguage, update.toChat().key(), setting)
+        easyKeyValueService.put(UkrainianLanguage, executorContext.update.toChat().key(), setting)
         return {
-            it.send(update, context.get(Phrase.ADVANCED_SETTINGS_OK))
+            it.send(executorContext, executorContext.phrase(Phrase.ADVANCED_SETTINGS_OK))
         }
     }
 }

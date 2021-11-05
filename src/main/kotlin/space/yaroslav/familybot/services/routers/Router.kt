@@ -6,13 +6,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.api.objects.Chat
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.common.extensions.executorContext
 import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.prettyFormat
+import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.common.meteredCanExecute
@@ -25,6 +25,7 @@ import space.yaroslav.familybot.executors.eventbased.AntiDdosExecutor
 import space.yaroslav.familybot.executors.pm.PrivateMessageExecutor
 import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.models.telegram.CommandByUser
 import space.yaroslav.familybot.repos.ChatLogRepository
@@ -77,24 +78,30 @@ class Router(
                 return {}
             }
         }
+        val executorContext = update.executorContext(botConfig, dictionary)
 
         val executor = if (isGroup) {
-            selectExecutor(update) ?: selectRandom(update)
+            selectExecutor(executorContext) ?: selectRandom(executorContext)
         } else {
-            selectExecutor(update, forSingleUser = true) ?: return {}
+            selectExecutor(executorContext, forSingleUser = true) ?: return {}
         }
 
         logger.info("Executor to apply: ${executor.javaClass.simpleName}")
 
-        return if (isExecutorDisabled(executor, update)) {
+        return if (isExecutorDisabled(executor, executorContext)) {
             when (executor) {
-                is CommandExecutor -> disabledCommand(chat)
-                is AntiDdosExecutor -> antiDdosSkip(message, update)
+                is CommandExecutor -> disabledCommand(executorContext)
+                is AntiDdosExecutor -> antiDdosSkip(executorContext)
                 else -> { _ -> }
             }
         } else {
-            executor.meteredExecute(update, meterRegistry)
-        }.also { logChatCommand(executor, update) }
+            executor.meteredExecute(executorContext, meterRegistry)
+        }.also {
+            loggingScope.launch {
+                delay(3000)
+                logChatCommand(executor, executorContext)
+            }
+        }
     }
 
     private fun registerUpdate(
@@ -108,42 +115,42 @@ class Router(
         }
     }
 
-    private fun selectRandom(update: Update): Executor {
+    private fun selectRandom(executorContext: ExecutorContext): Executor {
         logger.info("No executor found, trying to find random priority executors")
 
-        loggingScope.launch { logChatMessage(update) }
-        val executor = executors.filter { it.meteredPriority(update, meterRegistry) == Priority.RANDOM }.random()
+        loggingScope.launch { logChatMessage(executorContext) }
+        val executor = executors
+            .filter { it.meteredPriority(executorContext, meterRegistry) == Priority.RANDOM }
+            .random()
 
         logger.info("Random priority executor ${executor.javaClass.simpleName} was selected")
         return executor
     }
 
-    private fun antiDdosSkip(message: Message, update: Update): suspend (AbsSender) -> Unit = marker@{ it ->
-        val executor = executors
-            .filterIsInstance<CommandExecutor>()
-            .find { it.meteredCanExecute(message, meterRegistry) } ?: return@marker
-        val function = if (isExecutorDisabled(executor, update)) {
-            disabledCommand(message.chat)
-        } else {
-            executor.meteredExecute(update, meterRegistry)
+    private fun antiDdosSkip(executorContext: ExecutorContext): suspend (AbsSender) -> Unit =
+        marker@{ it ->
+            val executor = executors
+                .filterIsInstance<CommandExecutor>()
+                .find { it.meteredCanExecute(executorContext, meterRegistry) } ?: return@marker
+            val function = if (isExecutorDisabled(executor, executorContext)) {
+                disabledCommand(executorContext)
+            } else {
+                executor.meteredExecute(executorContext, meterRegistry)
+            }
+
+            function.invoke(it)
         }
 
-        function.invoke(it)
+    private fun disabledCommand(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+        val phrase = executorContext.phrase(Phrase.COMMAND_IS_OFF)
+        return { it -> it.send(executorContext, phrase) }
     }
 
-    private fun disabledCommand(chat: Chat): suspend (AbsSender) -> Unit {
-        val mappedChat = chat.toChat()
-        val phrase = dictionary.get(Phrase.COMMAND_IS_OFF, mappedChat.key())
-        return { it ->
-            it.execute(SendMessage(mappedChat.idString, phrase))
-        }
-    }
-
-    private fun isExecutorDisabled(executor: Executor, update: Update): Boolean {
+    private fun isExecutorDisabled(executor: Executor, executorContext: ExecutorContext): Boolean {
         if (executor !is Configurable) return false
 
-        val functionId = executor.getFunctionId(update)
-        val isExecutorDisabled = !configureRepository.isEnabled(functionId, update.toChat())
+        val functionId = executor.getFunctionId(executorContext)
+        val isExecutorDisabled = !configureRepository.isEnabled(functionId, executorContext.chat)
 
         if (isExecutorDisabled) {
             logger.info("Executor ${executor::class.simpleName} is disabled")
@@ -151,54 +158,56 @@ class Router(
         return isExecutorDisabled
     }
 
-    private fun logChatCommand(executor: Executor, update: Update) {
-        loggingScope.launch {
-            if (executor is CommandExecutor && executor.isLoggable()) {
-                val key = update.key()
-                val currentValue = easyKeyValueService.get(CommandLimit, key)
-                if (currentValue == null) {
-                    easyKeyValueService.put(CommandLimit, key, 1, Duration.of(5, ChronoUnit.MINUTES))
-                } else {
-                    easyKeyValueService.increment(CommandLimit, key)
-                }
-                commandHistoryRepository.add(
-                    CommandByUser(
-                        update.toUser(),
-                        executor.command(),
-                        Instant.now()
-                    )
-                )
+    private fun logChatCommand(executor: Executor, executorContext: ExecutorContext) {
+        if (executor is CommandExecutor && executor.isLoggable()) {
+            val key = executorContext.userAndChatKey
+            val currentValue = easyKeyValueService.get(CommandLimit, key)
+            if (currentValue == null) {
+                easyKeyValueService.put(CommandLimit, key, 1, Duration.of(5, ChronoUnit.MINUTES))
+            } else {
+                easyKeyValueService.increment(CommandLimit, key)
             }
+
+            commandHistoryRepository.add(
+                CommandByUser(
+                    executorContext.user,
+                    executor.command(),
+                    Instant.now()
+                )
+            )
         }
     }
 
-    private fun logChatMessage(update: Update) {
-        val key = update.key()
+    private fun logChatMessage(executorContext: ExecutorContext) {
+        val key = executorContext.userAndChatKey
         if (easyKeyValueService.get(MessageCounter, key) != null) {
             easyKeyValueService.increment(MessageCounter, key)
         }
 
-        val text = update.message.text
+        val text = executorContext.message.text
             ?.takeIf { botConfig.botNameAliases.none { alias -> it.contains(alias, ignoreCase = true) } }
             ?.takeIf { it.split(" ").size in (3..7) }
             ?.takeIf { it.length < 600 }
             ?.takeIf { chatLogRegex.matches(it) } ?: return
 
-        chatLogRepository.add(update.toUser(), text)
+        chatLogRepository.add(executorContext.user, text)
     }
 
-    private fun selectExecutor(update: Update, forSingleUser: Boolean = false): Executor? {
+    private fun selectExecutor(
+        executorContext: ExecutorContext,
+        forSingleUser: Boolean = false
+    ): Executor? {
         val executorsToProcess = if (forSingleUser) {
             executors.filterIsInstance<PrivateMessageExecutor>()
         } else {
             executors.filterNot { it is PrivateMessageExecutor }
         }
         return executorsToProcess
-            .sortedByDescending { it.meteredPriority(update, meterRegistry).priorityValue }
-            .filter { it.meteredPriority(update, meterRegistry) higherThan Priority.RANDOM }
+            .sortedByDescending { it.meteredPriority(executorContext, meterRegistry).priorityValue }
+            .filter { it.meteredPriority(executorContext, meterRegistry) higherThan Priority.RANDOM }
             .find {
                 it.meteredCanExecute(
-                    update.message ?: update.editedMessage ?: update.callbackQuery.message,
+                    executorContext,
                     meterRegistry
                 )
             }

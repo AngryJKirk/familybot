@@ -14,12 +14,8 @@ import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.api.objects.Update
-import space.yaroslav.familybot.common.extensions.key
-import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.executors.eventbased.HuificatorExecutor
-import space.yaroslav.familybot.infrastructure.createSimpleUpdate
+import space.yaroslav.familybot.infrastructure.createSimpleContext
 import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.TalkingDensity
@@ -54,13 +50,12 @@ class HuificatorExecutorTest : ExecutorTest() {
     lateinit var easyKeyValueService: EasyKeyValueService
 
     override fun priorityTest() {
-        val update = Update()
-        val priority = huificatorExecutor.priority(update)
+        val priority = huificatorExecutor.priority(createSimpleContext())
         Assertions.assertEquals(Priority.RANDOM, priority, "Huificator executor should be random")
     }
 
     override fun canExecuteTest() {
-        val canExecute = huificatorExecutor.canExecute(Message())
+        val canExecute = huificatorExecutor.canExecute(createSimpleContext())
         Assertions.assertFalse(canExecute, "Should always be not available to execute")
     }
 
@@ -71,11 +66,11 @@ class HuificatorExecutorTest : ExecutorTest() {
     @ParameterizedTest
     @MethodSource("valuesProvider")
     fun executeTest(input: String, expected: String?) {
-        val update = createSimpleUpdate(input)
-        easyKeyValueService.put(TalkingDensity, update.toChat().key(), 0)
+        val context = createSimpleContext(input)
+        easyKeyValueService.put(TalkingDensity, context.chatKey, 0)
         val sender = testSender.sender
         runBlocking {
-            huificatorExecutor.execute(update).invoke(sender)
+            huificatorExecutor.execute(context).invoke(sender)
         }
         if (expected == null) {
             verifyNoInteractions(sender)

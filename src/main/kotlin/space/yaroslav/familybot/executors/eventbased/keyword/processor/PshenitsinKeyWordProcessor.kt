@@ -1,13 +1,10 @@
 package space.yaroslav.familybot.executors.eventbased.keyword.processor
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.send
-import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.executors.eventbased.keyword.KeyWordProcessor
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.services.settings.ChatEasyKey
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.PshenitsinTolerance
@@ -20,15 +17,15 @@ class PshenitsinKeyWordProcessor(
     private val keyValueService: EasyKeyValueService
 ) : KeyWordProcessor {
 
-    override fun canProcess(message: Message): Boolean {
-        val text = message.text ?: return false
-        return containsSymbolsY(text) && isTolerant(message.chatId).not()
+    override fun canProcess(executorContext: ExecutorContext): Boolean {
+        val text = executorContext.message.text ?: return false
+        return containsSymbolsY(text) && isTolerant(executorContext.message.chatId).not()
     }
 
-    override fun process(update: Update): suspend (AbsSender) -> Unit {
+    override fun process(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
         return { sender ->
             val text = talkingService
-                .getReplyToUser(update)
+                .getReplyToUser(executorContext)
                 .toCharArray()
                 .map { ch ->
                     when {
@@ -41,13 +38,13 @@ class PshenitsinKeyWordProcessor(
                 .let(::String)
 
             sender.send(
-                update,
+                executorContext,
                 text,
                 shouldTypeBeforeSend = true,
                 replyToUpdate = true
             )
 
-            keyValueService.put(PshenitsinTolerance, update.toChat().key(), true, Duration.ofMinutes(1))
+            keyValueService.put(PshenitsinTolerance, executorContext.chatKey, true, Duration.ofMinutes(1))
         }
     }
 

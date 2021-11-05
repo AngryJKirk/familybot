@@ -5,11 +5,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.Update
 import space.yaroslav.familybot.common.extensions.key
-import space.yaroslav.familybot.common.extensions.toChat
-import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.getLogger
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.telegram.User
 import space.yaroslav.familybot.repos.ChatLogRepository
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
@@ -35,10 +33,10 @@ class TalkingService(
     }
 
     @Timed("service.TalkingService.getReplyToUser")
-    suspend fun getReplyToUser(update: Update, shouldBeQuestion: Boolean = false): String {
+    suspend fun getReplyToUser(executorContext: ExecutorContext, shouldBeQuestion: Boolean = false): String {
         val message = coroutineScope {
             async {
-                val userMessages = getMessagesForUser(update.toUser())
+                val userMessages = getMessagesForUser(executorContext.user)
                 return@async if (shouldBeQuestion) {
                     userMessages
                         .filter { message -> message.endsWith("?") }
@@ -50,7 +48,7 @@ class TalkingService(
             }
         }
 
-        return if (easyKeyValueService.get(UkrainianLanguage, update.toChat().key()) == true) {
+        return if (easyKeyValueService.get(UkrainianLanguage, executorContext.chat.key()) == true) {
             translateService.translate(message.await())
         } else {
             message.await()

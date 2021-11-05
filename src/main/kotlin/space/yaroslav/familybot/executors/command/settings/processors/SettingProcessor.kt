@@ -1,11 +1,11 @@
 package space.yaroslav.familybot.executors.command.settings.processors
 
-import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.models.router.ExecutorContext
 
 interface SettingProcessor {
 
-    fun canProcess(update: Update): Boolean
+    fun canProcess(executorContext: ExecutorContext): Boolean
 
-    fun process(update: Update): suspend (AbsSender) -> Unit
+    fun process(executorContext: ExecutorContext): suspend (AbsSender) -> Unit
 }

@@ -1,31 +1,29 @@
 package space.yaroslav.familybot.services.pidor
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.bold
 import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.telegram.User
-import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.lang.Integer.max
 
 @Component
 class PidorStrikesService(
-    private val dictionary: Dictionary,
     private val pidorStrikeStorage: PidorStrikeStorage
 ) {
-    fun calculateStrike(update: Update, pidor: User): suspend (AbsSender) -> Unit {
-        val stats = pidorStrikeStorage.get(update)
+    fun calculateStrike(executorContext: ExecutorContext, pidor: User): suspend (AbsSender) -> Unit {
+        val stats = pidorStrikeStorage.get(executorContext.chat)
         val newStats = calculateStrike(stats, pidor)
 
-        pidorStrikeStorage.save(update, newStats)
+        pidorStrikeStorage.save(executorContext, newStats)
 
         val newPidorStrike = newStats.stats[pidor.id]
             ?: throw FamilyBot.InternalException("Some huge internal logic problem, please investigate")
         return if (newPidorStrike.currentStrike >= 2 && newStats.stats.size > 1) {
-            congratulate(update, newPidorStrike)
+            congratulate(executorContext, newPidorStrike)
         } else {
             { }
         }
@@ -54,7 +52,7 @@ class PidorStrikesService(
     }
 
     private fun congratulate(
-        update: Update,
+        executorContext: ExecutorContext,
         strike: PidorStrikeStat
     ): suspend (AbsSender) -> Unit {
         val phrase = when (strike.currentStrike) {
@@ -71,8 +69,8 @@ class PidorStrikesService(
         }
         return { sender ->
             sender.send(
-                update,
-                dictionary.get(phrase, update).bold(),
+                executorContext,
+                executorContext.phrase(phrase).bold(),
                 shouldTypeBeforeSend = true,
                 enableHtml = true
             )

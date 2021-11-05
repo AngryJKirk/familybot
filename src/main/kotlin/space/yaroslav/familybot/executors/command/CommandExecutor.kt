@@ -1,19 +1,16 @@
 package space.yaroslav.familybot.executors.command
 
-import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.api.objects.Update
-import space.yaroslav.familybot.common.extensions.getCommand
 import space.yaroslav.familybot.executors.Executor
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.models.telegram.Command
-import space.yaroslav.familybot.telegram.BotConfig
 
-abstract class CommandExecutor(private val config: BotConfig) : Executor {
-    override fun canExecute(message: Message): Boolean {
-        return command() == message.getCommand(config.botName)
+abstract class CommandExecutor : Executor {
+    override fun canExecute(executorContext: ExecutorContext): Boolean {
+        return command() == executorContext.command
     }
 
-    override fun priority(update: Update): Priority {
+    override fun priority(executorContext: ExecutorContext): Priority {
         return Priority.MEDIUM
     }
 
