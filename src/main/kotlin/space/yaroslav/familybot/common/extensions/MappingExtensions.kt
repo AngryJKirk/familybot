@@ -66,7 +66,7 @@ fun Update.from(): TelegramUser {
 
 fun Update.context(botConfig: BotConfig, dictionary: Dictionary): ExecutorContext {
     val message = this.message ?: this.editedMessage ?: this.callbackQuery.message
-    val isFromDeveloper = botConfig.developer == message.from.userName
+    val isFromDeveloper = botConfig.developer == this.from().userName
     val chat = this.toChat()
     val user = this.toUser()
     return ExecutorContext(
