@@ -28,7 +28,7 @@ class ShopContiniousExecutor(
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         val providerToken = botConfig.paymentToken ?: return {}
         val chat = context.chat
-        
+
         val callbackQuery = context.update.callbackQuery
         val shopItem = ShopItem.values().find { item -> callbackQuery.data == item.name }
             ?: return {}

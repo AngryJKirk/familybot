@@ -41,9 +41,9 @@ class FindUserExecutor(
             userToChats
                 .joinToString(separator = delimiter) { (user, chats) ->
                     "User: ${formatUser(user)} in chats [${
-                        formatChats(
-                            chats
-                        )
+                    formatChats(
+                        chats
+                    )
                     }]"
                 }
     }

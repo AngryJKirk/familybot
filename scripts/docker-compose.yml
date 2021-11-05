@@ -32,7 +32,7 @@ services:
       - POSTGRES_PASSWORD
     ports:
       - "127.0.0.1:5432:5432"
-   
+
   family-pgadmin:
     container_name: family-pgadmin
     image: dpage/pgadmin4
@@ -40,13 +40,13 @@ services:
       family-net:
     volumes:
       - pgadmin-data:/var/lib/pgadmin
-    environment: 
+    environment:
       - PGADMIN_DEFAULT_EMAIL
       - PGADMIN_DEFAULT_PASSWORD
     restart: always
     ports:
       - "127.0.0.1:5081:80"
-    
+
   family:
     container_name: family
     networks:

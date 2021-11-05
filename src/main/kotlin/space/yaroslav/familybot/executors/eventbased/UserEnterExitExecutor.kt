@@ -10,11 +10,11 @@ import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.router.FunctionId
 import space.yaroslav.familybot.models.router.Priority
-import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
-class UserEnterExitExecutor(private val dictionary: Dictionary, private val botConfig: BotConfig) : Executor,
+class UserEnterExitExecutor(private val botConfig: BotConfig) :
+    Executor,
     Configurable {
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         val message = context.message

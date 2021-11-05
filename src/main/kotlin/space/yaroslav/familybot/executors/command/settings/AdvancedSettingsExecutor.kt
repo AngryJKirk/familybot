@@ -11,11 +11,9 @@ import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.telegram.Command
-import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
 class AdvancedSettingsExecutor(
-    private val botConfig: BotConfig,
     private val processors: List<SettingProcessor>
 ) : CommandExecutor() {
     override fun command() = Command.ADVANCED_SETTINGS
@@ -23,7 +21,7 @@ class AdvancedSettingsExecutor(
     private val log = getLogger()
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        
+
         val messageTokens = context.update.getMessageTokens()
         if (messageTokens.size == 1) {
             return {

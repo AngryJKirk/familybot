@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package space.yaroslav.familybot.executors.eventbased
 
 import org.springframework.stereotype.Component
@@ -14,11 +12,9 @@ import space.yaroslav.familybot.models.router.FunctionId
 import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.services.settings.CommandLimit
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
-import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
 class AntiDdosExecutor(
-    private val config: BotConfig,
     private val easyKeyValueService: EasyKeyValueService
 ) : Executor, Configurable {
     override fun getFunctionId(context: ExecutorContext): FunctionId {

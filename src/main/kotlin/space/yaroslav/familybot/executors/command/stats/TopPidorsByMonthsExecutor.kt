@@ -1,7 +1,6 @@
 package space.yaroslav.familybot.executors.command.stats
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.bold
 import space.yaroslav.familybot.common.extensions.capitalized
@@ -44,7 +43,7 @@ class TopPidorsByMonthsExecutor(
     }
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        
+
         val result = commonRepository
             .getPidorsByChat(context.chat)
             .filter { it.date.isBefore(startOfCurrentMonth()) }

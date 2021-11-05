@@ -16,7 +16,7 @@ import space.yaroslav.familybot.telegram.FamilyBot
 class ScenarioContiniousExecutor(
     private val scenarioSessionManagementService: ScenarioSessionManagementService,
     private val scenarioService: ScenarioService,
-    private val botConfig: BotConfig
+    botConfig: BotConfig
 ) :
     ContiniousConversationExecutor(botConfig) {
     override fun getDialogMessage(context: ExecutorContext) = "Какую игру выбрать?"

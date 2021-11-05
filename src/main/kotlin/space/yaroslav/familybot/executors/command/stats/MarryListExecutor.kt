@@ -64,7 +64,7 @@ class MarryListExecutor(
     override fun command() = Command.MARRY_LIST
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        
+
         val marriages = marriagesRepository.getAllMarriages(context.chat.id)
         if (marriages.isEmpty()) {
             return { sender -> sender.send(context, context.phrase(Phrase.MARRY_EMPTY_LIST)) }

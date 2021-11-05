@@ -18,7 +18,7 @@ import space.yaroslav.familybot.telegram.BotConfig
 @Component
 class SettingsContiniousExecutor(
     private val configureRepository: FunctionsConfigureRepository,
-    private val botConfig: BotConfig
+    botConfig: BotConfig
 ) : ContiniousConversationExecutor(botConfig) {
     private val log = getLogger()
     override fun command(): Command {

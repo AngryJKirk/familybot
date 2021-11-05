@@ -19,7 +19,7 @@ class LanguageSettingProcessor(
     }
 
     override fun process(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        
+
         val value = context.update.getMessageTokens()[2]
         if (value != "вкл" && value != "выкл") {
             return {
