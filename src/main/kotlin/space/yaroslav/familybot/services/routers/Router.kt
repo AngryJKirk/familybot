@@ -1,6 +1,7 @@
 package space.yaroslav.familybot.services.routers
 
 import io.micrometer.core.instrument.MeterRegistry
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -61,6 +62,10 @@ class Router(
     private val logger = getLogger()
     private val chatLogRegex = Regex("[а-яА-Яё\\s,.!?]+")
     private val loggingScope = CoroutineScope(Dispatchers.Default)
+    private val loggingExceptionHandler = CoroutineExceptionHandler { _, exception ->
+        logger.error("Exception in logging job", exception)
+    }
+
     suspend fun processUpdate(update: Update): suspend (AbsSender) -> Unit {
 
         val message = update.message
@@ -97,7 +102,7 @@ class Router(
         } else {
             executor.meteredExecute(context, meterRegistry)
         }.also {
-            loggingScope.launch {
+            loggingScope.launch(loggingExceptionHandler) {
                 delay(3000)
                 logChatCommand(executor, context)
             }
@@ -109,7 +114,7 @@ class Router(
         update: Update
     ) {
         register(message)
-        loggingScope.launch {
+        loggingScope.launch(loggingExceptionHandler) {
             delay(3000) // temporary fix in order to check why it fails sometimes
             rawUpdateLogger.log(update)
         }
@@ -118,7 +123,7 @@ class Router(
     private fun selectRandom(context: ExecutorContext): Executor {
         logger.info("No executor found, trying to find random priority executors")
 
-        loggingScope.launch { logChatMessage(context) }
+        loggingScope.launch(loggingExceptionHandler) { logChatMessage(context) }
         val executor = executors
             .filter { it.meteredPriority(context, meterRegistry) == Priority.RANDOM }
             .random()
