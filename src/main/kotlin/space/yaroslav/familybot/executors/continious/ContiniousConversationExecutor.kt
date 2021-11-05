@@ -7,15 +7,15 @@ import space.yaroslav.familybot.telegram.BotConfig
 
 abstract class ContiniousConversationExecutor(private val config: BotConfig) : CommandExecutor() {
 
-    override fun priority(executorContext: ExecutorContext): Priority {
+    override fun priority(context: ExecutorContext): Priority {
         return Priority.MEDIUM
     }
 
-    override fun canExecute(executorContext: ExecutorContext): Boolean {
-        val message = executorContext.message
+    override fun canExecute(context: ExecutorContext): Boolean {
+        val message = context.message
         return message.from.userName == config.botName &&
-            (message.text ?: "") == getDialogMessage(executorContext)
+            (message.text ?: "") == getDialogMessage(context)
     }
 
-    abstract fun getDialogMessage(executorContext: ExecutorContext): String
+    abstract fun getDialogMessage(context: ExecutorContext): String
 }

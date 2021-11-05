@@ -27,7 +27,7 @@ class RouletteContiniousExecutor(
 
     private val log = LoggerFactory.getLogger(RouletteContiniousExecutor::class.java)
 
-    override fun getDialogMessage(executorContext: ExecutorContext): String {
+    override fun getDialogMessage(context: ExecutorContext): String {
         return ROULETTE_MESSAGE
     }
 
@@ -35,18 +35,18 @@ class RouletteContiniousExecutor(
         return Command.ROULETTE
     }
 
-    override fun canExecute(executorContext: ExecutorContext): Boolean {
-        val message = executorContext.message
+    override fun canExecute(context: ExecutorContext): Boolean {
+        val message = context.message
         return message.isReply &&
             message.replyToMessage.from.userName == botConfig.botName &&
-            (message.replyToMessage.text ?: "") == getDialogMessage(executorContext)
+            (message.replyToMessage.text ?: "") == getDialogMessage(context)
     }
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
-        val user = executorContext.user
-        val chatId = executorContext.chat.idString
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        val user = context.user
+        val chatId = context.chat.idString
 
-        val number = executorContext.message.text.split(" ")[0].toIntOrNull()
+        val number = context.message.text.split(" ")[0].toIntOrNull()
         if (number !in 1..6) {
             return {
                 it.execute(SendMessage(chatId, "Мушку спили и в следующий раз играй по правилам"))
@@ -95,7 +95,7 @@ class RouletteContiniousExecutor(
                 )
             }
             delay(2000)
-            pidorCompetitionService.pidorCompetition(executorContext).invoke(it)
+            pidorCompetitionService.pidorCompetition(context).invoke(it)
         }
     }
 }

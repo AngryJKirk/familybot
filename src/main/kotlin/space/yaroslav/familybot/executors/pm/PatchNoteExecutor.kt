@@ -22,14 +22,14 @@ class PatchNoteExecutor(
     private val patchNotePrefix = "patch_note"
     private val log = getLogger()
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
-        if (executorContext.message.isReply.not()) {
-            return { sender -> sender.send(executorContext, "No reply message found, master") }
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        if (context.message.isReply.not()) {
+            return { sender -> sender.send(context, "No reply message found, master") }
         }
         return { sender ->
             val chats = commonRepository.getChats()
             log.info("Sending in {} chats", chats.size)
-            chats.forEach { tryToSendMessage(sender, it, executorContext) }
+            chats.forEach { tryToSendMessage(sender, it, context) }
         }
     }
 
@@ -42,7 +42,7 @@ class PatchNoteExecutor(
     private suspend fun tryToSendMessage(
         sender: AbsSender,
         chat: Chat,
-        executorContext: ExecutorContext
+        context: ExecutorContext
     ) {
         coroutineScope {
             launch {
@@ -51,8 +51,8 @@ class PatchNoteExecutor(
                     sender.execute(
                         ForwardMessage(
                             chat.idString,
-                            executorContext.user.id.toString(),
-                            executorContext.message.replyToMessage.messageId
+                            context.user.id.toString(),
+                            context.message.replyToMessage.messageId
                         )
                     )
                     log.info("Sent patchnote to chatId={}", chat.idString)

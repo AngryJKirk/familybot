@@ -19,9 +19,9 @@ class BanSomeoneExecutor(
 
     private val banPrefix = "ban|"
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
 
-        val command = executorContext.update.getMessageTokens(delimiter = "|")
+        val command = context.update.getMessageTokens(delimiter = "|")
         val identification = command[1]
         val isUnban = command.getOrNull(3) == "unban"
         val isForever = command.getOrNull(3) == "forever"
@@ -34,10 +34,10 @@ class BanSomeoneExecutor(
             return {
                 if (isUnban) {
                     banService.removeBan(chat.key())
-                    it.send(executorContext, "Unbanned chat: $chat")
+                    it.send(context, "Unbanned chat: $chat")
                 } else {
                     banService.banChat(chat, description, isForever)
-                    it.send(executorContext, "Banned chat: $chat")
+                    it.send(context, "Banned chat: $chat")
                 }
             }
         }
@@ -51,16 +51,16 @@ class BanSomeoneExecutor(
             return {
                 if (isUnban) {
                     banService.removeBan(user.key())
-                    it.send(executorContext, "Unbanned user: $user")
+                    it.send(context, "Unbanned user: $user")
                 } else {
                     banService.banUser(user, description, isForever)
-                    it.send(executorContext, "Banned user: $user")
+                    it.send(context, "Banned user: $user")
                 }
             }
         }
 
         return {
-            it.send(executorContext, "No one found")
+            it.send(context, "No one found")
         }
     }
 

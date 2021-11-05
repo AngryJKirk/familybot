@@ -16,8 +16,8 @@ import space.yaroslav.familybot.telegram.BotConfig
 @Component
 class UserEnterExitExecutor(private val dictionary: Dictionary, private val botConfig: BotConfig) : Executor,
     Configurable {
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
-        val message = executorContext.message
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        val message = context.message
         val phrase = when {
             isUserLeft(message) -> Phrase.USER_LEAVING_CHAT
             isNewChat(message) -> Phrase.BOT_WELCOME_MESSAGE
@@ -25,22 +25,22 @@ class UserEnterExitExecutor(private val dictionary: Dictionary, private val botC
         }
         return {
             it.send(
-                executorContext, executorContext.phrase(phrase),
+                context, context.phrase(phrase),
                 replyToUpdate = true,
                 shouldTypeBeforeSend = true
             )
         }
     }
 
-    override fun canExecute(executorContext: ExecutorContext) =
-        isUserLeft(executorContext.message) || isUserEntered(executorContext.message)
+    override fun canExecute(context: ExecutorContext) =
+        isUserLeft(context.message) || isUserEntered(context.message)
 
-    override fun priority(executorContext: ExecutorContext) = Priority.LOW
+    override fun priority(context: ExecutorContext) = Priority.LOW
 
     private fun isUserLeft(message: Message) = message.leftChatMember != null
     private fun isUserEntered(message: Message) = message.newChatMembers?.isNotEmpty() ?: false
     private fun isNewChat(message: Message) =
         message.newChatMembers.any { it.isBot && it.userName == botConfig.botName }
 
-    override fun getFunctionId(executorContext: ExecutorContext) = FunctionId.GREETINGS
+    override fun getFunctionId(context: ExecutorContext) = FunctionId.GREETINGS
 }

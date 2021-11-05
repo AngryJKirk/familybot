@@ -19,17 +19,17 @@ class ShopContiniousExecutor(
     private val botConfig: BotConfig,
 ) : ContiniousConversationExecutor(botConfig) {
 
-    override fun getDialogMessage(executorContext: ExecutorContext): String {
-        return executorContext.phrase(Phrase.SHOP_KEYBOARD)
+    override fun getDialogMessage(context: ExecutorContext): String {
+        return context.phrase(Phrase.SHOP_KEYBOARD)
     }
 
     override fun command() = Command.SHOP
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         val providerToken = botConfig.paymentToken ?: return {}
-        val chat = executorContext.chat
+        val chat = context.chat
         
-        val callbackQuery = executorContext.update.callbackQuery
+        val callbackQuery = context.update.callbackQuery
         val shopItem = ShopItem.values().find { item -> callbackQuery.data == item.name }
             ?: return {}
 
@@ -38,13 +38,13 @@ class ShopContiniousExecutor(
             it.execute(
                 SendInvoice(
                     chat.idString,
-                    executorContext.phrase(shopItem.title),
-                    executorContext.phrase(shopItem.description),
-                    createPayload(executorContext, shopItem),
+                    context.phrase(shopItem.title),
+                    context.phrase(shopItem.description),
+                    createPayload(context, shopItem),
                     providerToken,
                     "help",
                     "RUB",
-                    listOf(LabeledPrice(executorContext.phrase(Phrase.SHOP_PAY_LABEL), shopItem.price))
+                    listOf(LabeledPrice(context.phrase(Phrase.SHOP_PAY_LABEL), shopItem.price))
                 ).apply {
                     maxTipAmount = 100.rubles()
                     suggestedTipAmounts = listOf(10.rubles(), 20.rubles(), 50.rubles(), 100.rubles())
@@ -53,10 +53,10 @@ class ShopContiniousExecutor(
         }
     }
 
-    private fun createPayload(executorContext: ExecutorContext, shopItem: ShopItem): String {
+    private fun createPayload(context: ExecutorContext, shopItem: ShopItem): String {
         return ShopPayload(
-            executorContext.chat.id,
-            executorContext.user.id,
+            context.chat.id,
+            context.user.id,
             shopItem
         ).toJson()
     }

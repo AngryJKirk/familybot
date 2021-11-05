@@ -14,16 +14,16 @@ import java.lang.Integer.max
 class PidorStrikesService(
     private val pidorStrikeStorage: PidorStrikeStorage
 ) {
-    fun calculateStrike(executorContext: ExecutorContext, pidor: User): suspend (AbsSender) -> Unit {
-        val stats = pidorStrikeStorage.get(executorContext.chat)
+    fun calculateStrike(context: ExecutorContext, pidor: User): suspend (AbsSender) -> Unit {
+        val stats = pidorStrikeStorage.get(context)
         val newStats = calculateStrike(stats, pidor)
 
-        pidorStrikeStorage.save(executorContext, newStats)
+        pidorStrikeStorage.save(context, newStats)
 
         val newPidorStrike = newStats.stats[pidor.id]
             ?: throw FamilyBot.InternalException("Some huge internal logic problem, please investigate")
         return if (newPidorStrike.currentStrike >= 2 && newStats.stats.size > 1) {
-            congratulate(executorContext, newPidorStrike)
+            congratulate(context, newPidorStrike)
         } else {
             { }
         }
@@ -52,7 +52,7 @@ class PidorStrikesService(
     }
 
     private fun congratulate(
-        executorContext: ExecutorContext,
+        context: ExecutorContext,
         strike: PidorStrikeStat
     ): suspend (AbsSender) -> Unit {
         val phrase = when (strike.currentStrike) {
@@ -69,8 +69,8 @@ class PidorStrikesService(
         }
         return { sender ->
             sender.send(
-                executorContext,
-                executorContext.phrase(phrase).bold(),
+                context,
+                context.phrase(phrase).bold(),
                 shouldTypeBeforeSend = true,
                 enableHtml = true
             )

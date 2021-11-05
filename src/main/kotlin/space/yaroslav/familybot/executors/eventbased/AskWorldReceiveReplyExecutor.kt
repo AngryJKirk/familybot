@@ -43,12 +43,12 @@ class AskWorldReceiveReplyExecutor(
     private val dictionary: Dictionary
 ) : Executor, Configurable {
     private val log = LoggerFactory.getLogger(AskWorldReceiveReplyExecutor::class.java)
-    override fun getFunctionId(executorContext: ExecutorContext): FunctionId {
+    override fun getFunctionId(context: ExecutorContext): FunctionId {
         return FunctionId.ASK_WORLD
     }
 
-    override fun canExecute(executorContext: ExecutorContext): Boolean {
-        val message = executorContext.message
+    override fun canExecute(context: ExecutorContext): Boolean {
+        val message = context.message
         if (message.isReply.not()) {
             return false
         }
@@ -69,16 +69,16 @@ class AskWorldReceiveReplyExecutor(
         return allPrefixes.map { "$it " }.any { text.startsWith(it) }
     }
 
-    override fun priority(executorContext: ExecutorContext): Priority {
+    override fun priority(context: ExecutorContext): Priority {
         return Priority.LOW
     }
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
 
-        val message = executorContext.message
+        val message = context.message
         val reply = message.text ?: "MEDIA: $message"
-        val chat = executorContext.chat
-        val user = executorContext.user
+        val chat = context.chat
+        val user = context.user
         val chatId = chat.id
         val messageId = message.replyToMessage.messageId
         val question =
@@ -88,7 +88,7 @@ class AskWorldReceiveReplyExecutor(
                 it.execute(
                     SendMessage(
                         chat.idString,
-                        executorContext.phrase(Phrase.ASK_WORLD_ANSWER_COULD_BE_ONLY_ONE)
+                        context.phrase(Phrase.ASK_WORLD_ANSWER_COULD_BE_ONLY_ONE)
                     ).apply {
                         replyToMessageId = message.messageId
                     }
@@ -118,7 +118,7 @@ class AskWorldReceiveReplyExecutor(
                         sender,
                         chatIdToReply,
                         answerTitle,
-                        executorContext,
+                        context,
                         questionTitle,
                         reply
                     )
@@ -127,14 +127,14 @@ class AskWorldReceiveReplyExecutor(
                         sender,
                         chatIdToReply,
                         answerTitle,
-                        executorContext,
+                        context,
                         questionTitle
                     )
                     dispatchMedia(sender, contentType, chatIdToReply, message)
                 }
-                sender.send(executorContext, "Принято и отправлено")
+                sender.send(context, "Принято и отправлено")
             }.onFailure { e ->
-                sender.send(executorContext, "Принято")
+                sender.send(context, "Принято")
                 log.info("Could not send reply instantly", e)
             }
         }
@@ -278,14 +278,14 @@ class AskWorldReceiveReplyExecutor(
         it: AbsSender,
         chatIdToReply: String,
         answerTitle: String,
-        executorContext: ExecutorContext,
+        context: ExecutorContext,
         questionTitle: String
     ) {
         it.execute(
             SendMessage(
                 chatIdToReply,
-                "$answerTitle ${executorContext.chat.name.boldNullable()} " +
-                    "от ${executorContext.user.getGeneralName()} на вопрос \"$questionTitle\":"
+                "$answerTitle ${context.chat.name.boldNullable()} " +
+                    "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\":"
             ).apply {
                 enableHtml(true)
             }
@@ -296,15 +296,15 @@ class AskWorldReceiveReplyExecutor(
         it: AbsSender,
         chatIdToReply: String,
         answerTitle: String,
-        executorContext: ExecutorContext,
+        context: ExecutorContext,
         questionTitle: String,
         reply: String
     ) {
         it.execute(
             SendMessage(
                 chatIdToReply,
-                "$answerTitle ${executorContext.chat.name.boldNullable()} " +
-                    "от ${executorContext.user.getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}"
+                "$answerTitle ${context.chat.name.boldNullable()} " +
+                    "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}"
             ).apply {
                 enableHtml(true)
             }

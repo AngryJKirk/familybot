@@ -12,20 +12,20 @@ import space.yaroslav.familybot.models.telegram.stickers.StickerPack
 class ZigaKeyWordProcessor : KeyWordProcessor {
     private val zigaStickers = listOf(Sticker.LEFT_ZIGA, Sticker.RIGHT_ZIGA)
 
-    override fun canProcess(executorContext: ExecutorContext): Boolean {
-        val incomeSticker = executorContext.message.sticker ?: return false
+    override fun canProcess(context: ExecutorContext): Boolean {
+        val incomeSticker = context.message.sticker ?: return false
         val isRightPack = StickerPack.FAMILY_PACK.packName == incomeSticker.setName
         return isRightPack && zigaStickers.any { it.stickerEmoji == incomeSticker.emoji }
     }
 
-    override fun process(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun process(context: ExecutorContext): suspend (AbsSender) -> Unit {
         return {
-            val stickerToSend = if (executorContext.message.sticker?.emoji == Sticker.LEFT_ZIGA.stickerEmoji) {
+            val stickerToSend = if (context.message.sticker?.emoji == Sticker.LEFT_ZIGA.stickerEmoji) {
                 Sticker.RIGHT_ZIGA
             } else {
                 Sticker.LEFT_ZIGA
             }
-            it.sendSticker(executorContext, stickerToSend, replyToUpdate = true)
+            it.sendSticker(context, stickerToSend, replyToUpdate = true)
         }
     }
 }

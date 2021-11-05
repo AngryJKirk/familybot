@@ -6,13 +6,13 @@ import space.yaroslav.familybot.telegram.BotConfig
 
 abstract class OnlyBotOwnerExecutor(private val botConfig: BotConfig) : PrivateMessageExecutor {
 
-    override fun canExecute(executorContext: ExecutorContext): Boolean {
-        val message = executorContext.message
+    override fun canExecute(context: ExecutorContext): Boolean {
+        val message = context.message
         return botConfig.developer == message.from.userName &&
             message.text.startsWith(getMessagePrefix(), ignoreCase = true)
     }
 
-    override fun priority(executorContext: ExecutorContext) = Priority.HIGH
+    override fun priority(context: ExecutorContext) = Priority.HIGH
 
     abstract fun getMessagePrefix(): String
 }

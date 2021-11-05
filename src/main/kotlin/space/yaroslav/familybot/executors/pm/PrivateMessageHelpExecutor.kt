@@ -14,25 +14,25 @@ class PrivateMessageHelpExecutor(
     private val helpExecutor: HelpCommandExecutor,
     private val botConfig: BotConfig
 ) : PrivateMessageExecutor {
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
-        if (helpExecutor.canExecute(executorContext)) {
-            return helpExecutor.execute(executorContext)
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        if (helpExecutor.canExecute(context)) {
+            return helpExecutor.execute(context)
         } else {
             return {
                 it.send(
-                    executorContext,
-                    executorContext.phrase(Phrase.PRIVATE_MESSAGE_HELP),
+                    context,
+                    context.phrase(Phrase.PRIVATE_MESSAGE_HELP),
                     shouldTypeBeforeSend = true
                 )
             }
         }
     }
 
-    override fun canExecute(executorContext: ExecutorContext): Boolean {
-        return botConfig.developer != executorContext.message.from.userName
+    override fun canExecute(context: ExecutorContext): Boolean {
+        return botConfig.developer != context.message.from.userName
     }
 
-    override fun priority(executorContext: ExecutorContext): Priority {
+    override fun priority(context: ExecutorContext): Priority {
         return Priority.VERY_LOW
     }
 }

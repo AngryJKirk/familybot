@@ -20,13 +20,13 @@ class QuoteByTagExecutor(private val quoteRepository: QuoteRepository) : Command
         return Command.QUOTE_BY_TAG
     }
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         return {
             val rows = quoteRepository
                 .getTags()
                 .map { tag -> InlineKeyboardButton(tag.capitalized()).apply { callbackData = tag } }
                 .chunked(3)
-            it.send(executorContext, QUOTE_MESSAGE, replyToUpdate = true, customization = customization(rows))
+            it.send(context, QUOTE_MESSAGE, replyToUpdate = true, customization = customization(rows))
         }
     }
 

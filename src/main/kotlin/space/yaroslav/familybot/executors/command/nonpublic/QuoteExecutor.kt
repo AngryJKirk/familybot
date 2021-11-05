@@ -14,7 +14,7 @@ class QuoteExecutor(private val quoteRepository: QuoteRepository) : CommandExecu
         return Command.QUOTE
     }
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
-        return { it.send(executorContext, quoteRepository.getRandom()) }
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        return { it.send(context, quoteRepository.getRandom()) }
     }
 }

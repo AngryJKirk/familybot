@@ -23,53 +23,53 @@ class ScenarioExecutor(
         const val STORY_PREFIX = "story"
     }
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
-        if (executorContext.message.text.contains(STORY_PREFIX)) {
-            return tellTheStory(executorContext)
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        if (context.message.text.contains(STORY_PREFIX)) {
+            return tellTheStory(context)
         }
 
-        if (executorContext.isFromDeveloper && executorContext.message.text.contains(MOVE_PREFIX)) {
-            return moveState(executorContext)
+        if (context.isFromDeveloper && context.message.text.contains(MOVE_PREFIX)) {
+            return moveState(context)
         }
 
-        return processGame(executorContext)
+        return processGame(context)
     }
 
     private fun processGame(
-        executorContext: ExecutorContext
+        context: ExecutorContext
     ): suspend (AbsSender) -> Unit {
-        val chat = executorContext.chat
+        val chat = context.chat
         val currentGame = scenarioService.getCurrentGame(chat)
         return when {
             currentGame == null -> {
-                scenarioSessionManagementService.listGames(executorContext)
+                scenarioSessionManagementService.listGames(context)
             }
             currentGame.isEnd -> {
                 {
-                    scenarioSessionManagementService.processCurrentGame(executorContext).invoke(it)
+                    scenarioSessionManagementService.processCurrentGame(context).invoke(it)
                     delay(2000L)
-                    scenarioSessionManagementService.listGames(executorContext).invoke(it)
+                    scenarioSessionManagementService.listGames(context).invoke(it)
                 }
             }
             else -> {
-                scenarioSessionManagementService.processCurrentGame(executorContext)
+                scenarioSessionManagementService.processCurrentGame(context)
             }
         }
     }
 
     private fun tellTheStory(
-        executorContext: ExecutorContext
+        context: ExecutorContext
     ): suspend (AbsSender) -> Unit {
-        val story = scenarioService.getAllStoryOfCurrentGame(executorContext.chat)
-        return { it.send(executorContext, story, enableHtml = true) }
+        val story = scenarioService.getAllStoryOfCurrentGame(context.chat)
+        return { it.send(context, story, enableHtml = true) }
     }
 
     private fun moveState(
-        executorContext: ExecutorContext
+        context: ExecutorContext
     ): suspend (AbsSender) -> Unit {
-        val nextMove = scenarioGameplayService.nextState(executorContext.chat)
+        val nextMove = scenarioGameplayService.nextState(context.chat)
         if (nextMove == null) {
-            return { it.send(executorContext, "State hasn't been moved") }
+            return { it.send(context, "State hasn't been moved") }
         } else {
             return {}
         }

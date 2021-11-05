@@ -14,16 +14,16 @@ import space.yaroslav.familybot.telegram.BotConfig
 class LogsExecutor(botConfig: BotConfig) : OnlyBotOwnerExecutor(botConfig) {
     override fun getMessagePrefix() = "logs"
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
-        val tokens = executorContext.update.getMessageTokens()
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        val tokens = context.update.getMessageTokens()
         if (tokens.getOrNull(1) == "clear") {
             ErrorLogsDeferredAppender.errors.clear()
-            return { sender -> sender.send(executorContext, "Cleared") }
+            return { sender -> sender.send(context, "Cleared") }
         }
 
         return { sender ->
             if (ErrorLogsDeferredAppender.errors.isEmpty()) {
-                sender.send(executorContext, "No errors yet")
+                sender.send(context, "No errors yet")
             } else {
                 val errors = ErrorLogsDeferredAppender
                     .errors
@@ -31,7 +31,7 @@ class LogsExecutor(botConfig: BotConfig) : OnlyBotOwnerExecutor(botConfig) {
                     .byteInputStream()
                 sender.execute(
                     SendDocument(
-                        executorContext.chat.idString,
+                        context.chat.idString,
                         InputFile(errors, "error_logs.txt")
                     )
                 )

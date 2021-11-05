@@ -21,9 +21,9 @@ class PidorStatsStrikesExecutor(
 ) : CommandExecutor() {
     override fun command() = Command.STATS_STRIKES
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
-        val chat = executorContext.chat
-        val strikes = pidorStrikeStorage.get(chat).stats.filter { (_, stats) -> stats.maxStrike > 1 }
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        val chat = context.chat
+        val strikes = pidorStrikeStorage.get(context).stats.filter { (_, stats) -> stats.maxStrike > 1 }
         val users = commonRepository.getUsers(chat).associateBy(User::id)
         val stats = strikes
             .map {
@@ -37,19 +37,19 @@ class PidorStatsStrikesExecutor(
             .flatten()
             .formatTopList(
                 PluralizedWordsProvider(
-                    one = { executorContext.phrase(Phrase.PIDOR_STRIKE_STAT_PLURALIZED_ONE) },
-                    few = { executorContext.phrase(Phrase.PIDOR_STRIKE_STAT_PLURALIZED_FEW) },
-                    many = { executorContext.phrase(Phrase.PIDOR_STRIKE_STAT_PLURALIZED_MANY) }
+                    one = { context.phrase(Phrase.PIDOR_STRIKE_STAT_PLURALIZED_ONE) },
+                    few = { context.phrase(Phrase.PIDOR_STRIKE_STAT_PLURALIZED_FEW) },
+                    many = { context.phrase(Phrase.PIDOR_STRIKE_STAT_PLURALIZED_MANY) }
                 )
             )
-        val title = "${executorContext.phrase(Phrase.PIDOR_STRIKE_STAT_TITLE)}:\n".bold()
+        val title = "${context.phrase(Phrase.PIDOR_STRIKE_STAT_TITLE)}:\n".bold()
         if (stats.isNotEmpty()) {
-            return { it.send(executorContext, title + stats.joinToString("\n"), enableHtml = true) }
+            return { it.send(context, title + stats.joinToString("\n"), enableHtml = true) }
         } else {
             return {
                 it.send(
-                    executorContext,
-                    title + executorContext.phrase(Phrase.PIDOR_STRIKE_STAT_NONE),
+                    context,
+                    title + context.phrase(Phrase.PIDOR_STRIKE_STAT_NONE),
                     enableHtml = true
                 )
             }

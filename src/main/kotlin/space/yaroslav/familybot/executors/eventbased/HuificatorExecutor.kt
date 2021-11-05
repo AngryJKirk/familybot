@@ -3,7 +3,6 @@ package space.yaroslav.familybot.executors.eventbased
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.dropLastDelimiter
-import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.randomBoolean
 import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.executors.Configurable
@@ -11,35 +10,34 @@ import space.yaroslav.familybot.executors.Executor
 import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.router.FunctionId
 import space.yaroslav.familybot.models.router.Priority
-import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.TalkingDensity
 import java.util.regex.Pattern
 
 @Component
 class HuificatorExecutor(private val easyKeyValueService: EasyKeyValueService) : Executor, Configurable {
-    override fun getFunctionId(executorContext: ExecutorContext): FunctionId {
+    override fun getFunctionId(context: ExecutorContext): FunctionId {
         return FunctionId.HUIFICATE
     }
 
-    override fun priority(executorContext: ExecutorContext): Priority {
+    override fun priority(context: ExecutorContext): Priority {
         return Priority.RANDOM
     }
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
 
-        val message = executorContext.message
+        val message = context.message
         val text = message.text ?: return {}
 
-        if (shouldHuificate(executorContext.chat)) {
+        if (shouldHuificate(context)) {
             val huifyed = huify(text) ?: return { }
-            return { it -> it.send(executorContext, huifyed, shouldTypeBeforeSend = true) }
+            return { it -> it.send(context, huifyed, shouldTypeBeforeSend = true) }
         } else {
             return { }
         }
     }
 
-    override fun canExecute(executorContext: ExecutorContext): Boolean {
+    override fun canExecute(context: ExecutorContext): Boolean {
         return false
     }
 
@@ -76,8 +74,8 @@ class HuificatorExecutor(private val easyKeyValueService: EasyKeyValueService) :
 
     private fun getLastWord(text: String) = text.split(regex = spaces).last()
 
-    private fun shouldHuificate(chat: Chat): Boolean {
-        val density = getTalkingDensity(chat)
+    private fun shouldHuificate(context: ExecutorContext): Boolean {
+        val density = getTalkingDensity(context)
         return if (density == 0L) {
             true
         } else {
@@ -85,8 +83,8 @@ class HuificatorExecutor(private val easyKeyValueService: EasyKeyValueService) :
         }
     }
 
-    private fun getTalkingDensity(chat: Chat): Long {
-        return easyKeyValueService.get(TalkingDensity, chat.key(), 7)
+    private fun getTalkingDensity(context: ExecutorContext): Long {
+        return easyKeyValueService.get(TalkingDensity, context.chatKey, 7)
     }
 
     companion object {

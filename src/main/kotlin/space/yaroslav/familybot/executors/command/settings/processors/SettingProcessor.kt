@@ -5,7 +5,7 @@ import space.yaroslav.familybot.models.router.ExecutorContext
 
 interface SettingProcessor {
 
-    fun canProcess(executorContext: ExecutorContext): Boolean
+    fun canProcess(context: ExecutorContext): Boolean
 
-    fun process(executorContext: ExecutorContext): suspend (AbsSender) -> Unit
+    fun process(context: ExecutorContext): suspend (AbsSender) -> Unit
 }

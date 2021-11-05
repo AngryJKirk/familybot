@@ -17,13 +17,13 @@ class GetChatListExecutor(
 
     override fun getMessagePrefix() = "chats"
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         val chats = commonRepository.getChats()
         return { sender ->
-            sender.send(executorContext, "Active chats count=${chats.size}")
+            sender.send(context, "Active chats count=${chats.size}")
             val totalUsersCount =
                 chats.sumOf { chat -> calculate(sender, chat) }
-            sender.send(executorContext, "Total users count=$totalUsersCount")
+            sender.send(context, "Total users count=$totalUsersCount")
         }
     }
 

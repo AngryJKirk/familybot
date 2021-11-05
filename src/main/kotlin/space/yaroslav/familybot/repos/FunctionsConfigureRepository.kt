@@ -2,9 +2,8 @@ package space.yaroslav.familybot.repos
 
 import io.micrometer.core.annotation.Timed
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.extensions.key
+import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.router.FunctionId
-import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.services.settings.EasyKeyValueRepository
 import space.yaroslav.familybot.services.settings.FuckOffOverride
 
@@ -21,38 +20,39 @@ class FunctionsConfigureRepository(
     )
 
     @Timed("repository.RedisFunctionsConfigureRepository.isEnabled")
-    fun isEnabled(id: FunctionId, chat: Chat): Boolean {
+    fun isEnabled(id: FunctionId, context: ExecutorContext): Boolean {
         if (id in fuckOffFunctions &&
-            keyValueRepository.get(FuckOffOverride, chat.key()) == true
+            keyValueRepository.get(FuckOffOverride, context.chatKey) == true
         ) {
             return false
         }
-        return isEnabledInternal(id, chat)
+        return isEnabledInternal(id, context)
     }
 
     @Timed("repository.RedisFunctionsConfigureRepository.switch")
-    suspend fun switch(id: FunctionId, chat: Chat) {
-        switchInternal(id, chat)
+    suspend fun switch(id: FunctionId, context: ExecutorContext) {
+        switchInternal(id, context)
     }
 
-    fun setStatus(id: FunctionId, chat: Chat, isEnabled: Boolean) {
-        if (isEnabledInternal(id, chat) != isEnabled) {
-            switchInternal(id, chat)
+    fun setStatus(id: FunctionId, context: ExecutorContext, isEnabled: Boolean) {
+        if (isEnabledInternal(id, context) != isEnabled) {
+            switchInternal(id, context)
         }
     }
 
     private fun isEnabledInternal(
         id: FunctionId,
-        chat: Chat
+        context: ExecutorContext
     ): Boolean {
-        return keyValueRepository.get(id.easySetting, chat.key()) ?: true
+        return keyValueRepository.get(id.easySetting, context.chatKey) ?: true
     }
 
     private fun switchInternal(
         id: FunctionId,
-        chat: Chat
+        context: ExecutorContext
     ) {
-        val currentValue = keyValueRepository.get(id.easySetting, chat.key()) ?: true
-        keyValueRepository.put(id.easySetting, chat.key(), currentValue.not())
+        val key = context.chatKey
+        val currentValue = keyValueRepository.get(id.easySetting, key) ?: true
+        keyValueRepository.put(id.easySetting, key, currentValue.not())
     }
 }

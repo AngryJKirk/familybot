@@ -17,22 +17,22 @@ class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Config
 
     private val processorsForMessage = HashMap<Int, KeyWordProcessor>()
 
-    override fun priority(executorContext: ExecutorContext) = Priority.LOW
+    override fun priority(context: ExecutorContext) = Priority.LOW
 
-    override fun getFunctionId(executorContext: ExecutorContext) = FunctionId.TALK_BACK
+    override fun getFunctionId(context: ExecutorContext) = FunctionId.TALK_BACK
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
-        return processorsForMessage.remove(executorContext.message.messageId)?.process(executorContext) ?: {}
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        return processorsForMessage.remove(context.message.messageId)?.process(context) ?: {}
     }
 
-    override fun canExecute(executorContext: ExecutorContext): Boolean {
-        val message = executorContext.message
+    override fun canExecute(context: ExecutorContext): Boolean {
+        val message = context.message
         if (message.from.isBot) {
             return false
         }
         val keyWordProcessor = processors
-            .find { it.canProcess(executorContext) }
-            ?.takeIf { isPassingRandomCheck(it, executorContext) }
+            .find { it.canProcess(context) }
+            ?.takeIf { isPassingRandomCheck(it, context) }
         return if (keyWordProcessor != null) {
             log.info("Key word processor is found: ${keyWordProcessor::class.simpleName}")
             processorsForMessage[message.messageId] = keyWordProcessor
@@ -42,8 +42,8 @@ class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Config
         }
     }
 
-    private fun isPassingRandomCheck(processor: KeyWordProcessor, executorContext: ExecutorContext): Boolean {
-        return if (processor.isRandom(executorContext)) {
+    private fun isPassingRandomCheck(processor: KeyWordProcessor, context: ExecutorContext): Boolean {
+        return if (processor.isRandom(context)) {
             randomInt(0, 5) == 0
         } else {
             true

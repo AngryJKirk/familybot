@@ -21,10 +21,10 @@ class PidorCompetitionService(
     private val repository: CommonRepository
 ) {
 
-    fun pidorCompetition(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    fun pidorCompetition(context: ExecutorContext): suspend (AbsSender) -> Unit {
 
         if (isEndOfMonth()) {
-            val thisMonthPidors = getPidorsOfThisMonth(executorContext.chat)
+            val thisMonthPidors = getPidorsOfThisMonth(context.chat)
             if (thisMonthPidors.size < 2) {
                 return { }
             }
@@ -32,8 +32,8 @@ class PidorCompetitionService(
             if (competitors != null) {
                 return {
                     it.send(
-                        executorContext,
-                        executorContext.phrase(Phrase.PIDOR_COMPETITION).bold() + "\n" + formatListOfCompetitors(
+                        context,
+                        context.phrase(Phrase.PIDOR_COMPETITION).bold() + "\n" + formatListOfCompetitors(
                             competitors
                         ),
                         enableHtml = true
@@ -42,9 +42,9 @@ class PidorCompetitionService(
                     repository.addPidor(Pidor(oneMorePidor, Instant.now()))
                     delay(1000)
                     val oneMorePidorMessage =
-                        executorContext.phrase(Phrase.COMPETITION_ONE_MORE_PIDOR)
+                        context.phrase(Phrase.COMPETITION_ONE_MORE_PIDOR)
                             .bold() + " " + oneMorePidor.getGeneralName()
-                    it.send(executorContext, oneMorePidorMessage, enableHtml = true)
+                    it.send(context, oneMorePidorMessage, enableHtml = true)
                 }
             }
         }

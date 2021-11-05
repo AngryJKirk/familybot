@@ -14,11 +14,11 @@ class HelpCommandExecutor : CommandExecutor() {
         return Command.HELP
     }
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         return {
             it.send(
-                executorContext,
-                executorContext.phrase(Phrase.HELP_MESSAGE),
+                context,
+                context.phrase(Phrase.HELP_MESSAGE),
                 enableHtml = true,
                 customization = {
                     disableWebPagePreview = true

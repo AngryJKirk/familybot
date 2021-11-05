@@ -17,16 +17,16 @@ abstract class SendRandomStickerExecutor(
     private val historyRepository: CommandHistoryRepository
 ) : CommandExecutor() {
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
 
-        if (isInvokedToday(executorContext.update.toUser())) {
+        if (isInvokedToday(context.update.toUser())) {
             return {}
         }
 
         return {
-            it.send(executorContext, getMessage())
+            it.send(context, getMessage())
             delay(1000)
-            it.sendRandomSticker(executorContext, getStickerPack())
+            it.sendRandomSticker(context, getStickerPack())
         }
     }
 

@@ -5,5 +5,5 @@ import space.yaroslav.familybot.models.router.FunctionId
 
 interface Configurable {
 
-    fun getFunctionId(executorContext: ExecutorContext): FunctionId
+    fun getFunctionId(context: ExecutorContext): FunctionId
 }

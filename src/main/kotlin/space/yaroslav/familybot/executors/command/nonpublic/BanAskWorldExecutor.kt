@@ -21,8 +21,8 @@ class BanAskWorldExecutor(
     private val log = getLogger()
     override fun command() = Command.BAN
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
-        val message = executorContext.message
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        val message = context.message
         if (message.isReply.not()) return {}
 
         val replyToMessage = message.replyToMessage
@@ -32,33 +32,33 @@ class BanAskWorldExecutor(
             }
         log.info("Trying to ban, questions found: {}", questions)
         when (questions.size) {
-            0 -> return { it.send(executorContext, "Can't find anyone, sorry, my master") }
-            1 -> return ban(executorContext, questions.first())
+            0 -> return { it.send(context, "Can't find anyone, sorry, my master") }
+            1 -> return ban(context, questions.first())
             else -> return { sender ->
                 questions
                     .distinctBy { question -> question.user.id }
-                    .map { question -> ban(executorContext, question) }
+                    .map { question -> ban(context, question) }
                     .forEach { it.invoke(sender) }
             }
         }
     }
 
-    override fun canExecute(executorContext: ExecutorContext): Boolean {
-        return executorContext.isFromDeveloper && super.canExecute(executorContext)
+    override fun canExecute(context: ExecutorContext): Boolean {
+        return context.isFromDeveloper && super.canExecute(context)
     }
 
-    private fun ban(executorContext: ExecutorContext, question: AskWorldQuestion): suspend (AbsSender) -> Unit {
+    private fun ban(context: ExecutorContext, question: AskWorldQuestion): suspend (AbsSender) -> Unit {
 
-        val tokens = executorContext.update.message.text.split(" ")
+        val tokens = context.update.message.text.split(" ")
         val banReason = tokens[1]
         val isChat = tokens.getOrNull(2) == "chat"
         if (isChat) {
             banService.banChat(question.chat, banReason)
-            return { it.send(executorContext, "${question.chat} is banned, my master", replyToUpdate = true) }
+            return { it.send(context, "${question.chat} is banned, my master", replyToUpdate = true) }
         } else {
             banService.banUser(question.user, banReason)
             return {
-                it.send(executorContext, "${question.user} is banned, my master", replyToUpdate = true)
+                it.send(context, "${question.user} is banned, my master", replyToUpdate = true)
             }
         }
     }

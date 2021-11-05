@@ -63,19 +63,19 @@ class MarryListExecutor(
 
     override fun command() = Command.MARRY_LIST
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         
-        val marriages = marriagesRepository.getAllMarriages(executorContext.chat.id)
+        val marriages = marriagesRepository.getAllMarriages(context.chat.id)
         if (marriages.isEmpty()) {
-            return { sender -> sender.send(executorContext, executorContext.phrase(Phrase.MARRY_EMPTY_LIST)) }
+            return { sender -> sender.send(context, context.phrase(Phrase.MARRY_EMPTY_LIST)) }
         } else {
-            val marriageList = format(marriages, executorContext)
-            return { sender -> sender.send(executorContext, marriageList, enableHtml = true) }
+            val marriageList = format(marriages, context)
+            return { sender -> sender.send(context, marriageList, enableHtml = true) }
         }
     }
 
-    private fun format(marriages: List<Marriage>, executorContext: ExecutorContext): String {
-        val title = executorContext.phrase(Phrase.MARRY_LIST_TITLE) + "\n"
+    private fun format(marriages: List<Marriage>, context: ExecutorContext): String {
+        val title = context.phrase(Phrase.MARRY_LIST_TITLE) + "\n"
         return title + marriages
             .sortedBy(Marriage::startDate)
             .mapIndexed { i, marriage ->
@@ -83,17 +83,17 @@ class MarryListExecutor(
                 val firstUser = marriage.firstUser.getGeneralName(mention = false).bold()
                 val secondUser = marriage.secondUser.getGeneralName(mention = false).bold()
                 val daysTogether = Duration.between(marriage.startDate, Instant.now()).toDays()
-                val ending = getEnding(daysTogether, executorContext, marriage)
+                val ending = getEnding(daysTogether, context, marriage)
                 "$index $firstUser + $secondUser = $daysTogether $ending"
             }
             .joinToString(separator = "\n")
     }
 
-    private fun getEnding(amountOfDays: Long, executorContext: ExecutorContext, marriage: Marriage): String {
+    private fun getEnding(amountOfDays: Long, context: ExecutorContext, marriage: Marriage): String {
         val pluralization = PluralizedWordsProvider(
-            one = { executorContext.phrase(Phrase.PLURALIZED_DAY_ONE) },
-            few = { executorContext.phrase(Phrase.PLURALIZED_DAY_FEW) },
-            many = { executorContext.phrase(Phrase.PLURALIZED_DAY_MANY) }
+            one = { context.phrase(Phrase.PLURALIZED_DAY_ONE) },
+            few = { context.phrase(Phrase.PLURALIZED_DAY_FEW) },
+            many = { context.phrase(Phrase.PLURALIZED_DAY_MANY) }
         )
         val emojiId = (marriage.firstUser.id + marriage.secondUser.id) % loveEmojis.size
         return pluralize(amountOfDays.toInt(), pluralization) + " " + (loveEmojis.getOrNull(emojiId.toInt()) ?: "")

@@ -31,22 +31,22 @@ class BotMentionKeyWordProcessor(
         Regex(".*пельку.{0,10}стули.*", RegexOption.IGNORE_CASE)
     )
 
-    override fun canProcess(executorContext: ExecutorContext): Boolean {
-        val message = executorContext.message
+    override fun canProcess(context: ExecutorContext): Boolean {
+        val message = context.message
         return isReplyToBot(message) || isBotMention(message) || isBotNameMention(message)
     }
 
-    override fun process(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
-        if (isFuckOff(executorContext)) {
-            return fuckOff(executorContext)
+    override fun process(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        if (isFuckOff(context)) {
+            return fuckOff(context)
         }
-        val shouldBeQuestion = isBotMention(executorContext.message) || isBotNameMention(executorContext.message)
+        val shouldBeQuestion = isBotMention(context.message) || isBotNameMention(context.message)
         return {
             val reply = talkingService.getReplyToUser(
-                executorContext,
+                context,
                 randomBoolean() && shouldBeQuestion
             )
-            it.send(executorContext, reply, replyToUpdate = true, shouldTypeBeforeSend = true)
+            it.send(context, reply, replyToUpdate = true, shouldTypeBeforeSend = true)
         }
     }
 
@@ -65,21 +65,21 @@ class BotMentionKeyWordProcessor(
         return message.isReply && message.replyToMessage.from.userName == botConfig.botName
     }
 
-    fun isFuckOff(executorContext: ExecutorContext): Boolean {
-        val text = executorContext.message.text ?: return false
-        return if (!isUserUnderTolerance(executorContext)) {
+    fun isFuckOff(context: ExecutorContext): Boolean {
+        val text = context.message.text ?: return false
+        return if (!isUserUnderTolerance(context)) {
             fuckOffPhrases.any { it.matches(text) }
         } else {
             false
         }
     }
 
-    fun fuckOff(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
-        easyKeyValueService.put(FuckOffOverride, executorContext.chatKey, true, defaultFuckOffDuration)
-        easyKeyValueService.put(FuckOffTolerance, executorContext.userAndChatKey, true, defaultToleranceDuration)
+    fun fuckOff(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        easyKeyValueService.put(FuckOffOverride, context.chatKey, true, defaultFuckOffDuration)
+        easyKeyValueService.put(FuckOffTolerance, context.userAndChatKey, true, defaultToleranceDuration)
         return {}
     }
 
-    private fun isUserUnderTolerance(executorContext: ExecutorContext) =
-        easyKeyValueService.get(FuckOffTolerance, executorContext.userAndChatKey, defaultValue = false)
+    private fun isUserUnderTolerance(context: ExecutorContext) =
+        easyKeyValueService.get(FuckOffTolerance, context.userAndChatKey, defaultValue = false)
 }

@@ -25,22 +25,22 @@ class SettingsContiniousExecutor(
         return Command.SETTINGS
     }
 
-    override fun getDialogMessage(executorContext: ExecutorContext): String {
-        return executorContext.phrase(Phrase.WHICH_SETTING_SHOULD_CHANGE)
+    override fun getDialogMessage(context: ExecutorContext): String {
+        return context.phrase(Phrase.WHICH_SETTING_SHOULD_CHANGE)
     }
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         return {
-            val chat = executorContext.chat
-            val callbackQuery = executorContext.update.callbackQuery
+            val chat = context.chat
+            val callbackQuery = context.update.callbackQuery
 
-            if (!it.isFromAdmin(executorContext)) {
+            if (!it.isFromAdmin(context)) {
                 log.info("Access to settings denied")
                 it.execute(
                     AnswerCallbackQuery(callbackQuery.id)
                         .apply {
                             showAlert = true
-                            text = executorContext.phrase(Phrase.ACCESS_DENIED)
+                            text = context.phrase(Phrase.ACCESS_DENIED)
                         }
 
                 )
@@ -50,8 +50,8 @@ class SettingsContiniousExecutor(
                     .find { id -> id.desc == callbackQuery.data }
 
                 if (function != null) {
-                    configureRepository.switch(function, chat)
-                    val isEnabled = { id: FunctionId -> configureRepository.isEnabled(id, chat) }
+                    configureRepository.switch(function, context)
+                    val isEnabled = { id: FunctionId -> configureRepository.isEnabled(id, context) }
                     it.execute(AnswerCallbackQuery(callbackQuery.id))
                     it.execute(
                         EditMessageReplyMarkup().apply {

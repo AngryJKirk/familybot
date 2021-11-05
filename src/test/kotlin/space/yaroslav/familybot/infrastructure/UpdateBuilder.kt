@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.MessageEntity
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
-import space.yaroslav.familybot.common.extensions.executorContext
+import space.yaroslav.familybot.common.extensions.context
 import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.models.telegram.stickers.Sticker
@@ -36,13 +36,13 @@ private val botConfig = BotConfig(
 
 fun createSimpleContext(text: String? = null): ExecutorContext {
 
-    return update(text).executorContext(botConfig, dictionary)
+    return update(text).context(botConfig, dictionary)
 }
 
-fun Update.createContext() = this.executorContext(botConfig, dictionary)
+fun Update.createContext() = this.context(botConfig, dictionary)
 
 fun createSimpleCommandContext(command: Command, prefix: String? = null, postfix: String? = null): ExecutorContext {
-    return createSimpleCommand(command, prefix, postfix).executorContext(botConfig, dictionary)
+    return createSimpleCommand(command, prefix, postfix).context(botConfig, dictionary)
 }
 
 fun createSimpleUpdate(text: String? = null): Update {
@@ -84,7 +84,7 @@ fun singleStickerContext(sticker: Sticker): ExecutorContext {
                 setName = sticker.pack.packName
                 fileId = randomString()
             }
-        }.executorContext(botConfig, dictionary)
+        }.context(botConfig, dictionary)
 }
 
 private fun update(text: String? = null): Update {

@@ -10,7 +10,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.bold
 import space.yaroslav.familybot.common.extensions.isToday
-import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.common.extensions.untilNextDay
@@ -38,22 +37,22 @@ class PidorExecutor(
     private val pidorStrikesService: PidorStrikesService,
     private val easyKeyValueService: EasyKeyValueService
 ) : CommandExecutor(), Configurable {
-    override fun getFunctionId(executorContext: ExecutorContext): FunctionId {
+    override fun getFunctionId(context: ExecutorContext): FunctionId {
         return FunctionId.PIDOR
     }
 
     private val log = getLogger()
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
-        val chat = executorContext.chat
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        val chat = context.chat
 
         log.info("Getting pidors from chat $chat")
         val users = repository.getUsers(chat, activeOnly = true)
-        val key = chat.key()
+        val key = context.chatKey
         val pidorToleranceValue = easyKeyValueService.get(PidorTolerance, key)
         if (isLimitOfPidorsExceeded(users, pidorToleranceValue ?: 0)) {
             log.info("Pidors are already found")
-            val message = getMessageForPidors(executorContext)
+            val message = getMessageForPidors(context)
             if (message != null) {
                 return { it.execute(message) }
             }
@@ -67,11 +66,11 @@ class PidorExecutor(
                 Phrase.PIDOR_SEARCH_MIDDLE,
                 Phrase.PIDOR_SEARCH_FINISHER
             )
-                .map(executorContext::phrase)
+                .map(context::phrase)
                 .map(String::bold)
                 .forEach { phrase ->
                     sender.send(
-                        executorContext,
+                        context,
                         phrase,
                         enableHtml = true,
                         shouldTypeBeforeSend = true,
@@ -80,7 +79,7 @@ class PidorExecutor(
                 }
             val pidor = nextPidor.await()
             sender.send(
-                executorContext,
+                context,
                 pidor.getGeneralName(),
                 enableHtml = true,
                 shouldTypeBeforeSend = true,
@@ -91,8 +90,8 @@ class PidorExecutor(
             } else {
                 easyKeyValueService.increment(PidorTolerance, key)
             }
-            pidorStrikesService.calculateStrike(executorContext, pidor).invoke(sender)
-            pidorCompetitionService.pidorCompetition(executorContext).invoke(sender)
+            pidorStrikesService.calculateStrike(context, pidor).invoke(sender)
+            pidorCompetitionService.pidorCompetition(context).invoke(sender)
         }
     }
 
@@ -134,8 +133,8 @@ class PidorExecutor(
         return Command.PIDOR
     }
 
-    private fun getMessageForPidors(executorContext: ExecutorContext): SendMessage? {
-        val chat = executorContext.chat
+    private fun getMessageForPidors(context: ExecutorContext): SendMessage? {
+        val chat = context.chat
         val pidorsByChat = repository
             .getPidorsByChat(chat)
             .filter { pidor -> pidor.date.isToday() }
@@ -144,12 +143,12 @@ class PidorExecutor(
             0 -> null
             1 -> SendMessage(
                 chat.idString,
-                executorContext.phrase(Phrase.PIROR_DISCOVERED_ONE) + " " +
+                context.phrase(Phrase.PIROR_DISCOVERED_ONE) + " " +
                     pidorsByChat.first().user.getGeneralName()
             ).apply { enableHtml(true) }
             else -> SendMessage(
                 chat.idString,
-                executorContext.phrase(Phrase.PIROR_DISCOVERED_MANY) + " " +
+                context.phrase(Phrase.PIROR_DISCOVERED_MANY) + " " +
                     pidorsByChat.joinToString { it.user.getGeneralName() }
             ).apply { enableHtml(true) }
         }

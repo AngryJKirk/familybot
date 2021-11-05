@@ -28,67 +28,67 @@ class ScenarioSessionManagementService(
 ) {
     private val log = getLogger()
 
-    fun startGame(executorContext: ExecutorContext, scenario: Scenario): suspend (AbsSender) -> Unit {
-        val chat = executorContext.chat
+    fun startGame(context: ExecutorContext, scenario: Scenario): suspend (AbsSender) -> Unit {
+        val chat = context.chat
 
         val currentMove = scenarioGameplayService.getCurrentScenarioState(chat)
         if (currentMove != null && currentMove.move.isEnd.not()) {
             return {
                 it.execute(
                     AnswerCallbackQuery().apply {
-                        callbackQueryId = executorContext.update.callbackQuery.id
+                        callbackQueryId = context.update.callbackQuery.id
                         showAlert = true
-                        text = executorContext.phrase(Phrase.SCENARIO_IS_RUNNING_ALREADY)
+                        text = context.phrase(Phrase.SCENARIO_IS_RUNNING_ALREADY)
                     }
                 )
             }
         }
         scenarioGameplayService.startGame(scenario, chat)
         return {
-            it.send(executorContext, executorContext.phrase(Phrase.SCENARIO_IS_STARTING))
-            currentGame(executorContext).invoke(it)
+            it.send(context, context.phrase(Phrase.SCENARIO_IS_STARTING))
+            currentGame(context).invoke(it)
         }
     }
 
-    fun processCurrentGame(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
-        return currentGame(executorContext)
+    fun processCurrentGame(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        return currentGame(context)
     }
 
-    fun listGames(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    fun listGames(context: ExecutorContext): suspend (AbsSender) -> Unit {
 
         return {
             it.send(
-                executorContext,
-                executorContext.phrase(Phrase.SCENARIO_RULES)
+                context,
+                context.phrase(Phrase.SCENARIO_RULES)
             )
             it.send(
-                executorContext,
-                executorContext.phrase(Phrase.SCENARIO_CHOOSE),
+                context,
+                context.phrase(Phrase.SCENARIO_CHOOSE),
                 replyToUpdate = true,
                 customization = createKeyboardMarkup()
             )
         }
     }
 
-    private fun currentGame(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
-        val chat = executorContext.chat
+    private fun currentGame(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        val chat = context.chat
         val previousMove = scenarioGameplayService.getCurrentScenarioState(chat)?.move
             ?: throw FamilyBot.InternalException("Internal logic error, current state wasn't found")
         if (previousMove.isEnd) {
             return {
                 val evenMorePreviousMove = scenarioService.getPreviousMove(previousMove)
                     ?: throw FamilyBot.InternalException("Scenario seems broken")
-                it.send(executorContext, getExpositionMessage(previousMove, evenMorePreviousMove), enableHtml = true)
+                it.send(context, getExpositionMessage(previousMove, evenMorePreviousMove), enableHtml = true)
                 delay(2000)
-                it.send(executorContext, previousMove.description)
+                it.send(context, previousMove.description)
                 delay(2000)
-                it.send(executorContext, executorContext.phrase(Phrase.SCENARIO_END))
+                it.send(context, context.phrase(Phrase.SCENARIO_END))
             }
         }
         val recentPoll = scenarioPollManagingService.getRecentPoll(chat, previousMove)
             ?: return { sender ->
                 continueGame(
-                    executorContext,
+                    context,
                     previousMove,
                     sender,
                     scenarioService.getPreviousMove(previousMove)
@@ -100,15 +100,15 @@ class ScenarioSessionManagementService(
             if (dayAgo.isAfter(recentPoll.createDate)) {
                 val nextMove = scenarioGameplayService.nextState(recentPoll.chat)
                 if (nextMove != null) {
-                    continueGame(executorContext, nextMove, sender, previousMove)
+                    continueGame(context, nextMove, sender, previousMove)
                 } else {
                     sender.send(
-                        executorContext,
-                        executorContext.phrase(Phrase.SCENARIO_POLL_DRAW)
+                        context,
+                        context.phrase(Phrase.SCENARIO_POLL_DRAW)
                     )
                     val evenMorePreviousMove = scenarioService.getPreviousMove(previousMove)
                     delay(2000)
-                    continueGame(executorContext, previousMove, sender, evenMorePreviousMove)
+                    continueGame(context, previousMove, sender, evenMorePreviousMove)
                 }
             } else {
                 val timeLeft =
@@ -119,16 +119,16 @@ class ScenarioSessionManagementService(
 
                 runCatching {
                     sender.send(
-                        executorContext,
-                        executorContext.phrase(Phrase.SCENARIO_POLL_EXISTS).replace("\$timeLeft", timeLeft),
+                        context,
+                        context.phrase(Phrase.SCENARIO_POLL_EXISTS).replace("\$timeLeft", timeLeft),
                         replyMessageId = recentPoll.messageId
                     )
                 }
                     .onFailure { throwable ->
                         log.error("Sending poll reply fucked up", throwable)
                         sender.send(
-                            executorContext,
-                            executorContext.phrase(Phrase.SCENARIO_POLL_EXISTS_FALLBACK).replace("\$timeLeft", timeLeft)
+                            context,
+                            context.phrase(Phrase.SCENARIO_POLL_EXISTS_FALLBACK).replace("\$timeLeft", timeLeft)
                         )
                     }
             }
@@ -136,21 +136,21 @@ class ScenarioSessionManagementService(
     }
 
     private suspend fun continueGame(
-        executorContext: ExecutorContext,
+        context: ExecutorContext,
         nextMove: ScenarioMove,
         sender: AbsSender,
         previousMove: ScenarioMove?
     ) {
         if (previousMove != null) {
-            sender.send(executorContext, getExpositionMessage(nextMove, previousMove), enableHtml = true)
+            sender.send(context, getExpositionMessage(nextMove, previousMove), enableHtml = true)
             delay(2000)
         }
 
-        val message = sendPoll(executorContext, nextMove).invoke(sender)
+        val message = sendPoll(context, nextMove).invoke(sender)
         scenarioPollManagingService.savePollToScenario(
             ScenarioPoll(
                 message.poll.id,
-                executorContext.chat,
+                context.chat,
                 Instant.now(),
                 nextMove,
                 message.messageId
@@ -188,19 +188,19 @@ class ScenarioSessionManagementService(
     }
 
     private fun sendPoll(
-        executorContext: ExecutorContext,
+        context: ExecutorContext,
         scenarioMove: ScenarioMove
     ): suspend (AbsSender) -> Message {
         return when {
-            scenarioMove.ways.any { it.description.length > 100 } -> sendSeparately(scenarioMove, executorContext)
-            scenarioMove.description.length > 255 -> sendDescriptionSeparately(scenarioMove, executorContext)
-            else -> sendInOneMessage(scenarioMove, executorContext)
+            scenarioMove.ways.any { it.description.length > 100 } -> sendSeparately(scenarioMove, context)
+            scenarioMove.description.length > 255 -> sendDescriptionSeparately(scenarioMove, context)
+            else -> sendInOneMessage(scenarioMove, context)
         }
     }
 
     private fun sendSeparately(
         scenarioMove: ScenarioMove,
-        executorContext: ExecutorContext
+        context: ExecutorContext
     ): suspend (AbsSender) -> Message {
         val moveDescription = scenarioMove.description
         val scenarioOptions = scenarioMove
@@ -210,11 +210,11 @@ class ScenarioSessionManagementService(
             .joinToString("\n")
         val messageToSend = moveDescription + "\n\n" + scenarioOptions
         return {
-            val message = it.send(executorContext, messageToSend)
+            val message = it.send(context, messageToSend)
             it.execute(
                 SendPoll().apply {
-                    chatId = executorContext.chat.idString
-                    question = executorContext.phrase(Phrase.SCENARIO_POLL_DEFAULT_QUESTION)
+                    chatId = context.chat.idString
+                    question = context.phrase(Phrase.SCENARIO_POLL_DEFAULT_QUESTION)
                     options = (1..scenarioMove.ways.size).map { i -> "Вариант $i" }
                     replyToMessageId = message.messageId
                     isAnonymous = false
@@ -225,16 +225,16 @@ class ScenarioSessionManagementService(
 
     private fun sendDescriptionSeparately(
         scenarioMove: ScenarioMove,
-        executorContext: ExecutorContext
+        context: ExecutorContext
     ): suspend (AbsSender) -> Message {
         val moveDescription = scenarioMove.description
         val scenarioOptions = scenarioMove.ways.map(ScenarioWay::description)
         return {
-            it.send(executorContext, moveDescription)
+            it.send(context, moveDescription)
             it.execute(
                 SendPoll().apply {
-                    chatId = executorContext.chat.idString
-                    question = executorContext.phrase(Phrase.SCENARIO_POLL_DEFAULT_QUESTION)
+                    chatId = context.chat.idString
+                    question = context.phrase(Phrase.SCENARIO_POLL_DEFAULT_QUESTION)
                     options = scenarioOptions
                     isAnonymous = false
                 }
@@ -244,14 +244,14 @@ class ScenarioSessionManagementService(
 
     private fun sendInOneMessage(
         scenarioMove: ScenarioMove,
-        executorContext: ExecutorContext
+        context: ExecutorContext
     ): suspend (AbsSender) -> Message {
         val scenarioOptions = scenarioMove.ways.map(ScenarioWay::description)
         return {
             it.execute(
                 SendPoll()
                     .apply {
-                        chatId = executorContext.chat.idString
+                        chatId = context.chat.idString
                         question = scenarioMove.description
                         options = scenarioOptions
                         isAnonymous = false

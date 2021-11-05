@@ -8,32 +8,32 @@ import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.telegram.FamilyBot
 
 fun Executor.meteredExecute(
-    executorContext: ExecutorContext,
+    context: ExecutorContext,
     meterRegistry: MeterRegistry
 ): suspend (AbsSender) -> Unit {
 
     return meterRegistry
         .timer("executors.${this::class.simpleName}.execute")
         .recordCallable {
-            this.execute(executorContext)
+            this.execute(context)
         } ?: throw FamilyBot.InternalException("Something has gone wrong while calling metered executor")
 }
 
-fun Executor.meteredCanExecute(executorContext: ExecutorContext, meterRegistry: MeterRegistry): Boolean {
+fun Executor.meteredCanExecute(context: ExecutorContext, meterRegistry: MeterRegistry): Boolean {
     return meterRegistry
         .timer("executors.${this::class.simpleName}.canExecute")
         .recordCallable {
-            this.canExecute(executorContext)
+            this.canExecute(context)
         } ?: throw FamilyBot.InternalException("Something has gone wrong while calling metered executor")
 }
 
 fun Executor.meteredPriority(
-    executorContext: ExecutorContext,
+    context: ExecutorContext,
     meterRegistry: MeterRegistry
 ): Priority {
     return meterRegistry
         .timer("executors.${this::class.simpleName}.priority")
         .recordCallable {
-            this.priority(executorContext)
+            this.priority(context)
         } ?: throw FamilyBot.InternalException("Something has gone wrong while calling metered executor")
 }

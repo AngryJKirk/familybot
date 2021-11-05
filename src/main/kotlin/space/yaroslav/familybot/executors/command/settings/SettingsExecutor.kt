@@ -8,7 +8,6 @@ import space.yaroslav.familybot.executors.command.CommandExecutor
 import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.router.FunctionId
-import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.repos.FunctionsConfigureRepository
 
@@ -20,20 +19,20 @@ class SettingsExecutor(
         return Command.SETTINGS
     }
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         return {
             it.send(
-                executorContext,
-                executorContext.phrase(Phrase.WHICH_SETTING_SHOULD_CHANGE),
+                context,
+                context.phrase(Phrase.WHICH_SETTING_SHOULD_CHANGE),
                 replyToUpdate = true,
-                customization = customization(executorContext.chat)
+                customization = customization(context)
             )
         }
     }
 
-    private fun customization(chat: Chat): SendMessage.() -> Unit {
+    private fun customization(context: ExecutorContext): SendMessage.() -> Unit {
         return {
-            replyMarkup = FunctionId.toKeyBoard { configureRepository.isEnabled(it, chat) }
+            replyMarkup = FunctionId.toKeyBoard { configureRepository.isEnabled(it, context) }
         }
     }
 }

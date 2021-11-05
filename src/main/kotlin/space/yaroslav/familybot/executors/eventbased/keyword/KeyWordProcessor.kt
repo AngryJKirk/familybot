@@ -5,9 +5,9 @@ import space.yaroslav.familybot.models.router.ExecutorContext
 
 interface KeyWordProcessor {
 
-    fun isRandom(executorContext: ExecutorContext): Boolean = false
+    fun isRandom(context: ExecutorContext): Boolean = false
 
-    fun canProcess(executorContext: ExecutorContext): Boolean
+    fun canProcess(context: ExecutorContext): Boolean
 
-    fun process(executorContext: ExecutorContext): suspend (AbsSender) -> Unit
+    fun process(context: ExecutorContext): suspend (AbsSender) -> Unit
 }

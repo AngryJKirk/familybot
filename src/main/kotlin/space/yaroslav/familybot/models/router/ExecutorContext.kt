@@ -18,10 +18,10 @@ class ExecutorContext(
     val isFromDeveloper: Boolean,
     val chat: Chat,
     val user: User,
-    private val dictionary: Dictionary,
     val userAndChatKey: UserAndChatEasyKey,
     val userKey: UserEasyKey,
-    val chatKey: ChatEasyKey
+    val chatKey: ChatEasyKey,
+    private val dictionary: Dictionary
 ) {
     fun phrase(phrase: Phrase) = dictionary.get(phrase, chatKey)
 }

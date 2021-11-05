@@ -2,11 +2,9 @@ package space.yaroslav.familybot.services.pidor
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.parseJson
 import space.yaroslav.familybot.common.extensions.toJson
 import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.PidorStrikeStats
 
@@ -15,8 +13,8 @@ class PidorStrikeStorage(
     private val easyKeyValueService: EasyKeyValueService
 ) {
 
-    fun get(chat: Chat): PidorStrikes {
-        val key = chat.key()
+    fun get(context: ExecutorContext): PidorStrikes {
+        val key = context.chatKey
         val rawValue = easyKeyValueService.get(PidorStrikeStats, key)
         return if (rawValue.isNullOrBlank()) {
             PidorStrikes(mutableMapOf())
@@ -25,8 +23,8 @@ class PidorStrikeStorage(
         }
     }
 
-    fun save(executorContext: ExecutorContext, strikes: PidorStrikes) {
-        easyKeyValueService.put(PidorStrikeStats, executorContext.chat.key(), serialize(strikes))
+    fun save(context: ExecutorContext, strikes: PidorStrikes) {
+        easyKeyValueService.put(PidorStrikeStats, context.chatKey, serialize(strikes))
     }
 
     private fun deserialize(raw: String): PidorStrikes {

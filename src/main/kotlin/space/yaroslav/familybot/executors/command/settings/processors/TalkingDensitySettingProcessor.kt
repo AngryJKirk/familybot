@@ -3,9 +3,7 @@ package space.yaroslav.familybot.executors.command.settings.processors
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.getMessageTokens
-import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.send
-import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
@@ -17,18 +15,18 @@ class TalkingDensitySettingProcessor(
 ) : SettingProcessor {
 
     private val commands = setOf("разговорчики", "балачки")
-    override fun canProcess(executorContext: ExecutorContext): Boolean {
-        val command = executorContext.update.getMessageTokens()[1]
+    override fun canProcess(context: ExecutorContext): Boolean {
+        val command = context.update.getMessageTokens()[1]
         return commands.contains(command)
     }
 
-    override fun process(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun process(context: ExecutorContext): suspend (AbsSender) -> Unit {
 
-        val value = executorContext.update.getMessageTokens()[2]
+        val value = context.update.getMessageTokens()[2]
         val amountOfDensity = value.toLongOrNull() ?: return {
             it.send(
-                executorContext,
-                executorContext.phrase(Phrase.ADVANCED_SETTINGS_FAILED_TALKING_DENSITY_NOT_NUMBER)
+                context,
+                context.phrase(Phrase.ADVANCED_SETTINGS_FAILED_TALKING_DENSITY_NOT_NUMBER)
                     .replace("#value", value)
             )
         }
@@ -36,15 +34,15 @@ class TalkingDensitySettingProcessor(
         if (amountOfDensity < 0) {
             return {
                 it.send(
-                    executorContext,
-                    executorContext.phrase(Phrase.ADVANCED_SETTINGS_FAILED_TALKING_DENSITY_NEGATIVE)
+                    context,
+                    context.phrase(Phrase.ADVANCED_SETTINGS_FAILED_TALKING_DENSITY_NEGATIVE)
                 )
             }
         }
 
-        easyKeyValueService.put(TalkingDensity, executorContext.update.toChat().key(), amountOfDensity)
+        easyKeyValueService.put(TalkingDensity, context.chatKey, amountOfDensity)
         return {
-            it.send(executorContext, executorContext.phrase(Phrase.ADVANCED_SETTINGS_OK))
+            it.send(context, context.phrase(Phrase.ADVANCED_SETTINGS_OK))
         }
     }
 }

@@ -22,7 +22,7 @@ import java.time.LocalDate
 class PidorStatsYearExecutor(
     private val repository: CommonRepository
 ) : CommandExecutor(), Configurable {
-    override fun getFunctionId(executorContext: ExecutorContext): FunctionId {
+    override fun getFunctionId(context: ExecutorContext): FunctionId {
         return FunctionId.PIDOR
     }
 
@@ -30,22 +30,22 @@ class PidorStatsYearExecutor(
         return Command.STATS_YEAR
     }
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         
         val now = LocalDate.now()
         val pidorsByChat = repository.getPidorsByChat(
-            executorContext.chat,
+            context.chat,
             startDate = startOfTheYear()
         )
             .map(Pidor::user)
             .formatTopList(
                 PluralizedWordsProvider(
-                    one = { executorContext.phrase(Phrase.PLURALIZED_COUNT_ONE) },
-                    few = { executorContext.phrase(Phrase.PLURALIZED_COUNT_FEW) },
-                    many = { executorContext.phrase(Phrase.PLURALIZED_COUNT_MANY) }
+                    one = { context.phrase(Phrase.PLURALIZED_COUNT_ONE) },
+                    few = { context.phrase(Phrase.PLURALIZED_COUNT_FEW) },
+                    many = { context.phrase(Phrase.PLURALIZED_COUNT_MANY) }
                 )
             )
-        val title = "${executorContext.phrase(Phrase.PIDOR_STAT_YEAR)} ${now.year}:\n".bold()
-        return { it.send(executorContext, title + pidorsByChat.joinToString("\n"), enableHtml = true) }
+        val title = "${context.phrase(Phrase.PIDOR_STAT_YEAR)} ${now.year}:\n".bold()
+        return { it.send(context, title + pidorsByChat.joinToString("\n"), enableHtml = true) }
     }
 }

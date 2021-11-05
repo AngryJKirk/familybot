@@ -17,15 +17,15 @@ class PshenitsinKeyWordProcessor(
     private val keyValueService: EasyKeyValueService
 ) : KeyWordProcessor {
 
-    override fun canProcess(executorContext: ExecutorContext): Boolean {
-        val text = executorContext.message.text ?: return false
-        return containsSymbolsY(text) && isTolerant(executorContext.message.chatId).not()
+    override fun canProcess(context: ExecutorContext): Boolean {
+        val text = context.message.text ?: return false
+        return containsSymbolsY(text) && isTolerant(context.message.chatId).not()
     }
 
-    override fun process(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun process(context: ExecutorContext): suspend (AbsSender) -> Unit {
         return { sender ->
             val text = talkingService
-                .getReplyToUser(executorContext)
+                .getReplyToUser(context)
                 .toCharArray()
                 .map { ch ->
                     when {
@@ -38,13 +38,13 @@ class PshenitsinKeyWordProcessor(
                 .let(::String)
 
             sender.send(
-                executorContext,
+                context,
                 text,
                 shouldTypeBeforeSend = true,
                 replyToUpdate = true
             )
 
-            keyValueService.put(PshenitsinTolerance, executorContext.chatKey, true, Duration.ofMinutes(1))
+            keyValueService.put(PshenitsinTolerance, context.chatKey, true, Duration.ofMinutes(1))
         }
     }
 

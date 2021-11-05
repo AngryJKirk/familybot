@@ -19,8 +19,8 @@ class AnswerExecutor : CommandExecutor() {
         return Command.ANSWER
     }
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
-        val text = executorContext.message.text
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        val text = context.message.text
 
         val message = text
             .removeRange(0, getIndexOfQuestionStart(text))
@@ -32,9 +32,9 @@ class AnswerExecutor : CommandExecutor() {
             ?.dropLastDelimiter()
             ?: return {
                 log.info("Bad argument was passed, text of message is [{}]", text)
-                it.send(executorContext, executorContext.phrase(Phrase.BAD_COMMAND_USAGE), replyToUpdate = true)
+                it.send(context, context.phrase(Phrase.BAD_COMMAND_USAGE), replyToUpdate = true)
             }
-        return { it.send(executorContext, message, replyToUpdate = true, shouldTypeBeforeSend = true) }
+        return { it.send(context, message, replyToUpdate = true, shouldTypeBeforeSend = true) }
     }
 
     private fun isOptionsCountEnough(options: List<String>) = options.size >= 2

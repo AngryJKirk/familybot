@@ -15,20 +15,20 @@ class CustomMessageExecutor(
     botConfig: BotConfig
 ) :
     OnlyBotOwnerExecutor(botConfig) {
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
-        val tokens = executorContext.update.getMessageTokens(delimiter = "|")
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        val tokens = context.update.getMessageTokens(delimiter = "|")
 
         val chats = commonRepository
             .getChats()
             .filter { chat -> chat.name?.contains(tokens[1], ignoreCase = true) ?: false }
         if (chats.size != 1) {
             return { sender ->
-                sender.send(executorContext, "Chat is not found, specify search: $chats")
+                sender.send(context, "Chat is not found, specify search: $chats")
             }
         }
         return { sender ->
             sender.execute(SendMessage(chats.first().idString, tokens[2]))
-            sender.send(executorContext, "Message \"${tokens[2]}\" has been sent")
+            sender.send(context, "Message \"${tokens[2]}\" has been sent")
         }
     }
 

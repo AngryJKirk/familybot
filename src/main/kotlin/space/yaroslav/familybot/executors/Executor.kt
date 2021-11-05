@@ -6,9 +6,9 @@ import space.yaroslav.familybot.models.router.Priority
 
 interface Executor {
 
-    fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit
+    fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit
 
-    fun canExecute(executorContext: ExecutorContext): Boolean
+    fun canExecute(context: ExecutorContext): Boolean
 
-    fun priority(executorContext: ExecutorContext): Priority
+    fun priority(context: ExecutorContext): Priority
 }

@@ -18,18 +18,18 @@ class FindUserExecutor(
     private val delimiter = "\n===================\n"
     override fun getMessagePrefix() = "user|"
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
-        val tokens = executorContext.update.getMessageTokens("|")
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        val tokens = context.update.getMessageTokens("|")
         val usersToChats = commonRepository
             .findUsersByName(tokens[1])
             .distinctBy(User::id)
             .associateWith { user -> commonRepository.getChatsByUser(user) }
         return { sender ->
             if (usersToChats.isEmpty()) {
-                sender.send(executorContext, "No one found, master")
+                sender.send(context, "No one found, master")
             } else {
                 usersToChats.toList().chunked(5).forEach { chunk ->
-                    sender.send(executorContext, format(chunk))
+                    sender.send(context, format(chunk))
                 }
             }
         }

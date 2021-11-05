@@ -18,26 +18,26 @@ class ShopExecutor(
 
     override fun command() = Command.SHOP
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         if (isEnabled.not()) {
             return { sender ->
-                sender.send(executorContext, executorContext.phrase(Phrase.SHOP_DISABLED))
+                sender.send(context, context.phrase(Phrase.SHOP_DISABLED))
             }
         }
 
         return {
             it.send(
-                executorContext,
-                executorContext.phrase(Phrase.SHOP_KEYBOARD),
+                context,
+                context.phrase(Phrase.SHOP_KEYBOARD),
                 replyToUpdate = true,
-                customization = customization(executorContext)
+                customization = customization(context)
             )
         }
     }
 
-    private fun customization(executorContext: ExecutorContext): SendMessage.() -> Unit {
+    private fun customization(context: ExecutorContext): SendMessage.() -> Unit {
         return {
-            replyMarkup = ShopItem.toKeyBoard(executorContext)
+            replyMarkup = ShopItem.toKeyBoard(context)
         }
     }
 }

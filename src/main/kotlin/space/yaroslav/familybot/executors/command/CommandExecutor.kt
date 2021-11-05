@@ -6,11 +6,11 @@ import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.models.telegram.Command
 
 abstract class CommandExecutor : Executor {
-    override fun canExecute(executorContext: ExecutorContext): Boolean {
-        return command() == executorContext.command
+    override fun canExecute(context: ExecutorContext): Boolean {
+        return command() == context.command
     }
 
-    override fun priority(executorContext: ExecutorContext): Priority {
+    override fun priority(context: ExecutorContext): Priority {
         return Priority.MEDIUM
     }
 

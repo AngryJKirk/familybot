@@ -33,25 +33,25 @@ class MeCommandExecutor(
         return Command.ME
     }
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
-        val chat = executorContext.chat
-        val user = executorContext.user
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        val chat = context.chat
+        val user = context.user
         return {
             val message = coroutineScope {
-                val messageCount = async { getMessageCount(chat, user, executorContext) }
-                val pidorCount = async { getPidorsCount(chat, user, executorContext) }
-                val commandCount = async { getCommandCount(user, executorContext) }
+                val messageCount = async { getMessageCount(chat, user, context) }
+                val pidorCount = async { getPidorsCount(chat, user, context) }
+                val commandCount = async { getCommandCount(user, context) }
                 setOf(
                     pidorCount.await(),
                     commandCount.await(),
                     messageCount.await()
                 ).joinToString("\n")
             }
-            it.send(executorContext, message, replyToUpdate = true)
+            it.send(context, message, replyToUpdate = true)
         }
     }
 
-    private fun getMessageCount(chat: Chat, user: User, executorContext: ExecutorContext): String {
+    private fun getMessageCount(chat: Chat, user: User, context: ExecutorContext): String {
         val key = UserAndChatEasyKey(user.id, chat.id)
         val messageCounter = easyKeyValueService.get(MessageCounter, key)
             ?: rawChatLogRepository.getMessageCount(chat, user).toLong()
@@ -60,29 +60,29 @@ class MeCommandExecutor(
         val word = pluralize(
             messageCounter,
             PluralizedWordsProvider(
-                one = { executorContext.phrase(Phrase.PLURALIZED_MESSAGE_ONE) },
-                few = { executorContext.phrase(Phrase.PLURALIZED_MESSAGE_FEW) },
-                many = { executorContext.phrase(Phrase.PLURALIZED_MESSAGE_MANY) }
+                one = { context.phrase(Phrase.PLURALIZED_MESSAGE_ONE) },
+                few = { context.phrase(Phrase.PLURALIZED_MESSAGE_FEW) },
+                many = { context.phrase(Phrase.PLURALIZED_MESSAGE_MANY) }
             )
         )
-        return executorContext.phrase(Phrase.YOU_TALKED) + " $messageCounter $word."
+        return context.phrase(Phrase.YOU_TALKED) + " $messageCounter $word."
     }
 
-    private fun getCommandCount(user: User, executorContext: ExecutorContext): String {
+    private fun getCommandCount(user: User, context: ExecutorContext): String {
         val commandCount =
             commandHistoryRepository.get(user, from = DateConstants.theBirthDayOfFamilyBot).size
         val word = pluralize(
             commandCount,
             PluralizedWordsProvider(
-                one = { executorContext.phrase(Phrase.PLURALIZED_COUNT_ONE) },
-                few = { executorContext.phrase(Phrase.PLURALIZED_COUNT_FEW) },
-                many = { executorContext.phrase(Phrase.PLURALIZED_COUNT_MANY) }
+                one = { context.phrase(Phrase.PLURALIZED_COUNT_ONE) },
+                few = { context.phrase(Phrase.PLURALIZED_COUNT_FEW) },
+                many = { context.phrase(Phrase.PLURALIZED_COUNT_MANY) }
             )
         )
-        return executorContext.phrase(Phrase.YOU_USED_COMMANDS) + " $commandCount $word."
+        return context.phrase(Phrase.YOU_USED_COMMANDS) + " $commandCount $word."
     }
 
-    private fun getPidorsCount(chat: Chat, user: User, executorContext: ExecutorContext): String {
+    private fun getPidorsCount(chat: Chat, user: User, context: ExecutorContext): String {
         val pidorCount = commonRepository
             .getPidorsByChat(chat, startDate = DateConstants.theBirthDayOfFamilyBot)
             .filter { (pidor) -> pidor.id == user.id }
@@ -90,14 +90,14 @@ class MeCommandExecutor(
         val word = pluralize(
             pidorCount,
             PluralizedWordsProvider(
-                one = { executorContext.phrase(Phrase.PLURALIZED_COUNT_ONE) },
-                few = { executorContext.phrase(Phrase.PLURALIZED_COUNT_FEW) },
-                many = { executorContext.phrase(Phrase.PLURALIZED_COUNT_MANY) }
+                one = { context.phrase(Phrase.PLURALIZED_COUNT_ONE) },
+                few = { context.phrase(Phrase.PLURALIZED_COUNT_FEW) },
+                many = { context.phrase(Phrase.PLURALIZED_COUNT_MANY) }
             )
         )
         return pidorCount
             .takeIf { count -> count > 0 }
-            ?.let { count -> executorContext.phrase(Phrase.YOU_WAS_PIDOR) + " $count $word." }
-            ?: executorContext.phrase(Phrase.YOU_WAS_NOT_PIDOR)
+            ?.let { count -> context.phrase(Phrase.YOU_WAS_PIDOR) + " $count $word." }
+            ?: context.phrase(Phrase.YOU_WAS_NOT_PIDOR)
     }
 }

@@ -19,27 +19,27 @@ class ScenarioContiniousExecutor(
     private val botConfig: BotConfig
 ) :
     ContiniousConversationExecutor(botConfig) {
-    override fun getDialogMessage(executorContext: ExecutorContext) = "Какую игру выбрать?"
+    override fun getDialogMessage(context: ExecutorContext) = "Какую игру выбрать?"
 
     override fun command() = Command.SCENARIO
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         return {
-            val callbackQuery = executorContext.update.callbackQuery
+            val callbackQuery = context.update.callbackQuery
 
-            if (!it.isFromAdmin(executorContext)) {
+            if (!it.isFromAdmin(context)) {
                 it.execute(
                     AnswerCallbackQuery(callbackQuery.id)
                         .apply {
                             showAlert = true
-                            text = executorContext.phrase(Phrase.ACCESS_DENIED)
+                            text = context.phrase(Phrase.ACCESS_DENIED)
                         }
                 )
             } else {
                 val scenarioToStart = scenarioService.getScenarios()
                     .find { (id) -> id.toString() == callbackQuery.data }
                     ?: throw FamilyBot.InternalException("Can't find a scenario ${callbackQuery.data}")
-                scenarioSessionManagementService.startGame(executorContext, scenarioToStart).invoke(it)
+                scenarioSessionManagementService.startGame(context, scenarioToStart).invoke(it)
             }
         }
     }

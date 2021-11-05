@@ -31,7 +31,7 @@ class TopPidorsByMonthsExecutor(
     private val commonRepository: CommonRepository
 ) : CommandExecutor(), Configurable {
 
-    override fun getFunctionId(executorContext: ExecutorContext): FunctionId {
+    override fun getFunctionId(context: ExecutorContext): FunctionId {
         return FunctionId.PIDOR
     }
 
@@ -43,35 +43,35 @@ class TopPidorsByMonthsExecutor(
         return Command.LEADERBOARD
     }
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         
         val result = commonRepository
-            .getPidorsByChat(executorContext.chat)
+            .getPidorsByChat(context.chat)
             .filter { it.date.isBefore(startOfCurrentMonth()) }
             .groupBy { map(it.date) }
             .mapValues { monthPidors -> calculateStats(monthPidors.value) }
             .toSortedMap()
             .asIterable()
             .reversed()
-            .map(formatLeaderBoard(executorContext))
+            .map(formatLeaderBoard(context))
         if (result.isEmpty()) {
             return {
-                it.send(executorContext, executorContext.phrase(Phrase.LEADERBOARD_NONE))
+                it.send(context, context.phrase(Phrase.LEADERBOARD_NONE))
             }
         }
-        val message = "${executorContext.phrase(Phrase.LEADERBOARD_TITLE)}:\n".bold()
+        val message = "${context.phrase(Phrase.LEADERBOARD_TITLE)}:\n".bold()
         return {
-            it.send(executorContext, message + "\n" + result.joinToString(delimiter), enableHtml = true)
+            it.send(context, message + "\n" + result.joinToString(delimiter), enableHtml = true)
         }
     }
 
-    private fun formatLeaderBoard(executorContext: ExecutorContext): (Map.Entry<LocalDate, PidorStat>) -> String = {
+    private fun formatLeaderBoard(context: ExecutorContext): (Map.Entry<LocalDate, PidorStat>) -> String = {
         val month = it.key.month.toRussian().capitalized()
         val year = it.key.year
         val userName = it.value.user.name.dropLastDelimiter()
         val position = it.value.position
         val leaderboardPhrase = getLeaderboardPhrase(
-            Pluralization.getPlur(it.value.position), executorContext
+            Pluralization.getPlur(it.value.position), context
         )
         "$month, $year:\n".italic() + "$userName, $position $leaderboardPhrase"
     }
@@ -89,11 +89,11 @@ class TopPidorsByMonthsExecutor(
         return PidorStat(pidor.key, pidors.count { it.user == pidor.key })
     }
 
-    private fun getLeaderboardPhrase(pluralization: Pluralization, executorContext: ExecutorContext): String {
+    private fun getLeaderboardPhrase(pluralization: Pluralization, context: ExecutorContext): String {
         return when (pluralization) {
-            Pluralization.ONE -> executorContext.phrase(Phrase.PLURALIZED_LEADERBOARD_ONE)
-            Pluralization.FEW -> executorContext.phrase(Phrase.PLURALIZED_LEADERBOARD_FEW)
-            Pluralization.MANY -> executorContext.phrase(Phrase.PLURALIZED_LEADERBOARD_MANY)
+            Pluralization.ONE -> context.phrase(Phrase.PLURALIZED_LEADERBOARD_ONE)
+            Pluralization.FEW -> context.phrase(Phrase.PLURALIZED_LEADERBOARD_FEW)
+            Pluralization.MANY -> context.phrase(Phrase.PLURALIZED_LEADERBOARD_MANY)
         }
     }
 }

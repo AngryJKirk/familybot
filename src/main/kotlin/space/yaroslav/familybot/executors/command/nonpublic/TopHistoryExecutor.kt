@@ -33,10 +33,10 @@ class TopHistoryExecutor : CommandExecutor() {
         return Command.TOP_HISTORY
     }
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         val mamoeb = lazyMamoeb.value ?: return {}
 
-        return { sender -> sender.send(executorContext, mamoeb.curses.random()) }
+        return { sender -> sender.send(context, mamoeb.curses.random()) }
     }
 }
 

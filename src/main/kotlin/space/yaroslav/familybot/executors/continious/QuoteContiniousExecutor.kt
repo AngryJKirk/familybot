@@ -20,13 +20,13 @@ class QuoteContiniousExecutor(
         return Command.QUOTE_BY_TAG
     }
 
-    override fun getDialogMessage(executorContext: ExecutorContext): String {
+    override fun getDialogMessage(context: ExecutorContext): String {
         return QUOTE_MESSAGE
     }
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         return {
-            val callbackQuery = executorContext.update.callbackQuery
+            val callbackQuery = context.update.callbackQuery
             it.execute(AnswerCallbackQuery(callbackQuery.id))
             it.execute(
                 (

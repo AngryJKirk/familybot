@@ -22,46 +22,46 @@ class AdvancedSettingsExecutor(
 
     private val log = getLogger()
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         
-        val messageTokens = executorContext.update.getMessageTokens()
+        val messageTokens = context.update.getMessageTokens()
         if (messageTokens.size == 1) {
             return {
                 it.send(
-                    executorContext,
-                    executorContext.phrase(Phrase.ADVANCED_SETTINGS),
+                    context,
+                    context.phrase(Phrase.ADVANCED_SETTINGS),
                     enableHtml = true
                 )
             }
         }
         return {
-            if (!it.isFromAdmin(executorContext)) {
+            if (!it.isFromAdmin(context)) {
                 sendErrorMessage(
-                    executorContext, executorContext.phrase(Phrase.ADVANCED_SETTINGS_ADMIN_ONLY)
+                    context, context.phrase(Phrase.ADVANCED_SETTINGS_ADMIN_ONLY)
                 ).invoke(it)
             } else {
                 runCatching {
 
                     val processor = processors
-                        .find { processor -> processor.canProcess(executorContext) }
+                        .find { processor -> processor.canProcess(context) }
                     return@runCatching processor
-                        ?.process(executorContext)
-                        ?: sendErrorMessage(executorContext)
+                        ?.process(context)
+                        ?: sendErrorMessage(context)
                 }.getOrElse { throwable ->
                     log.error("Advanced settings failed", throwable)
-                    sendErrorMessage(executorContext)
+                    sendErrorMessage(context)
                 }.invoke(it)
             }
         }
     }
 
     private fun sendErrorMessage(
-        executorContext: ExecutorContext,
-        message: String = executorContext.phrase(Phrase.ADVANCED_SETTINGS_ERROR)
+        context: ExecutorContext,
+        message: String = context.phrase(Phrase.ADVANCED_SETTINGS_ERROR)
     ): suspend (AbsSender) -> Unit {
         return {
             it.send(
-                executorContext,
+                context,
                 message
             )
         }

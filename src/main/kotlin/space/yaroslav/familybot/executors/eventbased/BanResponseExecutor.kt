@@ -17,25 +17,25 @@ class BanResponseExecutor(
     private val banService: BanService
 ) : Executor {
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
-        val banMessage = banService.isChatBanned(executorContext.chat)
-            ?: banService.isUserBanned(executorContext.user)
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        val banMessage = banService.isChatBanned(context.chat)
+            ?: banService.isUserBanned(context.user)
             ?: "иди нахуй"
         return {
-            if (executorContext.command != null) {
-                it.send(executorContext, banMessage, replyToUpdate = true)
+            if (context.command != null) {
+                it.send(context, banMessage, replyToUpdate = true)
             }
         }
     }
 
-    override fun canExecute(executorContext: ExecutorContext): Boolean {
-        val message = executorContext.message
+    override fun canExecute(context: ExecutorContext): Boolean {
+        val message = context.message
         val chat = message.chat.toChat()
         val user = message.from.toUser(chat = chat)
         return banCheck(chat, user) != null
     }
 
-    override fun priority(executorContext: ExecutorContext) = Priority.HIGH
+    override fun priority(context: ExecutorContext) = Priority.HIGH
 
     private fun banCheck(chat: Chat, user: User): String? {
         return banService.isUserBanned(user) ?: banService.isChatBanned(chat)

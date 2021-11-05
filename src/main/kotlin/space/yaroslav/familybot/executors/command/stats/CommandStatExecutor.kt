@@ -21,26 +21,26 @@ class CommandStatExecutor(
         return Command.COMMAND_STATS
     }
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
 
-        val all = repositoryCommand.getAll(executorContext.chat).groupBy(CommandByUser::command)
+        val all = repositoryCommand.getAll(context.chat).groupBy(CommandByUser::command)
 
         val topList = all
             .filterNot { it.key == command() }
-            .map { format(it, executorContext) }
+            .map { format(it, context) }
             .joinToString("\n")
 
         return {
             it.send(
-                executorContext,
-                "${executorContext.phrase(Phrase.STATS_BY_COMMAND)}:\n".bold() + topList,
+                context,
+                "${context.phrase(Phrase.STATS_BY_COMMAND)}:\n".bold() + topList,
                 enableHtml = true
             )
         }
     }
 
-    private fun format(it: Map.Entry<Command, List<CommandByUser>>, executorContext: ExecutorContext) =
-        "${executorContext.phrase(Phrase.COMMAND)} " + "${it.key.command}:".bold() + "\n" + it.value.map { it.user }
+    private fun format(it: Map.Entry<Command, List<CommandByUser>>, context: ExecutorContext) =
+        "${context.phrase(Phrase.COMMAND)} " + "${it.key.command}:".bold() + "\n" + it.value.map { it.user }
             .formatTopList()
             .joinToString("\n")
 }

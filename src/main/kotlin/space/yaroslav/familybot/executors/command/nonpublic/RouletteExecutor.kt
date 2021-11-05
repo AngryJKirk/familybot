@@ -19,7 +19,7 @@ const val ROULETTE_MESSAGE = "Выбери число от 1 до 6"
 @Deprecated(message = "Replaced with BetExecutor")
 class RouletteExecutor : CommandExecutor(), Configurable {
 
-    override fun getFunctionId(executorContext: ExecutorContext): FunctionId {
+    override fun getFunctionId(context: ExecutorContext): FunctionId {
         return FunctionId.PIDOR
     }
 
@@ -27,16 +27,16 @@ class RouletteExecutor : CommandExecutor(), Configurable {
         return Command.ROULETTE
     }
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
 
-        val chatId = executorContext.update.message.chatId.toString()
+        val chatId = context.update.message.chatId.toString()
 
         return {
             it.execute(
-                SendMessage(chatId, executorContext.phrase(Phrase.ROULETTE_MESSAGE))
+                SendMessage(chatId, context.phrase(Phrase.ROULETTE_MESSAGE))
                     .apply {
                         replyMarkup = ForceReplyKeyboard().apply { selective = true }
-                        replyToMessageId = executorContext.update.message.messageId
+                        replyToMessageId = context.update.message.messageId
                     }
             )
         }

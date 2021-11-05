@@ -49,7 +49,7 @@ class AskWorldInitialExecutor(
     private val easyKeyValueService: EasyKeyValueService
 ) : CommandExecutor(), Configurable {
     private val log = getLogger()
-    override fun getFunctionId(executorContext: ExecutorContext): FunctionId {
+    override fun getFunctionId(context: ExecutorContext): FunctionId {
         return FunctionId.ASK_WORLD
     }
 
@@ -57,27 +57,27 @@ class AskWorldInitialExecutor(
         return Command.ASK_WORLD
     }
 
-    override fun execute(executorContext: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
 
-        val currentChat = executorContext.chat
+        val currentChat = context.chat
 
-        val chatEasyKey = currentChat.key()
-        val chatUsages = easyKeyValueService.get(AskWorldChatUsages, chatEasyKey)
+        val chatKey = context.chatKey
+        val chatUsages = easyKeyValueService.get(AskWorldChatUsages, chatKey)
         if (chatUsages != null && chatUsages > 0L) {
             return {
                 log.info("Limit was exceed for chat")
-                it.send(executorContext, executorContext.phrase(Phrase.ASK_WORLD_LIMIT_BY_CHAT), replyToUpdate = true)
+                it.send(context, context.phrase(Phrase.ASK_WORLD_LIMIT_BY_CHAT), replyToUpdate = true)
             }
         }
-        val userEasyKey = executorContext.user.key()
+        val userEasyKey = context.userKey
         val userUsages = easyKeyValueService.get(AskWorldUserUsages, userEasyKey)
         if (userUsages != null && userUsages > 1) {
             return {
                 log.info("Limit was exceed for user")
-                it.send(executorContext, executorContext.phrase(Phrase.ASK_WORLD_LIMIT_BY_USER), replyToUpdate = true)
+                it.send(context, context.phrase(Phrase.ASK_WORLD_LIMIT_BY_USER), replyToUpdate = true)
             }
         }
-        val askWorldData = getAskWorldData(executorContext)
+        val askWorldData = getAskWorldData(context)
         if (askWorldData is ValidationError) {
             return askWorldData.invalidQuestionAction
         }
@@ -86,15 +86,15 @@ class AskWorldInitialExecutor(
         val question = AskWorldQuestion(
             null,
             successData.questionTitle,
-            executorContext.user,
+            context.user,
             currentChat,
             Instant.now(),
             null
         )
         return { sender ->
             val questionId = coroutineScope { async { askWorldRepository.addQuestion(question) } }
-            sender.send(executorContext, executorContext.phrase(Phrase.DATA_CONFIRM))
-            getChatsToSendQuestion(executorContext, currentChat, successData.isScam)
+            sender.send(context, context.phrase(Phrase.DATA_CONFIRM))
+            getChatsToSendQuestion(context, successData.isScam)
                 .forEach { chatToSend ->
                     runCatching {
                         delay(100)
@@ -103,9 +103,9 @@ class AskWorldInitialExecutor(
                     }.onFailure { e -> markChatInactive(chatToSend, questionId, e) }
                 }
             if (chatUsages == null) {
-                easyKeyValueService.put(AskWorldChatUsages, chatEasyKey, 1, untilNextDay())
+                easyKeyValueService.put(AskWorldChatUsages, chatKey, 1, untilNextDay())
             } else {
-                easyKeyValueService.increment(AskWorldChatUsages, chatEasyKey)
+                easyKeyValueService.increment(AskWorldChatUsages, chatKey)
             }
             if (userUsages == null) {
                 easyKeyValueService.put(AskWorldUserUsages, userEasyKey, 1, untilNextDay())
@@ -115,9 +115,9 @@ class AskWorldInitialExecutor(
         }
     }
 
-    private fun getAskWorldData(executorContext: ExecutorContext): AskWorldQuestionData {
-        val replyToMessage = executorContext.message.replyToMessage
-        val isReply = executorContext.message.isReply
+    private fun getAskWorldData(context: ExecutorContext): AskWorldQuestionData {
+        val replyToMessage = context.message.replyToMessage
+        val isReply = context.message.isReply
 
         if (isReply && replyToMessage.hasPoll()) {
             val poll = replyToMessage.poll
@@ -140,10 +140,10 @@ class AskWorldInitialExecutor(
                 )
             }
         } else {
-            val message = if (isReply && replyToMessage.from.id == executorContext.message.from.id) {
+            val message = if (isReply && replyToMessage.from.id == context.message.from.id) {
                 replyToMessage.text
             } else {
-                executorContext.message
+                context.message
                     .text
                     ?.removePrefix(command().command)
                     ?.removePrefix("@${botConfig.botName}")
@@ -151,22 +151,22 @@ class AskWorldInitialExecutor(
             }
                 ?.takeIf(String::isNotEmpty) ?: return ValidationError {
                 it.send(
-                    executorContext,
-                    executorContext.phrase(Phrase.ASK_WORLD_HELP)
+                    context,
+                    context.phrase(Phrase.ASK_WORLD_HELP)
                 )
             }
 
             val isScam =
                 shouldBeCensored(message) ||
-                    shouldBeCensored(executorContext.chat.name ?: "") ||
+                    shouldBeCensored(context.chat.name ?: "") ||
                     isSpam(message) ||
                     containsLongWords(message)
 
             if (message.length > 2000) {
                 return ValidationError {
                     it.send(
-                        executorContext,
-                        executorContext.phrase(Phrase.ASK_WORLD_QUESTION_TOO_LONG),
+                        context,
+                        context.phrase(Phrase.ASK_WORLD_QUESTION_TOO_LONG),
                         replyToUpdate = true
                     )
                 }
@@ -218,8 +218,7 @@ class AskWorldInitialExecutor(
     }
 
     private fun getChatsToSendQuestion(
-        executorContext: ExecutorContext,
-        currentChat: Chat,
+        context: ExecutorContext,
         isScam: Boolean
     ): List<Chat> {
         if (isScam) {
@@ -227,9 +226,10 @@ class AskWorldInitialExecutor(
             return emptyList()
         }
 
+        val functionId = getFunctionId(context)
         val chatsWithFeatureEnabled = commonRepository.getChats()
-            .filterNot { chat -> chat == currentChat }
-            .filter { chat -> configureRepository.isEnabled(getFunctionId(executorContext), chat) }
+            .filterNot { chat -> chat == context.chat }
+            .filter { configureRepository.isEnabled(functionId, context) }
             .shuffled()
         log.info("Number of chats with feature enabled: ${chatsWithFeatureEnabled.size}")
         val acceptAllChats = chatsWithFeatureEnabled

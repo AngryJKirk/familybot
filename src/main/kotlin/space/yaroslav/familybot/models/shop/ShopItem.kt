@@ -16,11 +16,11 @@ enum class ShopItem(val title: Phrase, val description: Phrase, val price: Int) 
     I_AM_RICH(Phrase.I_AM_RICH_TITLE, Phrase.I_AM_RICH_DESC, 5000.rubles());
 
     companion object {
-        fun toKeyBoard(executorContext: ExecutorContext): InlineKeyboardMarkup {
+        fun toKeyBoard(context: ExecutorContext): InlineKeyboardMarkup {
             return InlineKeyboardMarkup(
                 values()
                     .map { shopItem ->
-                        InlineKeyboardButton(formatLine(executorContext, shopItem))
+                        InlineKeyboardButton(formatLine(context, shopItem))
                             .apply {
                                 callbackData = shopItem.name
                             }
@@ -31,8 +31,8 @@ enum class ShopItem(val title: Phrase, val description: Phrase, val price: Int) 
         }
 
         private fun formatLine(
-            executorContext: ExecutorContext,
+            context: ExecutorContext,
             shopItem: ShopItem
-        ) = executorContext.phrase(shopItem.title) + " - ${shopItem.price / 100}₽"
+        ) = context.phrase(shopItem.title) + " - ${shopItem.price / 100}₽"
     }
 }

@@ -31,7 +31,7 @@ object SenderLogger {
 }
 
 suspend fun AbsSender.send(
-    executorContext: ExecutorContext,
+    context: ExecutorContext,
     text: String,
     replyMessageId: Int? = null,
     enableHtml: Boolean = false,
@@ -40,7 +40,7 @@ suspend fun AbsSender.send(
     shouldTypeBeforeSend: Boolean = false,
     typeDelay: Pair<Int, Int> = 1000 to 2000
 ): Message {
-    val update = executorContext.update
+    val update = context.update
     SenderLogger.log.info(
         "Sending message, update=${update.toJson()}, " +
             "text=$text, " +
@@ -71,39 +71,39 @@ suspend fun AbsSender.send(
 }
 
 suspend fun AbsSender.sendSticker(
-    executorContext: ExecutorContext,
+    context: ExecutorContext,
     sticker: Sticker,
     replyToUpdate: Boolean = false
 ): Message {
-    return sendStickerInternal(this, executorContext, replyToUpdate, sticker.pack) {
+    return sendStickerInternal(this, context, replyToUpdate, sticker.pack) {
         find { it.emoji == sticker.stickerEmoji }
     }
 }
 
 suspend fun AbsSender.sendRandomSticker(
-    executorContext: ExecutorContext,
+    context: ExecutorContext,
     stickerPack: StickerPack,
     replyToUpdate: Boolean = false
 ): Message {
-    return sendStickerInternal(this, executorContext, replyToUpdate, stickerPack) {
+    return sendStickerInternal(this, context, replyToUpdate, stickerPack) {
         random()
     }
 }
 
-fun AbsSender.isFromAdmin(executorContext: ExecutorContext): Boolean {
-    if (executorContext.isFromDeveloper) {
+fun AbsSender.isFromAdmin(context: ExecutorContext): Boolean {
+    if (context.isFromDeveloper) {
         return true
     }
-    val user = executorContext.update.from()
+    val user = context.update.from()
     return this
-        .execute(GetChatAdministrators(executorContext.chat.idString))
+        .execute(GetChatAdministrators(context.chat.idString))
         .filter { chatMember -> chatMember.status == "administrator" || chatMember.status == "creator" }
         .any { admin -> admin.user().id == user.id }
 }
 
 private suspend fun sendStickerInternal(
     sender: AbsSender,
-    executorContext: ExecutorContext,
+    context: ExecutorContext,
     replyToUpdate: Boolean = false,
     stickerPack: StickerPack,
     stickerSelector: List<TelegramSticker>.() -> TelegramSticker?
@@ -116,10 +116,10 @@ private suspend fun sendStickerInternal(
     }
     val sendSticker = SendSticker().apply {
         sticker = InputFile(stickerId.await()?.fileId)
-        chatId = executorContext.update.chatIdString()
+        chatId = context.update.chatIdString()
     }
     if (replyToUpdate) {
-        sendSticker.replyToMessageId = executorContext.update.message.messageId
+        sendSticker.replyToMessageId = context.update.message.messageId
     }
     return sender.execute(sendSticker)
 }
