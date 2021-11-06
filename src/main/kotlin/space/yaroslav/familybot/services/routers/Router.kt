@@ -254,7 +254,7 @@ class Router(
                     newChatMembers.filter { !it.isBot }.forEach { repository.addUser(it.toUser(chat = chat)) }
                 }
             }
-            message.from.isBot.not() -> {
+            message.from.isBot.not() || message.from.userName == "GroupAnonymousBot" -> {
                 repository.addUser(message.from.toUser(chat = chat))
             }
         }
