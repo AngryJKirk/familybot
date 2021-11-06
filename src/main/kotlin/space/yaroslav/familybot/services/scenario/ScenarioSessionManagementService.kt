@@ -75,15 +75,7 @@ class ScenarioSessionManagementService(
         val previousMove = scenarioGameplayService.getCurrentScenarioState(chat)?.move
             ?: throw FamilyBot.InternalException("Internal logic error, current state wasn't found")
         if (previousMove.isEnd) {
-            return {
-                val evenMorePreviousMove = scenarioService.getPreviousMove(previousMove)
-                    ?: throw FamilyBot.InternalException("Scenario seems broken")
-                it.send(context, getExpositionMessage(previousMove, evenMorePreviousMove), enableHtml = true)
-                delay(2000)
-                it.send(context, previousMove.description)
-                delay(2000)
-                it.send(context, context.phrase(Phrase.SCENARIO_END))
-            }
+            return sendFinal(previousMove, context)
         }
         val recentPoll = scenarioPollManagingService.getRecentPoll(chat, previousMove)
             ?: return { sender ->
@@ -100,7 +92,11 @@ class ScenarioSessionManagementService(
             if (dayAgo.isAfter(recentPoll.createDate)) {
                 val nextMove = scenarioGameplayService.nextState(recentPoll.chat)
                 if (nextMove != null) {
-                    continueGame(context, nextMove, sender, previousMove)
+                    if (nextMove.isEnd) {
+                        sendFinal(nextMove, context).invoke(sender)
+                    } else {
+                        continueGame(context, nextMove, sender, previousMove)
+                    }
                 } else {
                     sender.send(
                         context,
@@ -259,4 +255,15 @@ class ScenarioSessionManagementService(
             )
         }
     }
+
+    private fun sendFinal(previousMove: ScenarioMove, context: ExecutorContext): suspend (AbsSender) -> Unit =
+        { sender ->
+            val evenMorePreviousMove = scenarioService.getPreviousMove(previousMove)
+                ?: throw FamilyBot.InternalException("Scenario seems broken")
+            sender.send(context, getExpositionMessage(previousMove, evenMorePreviousMove), enableHtml = true)
+            delay(2000)
+            sender.send(context, previousMove.description)
+            delay(2000)
+            sender.send(context, context.phrase(Phrase.SCENARIO_END))
+        }
 }
