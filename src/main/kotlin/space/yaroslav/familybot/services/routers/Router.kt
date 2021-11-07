@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.api.objects.User
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.context
 import space.yaroslav.familybot.common.extensions.key
@@ -251,7 +252,9 @@ class Router(
                     repository.changeChatActiveStatus(chat, true)
                 } else {
                     logger.info("New users was added: $newChatMembers")
-                    newChatMembers.filter { !it.isBot }.forEach { repository.addUser(it.toUser(chat = chat)) }
+                    newChatMembers
+                        .filterNot(User::getIsBot)
+                        .forEach { repository.addUser(it.toUser(chat = chat)) }
                 }
             }
             message.from.isBot.not() || message.from.userName == "GroupAnonymousBot" -> {

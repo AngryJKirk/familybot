@@ -29,6 +29,7 @@ import space.yaroslav.familybot.services.pidor.PidorStrikesService
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.PidorTolerance
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 @Component
 class PidorExecutor(
@@ -107,13 +108,22 @@ class PidorExecutor(
                     .forEach { job -> job.join() }
                 val actualizedUsers = repository.getUsers(chat, activeOnly = true)
                 log.info("Users to roll: {}", actualizedUsers)
-                val nextPidor = actualizedUsers.random()
+                val nextPidor = actualizedUsers.randomOrNull() ?: getFallbackPidor(chat)
+
                 log.info("Pidor is rolled to $nextPidor")
                 val newPidor = Pidor(nextPidor, Instant.now())
                 repository.addPidor(newPidor)
                 return@async nextPidor
             }
         }
+    }
+
+    private fun getFallbackPidor(chat: Chat): User {
+        log.error("Can't find pidor due to empty user list for $chat, switching to fallback pidor")
+        return repository
+            .getPidorsByChat(chat, startDate = Instant.now().minus(10, ChronoUnit.DAYS))
+            .random()
+            .user
     }
 
     private fun checkIfUserStillThere(
