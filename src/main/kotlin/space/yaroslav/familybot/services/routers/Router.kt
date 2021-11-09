@@ -4,7 +4,6 @@ import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
@@ -104,7 +103,7 @@ class Router(
             executor.meteredExecute(context, meterRegistry)
         }.also {
             loggingScope.launch(loggingExceptionHandler) {
-                delay(3000)
+                logger.info("Launching lcc coroutine")
                 logChatCommand(executor, context)
             }
         }
@@ -116,7 +115,7 @@ class Router(
     ) {
         register(message)
         loggingScope.launch(loggingExceptionHandler) {
-            delay(3000) // temporary fix in order to check why it fails sometimes
+            logger.info("Launching rul coroutine")
             rawUpdateLogger.log(update)
         }
     }
@@ -125,7 +124,7 @@ class Router(
         logger.info("No executor found, trying to find random priority executors")
 
         loggingScope.launch(loggingExceptionHandler) {
-            delay(3000)
+            logger.info("Launching lgm coroutine")
             logChatMessage(context)
         }
         val executor = executors
