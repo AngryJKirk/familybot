@@ -69,10 +69,10 @@ class FamilyBot(
     }
 
     private suspend fun proceed(update: Update) {
-        val user = update.toUser()
-        MDC.put("chat", "${user.chat.name}:${user.chat.id}")
-        MDC.put("user", "${user.name}:${user.id}")
         try {
+            val user = update.toUser()
+            MDC.put("chat", "${user.chat.name}:${user.chat.id}")
+            MDC.put("user", "${user.name}:${user.id}")
             router.processUpdate(update).invoke(this@FamilyBot)
         } catch (e: TelegramApiRequestException) {
             val logMessage = "Telegram error: ${e.apiResponse}, ${e.errorCode}, update is ${update.toJson()}"

@@ -4,6 +4,7 @@ import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
@@ -61,7 +62,7 @@ class Router(
 
     private val logger = getLogger()
     private val chatLogRegex = Regex("[а-яА-Яё\\s,.!?]+")
-    private val loggingScope = CoroutineScope(Dispatchers.Default)
+    private val loggingScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
     private val loggingExceptionHandler = CoroutineExceptionHandler { _, exception ->
         logger.error("Exception in logging job", exception)
     }
