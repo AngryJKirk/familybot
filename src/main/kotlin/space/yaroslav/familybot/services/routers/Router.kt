@@ -104,7 +104,6 @@ class Router(
             executor.meteredExecute(context, meterRegistry)
         }.also {
             loggingScope.launch(loggingExceptionHandler) {
-                logger.info("Launching lcc coroutine")
                 logChatCommand(executor, context)
             }
         }
@@ -116,7 +115,6 @@ class Router(
     ) {
         register(message)
         loggingScope.launch(loggingExceptionHandler) {
-            logger.info("Launching rul coroutine")
             rawUpdateLogger.log(update)
         }
     }
@@ -125,7 +123,6 @@ class Router(
         logger.info("No executor found, trying to find random priority executors")
 
         loggingScope.launch(loggingExceptionHandler) {
-            logger.info("Launching lgm coroutine")
             logChatMessage(context)
         }
         val executor = executors
