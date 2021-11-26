@@ -76,11 +76,7 @@ class BetContiniousExecutor(
         return {
             it.send(
                 context,
-                "${context.phrase(Phrase.BET_WINNABLE_NUMBERS_ANNOUNCEMENT)} ${
-                formatWinnableNumbers(
-                    winnableNumbers
-                )
-                }",
+                "${context.phrase(Phrase.BET_WINNABLE_NUMBERS_ANNOUNCEMENT)} ${formatWinnableNumbers(winnableNumbers)}",
                 shouldTypeBeforeSend = true
             )
             it.send(context, context.phrase(Phrase.BET_ZATRAVOCHKA), shouldTypeBeforeSend = true)
