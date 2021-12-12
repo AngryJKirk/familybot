@@ -15,11 +15,11 @@
 
     <properties>
         <kotlin.version>1.6.0</kotlin.version>
-        <telegrambots.version>5.4.0.1</telegrambots.version>
+        <telegrambots.version>5.5.0</telegrambots.version>
         <testcontainers.version>1.16.2</testcontainers.version>
         <mockito-kotlin.version>4.0.0</mockito-kotlin.version>
         <tomlj.version>1.0.0</tomlj.version>
-        <spring.version>2.6.0</spring.version>
+        <spring.version>2.6.1</spring.version>
         <kotlinx-coroutines.version>1.5.2</kotlinx-coroutines.version>
     </properties>
 
