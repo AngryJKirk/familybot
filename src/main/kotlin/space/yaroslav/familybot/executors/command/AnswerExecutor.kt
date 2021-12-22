@@ -23,7 +23,7 @@ class AnswerExecutor : CommandExecutor() {
         val text = context.message.text
 
         val message = text
-            .removeRange(0, getIndexOfQuestionStart(text))
+            .removeRange(0, getIndexOfQuestionStart(text) + 1)
             .split(orPattern)
             .filter(String::isNotEmpty)
             .takeIf(this::isOptionsCountEnough)

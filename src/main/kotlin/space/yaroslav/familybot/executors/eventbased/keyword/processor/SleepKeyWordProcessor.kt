@@ -11,8 +11,8 @@ import space.yaroslav.familybot.models.telegram.stickers.Sticker
 class SleepKeyWordProcessor : KeyWordProcessor {
     override fun canProcess(context: ExecutorContext): Boolean {
         val text = context.message.text ?: return false
-        return text.contains("спать", ignoreCase = true)
-            || text.contains("сплю", ignoreCase = true)
+        return text.contains("спать", ignoreCase = true) ||
+            text.contains("сплю", ignoreCase = true)
     }
 
     override fun process(context: ExecutorContext): suspend (AbsSender) -> Unit {

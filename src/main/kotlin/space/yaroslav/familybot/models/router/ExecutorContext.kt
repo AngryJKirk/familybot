@@ -21,6 +21,7 @@ class ExecutorContext(
     val userAndChatKey: UserAndChatEasyKey,
     val userKey: UserEasyKey,
     val chatKey: ChatEasyKey,
+    val testEnvironment: Boolean,
     private val dictionary: Dictionary
 ) {
     fun phrase(phrase: Phrase) = dictionary.get(phrase, chatKey)

@@ -9,14 +9,18 @@ import org.springframework.boot.WebApplicationType
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
+import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.scheduling.annotation.EnableScheduling
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.BotConfigInjector
+import space.yaroslav.familybot.telegram.BotStarter
 
 @SpringBootApplication
 @EnableScheduling
 @EnableConfigurationProperties(BotConfigInjector::class)
-class FamilyBotApplication {
+class FamilyBotApplication(
+    private val env: ConfigurableEnvironment
+) {
 
     @Bean
     fun timedAspect(registry: MeterRegistry): TimedAspect {
@@ -37,7 +41,8 @@ class FamilyBotApplication {
             botConfigInjector.developerId,
             botNameAliases,
             botConfigInjector.yandexKey?.takeIf(String::isNotBlank),
-            botConfigInjector.paymentToken?.takeIf(String::isNotBlank)
+            botConfigInjector.paymentToken?.takeIf(String::isNotBlank),
+            env.activeProfiles.contains(BotStarter.TESTING_PROFILE_NAME)
         )
     }
 }

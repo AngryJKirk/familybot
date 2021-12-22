@@ -60,7 +60,9 @@ suspend fun AbsSender.send(
     }
     if (shouldTypeBeforeSend) {
         this.execute(SendChatAction(update.chatIdString(), "typing"))
-        delay(randomInt(typeDelay.first, typeDelay.second).toLong())
+        if (context.testEnvironment.not()) {
+            delay(randomInt(typeDelay.first, typeDelay.second).toLong())
+        }
     }
 
     val message = messageObj.apply(customization)

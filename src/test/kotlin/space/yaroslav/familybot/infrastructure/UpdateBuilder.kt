@@ -31,7 +31,8 @@ private val botConfig = BotConfig(
     developerId = "123",
     botNameAliases = listOf("IntegrationTests"),
     yandexKey = null,
-    paymentToken = null
+    paymentToken = null,
+    testEnvironment = true
 )
 
 fun createSimpleContext(text: String? = null): ExecutorContext {

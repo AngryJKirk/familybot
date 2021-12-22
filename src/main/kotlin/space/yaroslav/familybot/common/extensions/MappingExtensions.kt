@@ -79,6 +79,7 @@ fun Update.context(botConfig: BotConfig, dictionary: Dictionary): ExecutorContex
         this.key(),
         user.key(),
         chat.key(),
+        botConfig.testEnvironment,
         dictionary
     )
 }
