@@ -39,7 +39,7 @@ To re-deploy only the app run `make redeploy-test`.
 
 ### Deploy prod
 
-1. Create production.env in your home folder just like `scripts/.env` but with production params
+1. Create `production.env` in `/scripts` folder just like `scripts/.env` but with production params
 
 2. enter `scripts/` and run `make deploy-prod`
 
