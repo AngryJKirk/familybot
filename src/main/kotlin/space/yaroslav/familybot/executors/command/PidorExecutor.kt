@@ -27,7 +27,9 @@ import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.pidor.PidorCompetitionService
 import space.yaroslav.familybot.services.pidor.PidorStrikesService
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
+import space.yaroslav.familybot.services.settings.PickPidorAbilityCount
 import space.yaroslav.familybot.services.settings.PidorTolerance
+import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -36,7 +38,8 @@ class PidorExecutor(
     private val repository: CommonRepository,
     private val pidorCompetitionService: PidorCompetitionService,
     private val pidorStrikesService: PidorStrikesService,
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
+    private val botConfig: BotConfig
 ) : CommandExecutor(), Configurable {
     override fun getFunctionId(context: ExecutorContext): FunctionId {
         return FunctionId.PIDOR
@@ -46,7 +49,9 @@ class PidorExecutor(
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         val chat = context.chat
-
+        if (context.message.isReply) {
+            return pickPidor(context)
+        }
         log.info("Getting pidors from chat $chat")
         val users = repository.getUsers(chat, activeOnly = true)
         val key = context.chatKey
@@ -145,23 +150,44 @@ class PidorExecutor(
 
     private fun getMessageForPidors(context: ExecutorContext): SendMessage? {
         val chat = context.chat
-        val pidorsByChat = repository
+        val pidorsByChat: List<List<Pidor>> = repository
             .getPidorsByChat(chat)
             .filter { pidor -> pidor.date.isToday() }
-            .distinctBy { (user) -> user.id }
+            .groupBy { (user) -> user.id }
+            .map(Map.Entry<Long, List<Pidor>>::value)
         return when (pidorsByChat.size) {
             0 -> null
-            1 -> SendMessage(
-                chat.idString,
-                context.phrase(Phrase.PIROR_DISCOVERED_ONE) + " " +
-                    pidorsByChat.first().user.getGeneralName()
-            ).apply { enableHtml(true) }
+            1 -> {
+                SendMessage(
+                    chat.idString,
+                    context.phrase(Phrase.PIROR_DISCOVERED_ONE) + " " +
+                        formatName(pidorsByChat.first(), context)
+                ).apply { enableHtml(true) }
+            }
             else -> SendMessage(
                 chat.idString,
                 context.phrase(Phrase.PIROR_DISCOVERED_MANY) + " " +
-                    pidorsByChat.joinToString { it.user.getGeneralName() }
+                    pidorsByChat.joinToString { formatName(it, context) }
             ).apply { enableHtml(true) }
         }
+    }
+
+    private fun formatName(statEntity: List<Pidor>, context: ExecutorContext): String {
+        val pidorCount = statEntity.size
+        val pidorName = statEntity.first()
+        var message = pidorName.user.getGeneralName()
+        if (pidorCount > 1) {
+            val pidorCountPhrase =
+                when (pidorCount) {
+                    2 -> Phrase.PIDOR_COUNT_TWICE
+                    3 -> Phrase.PIDOR_COUNT_THRICE
+                    4 -> Phrase.PIDOR_COUNT_FOUR_TIMES
+                    5 -> Phrase.PIDOR_COUNT_FIVE_TIMES
+                    else -> Phrase.PIDOR_COUNT_DOHUYA
+                }
+            message = "$message (${context.phrase(pidorCountPhrase)})"
+        }
+        return message
     }
 
     private fun isLimitOfPidorsExceeded(
@@ -180,5 +206,73 @@ class PidorExecutor(
                 ?.user()
                 ?.toUser(user.chat)
         }.getOrNull()
+    }
+
+    private fun pickPidor(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        val abilityCount = easyKeyValueService.get(PickPidorAbilityCount, context.userKey)
+        if (abilityCount == 0L) {
+            return {
+                it.send(
+                    context,
+                    context.phrase(Phrase.PICK_PIDOR_PAYMENT_REQUIRED),
+                    shouldTypeBeforeSend = true,
+                    replyToUpdate = true
+                )
+            }
+        }
+        val replyMessage = context.message.replyToMessage
+
+        if (replyMessage.from.isBot) {
+            if (replyMessage.from.userName == botConfig.botName) {
+                return {
+                    it.send(
+                        context,
+                        context.phrase(Phrase.PICK_PIDOR_CURRENT_BOT),
+                        shouldTypeBeforeSend = true,
+                        replyToUpdate = true
+                    )
+                }
+            } else {
+                return {
+                    it.send(
+                        context,
+                        context.phrase(Phrase.PICK_PIDOR_ANY_BOT),
+                        shouldTypeBeforeSend = true,
+                        replyToUpdate = true
+                    )
+                }
+            }
+        }
+        val pickedUser = replyMessage.from.toUser(context.chat)
+        repository.addUser(pickedUser)
+        repository.addPidor(Pidor(pickedUser, Instant.now()))
+        easyKeyValueService.decrement(PickPidorAbilityCount, context.userKey)
+        return {
+            it.send(
+                context, context.phrase(Phrase.PICK_PIDOR_PICKED).replace("{}", pickedUser.getGeneralName()),
+                shouldTypeBeforeSend = true,
+                replyMessageId = replyMessage.messageId
+            )
+            val newAbilityCount = easyKeyValueService.get(
+                PickPidorAbilityCount,
+                context.userKey
+            )
+            if (newAbilityCount == 0L) {
+                it.send(
+                    context, context.phrase(Phrase.PICK_PIDOR_ABILITY_COUNT_LEFT_NONE),
+                    shouldTypeBeforeSend = true,
+                    replyToUpdate = true,
+                    enableHtml = true
+                )
+            } else {
+                it.send(
+                    context,
+                    context.phrase(Phrase.PICK_PIDOR_ABILITY_COUNT_LEFT).replace("{}", newAbilityCount.toString()),
+                    shouldTypeBeforeSend = true,
+                    replyToUpdate = true
+                )
+            }
+
+        }
     }
 }

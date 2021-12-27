@@ -87,3 +87,7 @@ object ProposalTo : LongKeyType<UserAndChatEasyKey>() {
 object MessageCounter : LongKeyType<UserAndChatEasyKey>() {
     override fun keyType() = UserAndChatEasyKey::class
 }
+
+object PickPidorAbilityCount : LongKeyType<UserEasyKey>() {
+    override fun keyType() = UserEasyKey::class
+}
