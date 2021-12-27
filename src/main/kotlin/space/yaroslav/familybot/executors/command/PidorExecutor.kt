@@ -209,8 +209,8 @@ class PidorExecutor(
     }
 
     private fun pickPidor(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        val abilityCount = easyKeyValueService.get(PickPidorAbilityCount, context.userKey)
-        if (abilityCount == 0L) {
+        val abilityCount = easyKeyValueService.get(PickPidorAbilityCount, context.userKey, 0L)
+        if (abilityCount <= 0L) {
             return {
                 it.send(
                     context,
