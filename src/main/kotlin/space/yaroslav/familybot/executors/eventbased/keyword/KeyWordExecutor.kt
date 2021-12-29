@@ -17,7 +17,7 @@ class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Config
 
     private val processorsForMessage = HashMap<Int, KeyWordProcessor>()
 
-    override fun priority(context: ExecutorContext) = Priority.LOW
+    override fun priority(context: ExecutorContext) = Priority.VERY_LOW
 
     override fun getFunctionId(context: ExecutorContext) = FunctionId.TALK_BACK
 
