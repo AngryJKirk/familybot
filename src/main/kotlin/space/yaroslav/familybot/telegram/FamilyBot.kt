@@ -122,5 +122,5 @@ class FamilyBot(
         return channel
     }
 
-    class InternalException(override val message: String?) : RuntimeException(message)
+    class InternalException(override val message: String) : RuntimeException(message)
 }
