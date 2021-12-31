@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.BotConfigInjector
 import space.yaroslav.familybot.telegram.BotStarter
+import space.yaroslav.familybot.telegram.FamilyBot
 
 @SpringBootApplication
 @EnableScheduling
@@ -21,6 +22,7 @@ import space.yaroslav.familybot.telegram.BotStarter
 class FamilyBotApplication(
     private val env: ConfigurableEnvironment
 ) {
+    private val logger = getLogger()
 
     @Bean
     fun timedAspect(registry: MeterRegistry): TimedAspect {
@@ -30,20 +32,36 @@ class FamilyBotApplication(
     @Bean
     fun injectBotConfig(botConfigInjector: BotConfigInjector): BotConfig {
         val botNameAliases = if (botConfigInjector.botNameAliases.isNullOrEmpty()) {
+            logger.warn("No bot aliases provided, using botName")
             listOf(botConfigInjector.botName)
         } else {
             botConfigInjector.botNameAliases.split(",")
         }
+        val yandexKey = botConfigInjector.yandexKey?.takeIf(String::isNotBlank)
+        if (yandexKey == null) {
+            logger.warn("Yandex API key is not found, language API won't work")
+        }
+        val paymentToken = botConfigInjector.paymentToken?.takeIf(String::isNotBlank)
+        if (paymentToken == null) {
+            logger.warn("Payment token is not found, payment API won't work")
+        }
         return BotConfig(
-            botConfigInjector.botToken,
-            botConfigInjector.botName,
-            botConfigInjector.developer,
-            botConfigInjector.developerId,
+            notEmptyCheck(botConfigInjector.botToken, "botToken"),
+            notEmptyCheck(botConfigInjector.botName, "botName"),
+            notEmptyCheck(botConfigInjector.developer, "developer"),
+            notEmptyCheck(botConfigInjector.developerId, "developerId"),
             botNameAliases,
-            botConfigInjector.yandexKey?.takeIf(String::isNotBlank),
-            botConfigInjector.paymentToken?.takeIf(String::isNotBlank),
+            yandexKey,
+            paymentToken,
             env.activeProfiles.contains(BotStarter.TESTING_PROFILE_NAME)
         )
+    }
+
+    private fun notEmptyCheck(value: String, valueName: String): String {
+        if (value.isBlank()) {
+            throw FamilyBot.InternalException("Value of '$valueName' must be not empty")
+        }
+        return value
     }
 }
 
