@@ -1,8 +1,8 @@
 package space.yaroslav.familybot.services.talking
 
 import org.springframework.stereotype.Component
-import org.tomlj.Toml
 import org.tomlj.TomlTable
+import space.yaroslav.familybot.common.extensions.readTomlFromStatic
 import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.models.dictionary.PhraseTheme
 import space.yaroslav.familybot.telegram.FamilyBot
@@ -12,11 +12,7 @@ class DictionaryReader {
     private val dictionary: Map<Phrase, Map<PhraseTheme, List<String>>>
 
     init {
-        val resourceAsStream = this::class.java.classLoader
-            .getResourceAsStream("static/dictionary.toml")
-            ?: throw FamilyBot.InternalException("dictionary.toml is missing")
-
-        val toml = Toml.parse(resourceAsStream)
+        val toml = readTomlFromStatic("dictionary.toml")
 
         dictionary = Phrase.values()
             .map { phrase ->

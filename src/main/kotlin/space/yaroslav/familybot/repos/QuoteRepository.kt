@@ -1,8 +1,8 @@
 package space.yaroslav.familybot.repos
 
 import org.springframework.stereotype.Component
-import org.tomlj.Toml
 import org.tomlj.TomlTable
+import space.yaroslav.familybot.common.extensions.readTomlFromStatic
 import space.yaroslav.familybot.telegram.FamilyBot
 
 @Component
@@ -11,11 +11,8 @@ class QuoteRepository {
     private val flattenQuotes: List<String>
 
     init {
-        val resourceAsStream = this::class.java.classLoader
-            .getResourceAsStream("static/quotes.toml")
-            ?: throw FamilyBot.InternalException("quotes.toml is missing")
+        val toml = readTomlFromStatic("quotes.toml")
 
-        val toml = Toml.parse(resourceAsStream)
         val rawArray = toml.getArray("quotes")
             ?: throw FamilyBot.InternalException("quotes.toml is missing quotes array")
         quotes = rawArray.toList()

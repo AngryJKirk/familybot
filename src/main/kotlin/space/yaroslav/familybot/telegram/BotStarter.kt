@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScope
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 import org.tomlj.Toml
 import org.tomlj.TomlParseResult
+import space.yaroslav.familybot.common.extensions.readTomlFromStatic
 
 @Configuration
 @Profile(BotStarter.NOT_TESTING_PROFILE_NAME)
@@ -26,11 +27,7 @@ class BotStarter {
     private val helpCommand: BotCommand
 
     init {
-        val resourceAsStream = this::class.java.classLoader
-            .getResourceAsStream("static/commands.toml")
-            ?: throw FamilyBot.InternalException("commands.toml is missing")
-
-        val toml = Toml.parse(resourceAsStream)
+        val toml = readTomlFromStatic("commands.toml")
 
         helpCommand = BotCommand("help", extractValue(toml, "help"))
         commands = toml
