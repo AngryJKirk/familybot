@@ -2,8 +2,7 @@
 
 Telegram Bot for my friends
 
-![](https://storozhenko.dev/images/jesus_final-min.jpg)
-
+![](readme_assets/j.png)
 Wake up Neo
 
 You obosralsya
@@ -16,10 +15,10 @@ grammar or anything you would like to.
 # Stats
 
 Total amount of chats and users that have been seen by the bot:
-![](https://storozhenko.dev/images/stats1.png)
+![](readme_assets/stats1.png)
 
 Amount of everyday messages passed through the bot:
-![](https://storozhenko.dev/images/stats2.png)
+![](readme_assets/stats2.png)
 
 # Build & deploy
 
