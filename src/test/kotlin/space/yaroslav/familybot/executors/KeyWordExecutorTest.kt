@@ -30,7 +30,7 @@ class KeyWordExecutorTest : ExecutorTest() {
 
     override fun priorityTest() {
         val context = createSimpleContext()
-        Assertions.assertEquals(Priority.LOW, keyWordExecutor.priority(context))
+        Assertions.assertEquals(Priority.VERY_LOW, keyWordExecutor.priority(context))
     }
 
     override fun canExecuteTest() {

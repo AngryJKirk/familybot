@@ -29,7 +29,7 @@ class ReplyToUserExecutorTest : ExecutorTest() {
 
     override fun priorityTest() {
         val actual = replyToUserExecutor.priority(createSimpleContext())
-        Assertions.assertEquals(Priority.LOW, actual)
+        Assertions.assertEquals(Priority.VERY_LOW, actual)
     }
 
     override fun canExecuteTest() {

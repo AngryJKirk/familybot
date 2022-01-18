@@ -1,45 +1,35 @@
 package space.yaroslav.familybot.executors.command.nonpublic
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import org.apache.commons.codec.binary.Base64
 import org.springframework.stereotype.Component
-import org.springframework.web.client.RestTemplate
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.parseJson
 import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.executors.command.CommandExecutor
-import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.telegram.Command
+import space.yaroslav.familybot.telegram.FamilyBot
 
 @Component
 class TopHistoryExecutor : CommandExecutor() {
-    private val log = getLogger()
-    private val lazyMamoeb: Lazy<Mamoeb?> = lazy {
-        runCatching {
-            RestTemplate()
-                .getForEntity(
-                    "https://raw.githubusercontent.com/Mi7teR/mamoeb3000/master/templates.json",
-                    String::class.java
-                ).body
-                ?.parseJson<Mamoeb>()
-        }
-            .getOrElse {
-                log.error("Can't get mamoeb", it)
-                null
-            }
-    }
+    private val mamoeb: Mamoeb = this::class.java.classLoader
+        .getResourceAsStream("static/curses")
+        ?.readAllBytes()
+        ?.let { Base64.decodeBase64(it) }
+        ?.decodeToString()
+        ?.parseJson<Mamoeb>()
+        ?: throw FamilyBot.InternalException("curses is missing")
 
     override fun command(): Command {
         return Command.TOP_HISTORY
     }
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        val mamoeb = lazyMamoeb.value ?: return {}
-
         return { sender -> sender.send(context, mamoeb.curses.random()) }
     }
 }
 
 data class Mamoeb(
-    @JsonProperty("curses") val curses: List<String>
+    @JsonProperty("Templates") val curses: List<String>
 )

@@ -1,7 +1,6 @@
 package space.yaroslav.familybot.executors.command.nonpublic
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -24,13 +23,17 @@ class QuoteByTagExecutor(private val quoteRepository: QuoteRepository) : Command
         return {
             val rows = quoteRepository
                 .getTags()
-                .map { tag -> InlineKeyboardButton(tag.capitalized()).apply { callbackData = tag } }
+                .map { tag ->
+                    InlineKeyboardButton(tag.capitalized())
+                        .apply { callbackData = tag }
+                }
                 .chunked(3)
-            it.send(context, QUOTE_MESSAGE, replyToUpdate = true, customization = customization(rows))
+            it.send(
+                context,
+                QUOTE_MESSAGE,
+                replyToUpdate = true,
+                customization = { replyMarkup = InlineKeyboardMarkup(rows) }
+            )
         }
-    }
-
-    private fun customization(rows: List<List<InlineKeyboardButton>>): SendMessage.() -> Unit {
-        return { replyMarkup = InlineKeyboardMarkup(rows) }
     }
 }
