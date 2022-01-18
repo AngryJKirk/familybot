@@ -1,5 +1,6 @@
 package space.yaroslav.familybot.common.extensions
 
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -30,6 +31,29 @@ object SenderLogger {
     val log = getLogger()
 }
 
+suspend fun AbsSender.sendDeferred(
+    context: ExecutorContext,
+    text: Deferred<String>,
+    replyMessageId: Int? = null,
+    enableHtml: Boolean = false,
+    replyToUpdate: Boolean = false,
+    customization: SendMessage.() -> Unit = { },
+    shouldTypeBeforeSend: Boolean = false,
+    typeDelay: Pair<Int, Int> = 1000 to 2000
+): Message {
+    return sendInternal(
+        context,
+        { text.await() },
+        replyMessageId,
+        enableHtml,
+        replyToUpdate,
+        customization,
+        shouldTypeBeforeSend,
+        typeDelay
+    )
+}
+
+
 suspend fun AbsSender.send(
     context: ExecutorContext,
     text: String,
@@ -40,17 +64,46 @@ suspend fun AbsSender.send(
     shouldTypeBeforeSend: Boolean = false,
     typeDelay: Pair<Int, Int> = 1000 to 2000
 ): Message {
+    return sendInternal(
+        context,
+        { text },
+        replyMessageId,
+        enableHtml,
+        replyToUpdate,
+        customization,
+        shouldTypeBeforeSend,
+        typeDelay
+    )
+}
+
+private suspend fun AbsSender.sendInternal(
+    context: ExecutorContext,
+    text: suspend () -> String,
+    replyMessageId: Int? = null,
+    enableHtml: Boolean = false,
+    replyToUpdate: Boolean = false,
+    customization: SendMessage.() -> Unit = { },
+    shouldTypeBeforeSend: Boolean = false,
+    typeDelay: Pair<Int, Int> = 1000 to 2000
+): Message {
     val update = context.update
     SenderLogger.log.info(
         "Sending message, update=${update.toJson()}, " +
-            "text=$text, " +
-            "replyMessageId=$replyMessageId," +
-            "enableHtml=$enableHtml," +
-            "replyToUpdate=$replyToUpdate," +
-            "shouldTypeBeforeSend=$shouldTypeBeforeSend," +
-            "typeDelay=$typeDelay"
+                "replyMessageId=$replyMessageId," +
+                "enableHtml=$enableHtml," +
+                "replyToUpdate=$replyToUpdate," +
+                "shouldTypeBeforeSend=$shouldTypeBeforeSend," +
+                "typeDelay=$typeDelay"
     )
-    val messageObj = SendMessage(update.chatIdString(), text).apply { enableHtml(enableHtml) }
+    if (shouldTypeBeforeSend) {
+        this.execute(SendChatAction(update.chatIdString(), "typing"))
+        if (context.testEnvironment.not()) {
+            delay(randomInt(typeDelay.first, typeDelay.second).toLong())
+        }
+    }
+    val textToSend = text()
+    SenderLogger.log.info("Sending message, text=$textToSend")
+    val messageObj = SendMessage(update.chatIdString(), textToSend).apply { enableHtml(enableHtml) }
 
     if (replyMessageId != null) {
         messageObj.replyToMessageId = replyMessageId
@@ -58,12 +111,7 @@ suspend fun AbsSender.send(
     if (replyToUpdate) {
         messageObj.replyToMessageId = update.message.messageId
     }
-    if (shouldTypeBeforeSend) {
-        this.execute(SendChatAction(update.chatIdString(), "typing"))
-        if (context.testEnvironment.not()) {
-            delay(randomInt(typeDelay.first, typeDelay.second).toLong())
-        }
-    }
+
 
     val message = messageObj.apply(customization)
 
