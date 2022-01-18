@@ -62,21 +62,25 @@ class AskWorldInitialExecutor(
         val currentChat = context.chat
 
         val chatKey = context.chatKey
-        val chatUsages = easyKeyValueService.get(AskWorldChatUsages, chatKey)
-        if (chatUsages != null && chatUsages > 0L) {
-            return {
-                log.info("Limit was exceed for chat")
-                it.send(context, context.phrase(Phrase.ASK_WORLD_LIMIT_BY_CHAT), replyToUpdate = true)
-            }
-        }
         val userEasyKey = context.userKey
+        val chatUsages = easyKeyValueService.get(AskWorldChatUsages, chatKey)
         val userUsages = easyKeyValueService.get(AskWorldUserUsages, userEasyKey)
-        if (userUsages != null && userUsages > 1) {
-            return {
-                log.info("Limit was exceed for user")
-                it.send(context, context.phrase(Phrase.ASK_WORLD_LIMIT_BY_USER), replyToUpdate = true)
+        if (!context.isFromDeveloper) {
+            if (chatUsages != null && chatUsages > 0L) {
+                return {
+                    log.info("Limit was exceed for chat")
+                    it.send(context, context.phrase(Phrase.ASK_WORLD_LIMIT_BY_CHAT), replyToUpdate = true)
+                }
+            }
+
+            if (userUsages != null && userUsages > 1) {
+                return {
+                    log.info("Limit was exceed for user")
+                    it.send(context, context.phrase(Phrase.ASK_WORLD_LIMIT_BY_USER), replyToUpdate = true)
+                }
             }
         }
+
         val askWorldData = getAskWorldData(context)
         if (askWorldData is ValidationError) {
             return askWorldData.invalidQuestionAction
@@ -94,14 +98,19 @@ class AskWorldInitialExecutor(
         return { sender ->
             val questionId = coroutineScope { async { askWorldRepository.addQuestion(question) } }
             sender.send(context, context.phrase(Phrase.DATA_CONFIRM))
-            getChatsToSendQuestion(context, successData.isScam)
-                .forEach { chatToSend ->
-                    runCatching {
-                        delay(100)
-                        val result = successData.action.invoke(sender, chatToSend, currentChat)
-                        markQuestionDelivered(question, questionId, result, chatToSend)
-                    }.onFailure { e -> markChatInactive(chatToSend, questionId, e) }
-                }
+            if (!successData.isScam) {
+                getChatsToSendQuestion(context)
+                    .forEach { chatToSend ->
+                        runCatching {
+                            delay(100)
+                            val result = successData.action.invoke(sender, chatToSend, currentChat)
+                            markQuestionDelivered(question, questionId, result, chatToSend)
+                        }.onFailure { e -> markChatInactive(chatToSend, questionId, e) }
+                    }
+            } else {
+                log.info("Some scam message was found and it won't be sent")
+            }
+
             if (chatUsages == null) {
                 easyKeyValueService.put(AskWorldChatUsages, chatKey, 1, untilNextDay())
             } else {
@@ -158,9 +167,9 @@ class AskWorldInitialExecutor(
 
             val isScam =
                 shouldBeCensored(message) ||
-                    shouldBeCensored(context.chat.name ?: "") ||
-                    isSpam(message) ||
-                    containsLongWords(message)
+                        shouldBeCensored(context.chat.name ?: "") ||
+                        isSpam(message) ||
+                        containsLongWords(message)
 
             if (message.length > 2000) {
                 return ValidationError {
@@ -219,19 +228,18 @@ class AskWorldInitialExecutor(
 
     private fun getChatsToSendQuestion(
         context: ExecutorContext,
-        isScam: Boolean
     ): List<Chat> {
-        if (isScam) {
-            log.info("Some scam message was found and it won't be sent")
-            return emptyList()
-        }
-
         val functionId = getFunctionId(context)
         val chatsWithFeatureEnabled = commonRepository.getChats()
             .filterNot { chat -> chat == context.chat }
             .filter { chat -> configureRepository.isEnabled(functionId, chat) }
             .shuffled()
         log.info("Number of chats with feature enabled: ${chatsWithFeatureEnabled.size}")
+
+        if (context.isFromDeveloper) {
+            return chatsWithFeatureEnabled
+        }
+
         val acceptAllChats = chatsWithFeatureEnabled
             .filter { chat -> getDensity(chat) == AskWorldDensityValue.ALL }
         val acceptLessChats = chatsWithFeatureEnabled
@@ -244,16 +252,16 @@ class AskWorldInitialExecutor(
 
     private fun shouldBeCensored(message: String): Boolean {
         return message.contains("http", ignoreCase = true) ||
-            message.contains("www", ignoreCase = true) ||
-            message.contains("jpg", ignoreCase = true) ||
-            message.contains("png", ignoreCase = true) ||
-            message.contains("jpeg", ignoreCase = true) ||
-            message.contains("bmp", ignoreCase = true) ||
-            message.contains("gif", ignoreCase = true) ||
-            message.contains("_bot", ignoreCase = true) ||
-            message.contains("t.me", ignoreCase = true) ||
-            message.contains("Bot", ignoreCase = false) ||
-            message.contains("@")
+                message.contains("www", ignoreCase = true) ||
+                message.contains("jpg", ignoreCase = true) ||
+                message.contains("png", ignoreCase = true) ||
+                message.contains("jpeg", ignoreCase = true) ||
+                message.contains("bmp", ignoreCase = true) ||
+                message.contains("gif", ignoreCase = true) ||
+                message.contains("_bot", ignoreCase = true) ||
+                message.contains("t.me", ignoreCase = true) ||
+                message.contains("Bot", ignoreCase = false) ||
+                message.contains("@")
     }
 
     private fun isSpam(message: String): Boolean {
