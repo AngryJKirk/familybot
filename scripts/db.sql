@@ -303,5 +303,6 @@ VALUES (1, '/stats_month'),
        (24, '/stats_strikes'),
        (25, '/shop'),
        (26, '/marry'),
-       (27, '/marry_list')
+       (27, '/marry_list'),
+       (28, '/vestnik')
 ;

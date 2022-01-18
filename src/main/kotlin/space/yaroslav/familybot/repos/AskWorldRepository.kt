@@ -61,6 +61,28 @@ class AskWorldRepository(val template: JdbcTemplate) {
         )
     }
 
+    @Timed("repository.AskWorldRepository.searchQuestion")
+    fun searchQuestion(message: String, chat: Chat): List<AskWorldQuestion> {
+        return template.query(
+            """SELECT
+                          ask_world_questions.id,
+                          ask_world_questions.question,
+                          ask_world_questions.chat_id,
+                          ask_world_questions.user_id,
+                          ask_world_questions.date,
+                          c2.name as chat_name,
+                          u.name as common_name,
+                          u.username
+                            from ask_world_questions
+                            INNER JOIN chats c2 on ask_world_questions.chat_id = c2.id
+                            INNER JOIN users u on ask_world_questions.user_id = u.id
+                where chat_id = ? and lower(question) like ?""",
+            { rs, _ -> rs.toAskWorldQuestion() },
+            chat.id,
+            "%${message.lowercase()}%"
+        )
+    }
+
     @Timed("repository.AskWorldRepository.addQuestionDeliver")
     fun addQuestionDeliver(question: AskWorldQuestion, chat: Chat) {
         template.update(
