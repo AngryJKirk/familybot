@@ -36,11 +36,9 @@ class Dictionary(
         val month = now.month
         val day = now.dayOfMonth
         return when {
-            month == Month.JANUARY && day in listOf(22, 23, 24, 30, 31) -> PhraseTheme.ACAB
-            month == Month.FEBRUARY && day in listOf(1, 2, 3) -> PhraseTheme.ACAB
+            month == Month.JANUARY && day in listOf(22, 23, 24) -> PhraseTheme.ACAB
             month == Month.FEBRUARY && day == 23 -> PhraseTheme.DAY_OF_DEFENDER_23_FEB
             month == Month.MARCH && day == 8 -> PhraseTheme.DAY_OF_WOMAN_8_MARCH
-            month == Month.APRIL && day in listOf(20, 21, 22) -> PhraseTheme.ACAB
             else -> null
         }
     }
