@@ -18,21 +18,25 @@ import java.time.Month
 import org.telegram.telegrambots.meta.api.objects.Chat as TelegramChat
 import org.telegram.telegrambots.meta.api.objects.User as TelegramUser
 
-fun TelegramChat.toChat(): Chat = Chat(this.id, this.title)
+fun TelegramChat.toChat(): Chat = Chat(id, title)
 
 fun TelegramUser.toUser(chat: Chat? = null, telegramChat: TelegramChat? = null): User {
     val internalChat = telegramChat?.toChat()
         ?: chat
         ?: throw FamilyBot.InternalException("Should be some chat to map user to internal model")
-    val formattedName = listOfNotNull(this.firstName, this.lastName).joinToString(separator = " ")
-    return User(this.id, internalChat, formattedName, this.userName)
+    val formattedName = if (lastName != null) {
+        "$firstName $lastName"
+    } else {
+        firstName
+    }
+    return User(id, internalChat, formattedName, userName)
 }
 
 fun Update.toChat(): Chat {
     return when {
         hasMessage() -> Chat(message.chat.id, message.chat.title)
         hasEditedMessage() -> Chat(editedMessage.chat.id, editedMessage.chat.title)
-        else -> Chat(this.callbackQuery.message.chat.id, this.callbackQuery.message.chat.title)
+        else -> Chat(callbackQuery.message.chat.id, callbackQuery.message.chat.title)
     }
 }
 
@@ -45,13 +49,13 @@ fun Update.chatId(): Long {
 }
 
 fun Update.chatIdString(): String {
-    return this.chatId().toString()
+    return chatId().toString()
 }
 
 fun Update.toUser(): User {
-    val user = this.from()
+    val user = from()
     val formattedName = (user.firstName.let { "$it " }) + (user.lastName ?: "")
-    return User(user.id, this.toChat(), formattedName, user.userName)
+    return User(user.id, toChat(), formattedName, user.userName)
 }
 
 fun Update.from(): TelegramUser {
@@ -65,10 +69,10 @@ fun Update.from(): TelegramUser {
 }
 
 fun Update.context(botConfig: BotConfig, dictionary: Dictionary): ExecutorContext {
-    val message = this.message ?: this.editedMessage ?: this.callbackQuery.message
-    val isFromDeveloper = botConfig.developer == this.from().userName
-    val chat = this.toChat()
-    val user = this.toUser()
+    val message = message ?: editedMessage ?: callbackQuery.message
+    val isFromDeveloper = botConfig.developer == from().userName
+    val chat = toChat()
+    val user = toUser()
     return ExecutorContext(
         this,
         message,
@@ -76,7 +80,7 @@ fun Update.context(botConfig: BotConfig, dictionary: Dictionary): ExecutorContex
         isFromDeveloper,
         chat,
         user,
-        this.key(),
+        key(),
         user.key(),
         chat.key(),
         botConfig.testEnvironment,
@@ -85,7 +89,7 @@ fun Update.context(botConfig: BotConfig, dictionary: Dictionary): ExecutorContex
 }
 
 fun Message.getCommand(botName: String): Command? {
-    val entities = this.entities ?: return null
+    val entities = entities ?: return null
     for (entity in entities) {
         if (entity.offset == 0 && entity.type == EntityType.BOTCOMMAND) {
             val parts = entity.text.split("@")
@@ -109,7 +113,7 @@ fun Update.getMessageTokens(delimiter: String = " "): List<String> {
 }
 
 fun Update.key(): UserAndChatEasyKey {
-    return UserAndChatEasyKey(this.toUser().id, this.chatId())
+    return UserAndChatEasyKey(toUser().id, chatId())
 }
 
 fun Message.key(): UserAndChatEasyKey {
@@ -117,11 +121,11 @@ fun Message.key(): UserAndChatEasyKey {
 }
 
 fun User.key(): UserEasyKey {
-    return UserEasyKey(userId = this.id)
+    return UserEasyKey(userId = id)
 }
 
 fun Chat.key(): ChatEasyKey {
-    return ChatEasyKey(chatId = this.id)
+    return ChatEasyKey(chatId = id)
 }
 
 val monthMap = mapOf(
