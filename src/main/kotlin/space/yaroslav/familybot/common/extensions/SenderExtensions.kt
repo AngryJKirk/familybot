@@ -53,7 +53,6 @@ suspend fun AbsSender.sendDeferred(
     )
 }
 
-
 suspend fun AbsSender.send(
     context: ExecutorContext,
     text: String,
@@ -89,11 +88,11 @@ private suspend fun AbsSender.sendInternal(
     val update = context.update
     SenderLogger.log.info(
         "Sending message, update=${update.toJson()}, " +
-                "replyMessageId=$replyMessageId," +
-                "enableHtml=$enableHtml," +
-                "replyToUpdate=$replyToUpdate," +
-                "shouldTypeBeforeSend=$shouldTypeBeforeSend," +
-                "typeDelay=$typeDelay"
+            "replyMessageId=$replyMessageId," +
+            "enableHtml=$enableHtml," +
+            "replyToUpdate=$replyToUpdate," +
+            "shouldTypeBeforeSend=$shouldTypeBeforeSend," +
+            "typeDelay=$typeDelay"
     )
     if (shouldTypeBeforeSend) {
         this.execute(SendChatAction(update.chatIdString(), "typing"))
@@ -111,7 +110,6 @@ private suspend fun AbsSender.sendInternal(
     if (replyToUpdate) {
         messageObj.replyToMessageId = update.message.messageId
     }
-
 
     val message = messageObj.apply(customization)
 
@@ -140,6 +138,8 @@ suspend fun AbsSender.sendRandomSticker(
     }
 }
 
+private val adminStatuses = setOf(ChatMemberAdministrator.STATUS, ChatMemberOwner.STATUS)
+
 fun AbsSender.isFromAdmin(context: ExecutorContext): Boolean {
     if (context.isFromDeveloper) {
         return true
@@ -147,7 +147,7 @@ fun AbsSender.isFromAdmin(context: ExecutorContext): Boolean {
     val user = context.update.from()
     return this
         .execute(GetChatAdministrators(context.chat.idString))
-        .filter { chatMember -> chatMember.status == "administrator" || chatMember.status == "creator" }
+        .filter { chatMember -> chatMember.status in adminStatuses }
         .any { admin -> admin.user().id == user.id }
 }
 
@@ -174,21 +174,14 @@ private suspend fun sendStickerInternal(
     return sender.execute(sendSticker)
 }
 
-private val chatMemberAdministrator = ChatMemberAdministrator()
-private val chatMemberBanned = ChatMemberBanned()
-private val chatMemberLeft = ChatMemberLeft()
-private val chatMemberMember = ChatMemberMember()
-private val chatMemberOwner = ChatMemberOwner()
-private val chatMemberRestricted = ChatMemberRestricted()
-
 fun ChatMember.user(): User {
     return when (status) {
-        chatMemberAdministrator.status -> (this as ChatMemberAdministrator).user
-        chatMemberBanned.status -> (this as ChatMemberBanned).user
-        chatMemberLeft.status -> (this as ChatMemberLeft).user
-        chatMemberMember.status -> (this as ChatMemberMember).user
-        chatMemberOwner.status -> (this as ChatMemberOwner).user
-        chatMemberRestricted.status -> (this as ChatMemberRestricted).user
+        ChatMemberAdministrator.STATUS -> (this as ChatMemberAdministrator).user
+        ChatMemberBanned.STATUS -> (this as ChatMemberBanned).user
+        ChatMemberLeft.STATUS -> (this as ChatMemberLeft).user
+        ChatMemberMember.STATUS -> (this as ChatMemberMember).user
+        ChatMemberOwner.STATUS -> (this as ChatMemberOwner).user
+        ChatMemberRestricted.STATUS -> (this as ChatMemberRestricted).user
         else -> throw FamilyBot.InternalException("Can't find mapping for user $this ")
     }
 }
