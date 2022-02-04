@@ -13,6 +13,7 @@ import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.repos.AskWorldRepository
 import space.yaroslav.familybot.services.settings.EasyKeyValueRepository
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.UkrainianLanguage
 import space.yaroslav.familybot.services.talking.TranslateService
 
@@ -20,17 +21,17 @@ import space.yaroslav.familybot.services.talking.TranslateService
 class VestnikCommandExecutor(
     private val askWorldRepository: AskWorldRepository,
     private val translateService: TranslateService,
-    private val easyKeyValueRepository: EasyKeyValueRepository
+    private val easyKeyValueService: EasyKeyValueService,
 ) : CommandExecutor() {
     private val chat = Chat(id = -1001351771258L, name = null)
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         return { sender ->
             val question = coroutineScope {
                 async {
-                    val isUkrainian = async { easyKeyValueRepository.get(UkrainianLanguage, context.chatKey) }
+                    val isUkrainian = async { easyKeyValueService.get(UkrainianLanguage, context.chatKey, false) }
                     val question =
                         askWorldRepository.searchQuestion("вестник", chat).randomOrNull()?.message ?: "Выпусков нет :("
-                    if (isUkrainian.await() == true) {
+                    if (isUkrainian.await()) {
                         translateService.translate(question)
                     } else {
                         question
