@@ -53,13 +53,15 @@ class SettingsContiniousExecutor(
                     configureRepository.switch(function, chat)
                     val isEnabled = { id: FunctionId -> configureRepository.isEnabled(id, chat) }
                     it.execute(AnswerCallbackQuery(callbackQuery.id))
-                    it.execute(
-                        EditMessageReplyMarkup().apply {
-                            chatId = callbackQuery.message.chatId.toString()
-                            messageId = callbackQuery.message.messageId
-                            replyMarkup = FunctionId.toKeyBoard(isEnabled)
-                        }
-                    )
+                    runCatching {
+                        it.execute(
+                            EditMessageReplyMarkup().apply {
+                                chatId = callbackQuery.message.chatId.toString()
+                                messageId = callbackQuery.message.messageId
+                                replyMarkup = FunctionId.toKeyBoard(isEnabled)
+                            }
+                        )
+                    }
                     it.execute(
                         SendMessage(
                             chat.idString,

@@ -43,7 +43,7 @@ enum class FunctionId(val id: Int, val desc: String, val easySetting: ChatFuncti
                                 callbackData = description
                             }
                         }
-                        .chunked(2)
+                        .chunked(1)
                     )
             )
         }
