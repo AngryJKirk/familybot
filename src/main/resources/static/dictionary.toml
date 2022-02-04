@@ -1340,3 +1340,7 @@ DEFAULT = ["четырежды"]
 DEFAULT = ["ПЯТЬ РАЗ!"]
 [PIDOR_COUNT_DOHUYA]
 DEFAULT = ["дохуища"]
+
+[RANDOM_VESTNIK]
+DEFAULT = ["Случайный выпуск Вестника Кала:"]
+UKRAINIAN = ["Випадковий випуск Вісника калу:"]
