@@ -12,17 +12,29 @@ import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.repos.AskWorldRepository
+import space.yaroslav.familybot.services.settings.EasyKeyValueRepository
+import space.yaroslav.familybot.services.settings.UkrainianLanguage
+import space.yaroslav.familybot.services.talking.TranslateService
 
 @Component
 class VestnikCommandExecutor(
-    private val askWorldRepository: AskWorldRepository
+    private val askWorldRepository: AskWorldRepository,
+    private val translateService: TranslateService,
+    private val easyKeyValueRepository: EasyKeyValueRepository
 ) : CommandExecutor() {
     private val chat = Chat(id = -1001351771258L, name = null)
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         return { sender ->
             val question = coroutineScope {
                 async {
-                    askWorldRepository.searchQuestion("вестник", chat).randomOrNull()?.message ?: "Выпусков нет :("
+                    val isUkrainian = async { easyKeyValueRepository.get(UkrainianLanguage, context.chatKey) }
+                    val question =
+                        askWorldRepository.searchQuestion("вестник", chat).randomOrNull()?.message ?: "Выпусков нет :("
+                    if (isUkrainian.await() == true) {
+                        translateService.translate(question)
+                    } else {
+                        question
+                    }
                 }
             }
             sender.send(context, "Случайный выпуск Вестника Кала:")
