@@ -44,7 +44,7 @@ class BanSomeoneExecutor(
         val user = chats
             .asSequence()
             .flatMap { commonRepository.getUsers(it, activeOnly = true).asSequence() }
-            .firstOrNull { identification in listOf(it.name, it.nickname, it.id.toString()) }
+            .firstOrNull { identification.replace("@", "") in listOf(it.name, it.nickname, it.id.toString()) }
 
         if (user != null) {
             return {
