@@ -20,7 +20,7 @@ services:
   family-db:
     networks:
       family-net:
-    image: postgres
+    image: postgres:14
     container_name: family-db
     restart: always
     volumes:
