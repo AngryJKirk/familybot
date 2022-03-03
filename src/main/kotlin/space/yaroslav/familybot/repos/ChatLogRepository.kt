@@ -3,12 +3,16 @@ package space.yaroslav.familybot.repos
 import com.github.benmanes.caffeine.cache.Caffeine
 import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Component
+import space.yaroslav.familybot.common.extensions.randomLong
 import space.yaroslav.familybot.models.telegram.User
 import java.time.Duration
 
 @Component
-class ChatLogRepository(val template: JdbcTemplate) {
+class ChatLogRepository(private val template: JdbcTemplate) {
+
+    private val namedJdbcTemplate = NamedParameterJdbcTemplate(template)
 
     private val allByUserLoader = { (userId, chat): User ->
         template.queryForList(
@@ -24,13 +28,7 @@ class ChatLogRepository(val template: JdbcTemplate) {
         .expireAfterWrite(Duration.ofDays(1))
         .build(allByUserLoader)
 
-    @Timed("repository.ChatLogRepository.getAll")
-    fun getAll(): List<String> {
-        return template.queryForList(
-            "SELECT message FROM chat_log",
-            String::class.java
-        )
-    }
+    private val commonPoolMaxId: Long = getMaxCommonMessageId()
 
     @Timed("repository.ChatLogRepository.add")
     fun add(user: User, message: String) {
@@ -45,5 +43,26 @@ class ChatLogRepository(val template: JdbcTemplate) {
     @Timed("repository.ChatLogRepository.get")
     fun get(user: User): List<String> {
         return allByUserCache[user] ?: allByUserLoader(user)
+    }
+
+    @Timed("repository.ChatLogRepository.getRandomMessagesFromCommonPool")
+    fun getRandomMessagesFromCommonPool(): List<String> {
+        if (commonPoolMaxId <= 1) {
+            return listOf("хуй соси губой тряси")
+        }
+        val ids = (1..10).map { randomLong(1, commonPoolMaxId) }.toSet()
+        val paramMap = mapOf("ids" to ids)
+        return namedJdbcTemplate.queryForList(
+            "SELECT message FROM chat_log WHERE id IN (:ids)",
+            paramMap,
+            String::class.java
+        )
+    }
+
+    private fun getMaxCommonMessageId(): Long {
+        return template.queryForList(
+            "SELECT MAX(id) FROM chat_log",
+            Long::class.java
+        ).firstOrNull() ?: 0
     }
 }
