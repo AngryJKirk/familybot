@@ -20,4 +20,4 @@ ENV SPRING_PROFILES_ACTIVE production
 
 COPY --from=build /app/target/familybot.jar /usr/local/lib/familybot.jar
 
-ENTRYPOINT ["java","-jar","/usr/local/lib/familybot.jar"]
+ENTRYPOINT ["java","-Xmx256m","-jar","/usr/local/lib/familybot.jar"]
