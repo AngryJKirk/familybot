@@ -14,25 +14,16 @@ class PidorStrikeStorage(
 ) {
 
     fun get(context: ExecutorContext): PidorStrikes {
-        val key = context.chatKey
-        val rawValue = easyKeyValueService.get(PidorStrikeStats, key)
+        val rawValue = easyKeyValueService.get(PidorStrikeStats, context.chatKey)
         return if (rawValue.isNullOrBlank()) {
             PidorStrikes(mutableMapOf())
         } else {
-            deserialize(rawValue)
+            rawValue.parseJson()
         }
     }
 
     fun save(context: ExecutorContext, strikes: PidorStrikes) {
-        easyKeyValueService.put(PidorStrikeStats, context.chatKey, serialize(strikes))
-    }
-
-    private fun deserialize(raw: String): PidorStrikes {
-        return raw.parseJson()
-    }
-
-    private fun serialize(pidorStrikes: PidorStrikes): String {
-        return pidorStrikes.toJson()
+        easyKeyValueService.put(PidorStrikeStats, context.chatKey, strikes.toJson())
     }
 }
 
