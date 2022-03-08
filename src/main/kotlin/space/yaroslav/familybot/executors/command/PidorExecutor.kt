@@ -12,6 +12,7 @@ import space.yaroslav.familybot.common.extensions.bold
 import space.yaroslav.familybot.common.extensions.isToday
 import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.common.extensions.toUser
+import space.yaroslav.familybot.common.extensions.untilNextDay
 import space.yaroslav.familybot.common.extensions.user
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.getLogger
@@ -27,6 +28,7 @@ import space.yaroslav.familybot.services.pidor.PidorCompetitionService
 import space.yaroslav.familybot.services.pidor.PidorStrikesService
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.PickPidorAbilityCount
+import space.yaroslav.familybot.services.settings.PidorTolerance
 import space.yaroslav.familybot.telegram.BotConfig
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -50,7 +52,21 @@ class PidorExecutor(
         if (context.message.isReply) {
             return pickPidor(context)
         }
+        log.info("Getting pidors from chat $chat")
+        val users = repository.getUsers(chat, activeOnly = true)
+        val key = context.chatKey
+        val pidorToleranceValue = easyKeyValueService.get(PidorTolerance, key)
+        if (isLimitOfPidorsExceeded(users, pidorToleranceValue ?: 0)) {
+            log.info("Pidors are already found")
+            val message = getMessageForPidors(context)
+            if (message != null) {
+                return { it.execute(message) }
+            }
+        }
         return { sender ->
+            log.info("Pidor is not found, initiating search procedure")
+            val nextPidor = getNextPidorAsync(users, sender, chat)
+
             listOf(
                 Phrase.PIDOR_SEARCH_START,
                 Phrase.PIDOR_SEARCH_MIDDLE,
@@ -67,61 +83,22 @@ class PidorExecutor(
                         typeDelay = 1500 to 1501
                     )
                 }
+            val pidor = nextPidor.await()
             sender.send(
                 context,
-                "Путин Владимир Владимирович",
+                pidor.getGeneralName(),
                 enableHtml = true,
                 shouldTypeBeforeSend = true,
                 typeDelay = 1500 to 1501
             )
+            if (pidorToleranceValue == null) {
+                easyKeyValueService.put(PidorTolerance, key, 1, untilNextDay())
+            } else {
+                easyKeyValueService.increment(PidorTolerance, key)
+            }
+            pidorStrikesService.calculateStrike(context, pidor).invoke(sender)
+            pidorCompetitionService.pidorCompetition(context).invoke(sender)
         }
-        // log.info("Getting pidors from chat $chat")
-        // val users = repository.getUsers(chat, activeOnly = true)
-        // val key = context.chatKey
-        // val pidorToleranceValue = easyKeyValueService.get(PidorTolerance, key)
-        // if (isLimitOfPidorsExceeded(users, pidorToleranceValue ?: 0)) {
-        //     log.info("Pidors are already found")
-        //     val message = getMessageForPidors(context)
-        //     if (message != null) {
-        //         return { it.execute(message) }
-        //     }
-        // }
-        // return { sender ->
-        //     log.info("Pidor is not found, initiating search procedure")
-        //     val nextPidor = getNextPidorAsync(users, sender, chat)
-        //
-        //     listOf(
-        //         Phrase.PIDOR_SEARCH_START,
-        //         Phrase.PIDOR_SEARCH_MIDDLE,
-        //         Phrase.PIDOR_SEARCH_FINISHER
-        //     )
-        //         .map(context::phrase)
-        //         .map(String::bold)
-        //         .forEach { phrase ->
-        //             sender.send(
-        //                 context,
-        //                 phrase,
-        //                 enableHtml = true,
-        //                 shouldTypeBeforeSend = true,
-        //                 typeDelay = 1500 to 1501
-        //             )
-        //         }
-        //     val pidor = nextPidor.await()
-        //     sender.send(
-        //         context,
-        //         pidor.getGeneralName(),
-        //         enableHtml = true,
-        //         shouldTypeBeforeSend = true,
-        //         typeDelay = 1500 to 1501
-        //     )
-        //     if (pidorToleranceValue == null) {
-        //         easyKeyValueService.put(PidorTolerance, key, 1, untilNextDay())
-        //     } else {
-        //         easyKeyValueService.increment(PidorTolerance, key)
-        //     }
-        //     pidorStrikesService.calculateStrike(context, pidor).invoke(sender)
-        //     pidorCompetitionService.pidorCompetition(context).invoke(sender)
-        // }
     }
 
     private suspend fun getNextPidorAsync(
