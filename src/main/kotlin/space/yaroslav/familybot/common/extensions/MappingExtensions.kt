@@ -15,6 +15,8 @@ import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.time.Month
+import java.time.format.TextStyle
+import java.util.Locale
 import org.telegram.telegrambots.meta.api.objects.Chat as TelegramChat
 import org.telegram.telegrambots.meta.api.objects.User as TelegramUser
 
@@ -128,30 +130,12 @@ fun Chat.key(): ChatEasyKey {
     return ChatEasyKey(chatId = id)
 }
 
-val monthMap = mapOf(
-    Month.JANUARY to "январь",
-    Month.FEBRUARY to "февраль",
-    Month.MARCH to "март",
-    Month.APRIL to "апрель",
-    Month.MAY to "май",
-    Month.JUNE to "июнь",
-    Month.JULY to "июль",
-    Month.AUGUST to "август",
-    Month.SEPTEMBER to "сентябрь",
-    Month.OCTOBER to "октябрь",
-    Month.NOVEMBER to "ноябрь",
-    Month.DECEMBER to "декабрь"
-)
-
 fun Month.toRussian(): String {
-    return monthMap.getValue(this)
+    return this.getDisplayName(TextStyle.FULL_STANDALONE, Locale.forLanguageTag("ru"))
 }
 
 fun Boolean.toEmoji(): String {
-    return when (this) {
-        true -> "✅"
-        false -> "❌"
-    }
+    return if (this) "✅" else "❌"
 }
 
 fun Int.rubles() = this * 100

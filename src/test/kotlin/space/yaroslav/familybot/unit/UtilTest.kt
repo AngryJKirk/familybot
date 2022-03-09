@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.MethodSource
 import space.yaroslav.familybot.common.extensions.startOfCurrentMonth
 import space.yaroslav.familybot.common.extensions.startOfDay
 import space.yaroslav.familybot.common.extensions.startOfTheYear
+import space.yaroslav.familybot.common.extensions.toRussian
 import space.yaroslav.familybot.models.dictionary.Pluralization
 import java.time.Month
 import java.time.ZoneId
@@ -27,6 +28,24 @@ class UtilTest {
                 Arguments.of(5, Pluralization.MANY),
                 Arguments.of(11, Pluralization.MANY),
                 Arguments.of(21, Pluralization.ONE)
+            )
+        }
+
+        @JvmStatic
+        fun monthsTestValues(): Stream<Arguments> {
+            return Stream.of(
+                Arguments.of(Month.JANUARY, "январь"),
+                Arguments.of(Month.FEBRUARY, "февраль"),
+                Arguments.of(Month.MARCH, "март"),
+                Arguments.of(Month.APRIL, "апрель"),
+                Arguments.of(Month.MAY, "май"),
+                Arguments.of(Month.JUNE, "июнь"),
+                Arguments.of(Month.JULY, "июль"),
+                Arguments.of(Month.AUGUST, "август"),
+                Arguments.of(Month.SEPTEMBER, "сентябрь"),
+                Arguments.of(Month.OCTOBER, "октябрь"),
+                Arguments.of(Month.NOVEMBER, "ноябрь"),
+                Arguments.of(Month.DECEMBER, "декабрь")
             )
         }
     }
@@ -72,5 +91,11 @@ class UtilTest {
         Assertions.assertEquals(Month.JANUARY, startOfYear.month)
         Assertions.assertEquals(1, startOfYear.dayOfMonth)
         Assertions.assertEquals(currentDate.year, startOfYear.year)
+    }
+
+    @ParameterizedTest
+    @MethodSource("monthsTestValues")
+    fun monthTest(month: Month, result: String) {
+        Assertions.assertEquals(result, month.toRussian())
     }
 }
