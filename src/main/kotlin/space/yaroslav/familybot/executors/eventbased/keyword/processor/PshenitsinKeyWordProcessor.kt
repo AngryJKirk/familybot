@@ -54,12 +54,10 @@ class PshenitsinKeyWordProcessor(
 
     private fun containsSymbolsY(text: String): Boolean {
         val splitText = text.split(Regex("\\s+"))
-
-        if (splitText.first().toCharArray().isEmpty())
-        {
-            return false
+        return if (splitText.first().toCharArray().isEmpty()) {
+            false
+        } else {
+            splitText.any { word -> word.toCharArray().all { c -> c.lowercaseChar() == 'ы' } }
         }
-        
-        return splitText.any { word -> word.toCharArray().all { c -> c.lowercaseChar() == 'ы' } }
     }
 }
