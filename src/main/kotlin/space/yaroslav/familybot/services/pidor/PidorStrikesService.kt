@@ -3,27 +3,32 @@ package space.yaroslav.familybot.services.pidor
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.bold
-import space.yaroslav.familybot.common.extensions.send
+import space.yaroslav.familybot.common.extensions.sendContextFree
 import space.yaroslav.familybot.models.dictionary.Phrase
-import space.yaroslav.familybot.models.router.ExecutorContext
+import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.models.telegram.User
+import space.yaroslav.familybot.services.settings.ChatEasyKey
+import space.yaroslav.familybot.services.talking.Dictionary
+import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.lang.Integer.max
 
 @Component
 class PidorStrikesService(
-    private val pidorStrikeStorage: PidorStrikeStorage
+    private val pidorStrikeStorage: PidorStrikeStorage,
+    private val dictionary: Dictionary,
+    private val botConfig: BotConfig
 ) {
-    fun calculateStrike(context: ExecutorContext, pidor: User): suspend (AbsSender) -> Unit {
-        val stats = pidorStrikeStorage.get(context)
+    fun calculateStrike(chat: Chat, chatEasyKey: ChatEasyKey, pidor: User): suspend (AbsSender) -> Unit {
+        val stats = pidorStrikeStorage.get(chatEasyKey)
         val newStats = calculateStrike(stats, pidor)
 
-        pidorStrikeStorage.save(context, newStats)
+        pidorStrikeStorage.save(chatEasyKey, newStats)
 
         val newPidorStrike = newStats.stats[pidor.id]
             ?: throw FamilyBot.InternalException("Some huge internal logic problem, please investigate")
         return if (newPidorStrike.currentStrike >= 2 && newStats.stats.size > 1) {
-            congratulate(context, newPidorStrike)
+            congratulate(chat, chatEasyKey, newPidorStrike)
         } else {
             { }
         }
@@ -52,7 +57,8 @@ class PidorStrikesService(
     }
 
     private fun congratulate(
-        context: ExecutorContext,
+        chat: Chat,
+        chatEasyKey: ChatEasyKey,
         strike: PidorStrikeStat
     ): suspend (AbsSender) -> Unit {
         val phrase = when (strike.currentStrike) {
@@ -68,9 +74,10 @@ class PidorStrikesService(
             else -> Phrase.PIDOR_STRIKE_ELSE
         }
         return { sender ->
-            sender.send(
-                context,
-                context.phrase(phrase).bold(),
+            sender.sendContextFree(
+                chat.idString,
+                dictionary.get(phrase, chatEasyKey).bold(),
+                botConfig,
                 shouldTypeBeforeSend = true,
                 enableHtml = true
             )

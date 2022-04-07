@@ -12,7 +12,7 @@ import space.yaroslav.familybot.services.settings.UserEasyKey
 class PickPidorPaymentProcessorTest : PaymentProcessorTest() {
 
     @Autowired
-     lateinit var pickPidorPaymentProcessor: PickPidorPaymentProcessor
+    lateinit var pickPidorPaymentProcessor: PickPidorPaymentProcessor
 
     override fun preCheckOutTest() {
         val payload = payload(ShopItem.PICK_PIDOR)

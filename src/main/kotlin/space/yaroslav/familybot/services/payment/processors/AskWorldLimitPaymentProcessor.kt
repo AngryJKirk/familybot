@@ -27,10 +27,10 @@ class AskWorldLimitPaymentProcessor(
         }
     }
 
-    override fun processSuccess(shopPayload: ShopPayload): Phrase {
+    override fun processSuccess(shopPayload: ShopPayload): Pair<Phrase, String?> {
         easyKeyValueService.remove(AskWorldChatUsages, shopPayload.chatKey())
         easyKeyValueService.remove(AskWorldUserUsages, shopPayload.userKey())
         log.info("Removed ask world keys for $shopPayload")
-        return Phrase.DROP_ASK_WORLD_LIMIT_DONE
+        return Phrase.DROP_ASK_WORLD_LIMIT_DONE to null
     }
 }

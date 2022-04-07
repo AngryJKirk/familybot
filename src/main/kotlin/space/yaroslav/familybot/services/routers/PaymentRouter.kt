@@ -68,9 +68,9 @@ class PaymentRouter(
                     log.error("Can not process payment", e)
                     onFailure(sender, update, shopPayload)
                 }
-                .onSuccess { phrase ->
+                .onSuccess { (phrase, comment) ->
                     log.info("Wow, payment!")
-                    onSuccess(sender, update, phrase, shopPayload)
+                    onSuccess(sender, update, phrase, comment, shopPayload)
                 }
         }
     }
@@ -79,6 +79,7 @@ class PaymentRouter(
         sender: AbsSender,
         update: Update,
         phrase: Phrase,
+        comment: String?,
         shopPayload: ShopPayload
     ) {
         val developerId = botConfig.developerId
@@ -90,6 +91,9 @@ class PaymentRouter(
         val chatId = shopPayload.chatId.toString()
         sender.execute(SendMessage(chatId, text))
         sender.execute(SendMessage(chatId, dictionary.get(phrase, chatKey)))
+        if(comment != null){
+            sender.execute(SendMessage(chatId, comment))
+        }
         val chat = commonRepository
             .getChatsByUser(user)
             .find { shopPayload.chatId == it.id }

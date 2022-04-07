@@ -34,4 +34,8 @@ class EasyKeyValueService(private val easySettingRepository: EasyKeyValueReposit
     fun <T : Any, K : EasyKey> remove(easyKeyType: EasyKeyType<T, K>, key: K) {
         return easySettingRepository.remove(easyKeyType, key)
     }
+
+    fun <T : Any, K : EasyKey> getAllByPartKey(easyKeyType: EasyKeyType<T, K>): Map<K, T> {
+        return easySettingRepository.getAllByPartKey(easyKeyType)
+    }
 }

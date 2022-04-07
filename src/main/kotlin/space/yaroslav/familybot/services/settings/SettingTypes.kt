@@ -91,3 +91,7 @@ object MessageCounter : LongKeyType<UserAndChatEasyKey>() {
 object PickPidorAbilityCount : LongKeyType<UserEasyKey>() {
     override fun keyType() = UserEasyKey::class
 }
+
+object AutoPidorTimesLeft : LongKeyType<ChatEasyKey>() {
+    override fun keyType() = ChatEasyKey::class
+}

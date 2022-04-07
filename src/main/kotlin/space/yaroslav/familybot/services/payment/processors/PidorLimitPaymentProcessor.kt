@@ -27,9 +27,9 @@ class PidorLimitPaymentProcessor(
         }
     }
 
-    override fun processSuccess(shopPayload: ShopPayload): Phrase {
+    override fun processSuccess(shopPayload: ShopPayload): Pair<Phrase, String?> {
         easyKeyValueService.remove(PidorTolerance, shopPayload.chatKey())
         log.info("Removed pidor limit for $shopPayload")
-        return Phrase.DROP_PIDOR_LIMIT_DONE
+        return Phrase.DROP_PIDOR_LIMIT_DONE to null
     }
 }

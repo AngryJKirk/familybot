@@ -17,7 +17,7 @@ class PickPidorPaymentProcessor(
 
     override fun preCheckOut(shopPayload: ShopPayload): Phrase? = null
 
-    override fun processSuccess(shopPayload: ShopPayload): Phrase {
+    override fun processSuccess(shopPayload: ShopPayload): Pair<Phrase, String?> {
         val key = UserEasyKey(shopPayload.userId)
         val currentValue = easyKeyValueRepository.get(PickPidorAbilityCount, key)
         if (currentValue == null || currentValue <= 0L) {
@@ -25,6 +25,6 @@ class PickPidorPaymentProcessor(
         } else {
             easyKeyValueRepository.increment(PickPidorAbilityCount, key)
         }
-        return Phrase.PICK_PIDOR_DONE
+        return Phrase.PICK_PIDOR_DONE to null
     }
 }

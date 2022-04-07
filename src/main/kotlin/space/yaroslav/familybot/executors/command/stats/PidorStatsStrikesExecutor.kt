@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.PluralizedWordsProvider
 import space.yaroslav.familybot.common.extensions.bold
 import space.yaroslav.familybot.common.extensions.formatTopList
+import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.command.CommandExecutor
@@ -28,7 +29,7 @@ class PidorStatsStrikesExecutor(
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         val chat = context.chat
-        val strikes = pidorStrikeStorage.get(context).stats.filter { (_, stats) -> stats.maxStrike > 1 }
+        val strikes = pidorStrikeStorage.get(chat.key()).stats.filter { (_, stats) -> stats.maxStrike > 1 }
         val users = commonRepository.getUsers(chat).associateBy(User::id)
         val stats = strikes
             .map {

@@ -18,6 +18,6 @@ class IAmRichPaymentProcessorTest : PaymentProcessorTest() {
 
     override fun processSuccessTest() {
         val result = iAmRichPaymentProcessor.processSuccess(payload(ShopItem.I_AM_RICH))
-        Assertions.assertEquals(Phrase.I_AM_RICH_DONE, result)
+        Assertions.assertEquals(Phrase.I_AM_RICH_DONE to null, result)
     }
 }

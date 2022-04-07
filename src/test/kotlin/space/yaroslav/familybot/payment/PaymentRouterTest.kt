@@ -77,7 +77,7 @@ class PaymentRouterTest : FamilybotApplicationTest() {
 
     @Test
     fun successPayment() {
-        whenever(paymentService.processSuccessfulPayment(any())).thenReturn(Phrase.values().random())
+        whenever(paymentService.processSuccessfulPayment(any())).thenReturn(Phrase.values().random() to null)
         val update = createUpdateWithSuccessPayment()
         runBlocking { router.proceedSuccessfulPayment(update).invoke(testSender) }
         verify(testSender, times(3)).execute(any<SendMessage>())

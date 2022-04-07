@@ -38,7 +38,7 @@ class ResetPidorPaymentProcessor(
         }
     }
 
-    override fun processSuccess(shopPayload: ShopPayload): Phrase {
+    override fun processSuccess(shopPayload: ShopPayload): Pair<Phrase, String?> {
         val chat = Chat(shopPayload.chatId, null)
         val now = Instant.now()
         val amountOfRemovedPidors = commonRepository.removePidorRecords(
@@ -48,6 +48,6 @@ class ResetPidorPaymentProcessor(
         )
         easyKeyValueService.remove(PidorTolerance, chat.key())
         log.info("Removed $amountOfRemovedPidors pidors for $shopPayload")
-        return Phrase.DROP_PIDOR_DONE
+        return Phrase.DROP_PIDOR_DONE to null
     }
 }

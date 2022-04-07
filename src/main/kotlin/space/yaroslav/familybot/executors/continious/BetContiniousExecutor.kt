@@ -94,7 +94,7 @@ class BetContiniousExecutor(
             }
             easyKeyValueService.put(BetTolerance, key, true, untilNextMonth())
             delay(2000)
-            pidorCompetitionService.pidorCompetition(context).invoke(it)
+            pidorCompetitionService.pidorCompetition(context.chat, context.chatKey).invoke(it)
         }
     }
 

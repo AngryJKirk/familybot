@@ -10,5 +10,5 @@ interface PaymentProcessor {
 
     fun preCheckOut(shopPayload: ShopPayload): Phrase?
 
-    fun processSuccess(shopPayload: ShopPayload): Phrase
+    fun processSuccess(shopPayload: ShopPayload): Pair<Phrase, String?>
 }

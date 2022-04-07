@@ -26,9 +26,9 @@ class BetLimitPaymentProcessor(
         }
     }
 
-    override fun processSuccess(shopPayload: ShopPayload): Phrase {
+    override fun processSuccess(shopPayload: ShopPayload): Pair<Phrase, String?> {
         easyKeyValueService.remove(BetTolerance, shopPayload.userAndChatKey())
         log.info("Removed bet limit for $shopPayload")
-        return Phrase.DROP_BET_LIMIT_DONE
+        return Phrase.DROP_BET_LIMIT_DONE to null
     }
 }

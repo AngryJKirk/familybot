@@ -17,7 +17,7 @@ class PaymentService(
         return getProcessor(shopPayload).preCheckOut(shopPayload)
     }
 
-    fun processSuccessfulPayment(shopPayload: ShopPayload): Phrase {
+    fun processSuccessfulPayment(shopPayload: ShopPayload): Pair<Phrase, String?> {
         return getProcessor(shopPayload).processSuccess(shopPayload)
     }
 

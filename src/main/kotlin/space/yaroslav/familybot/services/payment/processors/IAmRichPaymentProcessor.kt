@@ -12,7 +12,7 @@ class IAmRichPaymentProcessor : PaymentProcessor {
 
     override fun preCheckOut(shopPayload: ShopPayload): Phrase? = null
 
-    override fun processSuccess(shopPayload: ShopPayload): Phrase {
-        return Phrase.I_AM_RICH_DONE
+    override fun processSuccess(shopPayload: ShopPayload): Pair<Phrase, String?> {
+        return Phrase.I_AM_RICH_DONE to null
     }
 }
