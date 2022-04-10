@@ -82,6 +82,7 @@ suspend fun AbsSender.send(
         typeDelay
     )
 }
+
 suspend fun AbsSender.sendContextFree(
     chatId: String,
     text: String,
@@ -92,7 +93,7 @@ suspend fun AbsSender.sendContextFree(
     customization: SendMessage.() -> Unit = { },
     shouldTypeBeforeSend: Boolean = false,
     typeDelay: Pair<Int, Int> = 1000 to 2000
-){
+) {
     sendInternal(
         chatId,
         botConfig.testEnvironment,
@@ -107,6 +108,7 @@ suspend fun AbsSender.sendContextFree(
         typeDelay
     )
 }
+
 private suspend fun AbsSender.sendInternal(
     chatId: String,
     testEnvironment: Boolean,

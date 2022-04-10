@@ -91,7 +91,7 @@ class PaymentRouter(
         val chatId = shopPayload.chatId.toString()
         sender.execute(SendMessage(chatId, text))
         sender.execute(SendMessage(chatId, dictionary.get(phrase, chatKey)))
-        if(comment != null){
+        if (comment != null) {
             sender.execute(SendMessage(chatId, comment))
         }
         val chat = commonRepository

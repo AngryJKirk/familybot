@@ -2,7 +2,6 @@ package space.yaroslav.familybot.executors.command.nonpublic
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.common.extensions.send
@@ -13,7 +12,6 @@ import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.models.telegram.Command
 import space.yaroslav.familybot.repos.AskWorldRepository
-import space.yaroslav.familybot.services.settings.EasyKeyValueRepository
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.UkrainianLanguage
 import space.yaroslav.familybot.services.talking.TranslateService
