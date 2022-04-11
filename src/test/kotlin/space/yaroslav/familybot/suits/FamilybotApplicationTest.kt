@@ -2,10 +2,8 @@ package space.yaroslav.familybot.suits
 
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.images.builder.ImageFromDockerfile
 import space.yaroslav.familybot.telegram.BotStarter
@@ -19,9 +17,6 @@ import java.util.concurrent.Future
 abstract class FamilybotApplicationTest {
 
     class KGenericContainer(imageName: Future<String>) : GenericContainer<KGenericContainer>(imageName)
-
-    @MockBean
-    lateinit var botMock: TelegramBotsApi
 
     companion object {
         init {
