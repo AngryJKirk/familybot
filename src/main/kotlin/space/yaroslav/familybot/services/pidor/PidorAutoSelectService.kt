@@ -32,6 +32,7 @@ class PidorAutoSelectService(
             .filterValues { timesLeft -> timesLeft > 0 }
             .forEach { (chatKey, timesLeft) ->
                 val chat = Chat(chatKey.chatId, name = null)
+                log.info("Running auto pidor select for chat $chat")
                 if (configureRepository.isEnabled(FunctionId.PIDOR, chat)) {
                     val (call, wasSelected) = pidorExecutor.selectPidor(chat, chatKey, silent = true)
                     if (wasSelected) {
@@ -46,7 +47,11 @@ class PidorAutoSelectService(
                                 )
                             }
                         }
+                    } else {
+                        log.info("Pidor was not selected for chat $chat")
                     }
+                } else {
+                    log.info("Pidor is disabled for chat $chat")
                 }
             }
     }
