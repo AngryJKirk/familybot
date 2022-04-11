@@ -11,6 +11,7 @@ import space.yaroslav.familybot.models.router.FunctionId
 import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.repos.FunctionsConfigureRepository
 import space.yaroslav.familybot.services.settings.AutoPidorTimesLeft
+import space.yaroslav.familybot.services.settings.ChatEasyKey
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.talking.Dictionary
 import space.yaroslav.familybot.telegram.BotConfig
@@ -29,29 +30,36 @@ class PidorAutoSelectService(
         log.info("Running auto pidor select...")
         easyKeyValueService.getAllByPartKey(AutoPidorTimesLeft)
             .filterValues { timesLeft -> timesLeft > 0 }
-            .forEach { (chatKey, timesLeft) ->
-                val chat = Chat(chatKey.chatId, name = null)
-                log.info("Running auto pidor select for chat $chat")
-                if (configureRepository.isEnabled(FunctionId.PIDOR, chat)) {
-                    val (call, wasSelected) = pidorExecutor.selectPidor(chat, chatKey, silent = true)
-                    if (wasSelected) {
-                        runBlocking {
-                            call.invoke(absSender)
-                            easyKeyValueService.decrement(AutoPidorTimesLeft, chatKey)
-                            if (timesLeft == 1L) {
-                                absSender.sendContextFree(
-                                    chat.idString,
-                                    dictionary.get(Phrase.AUTO_PIDOR_LAST_TIME, chatKey),
-                                    botConfig
-                                )
-                            }
-                        }
-                    } else {
-                        log.info("Pidor was not selected for chat $chat")
+            .forEach { (chatKey, timesLeft) -> runForChat(absSender, chatKey, timesLeft) }
+    }
+
+    private fun runForChat(
+        absSender: AbsSender,
+        chatKey: ChatEasyKey,
+        timesLeft: Long
+    ) {
+        val chat = Chat(chatKey.chatId, name = null)
+        log.info("Running auto pidor select for chat $chat")
+        if (configureRepository.isEnabled(FunctionId.PIDOR, chat)) {
+            val (call, wasSelected) = pidorExecutor.selectPidor(chat, chatKey, silent = true)
+            if (wasSelected) {
+                runBlocking {
+                    call.invoke(absSender)
+                    easyKeyValueService.decrement(AutoPidorTimesLeft, chatKey)
+                    if (timesLeft == 1L) {
+                        absSender.sendContextFree(
+                            chat.idString,
+                            dictionary.get(Phrase.AUTO_PIDOR_LAST_TIME, chatKey),
+                            botConfig
+                        )
+                        easyKeyValueService.remove(AutoPidorTimesLeft, chatKey)
                     }
-                } else {
-                    log.info("Pidor is disabled for chat $chat")
                 }
+            } else {
+                log.info("Pidor was not selected for chat $chat")
             }
+        } else {
+            log.info("Pidor is disabled for chat $chat")
+        }
     }
 }
