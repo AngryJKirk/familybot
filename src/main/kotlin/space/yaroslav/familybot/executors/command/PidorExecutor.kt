@@ -214,6 +214,7 @@ class PidorExecutor(
         pidorToleranceValue: Long
     ): Boolean {
         val limit = if (usersInChat.size >= 50) 2 else 1
+        log.info("Limit of pidors is $limit, tolerance is $pidorToleranceValue")
         return pidorToleranceValue >= limit
     }
 
