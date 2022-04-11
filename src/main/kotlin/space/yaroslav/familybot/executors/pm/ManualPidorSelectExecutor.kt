@@ -15,12 +15,13 @@ class ManualPidorSelectExecutor(
     override fun getMessagePrefix() = "pidor_manual"
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        val response = runCatching {
-            pidorAutoSelectService.autoSelect()
-            "it's done"
-        }
-            .onFailure { it.message }
+
         return {
+            val response = runCatching {
+                pidorAutoSelectService.autoSelect(it)
+                "it's done"
+            }
+                .onFailure { exception -> exception.message }
             it.send(context, response.getOrDefault("error"))
         }
     }
