@@ -117,7 +117,7 @@ class PidorExecutor(
             }
             pidorStrikesService.calculateStrike(chat, key, pidor).invoke(sender)
             pidorCompetitionService.pidorCompetition(chat, key).invoke(sender)
-        }, false)
+        }, true)
     }
 
     private suspend fun getNextPidorAsync(
