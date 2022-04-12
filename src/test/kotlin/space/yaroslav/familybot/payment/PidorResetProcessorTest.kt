@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.payload
+import space.yaroslav.familybot.models.shop.PreCheckOutResponse
 import space.yaroslav.familybot.models.shop.ShopItem
 import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.models.telegram.Pidor
@@ -28,7 +29,7 @@ class PidorResetProcessorTest : PaymentProcessorTest() {
         val key = payload.chatKey()
         easyKeyValueService.put(PidorTolerance, key, 1)
 
-        Assertions.assertNull(processor.preCheckOut(payload))
+        Assertions.assertTrue(processor.preCheckOut(payload) is PreCheckOutResponse.Success)
         easyKeyValueService.remove(PidorTolerance, key)
     }
 

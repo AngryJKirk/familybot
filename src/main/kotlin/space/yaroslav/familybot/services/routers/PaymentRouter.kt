@@ -11,7 +11,9 @@ import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.shop.PreCheckOutResponse
 import space.yaroslav.familybot.models.shop.ShopPayload
+import space.yaroslav.familybot.models.shop.SuccessPaymentResponse
 import space.yaroslav.familybot.repos.CommonRepository
 import space.yaroslav.familybot.services.payment.PaymentService
 import space.yaroslav.familybot.services.settings.ChatEasyKey
@@ -40,20 +42,23 @@ class PaymentRouter(
                     sender.execute(AnswerPreCheckoutQuery(update.preCheckoutQuery.id, false, message))
                     sender.execute(SendMessage(chatId, message))
                 }
-                .onSuccess { phrase ->
-                    if (phrase != null) {
-                        val message = dictionary.get(phrase, settingsKey)
-                        sender.execute(
-                            AnswerPreCheckoutQuery(
-                                update.preCheckoutQuery.id,
-                                false,
-                                message
+                .onSuccess { response ->
+                    when (response) {
+                        is PreCheckOutResponse.Success -> {
+                            sender.execute(AnswerPreCheckoutQuery(update.preCheckoutQuery.id, true))
+                            log.info("Pre checkout query is valid")
+                        }
+                        is PreCheckOutResponse.Error -> {
+                            val message = dictionary.get(response.explainPhrase, settingsKey)
+                            sender.execute(
+                                AnswerPreCheckoutQuery(
+                                    update.preCheckoutQuery.id,
+                                    false,
+                                    message
+                                )
                             )
-                        )
-                        sender.execute(SendMessage(chatId, message))
-                    } else {
-                        sender.execute(AnswerPreCheckoutQuery(update.preCheckoutQuery.id, true))
-                        log.info("Pre checkout query is valid")
+                            sender.execute(SendMessage(chatId, message))
+                        }
                     }
                 }
         }
@@ -68,9 +73,9 @@ class PaymentRouter(
                     log.error("Can not process payment", e)
                     onFailure(sender, update, shopPayload)
                 }
-                .onSuccess { (phrase, comment) ->
+                .onSuccess { result ->
                     log.info("Wow, payment!")
-                    onSuccess(sender, update, phrase, comment, shopPayload)
+                    onSuccess(sender, update, result, shopPayload)
                 }
         }
     }
@@ -78,8 +83,7 @@ class PaymentRouter(
     private fun onSuccess(
         sender: AbsSender,
         update: Update,
-        phrase: Phrase,
-        comment: String?,
+        successPaymentResponse: SuccessPaymentResponse,
         shopPayload: ShopPayload
     ) {
         val developerId = botConfig.developerId
@@ -90,10 +94,8 @@ class PaymentRouter(
             .replace("$1", "@" + botConfig.developer)
         val chatId = shopPayload.chatId.toString()
         sender.execute(SendMessage(chatId, text))
-        sender.execute(SendMessage(chatId, dictionary.get(phrase, chatKey)))
-        if (comment != null) {
-            sender.execute(SendMessage(chatId, comment))
-        }
+        sender.execute(SendMessage(chatId, dictionary.get(successPaymentResponse.phrase, chatKey)))
+        successPaymentResponse.customCall(sender)
         val chat = commonRepository
             .getChatsByUser(user)
             .find { shopPayload.chatId == it.id }

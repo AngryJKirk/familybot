@@ -3,6 +3,7 @@ package space.yaroslav.familybot.payment
 import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
 import space.yaroslav.familybot.infrastructure.payload
+import space.yaroslav.familybot.models.shop.PreCheckOutResponse
 import space.yaroslav.familybot.models.shop.ShopItem
 import space.yaroslav.familybot.services.payment.processors.BetLimitPaymentProcessor
 import space.yaroslav.familybot.services.settings.BetTolerance
@@ -18,7 +19,7 @@ class BetLimitPaymentProcessorTest : PaymentProcessorTest() {
 
         val key = payload.userAndChatKey()
         easyKeyValueService.put(BetTolerance, key, true)
-        Assertions.assertNull(processor.preCheckOut(payload))
+        Assertions.assertTrue(processor.preCheckOut(payload) is PreCheckOutResponse.Success)
         easyKeyValueService.remove(BetTolerance, key)
     }
 

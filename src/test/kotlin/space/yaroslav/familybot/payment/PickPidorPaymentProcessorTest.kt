@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
 import space.yaroslav.familybot.infrastructure.payload
 import space.yaroslav.familybot.infrastructure.randomLong
+import space.yaroslav.familybot.models.shop.PreCheckOutResponse
 import space.yaroslav.familybot.models.shop.ShopItem
 import space.yaroslav.familybot.services.payment.processors.PickPidorPaymentProcessor
 import space.yaroslav.familybot.services.settings.PickPidorAbilityCount
@@ -16,7 +17,7 @@ class PickPidorPaymentProcessorTest : PaymentProcessorTest() {
 
     override fun preCheckOutTest() {
         val payload = payload(ShopItem.PICK_PIDOR)
-        Assertions.assertNull(pickPidorPaymentProcessor.preCheckOut(payload))
+        Assertions.assertTrue(pickPidorPaymentProcessor.preCheckOut(payload) is PreCheckOutResponse.Success)
     }
 
     override fun processSuccessTest() {

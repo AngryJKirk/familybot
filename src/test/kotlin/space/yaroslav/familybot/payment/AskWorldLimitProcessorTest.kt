@@ -3,6 +3,7 @@ package space.yaroslav.familybot.payment
 import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
 import space.yaroslav.familybot.infrastructure.payload
+import space.yaroslav.familybot.models.shop.PreCheckOutResponse
 import space.yaroslav.familybot.models.shop.ShopItem
 import space.yaroslav.familybot.services.payment.processors.AskWorldLimitPaymentProcessor
 import space.yaroslav.familybot.services.settings.AskWorldChatUsages
@@ -18,7 +19,7 @@ class AskWorldLimitProcessorTest : PaymentProcessorTest() {
         Assertions.assertNotNull(processor.preCheckOut(payload))
         val chatKey = payload.chatKey()
         easyKeyValueService.put(AskWorldChatUsages, chatKey, 1)
-        Assertions.assertNull(processor.preCheckOut(payload))
+        Assertions.assertTrue(processor.preCheckOut(payload) is PreCheckOutResponse.Success)
         easyKeyValueService.remove(AskWorldChatUsages, chatKey)
     }
 

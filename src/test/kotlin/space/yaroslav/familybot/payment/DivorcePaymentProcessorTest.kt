@@ -8,6 +8,7 @@ import space.yaroslav.familybot.infrastructure.createSimpleUpdate
 import space.yaroslav.familybot.infrastructure.createSimpleUser
 import space.yaroslav.familybot.infrastructure.payload
 import space.yaroslav.familybot.models.Marriage
+import space.yaroslav.familybot.models.shop.PreCheckOutResponse
 import space.yaroslav.familybot.models.shop.ShopItem
 import space.yaroslav.familybot.models.shop.ShopPayload
 import space.yaroslav.familybot.repos.MarriagesRepository
@@ -25,7 +26,7 @@ class DivorcePaymentProcessorTest : PaymentProcessorTest() {
         Assertions.assertNotNull(processor.preCheckOut(payload(ShopItem.DIVORCE)))
 
         val (payload, marriage) = createMarriageAndPayload()
-        Assertions.assertNull(processor.preCheckOut(payload))
+        Assertions.assertTrue(processor.preCheckOut(payload) is PreCheckOutResponse.Success)
         marriagesRepository.removeMarriage(marriage.chatId, marriage.firstUser.id)
     }
 

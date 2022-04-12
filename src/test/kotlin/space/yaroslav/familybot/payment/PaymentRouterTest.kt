@@ -26,7 +26,9 @@ import space.yaroslav.familybot.infrastructure.payload
 import space.yaroslav.familybot.infrastructure.randomInt
 import space.yaroslav.familybot.infrastructure.randomString
 import space.yaroslav.familybot.models.dictionary.Phrase
+import space.yaroslav.familybot.models.shop.PreCheckOutResponse
 import space.yaroslav.familybot.models.shop.ShopItem
+import space.yaroslav.familybot.models.shop.SuccessPaymentResponse
 import space.yaroslav.familybot.services.payment.PaymentService
 import space.yaroslav.familybot.services.routers.PaymentRouter
 import space.yaroslav.familybot.suits.FamilybotApplicationTest
@@ -43,7 +45,7 @@ class PaymentRouterTest : FamilybotApplicationTest() {
 
     @Test
     fun successPreCheckout() {
-        whenever(paymentService.processPreCheckoutCheck(any())).thenReturn(null)
+        whenever(paymentService.processPreCheckoutCheck(any())).thenReturn(PreCheckOutResponse.Success())
         val update = createUpdateWithPreCheckoutQuery()
         runBlocking { router.proceedPreCheckoutQuery(update).invoke(testSender) }
         verify(testSender).execute(eq(AnswerPreCheckoutQuery(update.preCheckoutQuery.id, true)))
@@ -51,7 +53,11 @@ class PaymentRouterTest : FamilybotApplicationTest() {
 
     @Test
     fun invalidPreCheckout() {
-        whenever(paymentService.processPreCheckoutCheck(any())).thenReturn(Phrase.values().random())
+        whenever(paymentService.processPreCheckoutCheck(any())).thenReturn(
+            PreCheckOutResponse.Error(
+                Phrase.values().random()
+            )
+        )
         val update = createUpdateWithPreCheckoutQuery()
         runBlocking { router.proceedPreCheckoutQuery(update).invoke(testSender) }
         val preCheckoutQueryCaptor = ArgumentCaptor.forClass(AnswerPreCheckoutQuery::class.java)
@@ -77,7 +83,11 @@ class PaymentRouterTest : FamilybotApplicationTest() {
 
     @Test
     fun successPayment() {
-        whenever(paymentService.processSuccessfulPayment(any())).thenReturn(Phrase.values().random() to null)
+        whenever(paymentService.processSuccessfulPayment(any())).thenReturn(
+            SuccessPaymentResponse(
+                Phrase.values().random()
+            )
+        )
         val update = createUpdateWithSuccessPayment()
         runBlocking { router.proceedSuccessfulPayment(update).invoke(testSender) }
         verify(testSender, times(3)).execute(any<SendMessage>())
