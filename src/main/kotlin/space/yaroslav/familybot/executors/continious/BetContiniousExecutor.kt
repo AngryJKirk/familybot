@@ -6,7 +6,6 @@ import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendDice
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.common.extensions.untilNextMonth
 import space.yaroslav.familybot.models.dictionary.Phrase
@@ -50,7 +49,7 @@ class BetContiniousExecutor(
 
         val user = context.user
         val chatId = context.message.chatId
-        val key = context.update.key()
+        val key = context.userAndChatKey
 
         if (isBetAlreadyDone(key)) {
             return {

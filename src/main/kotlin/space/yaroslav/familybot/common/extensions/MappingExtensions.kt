@@ -82,7 +82,7 @@ fun Update.context(botConfig: BotConfig, dictionary: Dictionary): ExecutorContex
         isFromDeveloper,
         chat,
         user,
-        key(),
+        UserAndChatEasyKey(user.id, chat.id),
         user.key(),
         chat.key(),
         botConfig.testEnvironment,
@@ -112,10 +112,6 @@ fun Update.getMessageTokens(delimiter: String = " "): List<String> {
     } else {
         emptyList()
     }
-}
-
-fun Update.key(): UserAndChatEasyKey {
-    return UserAndChatEasyKey(toUser().id, chatId())
 }
 
 fun Message.key(): UserAndChatEasyKey {

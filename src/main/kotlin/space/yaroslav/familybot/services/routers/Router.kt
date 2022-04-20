@@ -209,13 +209,13 @@ class Router(
             executors.filterNot { it is PrivateMessageExecutor }
         }
         return executorsToProcess
-            .sortedByDescending { it.meteredPriority(context, meterRegistry).priorityValue }
-            .filter { it.meteredPriority(context, meterRegistry) higherThan Priority.RANDOM }
-            .find {
-                it.meteredCanExecute(
-                    context,
-                    meterRegistry
-                )
+            .asSequence()
+            .map { executor -> executor to executor.meteredPriority(context, meterRegistry) }
+            .filter { (_, priority) -> priority higherThan Priority.RANDOM }
+            .sortedByDescending { (_, priority) -> priority.priorityValue }
+            .map { (executor, _) -> executor }
+            .find { executor ->
+                executor.meteredCanExecute(context, meterRegistry)
             }
     }
 

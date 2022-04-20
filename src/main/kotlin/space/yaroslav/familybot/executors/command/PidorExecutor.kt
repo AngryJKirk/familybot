@@ -222,6 +222,7 @@ class PidorExecutor(
         val getChatMemberCall = GetChatMember(user.chat.idString, user.id)
         return runCatching {
             absSender.execute(getChatMemberCall)
+                .apply { log.info("Chat member status: $this ") }
                 .takeIf { member -> member.status != "left" && member.status != "kicked" }
                 ?.user()
                 ?.toUser(user.chat)
