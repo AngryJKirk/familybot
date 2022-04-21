@@ -9,3 +9,7 @@ deploy-prod:
 
 redeploy-prod:
 	docker-compose --env-file ./production.env up -d --no-deps --build family
+
+update:
+	docker-compose pull && docker-compose --env-file ./production.env up -d
+
