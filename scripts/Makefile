@@ -11,5 +11,5 @@ redeploy-prod:
 	docker compose --env-file ./production.env up -d --no-deps --build family
 
 update:
-	docker compose pull && docker-compose --env-file ./production.env up -d
+	docker compose pull && docker compose --env-file ./production.env up -d
 
