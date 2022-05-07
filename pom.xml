@@ -20,7 +20,7 @@
         <mockito-kotlin.version>4.0.0</mockito-kotlin.version>
         <tomlj.version>1.0.0</tomlj.version>
         <spring.version>2.6.7</spring.version>
-        <kotlinx-coroutines.version>1.6.0</kotlinx-coroutines.version>
+        <kotlinx-coroutines.version>1.6.1</kotlinx-coroutines.version>
     </properties>
 
     <dependencies>
