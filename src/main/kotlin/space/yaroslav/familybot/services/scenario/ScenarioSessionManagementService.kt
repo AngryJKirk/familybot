@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 import org.telegram.telegrambots.meta.bots.AbsSender
+import space.yaroslav.familybot.common.extensions.bold
 import space.yaroslav.familybot.common.extensions.italic
 import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.common.extensions.toHourMinuteString
@@ -202,11 +203,11 @@ class ScenarioSessionManagementService(
         val scenarioOptions = scenarioMove
             .ways
             .map(ScenarioWay::description)
-            .mapIndexed { description, i -> "$i. $description" }
+            .mapIndexed { i, description -> "${(i + 1).toString().bold()}. $description" }
             .joinToString("\n")
         val messageToSend = moveDescription + "\n\n" + scenarioOptions
         return {
-            val message = it.send(context, messageToSend)
+            val message = it.send(context, messageToSend, enableHtml = true)
             it.execute(
                 SendPoll().apply {
                     chatId = context.chat.idString
