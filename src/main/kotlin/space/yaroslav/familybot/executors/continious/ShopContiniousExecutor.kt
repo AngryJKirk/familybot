@@ -19,8 +19,8 @@ class ShopContiniousExecutor(
     private val botConfig: BotConfig,
 ) : ContiniousConversationExecutor(botConfig) {
 
-    override fun getDialogMessage(context: ExecutorContext): String {
-        return context.phrase(Phrase.SHOP_KEYBOARD)
+    override fun getDialogMessages(context: ExecutorContext): Set<String> {
+        return context.allPhrases(Phrase.SHOP_KEYBOARD)
     }
 
     override fun command() = Command.SHOP

@@ -32,8 +32,8 @@ class BetContiniousExecutor(
 ) : ContiniousConversationExecutor(botConfig) {
     private val diceNumbers = listOf(1, 2, 3, 4, 5, 6)
 
-    override fun getDialogMessage(context: ExecutorContext): String {
-        return context.phrase(Phrase.BET_INITIAL_MESSAGE)
+    override fun getDialogMessages(context: ExecutorContext): Set<String> {
+        return context.allPhrases(Phrase.BET_INITIAL_MESSAGE)
     }
 
     override fun command() = Command.BET
@@ -42,7 +42,7 @@ class BetContiniousExecutor(
         val message = context.message
         return message.isReply &&
             message.replyToMessage.from.userName == botConfig.botName &&
-            (message.replyToMessage.text ?: "") == getDialogMessage(context)
+            (message.replyToMessage.text ?: "") in getDialogMessages(context)
     }
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {

@@ -25,4 +25,5 @@ class ExecutorContext(
     private val dictionary: Dictionary
 ) {
     fun phrase(phrase: Phrase) = dictionary.get(phrase, chatKey)
+    fun allPhrases(phrase: Phrase) = dictionary.getAll(phrase)
 }

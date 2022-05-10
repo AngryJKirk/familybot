@@ -20,8 +20,8 @@ class QuoteContiniousExecutor(
         return Command.QUOTE_BY_TAG
     }
 
-    override fun getDialogMessage(context: ExecutorContext): String {
-        return QUOTE_MESSAGE
+    override fun getDialogMessages(context: ExecutorContext): Set<String> {
+        return setOf(QUOTE_MESSAGE)
     }
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {

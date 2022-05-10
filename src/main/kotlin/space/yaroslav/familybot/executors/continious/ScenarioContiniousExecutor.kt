@@ -19,7 +19,7 @@ class ScenarioContiniousExecutor(
     botConfig: BotConfig
 ) :
     ContiniousConversationExecutor(botConfig) {
-    override fun getDialogMessage(context: ExecutorContext) = "Какую игру выбрать?"
+    override fun getDialogMessages(context: ExecutorContext) = context.allPhrases(Phrase.SCENARIO_CHOOSE)
 
     override fun command() = Command.SCENARIO
 

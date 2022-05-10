@@ -25,8 +25,8 @@ class SettingsContiniousExecutor(
         return Command.SETTINGS
     }
 
-    override fun getDialogMessage(context: ExecutorContext): String {
-        return context.phrase(Phrase.WHICH_SETTING_SHOULD_CHANGE)
+    override fun getDialogMessages(context: ExecutorContext): Set<String> {
+        return context.allPhrases(Phrase.WHICH_SETTING_SHOULD_CHANGE)
     }
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {

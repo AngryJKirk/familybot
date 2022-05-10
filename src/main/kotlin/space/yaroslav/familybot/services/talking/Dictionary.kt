@@ -14,8 +14,8 @@ class Dictionary(
     private val keyValueService: EasyKeyValueService,
     private val dictionaryReader: DictionaryReader
 ) {
-    fun getAll(phrase: Phrase): List<String> {
-        return dictionaryReader.getAllPhrases(phrase)
+    fun getAll(phrase: Phrase): Set<String> {
+        return dictionaryReader.getAllPhrases(phrase).toSet()
     }
 
     fun get(phrase: Phrase, settingsKey: ChatEasyKey) = getInternal(phrase, settingsKey)
