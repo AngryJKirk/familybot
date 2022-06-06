@@ -127,17 +127,21 @@ class PidorExecutor(
     ): Deferred<User> {
         return coroutineScope {
             async {
-                users
-                    .map { user -> launch { checkIfUserStillThere(user, sender) } }
-                    .forEach { job -> job.join() }
-                val actualizedUsers = repository.getUsers(chat, activeOnly = true)
-                log.info("Users to roll: {}", actualizedUsers)
-                val nextPidor = actualizedUsers.randomOrNull() ?: getFallbackPidor(chat)
+                runCatching {
+                    users
+                        .map { user -> launch { checkIfUserStillThere(user, sender) } }
+                        .forEach { job -> job.join() }
+                    val actualizedUsers = repository.getUsers(chat, activeOnly = true)
+                    log.info("Users to roll: {}", actualizedUsers)
+                    val nextPidor = actualizedUsers.randomOrNull() ?: getFallbackPidor(chat)
 
-                log.info("Pidor is rolled to $nextPidor")
-                val newPidor = Pidor(nextPidor, Instant.now())
-                repository.addPidor(newPidor)
-                return@async nextPidor
+                    log.info("Pidor is rolled to $nextPidor")
+                    val newPidor = Pidor(nextPidor, Instant.now())
+                    repository.addPidor(newPidor)
+                    nextPidor
+                }
+                    .onFailure { e -> log.error("Something bad is happened on rolling, investigate", e) }
+                    .getOrNull() ?: getFallbackPidor(chat)
             }
         }
     }
@@ -180,13 +184,13 @@ class PidorExecutor(
                 SendMessage(
                     chat.idString,
                     dictionary.get(Phrase.PIROR_DISCOVERED_ONE, key) + " " +
-                        formatName(pidorsByChat.first(), key)
+                            formatName(pidorsByChat.first(), key)
                 ).apply { enableHtml(true) }
             }
             else -> SendMessage(
                 chat.idString,
                 dictionary.get(Phrase.PIROR_DISCOVERED_MANY, key) + " " +
-                    pidorsByChat.joinToString { formatName(it, key) }
+                        pidorsByChat.joinToString { formatName(it, key) }
             ).apply { enableHtml(true) }
         }
     }
