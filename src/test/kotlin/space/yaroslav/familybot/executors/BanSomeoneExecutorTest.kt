@@ -1,7 +1,6 @@
 package space.yaroslav.familybot.executors
 
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert
 import org.junit.Ignore
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -65,7 +64,7 @@ class BanSomeoneExecutorTest : ExecutorTest() {
 
         val canExecuteValid = banSomeoneExecutor.canExecute(validContext)
 
-        Assert.assertTrue(canExecuteValid)
+        Assertions.assertTrue(canExecuteValid)
 
         val notValidContext = updateFromDeveloper(randomString())
 

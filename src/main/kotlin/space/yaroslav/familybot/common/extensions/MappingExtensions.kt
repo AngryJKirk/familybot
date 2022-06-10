@@ -16,7 +16,7 @@ import space.yaroslav.familybot.telegram.BotConfig
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.time.Month
 import java.time.format.TextStyle
-import java.util.Locale
+import java.util.*
 import org.telegram.telegrambots.meta.api.objects.Chat as TelegramChat
 import org.telegram.telegrambots.meta.api.objects.User as TelegramUser
 

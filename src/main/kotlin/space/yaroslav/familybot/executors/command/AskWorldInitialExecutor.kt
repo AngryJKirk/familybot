@@ -1,20 +1,12 @@
 package space.yaroslav.familybot.executors.command
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.boldNullable
-import space.yaroslav.familybot.common.extensions.italic
-import space.yaroslav.familybot.common.extensions.key
-import space.yaroslav.familybot.common.extensions.send
-import space.yaroslav.familybot.common.extensions.untilNextDay
+import space.yaroslav.familybot.common.extensions.*
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.command.settings.processors.AskWorldDensityValue
 import space.yaroslav.familybot.getLogger
@@ -167,9 +159,9 @@ class AskWorldInitialExecutor(
 
             val isScam =
                 shouldBeCensored(message) ||
-                    shouldBeCensored(context.chat.name ?: "") ||
-                    isSpam(message) ||
-                    containsLongWords(message)
+                        shouldBeCensored(context.chat.name ?: "") ||
+                        isSpam(message) ||
+                        containsLongWords(message)
 
             if (message.length > 2000) {
                 return ValidationError {
@@ -252,16 +244,16 @@ class AskWorldInitialExecutor(
 
     private fun shouldBeCensored(message: String): Boolean {
         return message.contains("http", ignoreCase = true) ||
-            message.contains("www", ignoreCase = true) ||
-            message.contains("jpg", ignoreCase = true) ||
-            message.contains("png", ignoreCase = true) ||
-            message.contains("jpeg", ignoreCase = true) ||
-            message.contains("bmp", ignoreCase = true) ||
-            message.contains("gif", ignoreCase = true) ||
-            message.contains("_bot", ignoreCase = true) ||
-            message.contains("t.me", ignoreCase = true) ||
-            message.contains("Bot", ignoreCase = false) ||
-            message.contains("@")
+                message.contains("www", ignoreCase = true) ||
+                message.contains("jpg", ignoreCase = true) ||
+                message.contains("png", ignoreCase = true) ||
+                message.contains("jpeg", ignoreCase = true) ||
+                message.contains("bmp", ignoreCase = true) ||
+                message.contains("gif", ignoreCase = true) ||
+                message.contains("_bot", ignoreCase = true) ||
+                message.contains("t.me", ignoreCase = true) ||
+                message.contains("Bot", ignoreCase = false) ||
+                message.contains("@")
     }
 
     private fun isSpam(message: String): Boolean {

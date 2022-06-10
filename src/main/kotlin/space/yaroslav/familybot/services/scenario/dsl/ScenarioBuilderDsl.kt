@@ -1,6 +1,6 @@
 package space.yaroslav.familybot.services.scenario.dsl
 
-import java.util.UUID
+import java.util.*
 
 class Scenario {
     val id: UUID = UUID.randomUUID()

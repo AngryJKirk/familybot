@@ -30,11 +30,11 @@ class QuoteContiniousExecutor(
             it.execute(AnswerCallbackQuery(callbackQuery.id))
             it.execute(
                 (
-                    SendMessage(
-                        callbackQuery.message.chatId.toString(),
-                        quoteRepository.getByTag(callbackQuery.data) ?: "Такого тега нет, идите нахуй"
-                    )
-                    )
+                        SendMessage(
+                            callbackQuery.message.chatId.toString(),
+                            quoteRepository.getByTag(callbackQuery.data) ?: "Такого тега нет, идите нахуй"
+                        )
+                        )
             )
         }
     }

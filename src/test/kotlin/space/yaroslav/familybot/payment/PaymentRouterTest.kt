@@ -4,13 +4,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
-import org.mockito.kotlin.any
-import org.mockito.kotlin.atLeastOnce
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.firstValue
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery
@@ -20,11 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.payments.PreCheckoutQuery
 import org.telegram.telegrambots.meta.api.objects.payments.SuccessfulPayment
 import space.yaroslav.familybot.common.extensions.from
 import space.yaroslav.familybot.common.extensions.toJson
-import space.yaroslav.familybot.infrastructure.TestSender
-import space.yaroslav.familybot.infrastructure.createSimpleUpdate
-import space.yaroslav.familybot.infrastructure.payload
-import space.yaroslav.familybot.infrastructure.randomInt
-import space.yaroslav.familybot.infrastructure.randomString
+import space.yaroslav.familybot.infrastructure.*
 import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.models.shop.PreCheckOutResponse
 import space.yaroslav.familybot.models.shop.ShopItem

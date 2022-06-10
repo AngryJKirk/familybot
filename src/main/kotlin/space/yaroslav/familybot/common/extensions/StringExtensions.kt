@@ -1,7 +1,7 @@
 package space.yaroslav.familybot.common.extensions
 
 import space.yaroslav.familybot.models.dictionary.Pluralization
-import java.util.Locale
+import java.util.*
 
 fun String?.dropLastDelimiter(): String? {
     if (this.isNullOrEmpty()) {

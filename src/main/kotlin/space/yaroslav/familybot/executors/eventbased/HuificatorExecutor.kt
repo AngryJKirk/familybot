@@ -56,7 +56,7 @@ class HuificatorExecutor(private val easyKeyValueService: EasyKeyValueService) :
             return null
         }
 
-        if (wordLowerCase.startsWith("ху", true) || wordLowerCase.length < 5) {
+        if (wordLowerCase.startsWith("ху", true)) {
             return null
         }
 

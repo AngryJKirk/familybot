@@ -2,14 +2,10 @@ package space.yaroslav.familybot.common.extensions
 
 import space.yaroslav.familybot.models.Marriage
 import space.yaroslav.familybot.models.askworld.AskWorldQuestion
-import space.yaroslav.familybot.models.telegram.Chat
-import space.yaroslav.familybot.models.telegram.Command
-import space.yaroslav.familybot.models.telegram.CommandByUser
-import space.yaroslav.familybot.models.telegram.Pidor
-import space.yaroslav.familybot.models.telegram.User
+import space.yaroslav.familybot.models.telegram.*
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.sql.ResultSet
-import java.util.UUID
+import java.util.*
 
 fun ResultSet.toUser(): User = User(
     this.getLong("id"),

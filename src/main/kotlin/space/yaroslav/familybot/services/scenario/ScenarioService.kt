@@ -43,7 +43,7 @@ class ScenarioService(
         return currentStates
             .sortedBy(ScenarioState::date).joinToString(separator = "\n\n") { state ->
                 "Этап истории: ".bold() + state.move.description.italic() +
-                    "\n" + (getStateResultsFormatted(chat, state))
+                        "\n" + (getStateResultsFormatted(chat, state))
             }
     }
 

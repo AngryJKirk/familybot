@@ -99,17 +99,17 @@ class FamilyBot(
     private fun proceedPreCheckoutQuery(update: Update): suspend (AbsSender) -> Unit {
         return runCatching {
             paymentRouter.proceedPreCheckoutQuery(update)
-        }.getOrDefault {
-            log.warn("paymentRouter.proceedPreCheckoutQuery failed", it) {}
-        }
+        }.onFailure {
+            log.warn("paymentRouter.proceedPreCheckoutQuery failed", it)
+        }.getOrDefault { }
     }
 
     private fun proceedSuccessfulPayment(update: Update): suspend (AbsSender) -> Unit {
         return runCatching {
             paymentRouter.proceedSuccessfulPayment(update)
-        }.getOrDefault {
-            log.warn("paymentRouter.proceedSuccessfulPayment failed", it) {}
-        }
+        }.onFailure {
+            log.warn("paymentRouter.proceedSuccessfulPayment failed", it)
+        }.getOrDefault { }
     }
 
     private fun createChannel(): Channel<Update> {

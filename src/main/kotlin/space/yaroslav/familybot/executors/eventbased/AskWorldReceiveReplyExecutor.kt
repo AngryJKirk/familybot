@@ -4,17 +4,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.send.SendAnimation
-import org.telegram.telegrambots.meta.api.methods.send.SendAudio
-import org.telegram.telegrambots.meta.api.methods.send.SendContact
-import org.telegram.telegrambots.meta.api.methods.send.SendDocument
-import org.telegram.telegrambots.meta.api.methods.send.SendLocation
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
-import org.telegram.telegrambots.meta.api.methods.send.SendSticker
-import org.telegram.telegrambots.meta.api.methods.send.SendVideo
-import org.telegram.telegrambots.meta.api.methods.send.SendVideoNote
-import org.telegram.telegrambots.meta.api.methods.send.SendVoice
+import org.telegram.telegrambots.meta.api.methods.send.*
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -285,7 +275,7 @@ class AskWorldReceiveReplyExecutor(
             SendMessage(
                 chatIdToReply,
                 "$answerTitle ${context.chat.name.boldNullable()} " +
-                    "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\":"
+                        "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\":"
             ).apply {
                 enableHtml(true)
             }
@@ -304,7 +294,7 @@ class AskWorldReceiveReplyExecutor(
             SendMessage(
                 chatIdToReply,
                 "$answerTitle ${context.chat.name.boldNullable()} " +
-                    "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}"
+                        "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}"
             ).apply {
                 enableHtml(true)
             }

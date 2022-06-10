@@ -21,7 +21,7 @@ class PidorAutoSelectPaymentProcessorTest : PaymentProcessorTest() {
 
     override fun preCheckOutTest() {
         val payload = payload(ShopItem.AUTO_PIDOR)
-        Assertions.assertTrue(autoPidorPaymentProcessor.preCheckOut(payload)  is PreCheckOutResponse.Success)
+        Assertions.assertTrue(autoPidorPaymentProcessor.preCheckOut(payload) is PreCheckOutResponse.Success)
     }
 
     override fun processSuccessTest() {
@@ -35,6 +35,6 @@ class PidorAutoSelectPaymentProcessorTest : PaymentProcessorTest() {
         response.customCall(sender)
         verify(sender).execute(customCallCaptor.capture())
         Assertions.assertTrue(customCallCaptor.allValues.size == 1)
-        Assertions.assertTrue(customCallCaptor.value.text.endsWith(timesLeft.toString()) ?: false)
+        Assertions.assertTrue(customCallCaptor.value.text.endsWith(timesLeft.toString()))
     }
 }
