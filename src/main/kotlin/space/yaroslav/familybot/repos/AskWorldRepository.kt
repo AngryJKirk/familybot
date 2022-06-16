@@ -13,7 +13,7 @@ import java.sql.Timestamp
 import java.time.Instant
 
 @Component
-class AskWorldRepository(val template: JdbcTemplate) {
+class AskWorldRepository(private val template: JdbcTemplate) {
 
     @Timed("repository.AskWorldRepository.findQuestionByMessageId")
     fun findQuestionByMessageId(messageId: Long, chatId: Long): AskWorldQuestion? {
