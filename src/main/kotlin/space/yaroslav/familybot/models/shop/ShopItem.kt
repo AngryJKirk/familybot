@@ -2,6 +2,7 @@ package space.yaroslav.familybot.models.shop
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
+import space.yaroslav.familybot.common.extensions.from
 import space.yaroslav.familybot.common.extensions.rubles
 import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.models.router.ExecutorContext
@@ -35,6 +36,9 @@ enum class ShopItem(val title: Phrase, val description: Phrase, val price: Int) 
         private fun formatLine(
             context: ExecutorContext,
             shopItem: ShopItem
-        ) = context.phrase(shopItem.title) + " - ${shopItem.price / 100}₽"
+        ): String {
+            val additionalCost = if (context.update.from().isPremium) 10 else 0
+            return context.phrase(shopItem.title) + " - ${(shopItem.price / 100) + additionalCost}₽"
+        }
     }
 }
