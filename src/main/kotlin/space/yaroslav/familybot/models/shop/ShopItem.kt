@@ -37,7 +37,8 @@ enum class ShopItem(val title: Phrase, val description: Phrase, val price: Int) 
             context: ExecutorContext,
             shopItem: ShopItem
         ): String {
-            val additionalCost = if (context.update.from().isPremium) 10 else 0
+            val isPremium = context.update.from().isPremium ?: false
+            val additionalCost = if (isPremium) 10 else 0
             return context.phrase(shopItem.title) + " - ${(shopItem.price / 100) + additionalCost}₽"
         }
     }
