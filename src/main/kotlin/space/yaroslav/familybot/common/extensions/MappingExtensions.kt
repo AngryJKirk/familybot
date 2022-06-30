@@ -66,6 +66,7 @@ fun Update.from(): TelegramUser {
         hasEditedMessage() -> editedMessage.from
         hasCallbackQuery() -> callbackQuery.from
         hasPollAnswer() -> pollAnswer.user
+        hasPreCheckoutQuery() -> preCheckoutQuery.from
         else -> throw FamilyBot.InternalException("Cant process $this")
     }
 }

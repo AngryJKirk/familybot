@@ -6,8 +6,7 @@ import java.time.temporal.ChronoUnit
 
 object DateConstants {
     val theBirthDayOfFamilyBot: Instant = LocalDateTime.of(
-        2017, Month.DECEMBER, 18,
-        17, 36
+        2017, Month.DECEMBER, 18, 17, 36
     ).toInstant(ZoneOffset.UTC)
 }
 

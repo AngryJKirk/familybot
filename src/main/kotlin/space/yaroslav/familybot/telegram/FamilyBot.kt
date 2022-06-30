@@ -100,7 +100,7 @@ class FamilyBot(
         return runCatching {
             paymentRouter.proceedPreCheckoutQuery(update)
         }.onFailure {
-            log.warn("paymentRouter.proceedPreCheckoutQuery failed", it)
+            log.error("paymentRouter.proceedPreCheckoutQuery failed", it)
         }.getOrDefault { }
     }
 
