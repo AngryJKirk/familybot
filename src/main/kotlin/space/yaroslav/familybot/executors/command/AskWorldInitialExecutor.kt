@@ -1,12 +1,20 @@
 package space.yaroslav.familybot.executors.command
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.*
+import space.yaroslav.familybot.common.extensions.boldNullable
+import space.yaroslav.familybot.common.extensions.italic
+import space.yaroslav.familybot.common.extensions.key
+import space.yaroslav.familybot.common.extensions.send
+import space.yaroslav.familybot.common.extensions.untilNextDay
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.command.settings.processors.AskWorldDensityValue
 import space.yaroslav.familybot.getLogger
@@ -57,7 +65,8 @@ class AskWorldInitialExecutor(
         val userEasyKey = context.userKey
         val chatUsages = easyKeyValueService.get(AskWorldChatUsages, chatKey)
         val userUsages = easyKeyValueService.get(AskWorldUserUsages, userEasyKey)
-        if (!context.isFromDeveloper) {
+        val isNotFromDeveloper = !context.isFromDeveloper
+        if (isNotFromDeveloper) {
             if (chatUsages != null && chatUsages > 0L) {
                 return {
                     log.info("Limit was exceed for chat")
@@ -102,16 +111,17 @@ class AskWorldInitialExecutor(
             } else {
                 log.info("Some scam message was found and it won't be sent")
             }
-
-            if (chatUsages == null) {
-                easyKeyValueService.put(AskWorldChatUsages, chatKey, 1, untilNextDay())
-            } else {
-                easyKeyValueService.increment(AskWorldChatUsages, chatKey)
-            }
-            if (userUsages == null) {
-                easyKeyValueService.put(AskWorldUserUsages, userEasyKey, 1, untilNextDay())
-            } else {
-                easyKeyValueService.increment(AskWorldUserUsages, userEasyKey)
+            if (isNotFromDeveloper) {
+                if (chatUsages == null) {
+                    easyKeyValueService.put(AskWorldChatUsages, chatKey, 1, untilNextDay())
+                } else {
+                    easyKeyValueService.increment(AskWorldChatUsages, chatKey)
+                }
+                if (userUsages == null) {
+                    easyKeyValueService.put(AskWorldUserUsages, userEasyKey, 1, untilNextDay())
+                } else {
+                    easyKeyValueService.increment(AskWorldUserUsages, userEasyKey)
+                }
             }
         }
     }
@@ -159,9 +169,9 @@ class AskWorldInitialExecutor(
 
             val isScam =
                 shouldBeCensored(message) ||
-                        shouldBeCensored(context.chat.name ?: "") ||
-                        isSpam(message) ||
-                        containsLongWords(message)
+                    shouldBeCensored(context.chat.name ?: "") ||
+                    isSpam(message) ||
+                    containsLongWords(message)
 
             if (message.length > 2000) {
                 return ValidationError {
@@ -244,16 +254,16 @@ class AskWorldInitialExecutor(
 
     private fun shouldBeCensored(message: String): Boolean {
         return message.contains("http", ignoreCase = true) ||
-                message.contains("www", ignoreCase = true) ||
-                message.contains("jpg", ignoreCase = true) ||
-                message.contains("png", ignoreCase = true) ||
-                message.contains("jpeg", ignoreCase = true) ||
-                message.contains("bmp", ignoreCase = true) ||
-                message.contains("gif", ignoreCase = true) ||
-                message.contains("_bot", ignoreCase = true) ||
-                message.contains("t.me", ignoreCase = true) ||
-                message.contains("Bot", ignoreCase = false) ||
-                message.contains("@")
+            message.contains("www", ignoreCase = true) ||
+            message.contains("jpg", ignoreCase = true) ||
+            message.contains("png", ignoreCase = true) ||
+            message.contains("jpeg", ignoreCase = true) ||
+            message.contains("bmp", ignoreCase = true) ||
+            message.contains("gif", ignoreCase = true) ||
+            message.contains("_bot", ignoreCase = true) ||
+            message.contains("t.me", ignoreCase = true) ||
+            message.contains("Bot", ignoreCase = false) ||
+            message.contains("@")
     }
 
     private fun isSpam(message: String): Boolean {
