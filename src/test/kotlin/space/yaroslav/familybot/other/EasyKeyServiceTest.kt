@@ -23,7 +23,5 @@ class EasyKeyServiceTest : FamilybotApplicationTest() {
         Assertions.assertEquals(expectedData, actualData)
     }
 
-    private object TestKey : LongKeyType<ChatEasyKey>() {
-        override fun keyType() = ChatEasyKey::class
-    }
+    private object TestKey : LongKeyType<ChatEasyKey>
 }

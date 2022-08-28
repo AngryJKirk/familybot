@@ -6,20 +6,7 @@ import space.yaroslav.familybot.common.extensions.toEmoji
 import space.yaroslav.familybot.services.settings.BooleanKeyType
 import space.yaroslav.familybot.services.settings.ChatEasyKey
 
-abstract class ChatFunctionKeyType : BooleanKeyType<ChatEasyKey>() {
-    override fun keyType() = ChatEasyKey::class
-}
-
-object Huificate : ChatFunctionKeyType()
-object Chatting : ChatFunctionKeyType()
-object Pidor : ChatFunctionKeyType()
-object Rage : ChatFunctionKeyType()
-object AntiDdos : ChatFunctionKeyType()
-object AskWorld : ChatFunctionKeyType()
-object Greetings : ChatFunctionKeyType()
-object TalkBack : ChatFunctionKeyType()
-
-enum class FunctionId(val id: Int, val desc: String, val easySetting: ChatFunctionKeyType) {
+enum class FunctionId(val id: Int, val desc: String, val easySetting: BooleanKeyType<ChatEasyKey>) {
     HUIFICATE(1, "Хуификация", Huificate),
     CHATTING(2, "Влезание в диалог", Chatting),
     PIDOR(3, "Пидор-детектор", Pidor),
@@ -28,6 +15,15 @@ enum class FunctionId(val id: Int, val desc: String, val easySetting: ChatFuncti
     ASK_WORLD(6, "Вопросы миру", AskWorld),
     GREETINGS(7, "Приветствия и прощания", Greetings),
     TALK_BACK(8, "Реакция на обращения", TalkBack);
+
+    object Huificate : BooleanKeyType<ChatEasyKey>
+    object Chatting : BooleanKeyType<ChatEasyKey>
+    object Pidor : BooleanKeyType<ChatEasyKey>
+    object Rage : BooleanKeyType<ChatEasyKey>
+    object AntiDdos : BooleanKeyType<ChatEasyKey>
+    object AskWorld : BooleanKeyType<ChatEasyKey>
+    object Greetings : BooleanKeyType<ChatEasyKey>
+    object TalkBack : BooleanKeyType<ChatEasyKey>
 
     companion object {
         fun toKeyBoard(isEnabled: (FunctionId) -> Boolean): InlineKeyboardMarkup {

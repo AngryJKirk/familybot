@@ -7,13 +7,13 @@ import space.yaroslav.familybot.models.shop.ShopItem
 import space.yaroslav.familybot.models.shop.ShopPayload
 import space.yaroslav.familybot.models.shop.SuccessPaymentResponse
 import space.yaroslav.familybot.services.payment.PaymentProcessor
-import space.yaroslav.familybot.services.settings.EasyKeyValueRepository
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.PickPidorAbilityCount
 import space.yaroslav.familybot.services.settings.UserEasyKey
 
 @Component
 class PickPidorPaymentProcessor(
-    private val easyKeyValueRepository: EasyKeyValueRepository
+    private val easyKeyValueService: EasyKeyValueService
 ) : PaymentProcessor {
     override fun itemType() = ShopItem.PICK_PIDOR
 
@@ -21,11 +21,11 @@ class PickPidorPaymentProcessor(
 
     override fun processSuccess(shopPayload: ShopPayload): SuccessPaymentResponse {
         val key = UserEasyKey(shopPayload.userId)
-        val currentValue = easyKeyValueRepository.get(PickPidorAbilityCount, key)
+        val currentValue = easyKeyValueService.get(PickPidorAbilityCount, key)
         if (currentValue == null || currentValue <= 0L) {
-            easyKeyValueRepository.put(PickPidorAbilityCount, key, 1L)
+            easyKeyValueService.put(PickPidorAbilityCount, key, 1L)
         } else {
-            easyKeyValueRepository.increment(PickPidorAbilityCount, key)
+            easyKeyValueService.increment(PickPidorAbilityCount, key)
         }
         return SuccessPaymentResponse(Phrase.PICK_PIDOR_DONE)
     }

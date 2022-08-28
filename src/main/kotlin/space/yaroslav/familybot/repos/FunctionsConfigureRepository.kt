@@ -5,12 +5,12 @@ import org.springframework.stereotype.Component
 import space.yaroslav.familybot.common.extensions.key
 import space.yaroslav.familybot.models.router.FunctionId
 import space.yaroslav.familybot.models.telegram.Chat
-import space.yaroslav.familybot.services.settings.EasyKeyValueRepository
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.FuckOffOverride
 
 @Component
 class FunctionsConfigureRepository(
-    private val keyValueRepository: EasyKeyValueRepository
+    private val easyKeyValueService: EasyKeyValueService
 ) {
 
     private val fuckOffFunctions = listOf(
@@ -23,7 +23,7 @@ class FunctionsConfigureRepository(
     @Timed("repository.RedisFunctionsConfigureRepository.isEnabled")
     fun isEnabled(id: FunctionId, chat: Chat): Boolean {
         if (id in fuckOffFunctions &&
-            keyValueRepository.get(FuckOffOverride, chat.key()) == true
+            easyKeyValueService.get(FuckOffOverride, chat.key()) == true
         ) {
             return false
         }
@@ -45,7 +45,7 @@ class FunctionsConfigureRepository(
         id: FunctionId,
         chat: Chat
     ): Boolean {
-        return keyValueRepository.get(id.easySetting, chat.key()) ?: true
+        return easyKeyValueService.get(id.easySetting, chat.key()) ?: true
     }
 
     private fun switchInternal(
@@ -53,7 +53,7 @@ class FunctionsConfigureRepository(
         chat: Chat
     ) {
         val key = chat.key()
-        val currentValue = keyValueRepository.get(id.easySetting, key) ?: true
-        keyValueRepository.put(id.easySetting, key, currentValue.not())
+        val currentValue = easyKeyValueService.get(id.easySetting, key) ?: true
+        easyKeyValueService.put(id.easySetting, key, currentValue.not())
     }
 }
