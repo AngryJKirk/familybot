@@ -11,7 +11,11 @@ import space.yaroslav.familybot.executors.command.settings.AdvancedSettingsExecu
 import space.yaroslav.familybot.infrastructure.createSimpleContext
 import space.yaroslav.familybot.infrastructure.randomLong
 import space.yaroslav.familybot.models.telegram.Command
-import space.yaroslav.familybot.services.settings.*
+import space.yaroslav.familybot.services.settings.ChatEasyKey
+import space.yaroslav.familybot.services.settings.EasyKeyType
+import space.yaroslav.familybot.services.settings.EasyKeyValueService
+import space.yaroslav.familybot.services.settings.TalkingDensity
+import space.yaroslav.familybot.services.settings.UkrainianLanguage
 import space.yaroslav.familybot.suits.CommandExecutorTest
 import java.util.stream.Stream
 

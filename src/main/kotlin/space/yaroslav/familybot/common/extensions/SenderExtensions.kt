@@ -13,7 +13,13 @@ import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
-import org.telegram.telegrambots.meta.api.objects.chatmember.*
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberAdministrator
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberBanned
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberLeft
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberMember
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberOwner
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberRestricted
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.router.ExecutorContext
