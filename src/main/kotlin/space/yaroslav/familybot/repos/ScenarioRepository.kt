@@ -12,12 +12,17 @@ import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.models.telegram.User
-import space.yaroslav.familybot.services.scenario.*
+import space.yaroslav.familybot.services.scenario.Scenario
+import space.yaroslav.familybot.services.scenario.ScenarioMove
+import space.yaroslav.familybot.services.scenario.ScenarioPoll
+import space.yaroslav.familybot.services.scenario.ScenarioState
+import space.yaroslav.familybot.services.scenario.ScenarioWay
+
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 @Component
 class ScenarioRepository(jdbcTemplate: JdbcTemplate) {

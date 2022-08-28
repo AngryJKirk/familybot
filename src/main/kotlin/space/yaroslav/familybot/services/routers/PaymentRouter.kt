@@ -5,7 +5,12 @@ import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.*
+import space.yaroslav.familybot.common.extensions.from
+import space.yaroslav.familybot.common.extensions.key
+import space.yaroslav.familybot.common.extensions.parseJson
+import space.yaroslav.familybot.common.extensions.toChat
+import space.yaroslav.familybot.common.extensions.toUser
+
 import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.models.shop.PreCheckOutResponse

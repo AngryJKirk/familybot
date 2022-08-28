@@ -2,7 +2,8 @@ package space.yaroslav.familybot.infrastructure
 
 import space.yaroslav.familybot.models.shop.ShopItem
 import space.yaroslav.familybot.models.shop.ShopPayload
-import java.util.*
+import java.util.UUID
+
 import java.util.concurrent.ThreadLocalRandom
 
 fun randomString() = UUID.randomUUID().toString()

@@ -2,7 +2,14 @@ package space.yaroslav.familybot.executors.command.stats
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.*
+import space.yaroslav.familybot.common.extensions.bold
+import space.yaroslav.familybot.common.extensions.capitalized
+import space.yaroslav.familybot.common.extensions.dropLastDelimiter
+import space.yaroslav.familybot.common.extensions.italic
+import space.yaroslav.familybot.common.extensions.send
+import space.yaroslav.familybot.common.extensions.startOfCurrentMonth
+import space.yaroslav.familybot.common.extensions.toRussian
+
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.command.CommandExecutor
 import space.yaroslav.familybot.models.dictionary.Phrase

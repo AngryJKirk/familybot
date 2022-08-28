@@ -10,17 +10,17 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.0</version>
+        <version>2.7.3</version>
     </parent>
 
     <properties>
-        <kotlin.version>1.7.0</kotlin.version>
+        <kotlin.version>1.7.10</kotlin.version>
         <telegrambots.version>6.1.0</telegrambots.version>
-        <testcontainers.version>1.17.2</testcontainers.version>
+        <testcontainers.version>1.17.3</testcontainers.version>
         <mockito-kotlin.version>4.0.0</mockito-kotlin.version>
         <tomlj.version>1.0.0</tomlj.version>
         <spring.version>2.7.0</spring.version>
-        <kotlinx-coroutines.version>1.6.2</kotlinx-coroutines.version>
+        <kotlinx-coroutines.version>1.6.4</kotlinx-coroutines.version>
     </properties>
 
     <dependencies>
