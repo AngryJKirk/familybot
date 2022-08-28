@@ -9,7 +9,6 @@ import space.yaroslav.familybot.common.extensions.map
 import space.yaroslav.familybot.common.extensions.toChat
 import space.yaroslav.familybot.common.extensions.toPidor
 import space.yaroslav.familybot.common.extensions.toUser
-
 import space.yaroslav.familybot.models.telegram.Chat
 import space.yaroslav.familybot.models.telegram.Pidor
 import space.yaroslav.familybot.models.telegram.User

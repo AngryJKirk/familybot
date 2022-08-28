@@ -7,7 +7,6 @@ import space.yaroslav.familybot.common.extensions.bold
 import space.yaroslav.familybot.common.extensions.formatTopList
 import space.yaroslav.familybot.common.extensions.send
 import space.yaroslav.familybot.common.extensions.startOfTheYear
-
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.executors.command.CommandExecutor
 import space.yaroslav.familybot.models.dictionary.Phrase

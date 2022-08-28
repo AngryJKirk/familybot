@@ -15,7 +15,6 @@ import space.yaroslav.familybot.common.extensions.sendContextFree
 import space.yaroslav.familybot.common.extensions.toUser
 import space.yaroslav.familybot.common.extensions.untilNextDay
 import space.yaroslav.familybot.common.extensions.user
-
 import space.yaroslav.familybot.executors.Configurable
 import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.dictionary.Phrase
@@ -185,13 +184,13 @@ class PidorExecutor(
                 SendMessage(
                     chat.idString,
                     dictionary.get(Phrase.PIROR_DISCOVERED_ONE, key) + " " +
-                            formatName(pidorsByChat.first(), key)
+                        formatName(pidorsByChat.first(), key)
                 ).apply { enableHtml(true) }
             }
             else -> SendMessage(
                 chat.idString,
                 dictionary.get(Phrase.PIROR_DISCOVERED_MANY, key) + " " +
-                        pidorsByChat.joinToString { formatName(it, key) }
+                    pidorsByChat.joinToString { formatName(it, key) }
             ).apply { enableHtml(true) }
         }
     }
@@ -298,7 +297,6 @@ class PidorExecutor(
                     replyToUpdate = true
                 )
             }
-
         }
     }
 }

@@ -14,7 +14,7 @@ abstract class ContiniousConversationExecutor(private val config: BotConfig) : C
     override fun canExecute(context: ExecutorContext): Boolean {
         val message = context.message
         return message.from.userName == config.botName &&
-                (message.text ?: "") in getDialogMessages(context)
+            (message.text ?: "") in getDialogMessages(context)
     }
 
     abstract fun getDialogMessages(context: ExecutorContext): Set<String>

@@ -69,7 +69,7 @@ class DictionaryReader {
         if (missingDefaultPhrases.isNotEmpty()) {
             throw FamilyBot.InternalException(
                 "Some dictionary defaults missing. " +
-                        "Check $missingDefaultPhrases"
+                    "Check $missingDefaultPhrases"
             )
         }
     }

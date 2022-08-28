@@ -17,7 +17,6 @@ import space.yaroslav.familybot.services.scenario.ScenarioMove
 import space.yaroslav.familybot.services.scenario.ScenarioPoll
 import space.yaroslav.familybot.services.scenario.ScenarioState
 import space.yaroslav.familybot.services.scenario.ScenarioWay
-
 import space.yaroslav.familybot.telegram.FamilyBot
 import java.sql.ResultSet
 import java.sql.Timestamp
