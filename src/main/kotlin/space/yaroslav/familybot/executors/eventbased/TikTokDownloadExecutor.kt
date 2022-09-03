@@ -9,12 +9,14 @@ import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.TikTokDownload
+import space.yaroslav.familybot.telegram.BotConfig
 import java.io.File
 import java.util.UUID
 
 @Component
 class TikTokDownloadExecutor(
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
+    private val botConfig: BotConfig
 ) : Executor {
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
@@ -52,7 +54,7 @@ class TikTokDownloadExecutor(
 
     private fun download(url: String): File {
         val filename = "/tmp/${UUID.randomUUID()}.mp4"
-        ProcessBuilder("yt-dlp", url, "-o", filename).start().waitFor()
+        ProcessBuilder("/usr/local/bin/yt-dlp", url, "-o", filename).start().waitFor()
         return File(filename)
     }
 }
