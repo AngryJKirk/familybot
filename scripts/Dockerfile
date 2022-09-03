@@ -15,7 +15,7 @@ COPY ./src ./src
 RUN mvn package -DskipTests
 
 FROM openjdk:17-jdk-slim
-RUN apt update && apt install -y curl
+RUN apt update && apt install -y curl python3
 RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/lib/yt-dlp
 RUN chmod a+rx /usr/local/lib/yt-dlp
 ENV SPRING_PROFILES_ACTIVE production
