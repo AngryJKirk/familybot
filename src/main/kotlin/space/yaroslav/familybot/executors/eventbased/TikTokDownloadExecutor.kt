@@ -5,19 +5,20 @@ import org.telegram.telegrambots.meta.api.methods.send.SendVideo
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.bots.AbsSender
 import space.yaroslav.familybot.executors.Executor
+import space.yaroslav.familybot.getLogger
 import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.TikTokDownload
-import space.yaroslav.familybot.telegram.BotConfig
 import java.io.File
 import java.util.UUID
 
 @Component
 class TikTokDownloadExecutor(
-    private val easyKeyValueService: EasyKeyValueService,
-    private val botConfig: BotConfig
+    private val easyKeyValueService: EasyKeyValueService
 ) : Executor {
+
+    private val log = getLogger()
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         val urls = getTikTokUrls(context)
@@ -54,7 +55,13 @@ class TikTokDownloadExecutor(
 
     private fun download(url: String): File {
         val filename = "/tmp/${UUID.randomUUID()}.mp4"
-        ProcessBuilder("/usr/local/bin/yt-dlp", url, "-o", filename).start().waitFor()
+        val process = ProcessBuilder("/usr/local/bin/yt-dlp", url, "-o", filename).start()
+        log.info("Running yt-dlp...")
+        process.inputStream.reader(Charsets.UTF_8).use {
+            log.info(it.readText())
+        }
+        process.waitFor()
+        log.info("Finished running yt-dlp")
         return File(filename)
     }
 }
