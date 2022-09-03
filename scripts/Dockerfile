@@ -15,7 +15,8 @@ COPY ./src ./src
 RUN mvn package -DskipTests
 
 FROM openjdk:17-jdk-slim
-
+RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
+RUN chmod a+rx /usr/local/bin/yt-dlp
 ENV SPRING_PROFILES_ACTIVE production
 
 COPY --from=build /app/target/familybot.jar /usr/local/lib/familybot.jar
