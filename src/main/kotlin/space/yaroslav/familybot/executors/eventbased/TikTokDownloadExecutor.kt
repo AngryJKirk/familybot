@@ -45,9 +45,9 @@ class TikTokDownloadExecutor(
         return context
             .message
             .entities
-            .filter { it.type == "url" }
-            .filter { it.text?.contains("tiktok", ignoreCase = true) ?: false }
-            .map { it.text }
+            ?.filter { it.type == "url" }
+            ?.filter { it.text?.contains("tiktok", ignoreCase = true) ?: false }
+            ?.map { it.text } ?: emptyList()
     }
 
     private fun download(url: String): File {
