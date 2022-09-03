@@ -1,6 +1,7 @@
 package space.yaroslav.familybot.executors.eventbased
 
 import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -22,8 +23,9 @@ class TikTokDownloadExecutor(
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         val urls = getTikTokUrls(context)
-        return {
+        return { sender ->
             urls.forEach { url ->
+                sender.execute(SendChatAction(context.chat.idString, "upload_video"))
                 val downloadedFile = download(url)
                 val video = SendVideo
                     .builder()
@@ -31,7 +33,7 @@ class TikTokDownloadExecutor(
                     .chatId(context.chat.id)
                     .replyToMessageId(context.message.messageId)
                     .build()
-                it.execute(video)
+                sender.execute(video)
                 downloadedFile.delete()
             }
         }
