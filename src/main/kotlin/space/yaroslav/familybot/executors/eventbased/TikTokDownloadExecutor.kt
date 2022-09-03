@@ -55,7 +55,7 @@ class TikTokDownloadExecutor(
 
     private fun download(url: String): File {
         val filename = "/tmp/${UUID.randomUUID()}.mp4"
-        val process = ProcessBuilder("/usr/local/lib/yt-dlp", url, "-o", filename).start()
+        val process = ProcessBuilder("/usr/local/bin/yt-dlp", url, "-o", filename).start()
         log.info("Running yt-dlp...")
         process.inputStream.reader(Charsets.UTF_8).use {
             log.info(it.readText())
