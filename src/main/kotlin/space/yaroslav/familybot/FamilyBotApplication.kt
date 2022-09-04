@@ -37,23 +37,25 @@ class FamilyBotApplication(
         } else {
             botConfigInjector.botNameAliases.split(",")
         }
-        val yandexKey = botConfigInjector.yandexKey?.takeIf(String::isNotBlank)
-        if (yandexKey == null) {
-            logger.warn("Yandex API key is not found, language API won't work")
-        }
-        val paymentToken = botConfigInjector.paymentToken?.takeIf(String::isNotBlank)
-        if (paymentToken == null) {
-            logger.warn("Payment token is not found, payment API won't work")
-        }
         return BotConfig(
             notEmptyCheck(botConfigInjector.botToken, "botToken"),
             notEmptyCheck(botConfigInjector.botName, "botName"),
             notEmptyCheck(botConfigInjector.developer, "developer"),
             notEmptyCheck(botConfigInjector.developerId, "developerId"),
             botNameAliases,
-            yandexKey,
-            paymentToken,
-            env.activeProfiles.contains(BotStarter.TESTING_PROFILE_NAME)
+            notEmptyCheckAllowOptional(
+                botConfigInjector::yandexKey,
+                "Yandex API key is not found, language API won't work"
+            ),
+            notEmptyCheckAllowOptional(
+                botConfigInjector::paymentToken,
+                "Payment token is not found, payment API won't work"
+            ),
+            env.activeProfiles.contains(BotStarter.TESTING_PROFILE_NAME),
+            notEmptyCheckAllowOptional(
+                botConfigInjector::ytdlLocation,
+                "yt-dlp is missing, downloading function won't work"
+            )
         )
     }
 
@@ -62,6 +64,14 @@ class FamilyBotApplication(
             throw FamilyBot.InternalException("Value of '$valueName' must be not empty")
         }
         return value
+    }
+
+    private fun notEmptyCheckAllowOptional(value: () -> String?, log: String): String? {
+        return value()?.takeIf(String::isNotBlank).also {
+            if(it == null){
+              logger.warn(log)
+            }
+        }
     }
 }
 

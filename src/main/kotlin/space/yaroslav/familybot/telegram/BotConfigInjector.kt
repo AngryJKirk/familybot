@@ -12,5 +12,6 @@ data class BotConfigInjector(
     val developerId: String,
     val botNameAliases: String?,
     val yandexKey: String?,
-    val paymentToken: String?
+    val paymentToken: String?,
+    val ytdlLocation: String?
 )

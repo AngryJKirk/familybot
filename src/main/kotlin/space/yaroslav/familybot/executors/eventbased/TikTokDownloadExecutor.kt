@@ -11,14 +11,15 @@ import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.router.Priority
 import space.yaroslav.familybot.services.settings.EasyKeyValueService
 import space.yaroslav.familybot.services.settings.TikTokDownload
+import space.yaroslav.familybot.telegram.BotConfig
 import java.io.File
 import java.util.UUID
 
 @Component
 class TikTokDownloadExecutor(
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
+    private val botConfig: BotConfig
 ) : Executor {
-
     private val log = getLogger()
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
@@ -40,7 +41,8 @@ class TikTokDownloadExecutor(
     }
 
     override fun canExecute(context: ExecutorContext): Boolean {
-        return getTikTokUrls(context).isNotEmpty() &&
+        return botConfig.ytdlLocation != null &&
+            getTikTokUrls(context).isNotEmpty() &&
             easyKeyValueService.get(TikTokDownload, context.chatKey, false)
     }
 
@@ -57,7 +59,7 @@ class TikTokDownloadExecutor(
 
     private fun download(url: String): File {
         val filename = "/tmp/${UUID.randomUUID()}.mp4"
-        val process = ProcessBuilder("/usr/local/bin/yt-dlp", url, "-o", filename).start()
+        val process = ProcessBuilder(botConfig.ytdlLocation, url, "-o", filename).start()
         log.info("Running yt-dlp...")
         process.inputStream.reader(Charsets.UTF_8).use {
             log.info(it.readText())

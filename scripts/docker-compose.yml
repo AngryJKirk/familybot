@@ -67,6 +67,7 @@ services:
       - REDIS_HOST=family-redis
       - YANDEX_API_TOKEN
       - PAYMENT_TOKEN
+      - YTDL_LOCATION
     depends_on:
       - family-db
       - family-redis

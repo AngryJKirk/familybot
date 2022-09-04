@@ -48,6 +48,11 @@
       "type": "java.lang.String",
       "description": "Payment token, you can get it from @BotFather. Optional.",
       "sourceType": "space.yaroslav.familybot.telegram.BotConfigInjector"
+    },
+    {
+      "name": "settings.ytdlLocation",
+      "type": "java.lang.String",
+      "description": "Path to the yt-dlp location. Optional."
     }
   ]
 }
