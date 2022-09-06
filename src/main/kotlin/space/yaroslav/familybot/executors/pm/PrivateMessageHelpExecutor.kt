@@ -7,12 +7,10 @@ import space.yaroslav.familybot.executors.command.HelpCommandExecutor
 import space.yaroslav.familybot.models.dictionary.Phrase
 import space.yaroslav.familybot.models.router.ExecutorContext
 import space.yaroslav.familybot.models.router.Priority
-import space.yaroslav.familybot.telegram.BotConfig
 
 @Component
 class PrivateMessageHelpExecutor(
-    private val helpExecutor: HelpCommandExecutor,
-    private val botConfig: BotConfig
+    private val helpExecutor: HelpCommandExecutor
 ) : PrivateMessageExecutor {
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         if (helpExecutor.canExecute(context)) {
@@ -29,10 +27,10 @@ class PrivateMessageHelpExecutor(
     }
 
     override fun canExecute(context: ExecutorContext): Boolean {
-        return botConfig.developer != context.message.from.userName
+        return context.isFromDeveloper.not()
     }
 
     override fun priority(context: ExecutorContext): Priority {
-        return Priority.VERY_LOW
+        return Priority.HIGH
     }
 }
