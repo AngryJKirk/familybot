@@ -31,6 +31,6 @@ class PrivateMessageHelpExecutor(
     }
 
     override fun priority(context: ExecutorContext): Priority {
-        return Priority.HIGH
+        return Priority.MEDIUM
     }
 }
