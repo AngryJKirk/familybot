@@ -5,5 +5,6 @@ enum class PhraseTheme {
     DAY_OF_DEFENDER_23_FEB,
     DAY_OF_WOMAN_8_MARCH,
     UKRAINIAN,
-    ACAB
+    ACAB,
+    ARMY
 }
