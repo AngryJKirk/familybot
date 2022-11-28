@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.services.talking
+package dev.storozhenko.familybot.services.talking
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.http.HttpEntity
@@ -6,9 +6,9 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
-import space.yaroslav.familybot.getLogger
-import space.yaroslav.familybot.telegram.BotConfig
-import space.yaroslav.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.getLogger
+import dev.storozhenko.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.telegram.FamilyBot
 
 @Component
 class TranslateService(private val botConfig: BotConfig) {

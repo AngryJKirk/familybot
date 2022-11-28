@@ -1,8 +1,8 @@
-package space.yaroslav.familybot.executors
+package dev.storozhenko.familybot.executors
 
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.router.Priority
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.router.Priority
 
 interface Executor {
 

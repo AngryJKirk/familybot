@@ -1,10 +1,10 @@
-package space.yaroslav.familybot.models.router
+package dev.storozhenko.familybot.models.router
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
-import space.yaroslav.familybot.common.extensions.toEmoji
-import space.yaroslav.familybot.services.settings.BooleanKeyType
-import space.yaroslav.familybot.services.settings.ChatEasyKey
+import dev.storozhenko.familybot.common.extensions.toEmoji
+import dev.storozhenko.familybot.services.settings.BooleanKeyType
+import dev.storozhenko.familybot.services.settings.ChatEasyKey
 
 enum class FunctionId(val id: Int, val desc: String, val easySetting: BooleanKeyType<ChatEasyKey>) {
     HUIFICATE(1, "Хуификация", Huificate),

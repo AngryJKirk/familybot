@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.infrastructure
+package dev.storozhenko.familybot.infrastructure
 
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.kotlin.any
@@ -17,7 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberAdministr
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberMember
 import org.telegram.telegrambots.meta.api.objects.stickers.StickerSet
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.models.telegram.stickers.Sticker
+import dev.storozhenko.familybot.models.telegram.stickers.Sticker
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 
 class TestSender {

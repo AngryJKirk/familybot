@@ -1,17 +1,17 @@
-package space.yaroslav.familybot.executors.command.nonpublic
+package dev.storozhenko.familybot.executors.command.nonpublic
 
 import kotlinx.coroutines.delay
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.send
-import space.yaroslav.familybot.common.extensions.sendRandomSticker
-import space.yaroslav.familybot.common.extensions.startOfDay
-import space.yaroslav.familybot.common.extensions.toUser
-import space.yaroslav.familybot.executors.command.CommandExecutor
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.telegram.CommandByUser
-import space.yaroslav.familybot.models.telegram.User
-import space.yaroslav.familybot.models.telegram.stickers.StickerPack
-import space.yaroslav.familybot.repos.CommandHistoryRepository
+import dev.storozhenko.familybot.common.extensions.send
+import dev.storozhenko.familybot.common.extensions.sendRandomSticker
+import dev.storozhenko.familybot.common.extensions.startOfDay
+import dev.storozhenko.familybot.common.extensions.toUser
+import dev.storozhenko.familybot.executors.command.CommandExecutor
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.telegram.CommandByUser
+import dev.storozhenko.familybot.models.telegram.User
+import dev.storozhenko.familybot.models.telegram.stickers.StickerPack
+import dev.storozhenko.familybot.repos.CommandHistoryRepository
 
 abstract class SendRandomStickerExecutor(
     private val historyRepository: CommandHistoryRepository

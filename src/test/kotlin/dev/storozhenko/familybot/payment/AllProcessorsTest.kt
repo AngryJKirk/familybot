@@ -1,11 +1,11 @@
-package space.yaroslav.familybot.payment
+package dev.storozhenko.familybot.payment
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import space.yaroslav.familybot.models.shop.ShopItem
-import space.yaroslav.familybot.services.payment.PaymentProcessor
-import space.yaroslav.familybot.suits.FamilybotApplicationTest
+import dev.storozhenko.familybot.models.shop.ShopItem
+import dev.storozhenko.familybot.services.payment.PaymentProcessor
+import dev.storozhenko.familybot.suits.FamilybotApplicationTest
 
 class AllProcessorsTest : FamilybotApplicationTest() {
 

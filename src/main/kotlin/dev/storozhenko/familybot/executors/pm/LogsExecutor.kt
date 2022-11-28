@@ -1,14 +1,14 @@
-package space.yaroslav.familybot.executors.pm
+package dev.storozhenko.familybot.executors.pm
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.ErrorLogsDeferredAppender
-import space.yaroslav.familybot.common.extensions.getMessageTokens
-import space.yaroslav.familybot.common.extensions.send
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.common.ErrorLogsDeferredAppender
+import dev.storozhenko.familybot.common.extensions.getMessageTokens
+import dev.storozhenko.familybot.common.extensions.send
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.telegram.BotConfig
 
 @Component
 class LogsExecutor(botConfig: BotConfig) : OnlyBotOwnerExecutor(botConfig) {

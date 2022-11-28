@@ -1,7 +1,7 @@
-package space.yaroslav.familybot.executors
+package dev.storozhenko.familybot.executors
 
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.router.FunctionId
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.router.FunctionId
 
 interface Configurable {
 

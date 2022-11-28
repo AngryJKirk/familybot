@@ -1,16 +1,16 @@
-package space.yaroslav.familybot.services.pidor
+package dev.storozhenko.familybot.services.pidor
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.bold
-import space.yaroslav.familybot.common.extensions.sendContextFree
-import space.yaroslav.familybot.models.dictionary.Phrase
-import space.yaroslav.familybot.models.telegram.Chat
-import space.yaroslav.familybot.models.telegram.User
-import space.yaroslav.familybot.services.settings.ChatEasyKey
-import space.yaroslav.familybot.services.talking.Dictionary
-import space.yaroslav.familybot.telegram.BotConfig
-import space.yaroslav.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.common.extensions.bold
+import dev.storozhenko.familybot.common.extensions.sendContextFree
+import dev.storozhenko.familybot.models.dictionary.Phrase
+import dev.storozhenko.familybot.models.telegram.Chat
+import dev.storozhenko.familybot.models.telegram.User
+import dev.storozhenko.familybot.services.settings.ChatEasyKey
+import dev.storozhenko.familybot.services.talking.Dictionary
+import dev.storozhenko.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.telegram.FamilyBot
 import java.lang.Integer.max
 
 @Component

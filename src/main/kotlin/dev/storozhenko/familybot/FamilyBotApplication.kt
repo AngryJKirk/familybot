@@ -1,4 +1,4 @@
-package space.yaroslav.familybot
+package dev.storozhenko.familybot
 
 import io.micrometer.core.aop.TimedAspect
 import io.micrometer.core.instrument.MeterRegistry
@@ -11,10 +11,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.scheduling.annotation.EnableScheduling
-import space.yaroslav.familybot.telegram.BotConfig
-import space.yaroslav.familybot.telegram.BotConfigInjector
-import space.yaroslav.familybot.telegram.BotStarter
-import space.yaroslav.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.telegram.BotConfigInjector
+import dev.storozhenko.familybot.telegram.BotStarter
+import dev.storozhenko.familybot.telegram.FamilyBot
 
 @SpringBootApplication
 @EnableScheduling

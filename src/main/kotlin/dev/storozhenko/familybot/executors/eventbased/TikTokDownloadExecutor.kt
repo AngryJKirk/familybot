@@ -1,17 +1,17 @@
-package space.yaroslav.familybot.executors.eventbased
+package dev.storozhenko.familybot.executors.eventbased
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.executors.Executor
-import space.yaroslav.familybot.getLogger
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.router.Priority
-import space.yaroslav.familybot.services.settings.EasyKeyValueService
-import space.yaroslav.familybot.services.settings.TikTokDownload
-import space.yaroslav.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.executors.Executor
+import dev.storozhenko.familybot.getLogger
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.router.Priority
+import dev.storozhenko.familybot.services.settings.EasyKeyValueService
+import dev.storozhenko.familybot.services.settings.TikTokDownload
+import dev.storozhenko.familybot.telegram.BotConfig
 import java.io.File
 import java.util.UUID
 

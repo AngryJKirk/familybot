@@ -1,7 +1,7 @@
-package space.yaroslav.familybot.models.askworld
+package dev.storozhenko.familybot.models.askworld
 
-import space.yaroslav.familybot.models.telegram.Chat
-import space.yaroslav.familybot.models.telegram.User
+import dev.storozhenko.familybot.models.telegram.Chat
+import dev.storozhenko.familybot.models.telegram.User
 import java.time.Instant
 
 data class AskWorldReply(

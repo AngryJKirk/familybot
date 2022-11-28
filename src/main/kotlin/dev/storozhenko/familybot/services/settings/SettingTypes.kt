@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.services.settings
+package dev.storozhenko.familybot.services.settings
 
 interface BooleanKeyType<K : EasyKey> : EasyKeyType<Boolean, K> {
     override fun getType() = Boolean::class

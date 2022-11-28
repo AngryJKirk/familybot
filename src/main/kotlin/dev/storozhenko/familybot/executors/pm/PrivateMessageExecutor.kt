@@ -1,5 +1,5 @@
-package space.yaroslav.familybot.executors.pm
+package dev.storozhenko.familybot.executors.pm
 
-import space.yaroslav.familybot.executors.Executor
+import dev.storozhenko.familybot.executors.Executor
 
 interface PrivateMessageExecutor : Executor

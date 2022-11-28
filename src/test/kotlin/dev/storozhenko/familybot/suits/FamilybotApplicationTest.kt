@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.suits
+package dev.storozhenko.familybot.suits
 
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.context.SpringBootTest
@@ -6,7 +6,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.images.builder.ImageFromDockerfile
-import space.yaroslav.familybot.telegram.BotStarter
+import dev.storozhenko.familybot.telegram.BotStarter
 import java.nio.file.Paths
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
@@ -29,7 +29,7 @@ abstract class FamilybotApplicationTest {
                 CompletableFuture.supplyAsync { "redis:latest" }
             ).withExposedPorts(6379)
             redisContainer.start()
-            System.setProperty("spring.redis.port", redisContainer.firstMappedPort.toString())
+            System.setProperty("spring.data.redis.port", redisContainer.firstMappedPort.toString())
         }
 
         private fun createPostgres() {

@@ -1,14 +1,14 @@
-package space.yaroslav.familybot.repos
+package dev.storozhenko.familybot.repos
 
 import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.extensions.toAskWorldQuestion
-import space.yaroslav.familybot.models.askworld.AskWorldQuestion
-import space.yaroslav.familybot.models.askworld.AskWorldReply
-import space.yaroslav.familybot.models.telegram.Chat
-import space.yaroslav.familybot.models.telegram.User
-import space.yaroslav.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.common.extensions.toAskWorldQuestion
+import dev.storozhenko.familybot.models.askworld.AskWorldQuestion
+import dev.storozhenko.familybot.models.askworld.AskWorldReply
+import dev.storozhenko.familybot.models.telegram.Chat
+import dev.storozhenko.familybot.models.telegram.User
+import dev.storozhenko.familybot.telegram.FamilyBot
 import java.sql.Timestamp
 import java.time.Instant
 

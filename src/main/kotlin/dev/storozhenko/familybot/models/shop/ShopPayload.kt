@@ -1,9 +1,9 @@
-package space.yaroslav.familybot.models.shop
+package dev.storozhenko.familybot.models.shop
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import space.yaroslav.familybot.services.settings.ChatEasyKey
-import space.yaroslav.familybot.services.settings.UserAndChatEasyKey
-import space.yaroslav.familybot.services.settings.UserEasyKey
+import dev.storozhenko.familybot.services.settings.ChatEasyKey
+import dev.storozhenko.familybot.services.settings.UserAndChatEasyKey
+import dev.storozhenko.familybot.services.settings.UserEasyKey
 
 data class ShopPayload(
     @JsonProperty("chatId") val chatId: Long,

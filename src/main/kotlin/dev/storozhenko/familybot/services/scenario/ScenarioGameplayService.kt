@@ -1,11 +1,11 @@
-package space.yaroslav.familybot.services.scenario
+package dev.storozhenko.familybot.services.scenario
 
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.getLogger
-import space.yaroslav.familybot.models.telegram.Chat
-import space.yaroslav.familybot.models.telegram.User
-import space.yaroslav.familybot.repos.ScenarioRepository
-import space.yaroslav.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.getLogger
+import dev.storozhenko.familybot.models.telegram.Chat
+import dev.storozhenko.familybot.models.telegram.User
+import dev.storozhenko.familybot.repos.ScenarioRepository
+import dev.storozhenko.familybot.telegram.FamilyBot
 
 @Component
 class ScenarioGameplayService(

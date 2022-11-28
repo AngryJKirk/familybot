@@ -1,9 +1,9 @@
-package space.yaroslav.familybot.repos
+package dev.storozhenko.familybot.repos
 
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.extensions.toMarriage
-import space.yaroslav.familybot.models.Marriage
+import dev.storozhenko.familybot.common.extensions.toMarriage
+import dev.storozhenko.familybot.models.Marriage
 import java.sql.Timestamp
 import java.time.Instant
 

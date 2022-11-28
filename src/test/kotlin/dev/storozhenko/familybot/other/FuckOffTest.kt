@@ -1,15 +1,15 @@
-package space.yaroslav.familybot.other
+package dev.storozhenko.familybot.other
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
-import space.yaroslav.familybot.executors.eventbased.keyword.processor.BotMentionKeyWordProcessor
-import space.yaroslav.familybot.infrastructure.createSimpleContext
-import space.yaroslav.familybot.infrastructure.createSimpleMessage
-import space.yaroslav.familybot.infrastructure.createSimpleUser
-import space.yaroslav.familybot.suits.FamilybotApplicationTest
-import space.yaroslav.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.executors.eventbased.keyword.processor.BotMentionKeyWordProcessor
+import dev.storozhenko.familybot.infrastructure.createSimpleContext
+import dev.storozhenko.familybot.infrastructure.createSimpleMessage
+import dev.storozhenko.familybot.infrastructure.createSimpleUser
+import dev.storozhenko.familybot.suits.FamilybotApplicationTest
+import dev.storozhenko.familybot.telegram.BotConfig
 
 class FuckOffTest : FamilybotApplicationTest() {
 

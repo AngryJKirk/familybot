@@ -1,17 +1,17 @@
-package space.yaroslav.familybot.executors.eventbased
+package dev.storozhenko.familybot.executors.eventbased
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.dropLastDelimiter
-import space.yaroslav.familybot.common.extensions.randomBoolean
-import space.yaroslav.familybot.common.extensions.send
-import space.yaroslav.familybot.executors.Configurable
-import space.yaroslav.familybot.executors.Executor
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.router.FunctionId
-import space.yaroslav.familybot.models.router.Priority
-import space.yaroslav.familybot.services.settings.EasyKeyValueService
-import space.yaroslav.familybot.services.settings.TalkingDensity
+import dev.storozhenko.familybot.common.extensions.dropLastDelimiter
+import dev.storozhenko.familybot.common.extensions.randomBoolean
+import dev.storozhenko.familybot.common.extensions.send
+import dev.storozhenko.familybot.executors.Configurable
+import dev.storozhenko.familybot.executors.Executor
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.router.FunctionId
+import dev.storozhenko.familybot.models.router.Priority
+import dev.storozhenko.familybot.services.settings.EasyKeyValueService
+import dev.storozhenko.familybot.services.settings.TalkingDensity
 import java.util.regex.Pattern
 
 @Component

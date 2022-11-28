@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.repos
+package dev.storozhenko.familybot.repos
 
 import io.micrometer.core.annotation.Timed
 import org.springframework.dao.DataIntegrityViolationException
@@ -6,18 +6,18 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.extensions.getUuid
-import space.yaroslav.familybot.common.extensions.toChat
-import space.yaroslav.familybot.common.extensions.toUser
-import space.yaroslav.familybot.getLogger
-import space.yaroslav.familybot.models.telegram.Chat
-import space.yaroslav.familybot.models.telegram.User
-import space.yaroslav.familybot.services.scenario.Scenario
-import space.yaroslav.familybot.services.scenario.ScenarioMove
-import space.yaroslav.familybot.services.scenario.ScenarioPoll
-import space.yaroslav.familybot.services.scenario.ScenarioState
-import space.yaroslav.familybot.services.scenario.ScenarioWay
-import space.yaroslav.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.common.extensions.getUuid
+import dev.storozhenko.familybot.common.extensions.toChat
+import dev.storozhenko.familybot.common.extensions.toUser
+import dev.storozhenko.familybot.getLogger
+import dev.storozhenko.familybot.models.telegram.Chat
+import dev.storozhenko.familybot.models.telegram.User
+import dev.storozhenko.familybot.services.scenario.Scenario
+import dev.storozhenko.familybot.services.scenario.ScenarioMove
+import dev.storozhenko.familybot.services.scenario.ScenarioPoll
+import dev.storozhenko.familybot.services.scenario.ScenarioState
+import dev.storozhenko.familybot.services.scenario.ScenarioWay
+import dev.storozhenko.familybot.telegram.FamilyBot
 import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.Instant

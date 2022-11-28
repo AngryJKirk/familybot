@@ -1,7 +1,7 @@
-package space.yaroslav.familybot.suits
+package dev.storozhenko.familybot.suits
 
 import org.junit.jupiter.api.Test
-import space.yaroslav.familybot.infrastructure.TestSender
+import dev.storozhenko.familybot.infrastructure.TestSender
 
 abstract class ExecutorTest : FamilybotApplicationTest() {
 

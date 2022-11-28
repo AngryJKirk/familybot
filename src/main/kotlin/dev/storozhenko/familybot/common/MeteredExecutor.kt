@@ -1,11 +1,11 @@
-package space.yaroslav.familybot.common
+package dev.storozhenko.familybot.common
 
 import io.micrometer.core.instrument.MeterRegistry
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.executors.Executor
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.router.Priority
-import space.yaroslav.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.executors.Executor
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.router.Priority
+import dev.storozhenko.familybot.telegram.FamilyBot
 
 fun Executor.meteredExecute(
     context: ExecutorContext,

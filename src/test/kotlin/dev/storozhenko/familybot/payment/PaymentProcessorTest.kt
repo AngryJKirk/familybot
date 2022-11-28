@@ -1,9 +1,9 @@
-package space.yaroslav.familybot.payment
+package dev.storozhenko.familybot.payment
 
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import space.yaroslav.familybot.services.settings.EasyKeyValueService
-import space.yaroslav.familybot.suits.FamilybotApplicationTest
+import dev.storozhenko.familybot.services.settings.EasyKeyValueService
+import dev.storozhenko.familybot.suits.FamilybotApplicationTest
 
 abstract class PaymentProcessorTest : FamilybotApplicationTest() {
 

@@ -1,20 +1,20 @@
-package space.yaroslav.familybot.services.pidor
+package dev.storozhenko.familybot.services.pidor
 
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.sendContextFree
-import space.yaroslav.familybot.executors.command.PidorExecutor
-import space.yaroslav.familybot.getLogger
-import space.yaroslav.familybot.models.dictionary.Phrase
-import space.yaroslav.familybot.models.router.FunctionId
-import space.yaroslav.familybot.models.telegram.Chat
-import space.yaroslav.familybot.repos.FunctionsConfigureRepository
-import space.yaroslav.familybot.services.settings.AutoPidorTimesLeft
-import space.yaroslav.familybot.services.settings.ChatEasyKey
-import space.yaroslav.familybot.services.settings.EasyKeyValueService
-import space.yaroslav.familybot.services.talking.Dictionary
-import space.yaroslav.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.common.extensions.sendContextFree
+import dev.storozhenko.familybot.executors.command.PidorExecutor
+import dev.storozhenko.familybot.getLogger
+import dev.storozhenko.familybot.models.dictionary.Phrase
+import dev.storozhenko.familybot.models.router.FunctionId
+import dev.storozhenko.familybot.models.telegram.Chat
+import dev.storozhenko.familybot.repos.FunctionsConfigureRepository
+import dev.storozhenko.familybot.services.settings.AutoPidorTimesLeft
+import dev.storozhenko.familybot.services.settings.ChatEasyKey
+import dev.storozhenko.familybot.services.settings.EasyKeyValueService
+import dev.storozhenko.familybot.services.talking.Dictionary
+import dev.storozhenko.familybot.telegram.BotConfig
 
 @Component
 class PidorAutoSelectService(

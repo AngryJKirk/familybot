@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.models.dictionary
+package dev.storozhenko.familybot.models.dictionary
 
 enum class Phrase {
     BAD_COMMAND_USAGE,

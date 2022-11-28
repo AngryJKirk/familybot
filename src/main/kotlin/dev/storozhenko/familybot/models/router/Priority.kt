@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.models.router
+package dev.storozhenko.familybot.models.router
 
 enum class Priority(val priorityValue: Int) {
 

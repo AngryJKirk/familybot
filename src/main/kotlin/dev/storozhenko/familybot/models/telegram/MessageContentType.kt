@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.models.telegram
+package dev.storozhenko.familybot.models.telegram
 
 enum class MessageContentType(val id: Int) {
     PHOTO(1),

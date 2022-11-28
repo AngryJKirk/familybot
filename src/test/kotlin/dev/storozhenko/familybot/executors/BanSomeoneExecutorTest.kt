@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.executors
+package dev.storozhenko.familybot.executors
 
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
@@ -12,19 +12,19 @@ import org.mockito.kotlin.clearInvocations
 import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import space.yaroslav.familybot.common.extensions.key
-import space.yaroslav.familybot.common.extensions.toChat
-import space.yaroslav.familybot.common.extensions.toUser
-import space.yaroslav.familybot.executors.pm.BanSomeoneExecutor
-import space.yaroslav.familybot.infrastructure.createSimpleContext
-import space.yaroslav.familybot.infrastructure.createSimpleUpdate
-import space.yaroslav.familybot.infrastructure.randomString
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.router.Priority
-import space.yaroslav.familybot.services.misc.BanService
-import space.yaroslav.familybot.services.settings.EasyKey
-import space.yaroslav.familybot.suits.ExecutorTest
-import space.yaroslav.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.common.extensions.key
+import dev.storozhenko.familybot.common.extensions.toChat
+import dev.storozhenko.familybot.common.extensions.toUser
+import dev.storozhenko.familybot.executors.pm.BanSomeoneExecutor
+import dev.storozhenko.familybot.infrastructure.createSimpleContext
+import dev.storozhenko.familybot.infrastructure.createSimpleUpdate
+import dev.storozhenko.familybot.infrastructure.randomString
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.router.Priority
+import dev.storozhenko.familybot.services.misc.BanService
+import dev.storozhenko.familybot.services.settings.EasyKey
+import dev.storozhenko.familybot.suits.ExecutorTest
+import dev.storozhenko.familybot.telegram.BotConfig
 import java.util.stream.Stream
 
 class BanSomeoneExecutorTest : ExecutorTest() {

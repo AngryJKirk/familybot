@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.executors
+package dev.storozhenko.familybot.executors
 
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
@@ -7,15 +7,15 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import space.yaroslav.familybot.executors.eventbased.keyword.KeyWordExecutor
-import space.yaroslav.familybot.infrastructure.createSimpleContext
-import space.yaroslav.familybot.infrastructure.createSimpleMessage
-import space.yaroslav.familybot.infrastructure.createSimpleUser
-import space.yaroslav.familybot.infrastructure.randomString
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.router.Priority
-import space.yaroslav.familybot.suits.ExecutorTest
-import space.yaroslav.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.executors.eventbased.keyword.KeyWordExecutor
+import dev.storozhenko.familybot.infrastructure.createSimpleContext
+import dev.storozhenko.familybot.infrastructure.createSimpleMessage
+import dev.storozhenko.familybot.infrastructure.createSimpleUser
+import dev.storozhenko.familybot.infrastructure.randomString
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.router.Priority
+import dev.storozhenko.familybot.suits.ExecutorTest
+import dev.storozhenko.familybot.telegram.BotConfig
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 

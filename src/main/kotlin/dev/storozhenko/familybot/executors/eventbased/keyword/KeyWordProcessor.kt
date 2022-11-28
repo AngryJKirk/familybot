@@ -1,7 +1,7 @@
-package space.yaroslav.familybot.executors.eventbased.keyword
+package dev.storozhenko.familybot.executors.eventbased.keyword
 
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.router.ExecutorContext
 
 interface KeyWordProcessor {
 

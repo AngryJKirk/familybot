@@ -1,9 +1,9 @@
-package space.yaroslav.familybot.executors.command
+package dev.storozhenko.familybot.executors.command
 
-import space.yaroslav.familybot.executors.Executor
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.router.Priority
-import space.yaroslav.familybot.models.telegram.Command
+import dev.storozhenko.familybot.executors.Executor
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.router.Priority
+import dev.storozhenko.familybot.models.telegram.Command
 
 abstract class CommandExecutor : Executor {
     override fun canExecute(context: ExecutorContext): Boolean {

@@ -1,14 +1,14 @@
-package space.yaroslav.familybot.services.talking
+package dev.storozhenko.familybot.services.talking
 
 import io.micrometer.core.annotation.Timed
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.telegram.User
-import space.yaroslav.familybot.repos.ChatLogRepository
-import space.yaroslav.familybot.services.settings.EasyKeyValueService
-import space.yaroslav.familybot.services.settings.UkrainianLanguage
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.telegram.User
+import dev.storozhenko.familybot.repos.ChatLogRepository
+import dev.storozhenko.familybot.services.settings.EasyKeyValueService
+import dev.storozhenko.familybot.services.settings.UkrainianLanguage
 
 @Component
 class TalkingService(

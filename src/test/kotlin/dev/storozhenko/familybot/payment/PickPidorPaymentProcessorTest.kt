@@ -1,14 +1,14 @@
-package space.yaroslav.familybot.payment
+package dev.storozhenko.familybot.payment
 
 import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
-import space.yaroslav.familybot.infrastructure.payload
-import space.yaroslav.familybot.infrastructure.randomLong
-import space.yaroslav.familybot.models.shop.PreCheckOutResponse
-import space.yaroslav.familybot.models.shop.ShopItem
-import space.yaroslav.familybot.services.payment.processors.PickPidorPaymentProcessor
-import space.yaroslav.familybot.services.settings.PickPidorAbilityCount
-import space.yaroslav.familybot.services.settings.UserEasyKey
+import dev.storozhenko.familybot.infrastructure.payload
+import dev.storozhenko.familybot.infrastructure.randomLong
+import dev.storozhenko.familybot.models.shop.PreCheckOutResponse
+import dev.storozhenko.familybot.models.shop.ShopItem
+import dev.storozhenko.familybot.services.payment.processors.PickPidorPaymentProcessor
+import dev.storozhenko.familybot.services.settings.PickPidorAbilityCount
+import dev.storozhenko.familybot.services.settings.UserEasyKey
 
 class PickPidorPaymentProcessorTest : PaymentProcessorTest() {
 

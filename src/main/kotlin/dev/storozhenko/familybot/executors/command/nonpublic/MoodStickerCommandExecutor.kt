@@ -1,9 +1,9 @@
-package space.yaroslav.familybot.executors.command.nonpublic
+package dev.storozhenko.familybot.executors.command.nonpublic
 
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.models.telegram.Command
-import space.yaroslav.familybot.models.telegram.stickers.StickerPack
-import space.yaroslav.familybot.repos.CommandHistoryRepository
+import dev.storozhenko.familybot.models.telegram.Command
+import dev.storozhenko.familybot.models.telegram.stickers.StickerPack
+import dev.storozhenko.familybot.repos.CommandHistoryRepository
 
 @Component
 class MoodStickerCommandExecutor(

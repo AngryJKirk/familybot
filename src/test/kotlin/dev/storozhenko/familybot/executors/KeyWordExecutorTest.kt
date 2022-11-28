@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.executors
+package dev.storozhenko.familybot.executors
 
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
@@ -9,12 +9,12 @@ import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker
-import space.yaroslav.familybot.executors.eventbased.keyword.KeyWordExecutor
-import space.yaroslav.familybot.infrastructure.createSimpleContext
-import space.yaroslav.familybot.infrastructure.singleStickerContext
-import space.yaroslav.familybot.models.router.Priority
-import space.yaroslav.familybot.models.telegram.stickers.Sticker
-import space.yaroslav.familybot.suits.ExecutorTest
+import dev.storozhenko.familybot.executors.eventbased.keyword.KeyWordExecutor
+import dev.storozhenko.familybot.infrastructure.createSimpleContext
+import dev.storozhenko.familybot.infrastructure.singleStickerContext
+import dev.storozhenko.familybot.models.router.Priority
+import dev.storozhenko.familybot.models.telegram.stickers.Sticker
+import dev.storozhenko.familybot.suits.ExecutorTest
 
 @ExtendWith(SpringExtension::class)
 class KeyWordExecutorTest : ExecutorTest() {

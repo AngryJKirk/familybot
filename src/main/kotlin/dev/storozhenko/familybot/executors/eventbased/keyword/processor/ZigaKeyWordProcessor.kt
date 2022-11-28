@@ -1,12 +1,12 @@
-package space.yaroslav.familybot.executors.eventbased.keyword.processor
+package dev.storozhenko.familybot.executors.eventbased.keyword.processor
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.sendSticker
-import space.yaroslav.familybot.executors.eventbased.keyword.KeyWordProcessor
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.telegram.stickers.Sticker
-import space.yaroslav.familybot.models.telegram.stickers.StickerPack
+import dev.storozhenko.familybot.common.extensions.sendSticker
+import dev.storozhenko.familybot.executors.eventbased.keyword.KeyWordProcessor
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.telegram.stickers.Sticker
+import dev.storozhenko.familybot.models.telegram.stickers.StickerPack
 
 @Component
 class ZigaKeyWordProcessor : KeyWordProcessor {

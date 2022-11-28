@@ -1,18 +1,18 @@
-package space.yaroslav.familybot.executors.continious
+package dev.storozhenko.familybot.executors.continious
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.methods.invoices.SendInvoice
 import org.telegram.telegrambots.meta.api.objects.payments.LabeledPrice
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.rubles
-import space.yaroslav.familybot.common.extensions.toJson
-import space.yaroslav.familybot.models.dictionary.Phrase
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.shop.ShopItem
-import space.yaroslav.familybot.models.shop.ShopPayload
-import space.yaroslav.familybot.models.telegram.Command
-import space.yaroslav.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.common.extensions.rubles
+import dev.storozhenko.familybot.common.extensions.toJson
+import dev.storozhenko.familybot.models.dictionary.Phrase
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.shop.ShopItem
+import dev.storozhenko.familybot.models.shop.ShopPayload
+import dev.storozhenko.familybot.models.telegram.Command
+import dev.storozhenko.familybot.telegram.BotConfig
 
 @Component
 class ShopContiniousExecutor(

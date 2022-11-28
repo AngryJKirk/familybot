@@ -1,25 +1,25 @@
-package space.yaroslav.familybot.services.routers
+package dev.storozhenko.familybot.services.routers
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.from
-import space.yaroslav.familybot.common.extensions.key
-import space.yaroslav.familybot.common.extensions.parseJson
-import space.yaroslav.familybot.common.extensions.toChat
-import space.yaroslav.familybot.common.extensions.toUser
-import space.yaroslav.familybot.getLogger
-import space.yaroslav.familybot.models.dictionary.Phrase
-import space.yaroslav.familybot.models.shop.PreCheckOutResponse
-import space.yaroslav.familybot.models.shop.ShopPayload
-import space.yaroslav.familybot.models.shop.SuccessPaymentResponse
-import space.yaroslav.familybot.repos.CommonRepository
-import space.yaroslav.familybot.services.payment.PaymentService
-import space.yaroslav.familybot.services.settings.ChatEasyKey
-import space.yaroslav.familybot.services.talking.Dictionary
-import space.yaroslav.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.common.extensions.from
+import dev.storozhenko.familybot.common.extensions.key
+import dev.storozhenko.familybot.common.extensions.parseJson
+import dev.storozhenko.familybot.common.extensions.toChat
+import dev.storozhenko.familybot.common.extensions.toUser
+import dev.storozhenko.familybot.getLogger
+import dev.storozhenko.familybot.models.dictionary.Phrase
+import dev.storozhenko.familybot.models.shop.PreCheckOutResponse
+import dev.storozhenko.familybot.models.shop.ShopPayload
+import dev.storozhenko.familybot.models.shop.SuccessPaymentResponse
+import dev.storozhenko.familybot.repos.CommonRepository
+import dev.storozhenko.familybot.services.payment.PaymentService
+import dev.storozhenko.familybot.services.settings.ChatEasyKey
+import dev.storozhenko.familybot.services.talking.Dictionary
+import dev.storozhenko.familybot.telegram.BotConfig
 
 @Component
 class PaymentRouter(

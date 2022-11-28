@@ -1,15 +1,15 @@
-package space.yaroslav.familybot.executors.command.nonpublic
+package dev.storozhenko.familybot.executors.command.nonpublic
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.capitalized
-import space.yaroslav.familybot.common.extensions.send
-import space.yaroslav.familybot.executors.command.CommandExecutor
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.telegram.Command
-import space.yaroslav.familybot.repos.QuoteRepository
+import dev.storozhenko.familybot.common.extensions.capitalized
+import dev.storozhenko.familybot.common.extensions.send
+import dev.storozhenko.familybot.executors.command.CommandExecutor
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.telegram.Command
+import dev.storozhenko.familybot.repos.QuoteRepository
 
 const val QUOTE_MESSAGE = "Тег?"
 

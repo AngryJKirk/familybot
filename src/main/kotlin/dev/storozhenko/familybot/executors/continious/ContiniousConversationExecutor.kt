@@ -1,9 +1,9 @@
-package space.yaroslav.familybot.executors.continious
+package dev.storozhenko.familybot.executors.continious
 
-import space.yaroslav.familybot.executors.command.CommandExecutor
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.router.Priority
-import space.yaroslav.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.executors.command.CommandExecutor
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.router.Priority
+import dev.storozhenko.familybot.telegram.BotConfig
 
 abstract class ContiniousConversationExecutor(private val config: BotConfig) : CommandExecutor() {
 

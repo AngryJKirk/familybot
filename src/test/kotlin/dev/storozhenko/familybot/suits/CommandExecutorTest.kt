@@ -1,11 +1,11 @@
-package space.yaroslav.familybot.suits
+package dev.storozhenko.familybot.suits
 
 import org.junit.jupiter.api.Assertions
-import space.yaroslav.familybot.executors.command.CommandExecutor
-import space.yaroslav.familybot.infrastructure.createSimpleCommandContext
-import space.yaroslav.familybot.infrastructure.createSimpleContext
-import space.yaroslav.familybot.infrastructure.randomString
-import space.yaroslav.familybot.models.router.Priority
+import dev.storozhenko.familybot.executors.command.CommandExecutor
+import dev.storozhenko.familybot.infrastructure.createSimpleCommandContext
+import dev.storozhenko.familybot.infrastructure.createSimpleContext
+import dev.storozhenko.familybot.infrastructure.randomString
+import dev.storozhenko.familybot.models.router.Priority
 
 abstract class CommandExecutorTest : ExecutorTest() {
 

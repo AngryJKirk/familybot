@@ -1,12 +1,12 @@
-package space.yaroslav.familybot.services.routers
+package dev.storozhenko.familybot.services.routers
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
-import space.yaroslav.familybot.common.extensions.toUser
-import space.yaroslav.familybot.getLogger
-import space.yaroslav.familybot.services.scenario.ScenarioGameplayService
-import space.yaroslav.familybot.services.scenario.ScenarioPollManagingService
-import space.yaroslav.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.common.extensions.toUser
+import dev.storozhenko.familybot.getLogger
+import dev.storozhenko.familybot.services.scenario.ScenarioGameplayService
+import dev.storozhenko.familybot.services.scenario.ScenarioPollManagingService
+import dev.storozhenko.familybot.telegram.FamilyBot
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 

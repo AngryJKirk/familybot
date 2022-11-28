@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.services.settings
+package dev.storozhenko.familybot.services.settings
 
 import kotlin.reflect.KClass
 

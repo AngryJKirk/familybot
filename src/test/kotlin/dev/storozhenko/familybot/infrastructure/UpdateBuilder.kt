@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.infrastructure
+package dev.storozhenko.familybot.infrastructure
 
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
@@ -8,15 +8,15 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.MessageEntity
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
-import space.yaroslav.familybot.common.extensions.context
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.telegram.Command
-import space.yaroslav.familybot.models.telegram.stickers.Sticker
-import space.yaroslav.familybot.services.settings.EasyKeyValueService
-import space.yaroslav.familybot.services.settings.UkrainianLanguage
-import space.yaroslav.familybot.services.talking.Dictionary
-import space.yaroslav.familybot.services.talking.DictionaryReader
-import space.yaroslav.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.common.extensions.context
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.telegram.Command
+import dev.storozhenko.familybot.models.telegram.stickers.Sticker
+import dev.storozhenko.familybot.services.settings.EasyKeyValueService
+import dev.storozhenko.familybot.services.settings.UkrainianLanguage
+import dev.storozhenko.familybot.services.talking.Dictionary
+import dev.storozhenko.familybot.services.talking.DictionaryReader
+import dev.storozhenko.familybot.telegram.BotConfig
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 
 private val keyValueService = mock<EasyKeyValueService> {

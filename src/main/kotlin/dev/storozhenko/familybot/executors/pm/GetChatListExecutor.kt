@@ -1,13 +1,13 @@
-package space.yaroslav.familybot.executors.pm
+package dev.storozhenko.familybot.executors.pm
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMemberCount
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.send
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.telegram.Chat
-import space.yaroslav.familybot.repos.CommonRepository
-import space.yaroslav.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.common.extensions.send
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.telegram.Chat
+import dev.storozhenko.familybot.repos.CommonRepository
+import dev.storozhenko.familybot.telegram.BotConfig
 
 @Component
 class GetChatListExecutor(

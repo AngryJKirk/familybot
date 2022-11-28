@@ -1,25 +1,25 @@
-package space.yaroslav.familybot.executors.command.stats
+package dev.storozhenko.familybot.executors.command.stats
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.DateConstants
-import space.yaroslav.familybot.common.extensions.PluralizedWordsProvider
-import space.yaroslav.familybot.common.extensions.pluralize
-import space.yaroslav.familybot.common.extensions.send
-import space.yaroslav.familybot.executors.command.CommandExecutor
-import space.yaroslav.familybot.models.dictionary.Phrase
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.telegram.Chat
-import space.yaroslav.familybot.models.telegram.Command
-import space.yaroslav.familybot.models.telegram.User
-import space.yaroslav.familybot.repos.CommandHistoryRepository
-import space.yaroslav.familybot.repos.CommonRepository
-import space.yaroslav.familybot.repos.RawChatLogRepository
-import space.yaroslav.familybot.services.settings.EasyKeyValueService
-import space.yaroslav.familybot.services.settings.MessageCounter
-import space.yaroslav.familybot.services.settings.UserAndChatEasyKey
+import dev.storozhenko.familybot.common.extensions.DateConstants
+import dev.storozhenko.familybot.common.extensions.PluralizedWordsProvider
+import dev.storozhenko.familybot.common.extensions.pluralize
+import dev.storozhenko.familybot.common.extensions.send
+import dev.storozhenko.familybot.executors.command.CommandExecutor
+import dev.storozhenko.familybot.models.dictionary.Phrase
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.telegram.Chat
+import dev.storozhenko.familybot.models.telegram.Command
+import dev.storozhenko.familybot.models.telegram.User
+import dev.storozhenko.familybot.repos.CommandHistoryRepository
+import dev.storozhenko.familybot.repos.CommonRepository
+import dev.storozhenko.familybot.repos.RawChatLogRepository
+import dev.storozhenko.familybot.services.settings.EasyKeyValueService
+import dev.storozhenko.familybot.services.settings.MessageCounter
+import dev.storozhenko.familybot.services.settings.UserAndChatEasyKey
 
 @Component
 class MeCommandExecutor(

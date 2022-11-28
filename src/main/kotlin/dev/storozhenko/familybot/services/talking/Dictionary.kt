@@ -1,11 +1,11 @@
-package space.yaroslav.familybot.services.talking
+package dev.storozhenko.familybot.services.talking
 
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.models.dictionary.Phrase
-import space.yaroslav.familybot.models.dictionary.PhraseTheme
-import space.yaroslav.familybot.services.settings.ChatEasyKey
-import space.yaroslav.familybot.services.settings.EasyKeyValueService
-import space.yaroslav.familybot.services.settings.UkrainianLanguage
+import dev.storozhenko.familybot.models.dictionary.Phrase
+import dev.storozhenko.familybot.models.dictionary.PhraseTheme
+import dev.storozhenko.familybot.services.settings.ChatEasyKey
+import dev.storozhenko.familybot.services.settings.EasyKeyValueService
+import dev.storozhenko.familybot.services.settings.UkrainianLanguage
 import java.time.LocalDate
 import java.time.Month
 

@@ -1,11 +1,11 @@
-package space.yaroslav.familybot.other
+package dev.storozhenko.familybot.other
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import space.yaroslav.familybot.models.dictionary.Phrase
-import space.yaroslav.familybot.services.talking.DictionaryReader
-import space.yaroslav.familybot.suits.FamilybotApplicationTest
+import dev.storozhenko.familybot.models.dictionary.Phrase
+import dev.storozhenko.familybot.services.talking.DictionaryReader
+import dev.storozhenko.familybot.suits.FamilybotApplicationTest
 
 class DictionaryTest : FamilybotApplicationTest() {
 

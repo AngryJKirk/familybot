@@ -1,16 +1,16 @@
-package space.yaroslav.familybot.executors.continious
+package dev.storozhenko.familybot.executors.continious
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.isFromAdmin
-import space.yaroslav.familybot.models.dictionary.Phrase
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.telegram.Command
-import space.yaroslav.familybot.services.scenario.ScenarioService
-import space.yaroslav.familybot.services.scenario.ScenarioSessionManagementService
-import space.yaroslav.familybot.telegram.BotConfig
-import space.yaroslav.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.common.extensions.isFromAdmin
+import dev.storozhenko.familybot.models.dictionary.Phrase
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.telegram.Command
+import dev.storozhenko.familybot.services.scenario.ScenarioService
+import dev.storozhenko.familybot.services.scenario.ScenarioSessionManagementService
+import dev.storozhenko.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.telegram.FamilyBot
 
 @Component
 class ScenarioContiniousExecutor(

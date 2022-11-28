@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.executors
+package dev.storozhenko.familybot.executors
 
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
@@ -7,16 +7,16 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
-import space.yaroslav.familybot.executors.command.settings.AdvancedSettingsExecutor
-import space.yaroslav.familybot.infrastructure.createSimpleContext
-import space.yaroslav.familybot.infrastructure.randomLong
-import space.yaroslav.familybot.models.telegram.Command
-import space.yaroslav.familybot.services.settings.ChatEasyKey
-import space.yaroslav.familybot.services.settings.EasyKeyType
-import space.yaroslav.familybot.services.settings.EasyKeyValueService
-import space.yaroslav.familybot.services.settings.TalkingDensity
-import space.yaroslav.familybot.services.settings.UkrainianLanguage
-import space.yaroslav.familybot.suits.CommandExecutorTest
+import dev.storozhenko.familybot.executors.command.settings.AdvancedSettingsExecutor
+import dev.storozhenko.familybot.infrastructure.createSimpleContext
+import dev.storozhenko.familybot.infrastructure.randomLong
+import dev.storozhenko.familybot.models.telegram.Command
+import dev.storozhenko.familybot.services.settings.ChatEasyKey
+import dev.storozhenko.familybot.services.settings.EasyKeyType
+import dev.storozhenko.familybot.services.settings.EasyKeyValueService
+import dev.storozhenko.familybot.services.settings.TalkingDensity
+import dev.storozhenko.familybot.services.settings.UkrainianLanguage
+import dev.storozhenko.familybot.suits.CommandExecutorTest
 import java.util.stream.Stream
 
 class AdvancedSettingsExecutorTest : CommandExecutorTest() {

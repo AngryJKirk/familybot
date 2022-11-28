@@ -1,14 +1,14 @@
-package space.yaroslav.familybot.executors.command
+package dev.storozhenko.familybot.executors.command
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.capitalized
-import space.yaroslav.familybot.common.extensions.dropLastDelimiter
-import space.yaroslav.familybot.common.extensions.send
-import space.yaroslav.familybot.getLogger
-import space.yaroslav.familybot.models.dictionary.Phrase
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.telegram.Command
+import dev.storozhenko.familybot.common.extensions.capitalized
+import dev.storozhenko.familybot.common.extensions.dropLastDelimiter
+import dev.storozhenko.familybot.common.extensions.send
+import dev.storozhenko.familybot.getLogger
+import dev.storozhenko.familybot.models.dictionary.Phrase
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.telegram.Command
 import java.util.regex.Pattern
 
 @Component

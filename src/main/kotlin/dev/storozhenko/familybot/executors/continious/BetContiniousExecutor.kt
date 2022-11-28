@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.executors.continious
+package dev.storozhenko.familybot.executors.continious
 
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -6,20 +6,20 @@ import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendDice
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.send
-import space.yaroslav.familybot.common.extensions.untilNextMonth
-import space.yaroslav.familybot.models.dictionary.Phrase
-import space.yaroslav.familybot.models.dictionary.Pluralization
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.telegram.Command
-import space.yaroslav.familybot.models.telegram.Pidor
-import space.yaroslav.familybot.models.telegram.User
-import space.yaroslav.familybot.repos.CommonRepository
-import space.yaroslav.familybot.services.pidor.PidorCompetitionService
-import space.yaroslav.familybot.services.settings.BetTolerance
-import space.yaroslav.familybot.services.settings.EasyKeyValueService
-import space.yaroslav.familybot.services.settings.UserAndChatEasyKey
-import space.yaroslav.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.common.extensions.send
+import dev.storozhenko.familybot.common.extensions.untilNextMonth
+import dev.storozhenko.familybot.models.dictionary.Phrase
+import dev.storozhenko.familybot.models.dictionary.Pluralization
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.telegram.Command
+import dev.storozhenko.familybot.models.telegram.Pidor
+import dev.storozhenko.familybot.models.telegram.User
+import dev.storozhenko.familybot.repos.CommonRepository
+import dev.storozhenko.familybot.services.pidor.PidorCompetitionService
+import dev.storozhenko.familybot.services.settings.BetTolerance
+import dev.storozhenko.familybot.services.settings.EasyKeyValueService
+import dev.storozhenko.familybot.services.settings.UserAndChatEasyKey
+import dev.storozhenko.familybot.telegram.BotConfig
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 

@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.common.extensions
+package dev.storozhenko.familybot.common.extensions
 
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -21,12 +21,12 @@ import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberMember
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberOwner
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberRestricted
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.getLogger
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.telegram.stickers.Sticker
-import space.yaroslav.familybot.models.telegram.stickers.StickerPack
-import space.yaroslav.familybot.telegram.BotConfig
-import space.yaroslav.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.getLogger
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.telegram.stickers.Sticker
+import dev.storozhenko.familybot.models.telegram.stickers.StickerPack
+import dev.storozhenko.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.telegram.FamilyBot
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 
 object SenderLogger {

@@ -1,19 +1,19 @@
-package space.yaroslav.familybot.executors.continious
+package dev.storozhenko.familybot.executors.continious
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.isFromAdmin
-import space.yaroslav.familybot.common.extensions.toEmoji
-import space.yaroslav.familybot.getLogger
-import space.yaroslav.familybot.models.dictionary.Phrase
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.router.FunctionId
-import space.yaroslav.familybot.models.telegram.Command
-import space.yaroslav.familybot.repos.FunctionsConfigureRepository
-import space.yaroslav.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.common.extensions.isFromAdmin
+import dev.storozhenko.familybot.common.extensions.toEmoji
+import dev.storozhenko.familybot.getLogger
+import dev.storozhenko.familybot.models.dictionary.Phrase
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.router.FunctionId
+import dev.storozhenko.familybot.models.telegram.Command
+import dev.storozhenko.familybot.repos.FunctionsConfigureRepository
+import dev.storozhenko.familybot.telegram.BotConfig
 
 @Component
 class SettingsContiniousExecutor(

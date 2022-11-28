@@ -1,18 +1,18 @@
-package space.yaroslav.familybot.payment
+package dev.storozhenko.familybot.payment
 
 import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
-import space.yaroslav.familybot.common.extensions.toChat
-import space.yaroslav.familybot.common.extensions.toUser
-import space.yaroslav.familybot.infrastructure.createSimpleUpdate
-import space.yaroslav.familybot.infrastructure.createSimpleUser
-import space.yaroslav.familybot.infrastructure.payload
-import space.yaroslav.familybot.models.Marriage
-import space.yaroslav.familybot.models.shop.PreCheckOutResponse
-import space.yaroslav.familybot.models.shop.ShopItem
-import space.yaroslav.familybot.models.shop.ShopPayload
-import space.yaroslav.familybot.repos.MarriagesRepository
-import space.yaroslav.familybot.services.payment.processors.DivorcePaymentProcessor
+import dev.storozhenko.familybot.common.extensions.toChat
+import dev.storozhenko.familybot.common.extensions.toUser
+import dev.storozhenko.familybot.infrastructure.createSimpleUpdate
+import dev.storozhenko.familybot.infrastructure.createSimpleUser
+import dev.storozhenko.familybot.infrastructure.payload
+import dev.storozhenko.familybot.models.Marriage
+import dev.storozhenko.familybot.models.shop.PreCheckOutResponse
+import dev.storozhenko.familybot.models.shop.ShopItem
+import dev.storozhenko.familybot.models.shop.ShopPayload
+import dev.storozhenko.familybot.repos.MarriagesRepository
+import dev.storozhenko.familybot.services.payment.processors.DivorcePaymentProcessor
 
 class DivorcePaymentProcessorTest : PaymentProcessorTest() {
 

@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.services.scenario.dsl
+package dev.storozhenko.familybot.services.scenario.dsl
 
 class ScenarioSqlGenerator {
 

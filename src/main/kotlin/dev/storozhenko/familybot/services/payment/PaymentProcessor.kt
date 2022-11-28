@@ -1,9 +1,9 @@
-package space.yaroslav.familybot.services.payment
+package dev.storozhenko.familybot.services.payment
 
-import space.yaroslav.familybot.models.shop.PreCheckOutResponse
-import space.yaroslav.familybot.models.shop.ShopItem
-import space.yaroslav.familybot.models.shop.ShopPayload
-import space.yaroslav.familybot.models.shop.SuccessPaymentResponse
+import dev.storozhenko.familybot.models.shop.PreCheckOutResponse
+import dev.storozhenko.familybot.models.shop.ShopItem
+import dev.storozhenko.familybot.models.shop.ShopPayload
+import dev.storozhenko.familybot.models.shop.SuccessPaymentResponse
 
 interface PaymentProcessor {
 

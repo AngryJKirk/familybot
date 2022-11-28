@@ -1,15 +1,15 @@
-package space.yaroslav.familybot.unit
+package dev.storozhenko.familybot.unit
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import space.yaroslav.familybot.common.extensions.startOfCurrentMonth
-import space.yaroslav.familybot.common.extensions.startOfDay
-import space.yaroslav.familybot.common.extensions.startOfTheYear
-import space.yaroslav.familybot.common.extensions.toRussian
-import space.yaroslav.familybot.models.dictionary.Pluralization
+import dev.storozhenko.familybot.common.extensions.startOfCurrentMonth
+import dev.storozhenko.familybot.common.extensions.startOfDay
+import dev.storozhenko.familybot.common.extensions.startOfTheYear
+import dev.storozhenko.familybot.common.extensions.toRussian
+import dev.storozhenko.familybot.models.dictionary.Pluralization
 import java.time.Month
 import java.time.ZoneId
 import java.time.ZoneOffset

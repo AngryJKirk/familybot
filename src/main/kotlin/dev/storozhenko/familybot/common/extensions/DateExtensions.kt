@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.common.extensions
+package dev.storozhenko.familybot.common.extensions
 
 import java.time.Duration
 import java.time.Instant

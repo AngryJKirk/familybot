@@ -1,17 +1,17 @@
-package space.yaroslav.familybot.payment
+package dev.storozhenko.familybot.payment
 
 import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
-import space.yaroslav.familybot.common.extensions.toUser
-import space.yaroslav.familybot.infrastructure.createSimpleUpdate
-import space.yaroslav.familybot.infrastructure.payload
-import space.yaroslav.familybot.models.shop.PreCheckOutResponse
-import space.yaroslav.familybot.models.shop.ShopItem
-import space.yaroslav.familybot.models.telegram.Chat
-import space.yaroslav.familybot.models.telegram.Pidor
-import space.yaroslav.familybot.repos.CommonRepository
-import space.yaroslav.familybot.services.payment.processors.ResetPidorPaymentProcessor
-import space.yaroslav.familybot.services.settings.PidorTolerance
+import dev.storozhenko.familybot.common.extensions.toUser
+import dev.storozhenko.familybot.infrastructure.createSimpleUpdate
+import dev.storozhenko.familybot.infrastructure.payload
+import dev.storozhenko.familybot.models.shop.PreCheckOutResponse
+import dev.storozhenko.familybot.models.shop.ShopItem
+import dev.storozhenko.familybot.models.telegram.Chat
+import dev.storozhenko.familybot.models.telegram.Pidor
+import dev.storozhenko.familybot.repos.CommonRepository
+import dev.storozhenko.familybot.services.payment.processors.ResetPidorPaymentProcessor
+import dev.storozhenko.familybot.services.settings.PidorTolerance
 import java.time.Instant
 
 class PidorResetProcessorTest : PaymentProcessorTest() {

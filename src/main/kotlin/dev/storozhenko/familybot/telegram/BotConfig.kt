@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.telegram
+package dev.storozhenko.familybot.telegram
 
 data class BotConfig(
     val botToken: String,

@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.models.telegram
+package dev.storozhenko.familybot.models.telegram
 
 data class User(val id: Long, val chat: Chat, val name: String?, val nickname: String?) {
 

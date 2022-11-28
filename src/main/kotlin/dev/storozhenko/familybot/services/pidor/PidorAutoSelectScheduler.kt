@@ -1,9 +1,9 @@
-package space.yaroslav.familybot.services.pidor
+package dev.storozhenko.familybot.services.pidor
 
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.getLogger
-import space.yaroslav.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.getLogger
+import dev.storozhenko.familybot.telegram.FamilyBot
 
 @Component
 class PidorAutoSelectScheduler(

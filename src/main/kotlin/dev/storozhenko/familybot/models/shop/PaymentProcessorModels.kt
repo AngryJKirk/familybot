@@ -1,7 +1,7 @@
-package space.yaroslav.familybot.models.shop
+package dev.storozhenko.familybot.models.shop
 
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.models.dictionary.Phrase
+import dev.storozhenko.familybot.models.dictionary.Phrase
 
 sealed class PreCheckOutResponse(val success: Boolean) {
     class Success : PreCheckOutResponse(success = true)

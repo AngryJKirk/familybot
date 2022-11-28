@@ -1,14 +1,14 @@
-package space.yaroslav.familybot.services.misc
+package dev.storozhenko.familybot.services.misc
 
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.extensions.key
-import space.yaroslav.familybot.common.extensions.prettyFormat
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.telegram.Chat
-import space.yaroslav.familybot.models.telegram.User
-import space.yaroslav.familybot.services.settings.Ban
-import space.yaroslav.familybot.services.settings.EasyKey
-import space.yaroslav.familybot.services.settings.EasyKeyValueService
+import dev.storozhenko.familybot.common.extensions.key
+import dev.storozhenko.familybot.common.extensions.prettyFormat
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.telegram.Chat
+import dev.storozhenko.familybot.models.telegram.User
+import dev.storozhenko.familybot.services.settings.Ban
+import dev.storozhenko.familybot.services.settings.EasyKey
+import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import java.time.Duration
 import java.time.Instant
 

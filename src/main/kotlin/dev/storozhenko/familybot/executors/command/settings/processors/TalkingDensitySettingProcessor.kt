@@ -1,13 +1,13 @@
-package space.yaroslav.familybot.executors.command.settings.processors
+package dev.storozhenko.familybot.executors.command.settings.processors
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.getMessageTokens
-import space.yaroslav.familybot.common.extensions.send
-import space.yaroslav.familybot.models.dictionary.Phrase
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.services.settings.EasyKeyValueService
-import space.yaroslav.familybot.services.settings.TalkingDensity
+import dev.storozhenko.familybot.common.extensions.getMessageTokens
+import dev.storozhenko.familybot.common.extensions.send
+import dev.storozhenko.familybot.models.dictionary.Phrase
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.services.settings.EasyKeyValueService
+import dev.storozhenko.familybot.services.settings.TalkingDensity
 
 @Component
 class TalkingDensitySettingProcessor(

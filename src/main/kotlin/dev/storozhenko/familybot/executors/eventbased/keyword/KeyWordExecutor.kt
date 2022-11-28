@@ -1,14 +1,14 @@
-package space.yaroslav.familybot.executors.eventbased.keyword
+package dev.storozhenko.familybot.executors.eventbased.keyword
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.randomInt
-import space.yaroslav.familybot.executors.Configurable
-import space.yaroslav.familybot.executors.Executor
-import space.yaroslav.familybot.getLogger
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.router.FunctionId
-import space.yaroslav.familybot.models.router.Priority
+import dev.storozhenko.familybot.common.extensions.randomInt
+import dev.storozhenko.familybot.executors.Configurable
+import dev.storozhenko.familybot.executors.Executor
+import dev.storozhenko.familybot.getLogger
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.router.FunctionId
+import dev.storozhenko.familybot.models.router.Priority
 
 @Component
 class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Configurable {

@@ -1,6 +1,6 @@
-package space.yaroslav.familybot.models
+package dev.storozhenko.familybot.models
 
-import space.yaroslav.familybot.models.telegram.User
+import dev.storozhenko.familybot.models.telegram.User
 import java.time.Instant
 
 data class Marriage(

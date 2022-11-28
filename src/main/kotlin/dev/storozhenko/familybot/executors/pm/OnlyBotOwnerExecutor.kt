@@ -1,8 +1,8 @@
-package space.yaroslav.familybot.executors.pm
+package dev.storozhenko.familybot.executors.pm
 
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.router.Priority
-import space.yaroslav.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.router.Priority
+import dev.storozhenko.familybot.telegram.BotConfig
 
 abstract class OnlyBotOwnerExecutor(private val botConfig: BotConfig) : PrivateMessageExecutor {
 

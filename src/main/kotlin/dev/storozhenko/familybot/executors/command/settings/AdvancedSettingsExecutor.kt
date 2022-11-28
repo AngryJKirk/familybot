@@ -1,16 +1,16 @@
-package space.yaroslav.familybot.executors.command.settings
+package dev.storozhenko.familybot.executors.command.settings
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.common.extensions.getMessageTokens
-import space.yaroslav.familybot.common.extensions.isFromAdmin
-import space.yaroslav.familybot.common.extensions.send
-import space.yaroslav.familybot.executors.command.CommandExecutor
-import space.yaroslav.familybot.executors.command.settings.processors.SettingProcessor
-import space.yaroslav.familybot.getLogger
-import space.yaroslav.familybot.models.dictionary.Phrase
-import space.yaroslav.familybot.models.router.ExecutorContext
-import space.yaroslav.familybot.models.telegram.Command
+import dev.storozhenko.familybot.common.extensions.getMessageTokens
+import dev.storozhenko.familybot.common.extensions.isFromAdmin
+import dev.storozhenko.familybot.common.extensions.send
+import dev.storozhenko.familybot.executors.command.CommandExecutor
+import dev.storozhenko.familybot.executors.command.settings.processors.SettingProcessor
+import dev.storozhenko.familybot.getLogger
+import dev.storozhenko.familybot.models.dictionary.Phrase
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.telegram.Command
 
 @Component
 class AdvancedSettingsExecutor(

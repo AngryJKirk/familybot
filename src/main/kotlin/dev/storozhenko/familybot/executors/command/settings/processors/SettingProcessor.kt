@@ -1,7 +1,7 @@
-package space.yaroslav.familybot.executors.command.settings.processors
+package dev.storozhenko.familybot.executors.command.settings.processors
 
 import org.telegram.telegrambots.meta.bots.AbsSender
-import space.yaroslav.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.router.ExecutorContext
 
 interface SettingProcessor {
 

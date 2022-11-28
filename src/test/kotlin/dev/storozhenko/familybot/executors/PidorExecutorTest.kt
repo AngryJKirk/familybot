@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.executors
+package dev.storozhenko.familybot.executors
 
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
@@ -8,10 +8,10 @@ import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import space.yaroslav.familybot.executors.command.PidorExecutor
-import space.yaroslav.familybot.infrastructure.createSimpleCommandContext
-import space.yaroslav.familybot.repos.CommonRepository
-import space.yaroslav.familybot.suits.CommandExecutorTest
+import dev.storozhenko.familybot.executors.command.PidorExecutor
+import dev.storozhenko.familybot.infrastructure.createSimpleCommandContext
+import dev.storozhenko.familybot.repos.CommonRepository
+import dev.storozhenko.familybot.suits.CommandExecutorTest
 
 class PidorExecutorTest : CommandExecutorTest() {
 
@@ -38,7 +38,6 @@ class PidorExecutorTest : CommandExecutorTest() {
 
         val pidorsAfterFirstInvoke =
             commonRepository.getPidorsByChat(context.chat)
-
         Assertions.assertEquals(
             pidorsBefore.size + 1,
             pidorsAfterFirstInvoke.size,

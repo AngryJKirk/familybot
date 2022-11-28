@@ -1,12 +1,12 @@
-package space.yaroslav.familybot.repos
+package dev.storozhenko.familybot.repos
 
 import io.micrometer.core.annotation.Timed
 import org.springframework.stereotype.Component
-import space.yaroslav.familybot.common.extensions.key
-import space.yaroslav.familybot.models.router.FunctionId
-import space.yaroslav.familybot.models.telegram.Chat
-import space.yaroslav.familybot.services.settings.EasyKeyValueService
-import space.yaroslav.familybot.services.settings.FuckOffOverride
+import dev.storozhenko.familybot.common.extensions.key
+import dev.storozhenko.familybot.models.router.FunctionId
+import dev.storozhenko.familybot.models.telegram.Chat
+import dev.storozhenko.familybot.services.settings.EasyKeyValueService
+import dev.storozhenko.familybot.services.settings.FuckOffOverride
 
 @Component
 class FunctionsConfigureRepository(

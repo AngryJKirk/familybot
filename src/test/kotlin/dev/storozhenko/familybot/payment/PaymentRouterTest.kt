@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.payment
+package dev.storozhenko.familybot.payment
 
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
@@ -18,20 +18,20 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.payments.PreCheckoutQuery
 import org.telegram.telegrambots.meta.api.objects.payments.SuccessfulPayment
-import space.yaroslav.familybot.common.extensions.from
-import space.yaroslav.familybot.common.extensions.toJson
-import space.yaroslav.familybot.infrastructure.TestSender
-import space.yaroslav.familybot.infrastructure.createSimpleUpdate
-import space.yaroslav.familybot.infrastructure.payload
-import space.yaroslav.familybot.infrastructure.randomInt
-import space.yaroslav.familybot.infrastructure.randomString
-import space.yaroslav.familybot.models.dictionary.Phrase
-import space.yaroslav.familybot.models.shop.PreCheckOutResponse
-import space.yaroslav.familybot.models.shop.ShopItem
-import space.yaroslav.familybot.models.shop.SuccessPaymentResponse
-import space.yaroslav.familybot.services.payment.PaymentService
-import space.yaroslav.familybot.services.routers.PaymentRouter
-import space.yaroslav.familybot.suits.FamilybotApplicationTest
+import dev.storozhenko.familybot.common.extensions.from
+import dev.storozhenko.familybot.common.extensions.toJson
+import dev.storozhenko.familybot.infrastructure.TestSender
+import dev.storozhenko.familybot.infrastructure.createSimpleUpdate
+import dev.storozhenko.familybot.infrastructure.payload
+import dev.storozhenko.familybot.infrastructure.randomInt
+import dev.storozhenko.familybot.infrastructure.randomString
+import dev.storozhenko.familybot.models.dictionary.Phrase
+import dev.storozhenko.familybot.models.shop.PreCheckOutResponse
+import dev.storozhenko.familybot.models.shop.ShopItem
+import dev.storozhenko.familybot.models.shop.SuccessPaymentResponse
+import dev.storozhenko.familybot.services.payment.PaymentService
+import dev.storozhenko.familybot.services.routers.PaymentRouter
+import dev.storozhenko.familybot.suits.FamilybotApplicationTest
 
 class PaymentRouterTest : FamilybotApplicationTest() {
 

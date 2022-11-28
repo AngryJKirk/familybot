@@ -1,4 +1,4 @@
-package space.yaroslav.familybot.telegram
+package dev.storozhenko.familybot.telegram
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -11,12 +11,12 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException
-import space.yaroslav.familybot.common.extensions.toChat
-import space.yaroslav.familybot.common.extensions.toJson
-import space.yaroslav.familybot.common.extensions.toUser
-import space.yaroslav.familybot.services.routers.PaymentRouter
-import space.yaroslav.familybot.services.routers.PollRouter
-import space.yaroslav.familybot.services.routers.Router
+import dev.storozhenko.familybot.common.extensions.toChat
+import dev.storozhenko.familybot.common.extensions.toJson
+import dev.storozhenko.familybot.common.extensions.toUser
+import dev.storozhenko.familybot.services.routers.PaymentRouter
+import dev.storozhenko.familybot.services.routers.PollRouter
+import dev.storozhenko.familybot.services.routers.Router
 
 @Component
 class FamilyBot(

@@ -3,23 +3,23 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>space.yaroslav</groupId>
+    <groupId>dev.storozhenko</groupId>
     <artifactId>familybot</artifactId>
     <version>2.0.0</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.3</version>
+        <version>3.0.0</version>
     </parent>
 
     <properties>
-        <kotlin.version>1.7.10</kotlin.version>
-        <telegrambots.version>6.1.0</telegrambots.version>
-        <testcontainers.version>1.17.3</testcontainers.version>
+        <kotlin.version>1.7.21</kotlin.version>
+        <telegrambots.version>6.3.0</telegrambots.version>
+        <testcontainers.version>1.17.6</testcontainers.version>
         <mockito-kotlin.version>4.0.0</mockito-kotlin.version>
-        <tomlj.version>1.0.0</tomlj.version>
-        <spring.version>2.7.0</spring.version>
+        <tomlj.version>1.1.0</tomlj.version>
+        <spring.version>3.0.0</spring.version>
         <kotlinx-coroutines.version>1.6.4</kotlinx-coroutines.version>
     </properties>
 
