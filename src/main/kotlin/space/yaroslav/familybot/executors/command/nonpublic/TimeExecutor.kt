@@ -18,7 +18,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Component
-class TimeExecutor : CommandExecutor(), PrivateMessageExecutor {
+class TimeExecutor : CommandExecutor() {
     private val restTemplate = RestTemplate()
 
     private val inputDateTimeFormatter =
