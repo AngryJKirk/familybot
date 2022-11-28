@@ -1,11 +1,11 @@
 package space.yaroslav.familybot.telegram
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
+import org.springframework.boot.context.properties.bind.ConstructorBinding
 
-@ConstructorBinding
+
 @ConfigurationProperties("settings", ignoreInvalidFields = false)
-data class BotConfigInjector(
+data class BotConfigInjector @ConstructorBinding constructor(
     val botToken: String,
     val botName: String,
     val developer: String,
