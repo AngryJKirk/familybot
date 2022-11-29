@@ -24,6 +24,7 @@ class TimeExecutor : CommandExecutor() {
             "Время в Лондоне:    " to "Europe/London",
             "Время в Москве:     " to "Europe/Moscow",
             "Время в Ульяновске: " to "Europe/Samara",
+            "Время в Ташкенте:   " to "Asia/Tashkent",
             "Время в Аргентине:  " to "America/Argentina/Buenos_Aires",
             "Время в Малайзии:   " to "Asia/Kuala_Lumpur",
         )
