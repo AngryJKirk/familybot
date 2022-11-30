@@ -8,13 +8,16 @@ class PluralizedWordsProvider(
     val many: () -> String = { "раз" }
 )
 
+@Suppress("ConvertCallChainIntoSequence")
 fun List<User>.formatTopList(pluralizedWordsProvider: PluralizedWordsProvider = PluralizedWordsProvider()): List<String> {
     return this
         .groupBy { (id, _, name, nickname) -> id to (name ?: nickname) }
-        .mapKeys { (idToName) -> idToName.second }
+        .toList()
+        .map { (idToName, list) -> idToName.second to list }
         .map { (name, list) -> name to list.size }
         .sortedByDescending { (_, numberOfTimes) -> numberOfTimes }
         .mapIndexed { index, pair -> format(index, pair, pluralizedWordsProvider) }
+        .toList()
 }
 
 fun format(index: Int, stats: Pair<String?, Int>, pluralizedWordsProvider: PluralizedWordsProvider): String {

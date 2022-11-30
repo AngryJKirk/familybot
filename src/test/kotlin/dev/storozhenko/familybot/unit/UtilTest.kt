@@ -1,15 +1,20 @@
 package dev.storozhenko.familybot.unit
 
+import dev.storozhenko.familybot.common.extensions.formatTopList
+import dev.storozhenko.familybot.common.extensions.startOfCurrentMonth
+import dev.storozhenko.familybot.common.extensions.startOfDay
+import dev.storozhenko.familybot.common.extensions.startOfTheYear
+import dev.storozhenko.familybot.common.extensions.toRussian
+import dev.storozhenko.familybot.infrastructure.randomLong
+import dev.storozhenko.familybot.infrastructure.randomString
+import dev.storozhenko.familybot.models.dictionary.Pluralization
+import dev.storozhenko.familybot.models.telegram.Chat
+import dev.storozhenko.familybot.models.telegram.User
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import dev.storozhenko.familybot.common.extensions.startOfCurrentMonth
-import dev.storozhenko.familybot.common.extensions.startOfDay
-import dev.storozhenko.familybot.common.extensions.startOfTheYear
-import dev.storozhenko.familybot.common.extensions.toRussian
-import dev.storozhenko.familybot.models.dictionary.Pluralization
 import java.time.Month
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -97,5 +102,26 @@ class UtilTest {
     @MethodSource("monthsTestValues")
     fun monthTest(month: Month, result: String) {
         Assertions.assertEquals(result, month.toRussian())
+    }
+
+    @Test
+    fun formatTopListTest() {
+        val chat = Chat(randomLong(), randomString())
+        val commonUserName = randomString()
+        val user1 = User(1, chat, commonUserName, randomString())
+        val user2 = User(2, chat, commonUserName, randomString())
+        val user3 = User(3, chat, randomString(), randomString())
+        val topList = listOf(
+            user1,
+            user1,
+            user1,
+            user2,
+            user2,
+            user2,
+            user3,
+            user3,
+            user3,
+        ).formatTopList()
+        Assertions.assertEquals(3, topList.size)
     }
 }
