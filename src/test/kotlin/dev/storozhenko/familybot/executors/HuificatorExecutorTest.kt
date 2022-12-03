@@ -1,5 +1,11 @@
 package dev.storozhenko.familybot.executors
 
+import dev.storozhenko.familybot.executors.eventbased.HuificatorExecutor
+import dev.storozhenko.familybot.infrastructure.createSimpleContext
+import dev.storozhenko.familybot.models.router.Priority
+import dev.storozhenko.familybot.services.settings.EasyKeyValueService
+import dev.storozhenko.familybot.services.settings.TalkingDensity
+import dev.storozhenko.familybot.suits.ExecutorTest
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.jupiter.api.Assertions
@@ -14,12 +20,6 @@ import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import dev.storozhenko.familybot.executors.eventbased.HuificatorExecutor
-import dev.storozhenko.familybot.infrastructure.createSimpleContext
-import dev.storozhenko.familybot.models.router.Priority
-import dev.storozhenko.familybot.services.settings.EasyKeyValueService
-import dev.storozhenko.familybot.services.settings.TalkingDensity
-import dev.storozhenko.familybot.suits.ExecutorTest
 import java.util.stream.Stream
 
 class HuificatorExecutorTest : ExecutorTest() {

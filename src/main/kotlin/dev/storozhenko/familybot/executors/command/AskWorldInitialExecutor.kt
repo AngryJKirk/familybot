@@ -1,15 +1,5 @@
 package dev.storozhenko.familybot.executors.command
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.ForwardMessage
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.boldNullable
 import dev.storozhenko.familybot.common.extensions.italic
 import dev.storozhenko.familybot.common.extensions.key
@@ -36,6 +26,16 @@ import dev.storozhenko.familybot.services.settings.AskWorldUserUsages
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.talking.Dictionary
 import dev.storozhenko.familybot.telegram.BotConfig
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.methods.ForwardMessage
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.objects.Message
+import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -58,7 +58,6 @@ class AskWorldInitialExecutor(
     }
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-
         val currentChat = context.chat
 
         val chatKey = context.chatKey
@@ -229,7 +228,7 @@ class AskWorldInitialExecutor(
     }
 
     private fun getChatsToSendQuestion(
-        context: ExecutorContext,
+        context: ExecutorContext
     ): List<Chat> {
         val functionId = getFunctionId(context)
         val chatsWithFeatureEnabled = commonRepository.getChats()

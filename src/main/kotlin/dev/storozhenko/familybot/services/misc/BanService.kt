@@ -1,6 +1,5 @@
 package dev.storozhenko.familybot.services.misc
 
-import org.springframework.stereotype.Component
 import dev.storozhenko.familybot.common.extensions.key
 import dev.storozhenko.familybot.common.extensions.prettyFormat
 import dev.storozhenko.familybot.models.router.ExecutorContext
@@ -9,6 +8,7 @@ import dev.storozhenko.familybot.models.telegram.User
 import dev.storozhenko.familybot.services.settings.Ban
 import dev.storozhenko.familybot.services.settings.EasyKey
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
+import org.springframework.stereotype.Component
 import java.time.Duration
 import java.time.Instant
 

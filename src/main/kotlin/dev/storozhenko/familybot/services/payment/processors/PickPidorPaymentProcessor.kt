@@ -1,6 +1,5 @@
 package dev.storozhenko.familybot.services.payment.processors
 
-import org.springframework.stereotype.Component
 import dev.storozhenko.familybot.models.dictionary.Phrase
 import dev.storozhenko.familybot.models.shop.PreCheckOutResponse
 import dev.storozhenko.familybot.models.shop.ShopItem
@@ -10,6 +9,7 @@ import dev.storozhenko.familybot.services.payment.PaymentProcessor
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.settings.PickPidorAbilityCount
 import dev.storozhenko.familybot.services.settings.UserEasyKey
+import org.springframework.stereotype.Component
 
 @Component
 class PickPidorPaymentProcessor(

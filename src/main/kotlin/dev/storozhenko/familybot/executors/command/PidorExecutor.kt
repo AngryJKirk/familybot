@@ -1,13 +1,5 @@
 package dev.storozhenko.familybot.executors.command
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.isToday
 import dev.storozhenko.familybot.common.extensions.send
@@ -33,6 +25,14 @@ import dev.storozhenko.familybot.services.settings.PickPidorAbilityCount
 import dev.storozhenko.familybot.services.settings.PidorTolerance
 import dev.storozhenko.familybot.services.talking.Dictionary
 import dev.storozhenko.familybot.telegram.BotConfig
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -172,7 +172,6 @@ class PidorExecutor(
     }
 
     private fun getMessageForPidors(chat: Chat, key: ChatEasyKey): SendMessage? {
-
         val pidorsByChat: List<List<Pidor>> = repository
             .getPidorsByChat(chat)
             .filter { pidor -> pidor.date.isToday() }
@@ -274,7 +273,8 @@ class PidorExecutor(
         easyKeyValueService.decrement(PickPidorAbilityCount, context.userKey)
         return {
             it.send(
-                context, context.phrase(Phrase.PICK_PIDOR_PICKED).replace("{}", pickedUser.getGeneralName()),
+                context,
+                context.phrase(Phrase.PICK_PIDOR_PICKED).replace("{}", pickedUser.getGeneralName()),
                 shouldTypeBeforeSend = true,
                 replyMessageId = replyMessage.messageId
             )
@@ -284,7 +284,8 @@ class PidorExecutor(
             )
             if (newAbilityCount == 0L) {
                 it.send(
-                    context, context.phrase(Phrase.PICK_PIDOR_ABILITY_COUNT_LEFT_NONE),
+                    context,
+                    context.phrase(Phrase.PICK_PIDOR_ABILITY_COUNT_LEFT_NONE),
                     shouldTypeBeforeSend = true,
                     replyToUpdate = true,
                     enableHtml = true

@@ -1,7 +1,5 @@
 package dev.storozhenko.familybot.executors.eventbased.keyword
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.randomInt
 import dev.storozhenko.familybot.executors.Configurable
 import dev.storozhenko.familybot.executors.Executor
@@ -9,6 +7,8 @@ import dev.storozhenko.familybot.getLogger
 import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.models.router.FunctionId
 import dev.storozhenko.familybot.models.router.Priority
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Configurable {

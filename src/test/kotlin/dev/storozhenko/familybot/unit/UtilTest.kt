@@ -120,7 +120,7 @@ class UtilTest {
             user2,
             user3,
             user3,
-            user3,
+            user3
         ).formatTopList()
         Assertions.assertEquals(3, topList.size)
     }

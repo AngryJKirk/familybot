@@ -1,11 +1,11 @@
 package dev.storozhenko.familybot.executors.pm
 
-import org.springframework.stereotype.Component
 import dev.storozhenko.familybot.executors.eventbased.TikTokDownloadExecutor
 import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.models.router.Priority
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.settings.TikTokDownload
+import org.springframework.stereotype.Component
 
 @Component
 class TikTokDownloadPMExecutor(

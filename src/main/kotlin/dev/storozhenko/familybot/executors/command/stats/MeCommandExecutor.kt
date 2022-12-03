@@ -1,9 +1,5 @@
 package dev.storozhenko.familybot.executors.command.stats
 
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.DateConstants
 import dev.storozhenko.familybot.common.extensions.PluralizedWordsProvider
 import dev.storozhenko.familybot.common.extensions.pluralize
@@ -20,6 +16,10 @@ import dev.storozhenko.familybot.repos.RawChatLogRepository
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.settings.MessageCounter
 import dev.storozhenko.familybot.services.settings.UserAndChatEasyKey
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class MeCommandExecutor(

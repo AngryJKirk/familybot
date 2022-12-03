@@ -1,5 +1,10 @@
 package dev.storozhenko.familybot.executors
 
+import dev.storozhenko.familybot.common.extensions.capitalized
+import dev.storozhenko.familybot.executors.command.AnswerExecutor
+import dev.storozhenko.familybot.infrastructure.createSimpleCommandContext
+import dev.storozhenko.familybot.models.telegram.Command
+import dev.storozhenko.familybot.suits.CommandExecutorTest
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.jupiter.api.Assertions
@@ -13,11 +18,6 @@ import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import dev.storozhenko.familybot.common.extensions.capitalized
-import dev.storozhenko.familybot.executors.command.AnswerExecutor
-import dev.storozhenko.familybot.infrastructure.createSimpleCommandContext
-import dev.storozhenko.familybot.models.telegram.Command
-import dev.storozhenko.familybot.suits.CommandExecutorTest
 import java.util.stream.Stream
 
 class AnswerExecutorTest : CommandExecutorTest() {

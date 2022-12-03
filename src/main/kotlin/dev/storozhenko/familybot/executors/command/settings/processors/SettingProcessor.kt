@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.executors.command.settings.processors
 
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.models.router.ExecutorContext
+import org.telegram.telegrambots.meta.bots.AbsSender
 
 interface SettingProcessor {
 

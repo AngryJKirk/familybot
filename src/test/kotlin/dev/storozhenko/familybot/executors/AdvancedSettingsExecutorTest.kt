@@ -1,12 +1,5 @@
 package dev.storozhenko.familybot.executors
 
-import kotlinx.coroutines.runBlocking
-import org.junit.Ignore
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.MethodSource
-import org.springframework.beans.factory.annotation.Autowired
 import dev.storozhenko.familybot.executors.command.settings.AdvancedSettingsExecutor
 import dev.storozhenko.familybot.infrastructure.createSimpleContext
 import dev.storozhenko.familybot.infrastructure.randomLong
@@ -17,6 +10,13 @@ import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.settings.TalkingDensity
 import dev.storozhenko.familybot.services.settings.UkrainianLanguage
 import dev.storozhenko.familybot.suits.CommandExecutorTest
+import kotlinx.coroutines.runBlocking
+import org.junit.Ignore
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
+import org.springframework.beans.factory.annotation.Autowired
 import java.util.stream.Stream
 
 class AdvancedSettingsExecutorTest : CommandExecutorTest() {

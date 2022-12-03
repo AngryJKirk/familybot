@@ -1,7 +1,5 @@
 package dev.storozhenko.familybot.payment
 
-import org.junit.jupiter.api.Assertions
-import org.springframework.beans.factory.annotation.Autowired
 import dev.storozhenko.familybot.infrastructure.payload
 import dev.storozhenko.familybot.infrastructure.randomLong
 import dev.storozhenko.familybot.models.shop.PreCheckOutResponse
@@ -9,6 +7,8 @@ import dev.storozhenko.familybot.models.shop.ShopItem
 import dev.storozhenko.familybot.services.payment.processors.PickPidorPaymentProcessor
 import dev.storozhenko.familybot.services.settings.PickPidorAbilityCount
 import dev.storozhenko.familybot.services.settings.UserEasyKey
+import org.junit.jupiter.api.Assertions
+import org.springframework.beans.factory.annotation.Autowired
 
 class PickPidorPaymentProcessorTest : PaymentProcessorTest() {
 

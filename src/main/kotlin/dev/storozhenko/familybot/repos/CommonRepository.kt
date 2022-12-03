@@ -1,9 +1,5 @@
 package dev.storozhenko.familybot.repos
 
-import io.micrometer.core.annotation.Timed
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.core.ResultSetExtractor
-import org.springframework.stereotype.Component
 import dev.storozhenko.familybot.common.extensions.DateConstants
 import dev.storozhenko.familybot.common.extensions.map
 import dev.storozhenko.familybot.common.extensions.toChat
@@ -12,6 +8,10 @@ import dev.storozhenko.familybot.common.extensions.toUser
 import dev.storozhenko.familybot.models.telegram.Chat
 import dev.storozhenko.familybot.models.telegram.Pidor
 import dev.storozhenko.familybot.models.telegram.User
+import io.micrometer.core.annotation.Timed
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.ResultSetExtractor
+import org.springframework.stereotype.Component
 import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.Instant
@@ -141,7 +141,9 @@ class CommonRepository(private val template: JdbcTemplate) {
     fun findUsersByName(namePart: String): List<User> {
         return template.query(
             "SELECT * FROM users INNER JOIN users2chats u2c ON users.id = u2c.user_id WHERE LOWER(name) LIKE LOWER(?) OR LOWER(username) LIKE LOWER(?)",
-            { rs, _ -> rs.toUser() }, "%$namePart%", "%$namePart%"
+            { rs, _ -> rs.toUser() },
+            "%$namePart%",
+            "%$namePart%"
         )
     }
 
@@ -149,7 +151,8 @@ class CommonRepository(private val template: JdbcTemplate) {
     fun getChatsByUser(user: User): List<Chat> {
         return template.query(
             "SELECT * FROM chats INNER JOIN users2chats u2c ON chats.id = u2c.chat_id WHERE u2c.user_id = ? ",
-            { rs, _ -> rs.toChat() }, user.id
+            { rs, _ -> rs.toChat() },
+            user.id
         )
     }
 }

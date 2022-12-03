@@ -1,12 +1,12 @@
 package dev.storozhenko.familybot.executors.pm
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.executors.command.HelpCommandExecutor
 import dev.storozhenko.familybot.models.dictionary.Phrase
 import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.models.router.Priority
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class PrivateMessageHelpExecutor(

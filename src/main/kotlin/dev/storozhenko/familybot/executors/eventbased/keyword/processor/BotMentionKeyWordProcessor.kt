@@ -1,8 +1,5 @@
 package dev.storozhenko.familybot.executors.eventbased.keyword.processor
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.randomBoolean
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.executors.eventbased.keyword.KeyWordProcessor
@@ -12,6 +9,9 @@ import dev.storozhenko.familybot.services.settings.FuckOffOverride
 import dev.storozhenko.familybot.services.settings.FuckOffTolerance
 import dev.storozhenko.familybot.services.talking.TalkingService
 import dev.storozhenko.familybot.telegram.BotConfig
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.objects.Message
+import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Duration
 
 @Component

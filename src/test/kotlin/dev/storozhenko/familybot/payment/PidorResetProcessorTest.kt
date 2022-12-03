@@ -1,7 +1,5 @@
 package dev.storozhenko.familybot.payment
 
-import org.junit.jupiter.api.Assertions
-import org.springframework.beans.factory.annotation.Autowired
 import dev.storozhenko.familybot.common.extensions.toUser
 import dev.storozhenko.familybot.infrastructure.createSimpleUpdate
 import dev.storozhenko.familybot.infrastructure.payload
@@ -12,6 +10,8 @@ import dev.storozhenko.familybot.models.telegram.Pidor
 import dev.storozhenko.familybot.repos.CommonRepository
 import dev.storozhenko.familybot.services.payment.processors.ResetPidorPaymentProcessor
 import dev.storozhenko.familybot.services.settings.PidorTolerance
+import org.junit.jupiter.api.Assertions
+import org.springframework.beans.factory.annotation.Autowired
 import java.time.Instant
 
 class PidorResetProcessorTest : PaymentProcessorTest() {

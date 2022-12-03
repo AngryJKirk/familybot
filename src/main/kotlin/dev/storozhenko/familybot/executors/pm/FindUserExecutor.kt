@@ -1,7 +1,5 @@
 package dev.storozhenko.familybot.executors.pm
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.getMessageTokens
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.models.router.ExecutorContext
@@ -9,6 +7,8 @@ import dev.storozhenko.familybot.models.telegram.Chat
 import dev.storozhenko.familybot.models.telegram.User
 import dev.storozhenko.familybot.repos.CommonRepository
 import dev.storozhenko.familybot.telegram.BotConfig
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class FindUserExecutor(
@@ -36,7 +36,6 @@ class FindUserExecutor(
     }
 
     private fun format(userToChats: List<Pair<User, List<Chat>>>): String {
-
         return "Search user result:\n" +
             userToChats
                 .joinToString(separator = delimiter) { (user, chats) ->

@@ -1,5 +1,11 @@
 package dev.storozhenko.familybot.common.extensions
 
+import dev.storozhenko.familybot.getLogger
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.telegram.stickers.Sticker
+import dev.storozhenko.familybot.models.telegram.stickers.StickerPack
+import dev.storozhenko.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.telegram.FamilyBot
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -21,12 +27,6 @@ import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberMember
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberOwner
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberRestricted
 import org.telegram.telegrambots.meta.bots.AbsSender
-import dev.storozhenko.familybot.getLogger
-import dev.storozhenko.familybot.models.router.ExecutorContext
-import dev.storozhenko.familybot.models.telegram.stickers.Sticker
-import dev.storozhenko.familybot.models.telegram.stickers.StickerPack
-import dev.storozhenko.familybot.telegram.BotConfig
-import dev.storozhenko.familybot.telegram.FamilyBot
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 
 object SenderLogger {
@@ -194,7 +194,6 @@ private suspend fun sendStickerInternal(
     stickerPack: StickerPack,
     stickerSelector: List<TelegramSticker>.() -> TelegramSticker?
 ): Message {
-
     val stickerId = coroutineScope {
         async {
             stickerSelector(sender.execute(GetStickerSet(stickerPack.packName)).stickers)

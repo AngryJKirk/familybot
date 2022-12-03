@@ -1,8 +1,8 @@
 package dev.storozhenko.familybot.common.extensions
 
+import dev.storozhenko.familybot.telegram.FamilyBot
 import org.tomlj.Toml
 import org.tomlj.TomlParseResult
-import dev.storozhenko.familybot.telegram.FamilyBot
 import java.util.concurrent.ThreadLocalRandom
 
 fun randomInt(from: Int, to: Int) = ThreadLocalRandom.current().nextInt(from, to)

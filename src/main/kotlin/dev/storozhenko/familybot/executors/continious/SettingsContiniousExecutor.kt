@@ -1,10 +1,5 @@
 package dev.storozhenko.familybot.executors.continious
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.isFromAdmin
 import dev.storozhenko.familybot.common.extensions.toEmoji
 import dev.storozhenko.familybot.getLogger
@@ -14,6 +9,11 @@ import dev.storozhenko.familybot.models.router.FunctionId
 import dev.storozhenko.familybot.models.telegram.Command
 import dev.storozhenko.familybot.repos.FunctionsConfigureRepository
 import dev.storozhenko.familybot.telegram.BotConfig
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
+import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class SettingsContiniousExecutor(

@@ -1,10 +1,10 @@
 package dev.storozhenko.familybot.executors.eventbased.keyword.processor
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.executors.eventbased.keyword.KeyWordProcessor
 import dev.storozhenko.familybot.models.router.ExecutorContext
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class SlavaUkraineKeyWordProcessor : KeyWordProcessor {

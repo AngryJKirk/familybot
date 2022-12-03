@@ -1,17 +1,16 @@
 package dev.storozhenko.familybot.common
 
-import io.micrometer.core.instrument.MeterRegistry
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.executors.Executor
 import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.models.router.Priority
 import dev.storozhenko.familybot.telegram.FamilyBot
+import io.micrometer.core.instrument.MeterRegistry
+import org.telegram.telegrambots.meta.bots.AbsSender
 
 fun Executor.meteredExecute(
     context: ExecutorContext,
     meterRegistry: MeterRegistry
 ): suspend (AbsSender) -> Unit {
-
     return meterRegistry
         .timer("executors.${this::class.simpleName}.execute")
         .recordCallable {

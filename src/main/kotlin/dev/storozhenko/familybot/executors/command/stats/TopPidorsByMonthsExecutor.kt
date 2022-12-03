@@ -1,7 +1,5 @@
 package dev.storozhenko.familybot.executors.command.stats
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.capitalized
 import dev.storozhenko.familybot.common.extensions.dropLastDelimiter
@@ -20,6 +18,8 @@ import dev.storozhenko.familybot.models.telegram.Pidor
 import dev.storozhenko.familybot.models.telegram.User
 import dev.storozhenko.familybot.repos.CommonRepository
 import dev.storozhenko.familybot.telegram.FamilyBot
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -43,7 +43,6 @@ class TopPidorsByMonthsExecutor(
     }
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-
         val result = commonRepository
             .getPidorsByChat(context.chat)
             .filter { it.date.isBefore(startOfCurrentMonth()) }
@@ -70,7 +69,8 @@ class TopPidorsByMonthsExecutor(
         val userName = it.value.user.name.dropLastDelimiter()
         val position = it.value.position
         val leaderboardPhrase = getLeaderboardPhrase(
-            Pluralization.getPlur(it.value.position), context
+            Pluralization.getPlur(it.value.position),
+            context
         )
         "$month, $year:\n".italic() + "$userName, $position $leaderboardPhrase"
     }

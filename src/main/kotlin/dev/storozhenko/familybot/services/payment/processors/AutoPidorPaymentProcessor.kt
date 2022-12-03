@@ -1,7 +1,5 @@
 package dev.storozhenko.familybot.services.payment.processors
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import dev.storozhenko.familybot.models.dictionary.Phrase
 import dev.storozhenko.familybot.models.shop.PreCheckOutResponse
 import dev.storozhenko.familybot.models.shop.ShopItem
@@ -11,6 +9,8 @@ import dev.storozhenko.familybot.services.payment.PaymentProcessor
 import dev.storozhenko.familybot.services.settings.AutoPidorTimesLeft
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.talking.Dictionary
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 
 @Component
 class AutoPidorPaymentProcessor(

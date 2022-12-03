@@ -1,7 +1,5 @@
 package dev.storozhenko.familybot.models.router
 
-import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.api.objects.Update
 import dev.storozhenko.familybot.models.dictionary.Phrase
 import dev.storozhenko.familybot.models.telegram.Chat
 import dev.storozhenko.familybot.models.telegram.Command
@@ -10,6 +8,8 @@ import dev.storozhenko.familybot.services.settings.ChatEasyKey
 import dev.storozhenko.familybot.services.settings.UserAndChatEasyKey
 import dev.storozhenko.familybot.services.settings.UserEasyKey
 import dev.storozhenko.familybot.services.talking.Dictionary
+import org.telegram.telegrambots.meta.api.objects.Message
+import org.telegram.telegrambots.meta.api.objects.Update
 
 class ExecutorContext(
     val update: Update,

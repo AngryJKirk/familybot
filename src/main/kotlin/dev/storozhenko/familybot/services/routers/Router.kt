@@ -1,16 +1,5 @@
 package dev.storozhenko.familybot.services.routers
 
-import io.micrometer.core.instrument.MeterRegistry
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.api.objects.Update
-import org.telegram.telegrambots.meta.api.objects.User
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.context
 import dev.storozhenko.familybot.common.extensions.key
 import dev.storozhenko.familybot.common.extensions.prettyFormat
@@ -42,6 +31,17 @@ import dev.storozhenko.familybot.services.settings.FirstTimeInChat
 import dev.storozhenko.familybot.services.settings.MessageCounter
 import dev.storozhenko.familybot.services.talking.Dictionary
 import dev.storozhenko.familybot.telegram.BotConfig
+import io.micrometer.core.instrument.MeterRegistry
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.objects.Message
+import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.api.objects.User
+import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -68,7 +68,6 @@ class Router(
     }
 
     suspend fun processUpdate(update: Update): suspend (AbsSender) -> Unit {
-
         val message = update.message
             ?: update.editedMessage
             ?: update.callbackQuery.message

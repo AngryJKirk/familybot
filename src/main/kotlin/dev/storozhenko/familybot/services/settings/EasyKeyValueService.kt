@@ -1,8 +1,8 @@
 package dev.storozhenko.familybot.services.settings
 
+import dev.storozhenko.familybot.telegram.FamilyBot
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Component
-import dev.storozhenko.familybot.telegram.FamilyBot
 import java.time.Duration
 
 @Component

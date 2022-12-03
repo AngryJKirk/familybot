@@ -1,5 +1,11 @@
 package dev.storozhenko.familybot.telegram
 
+import dev.storozhenko.familybot.common.extensions.toChat
+import dev.storozhenko.familybot.common.extensions.toJson
+import dev.storozhenko.familybot.common.extensions.toUser
+import dev.storozhenko.familybot.services.routers.PaymentRouter
+import dev.storozhenko.familybot.services.routers.PollRouter
+import dev.storozhenko.familybot.services.routers.Router
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -11,12 +17,6 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException
-import dev.storozhenko.familybot.common.extensions.toChat
-import dev.storozhenko.familybot.common.extensions.toJson
-import dev.storozhenko.familybot.common.extensions.toUser
-import dev.storozhenko.familybot.services.routers.PaymentRouter
-import dev.storozhenko.familybot.services.routers.PollRouter
-import dev.storozhenko.familybot.services.routers.Router
 
 @Component
 class FamilyBot(
@@ -35,7 +35,6 @@ class FamilyBot(
     }
 
     override fun onUpdateReceived(tgUpdate: Update?) {
-
         val update = tgUpdate ?: throw InternalException("Update should not be null")
         if (update.hasPollAnswer()) {
             routerScope.launch { proceedPollAnswer(update) }

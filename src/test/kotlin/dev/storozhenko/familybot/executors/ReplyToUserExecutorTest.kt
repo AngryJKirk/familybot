@@ -1,12 +1,5 @@
 package dev.storozhenko.familybot.executors
 
-import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Assertions
-import org.mockito.kotlin.argumentCaptor
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
-import org.springframework.beans.factory.annotation.Autowired
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import dev.storozhenko.familybot.executors.eventbased.keyword.KeyWordExecutor
 import dev.storozhenko.familybot.infrastructure.createSimpleContext
 import dev.storozhenko.familybot.infrastructure.createSimpleMessage
@@ -16,6 +9,13 @@ import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.models.router.Priority
 import dev.storozhenko.familybot.suits.ExecutorTest
 import dev.storozhenko.familybot.telegram.BotConfig
+import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.Assertions
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.springframework.beans.factory.annotation.Autowired
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 

@@ -1,5 +1,11 @@
 package dev.storozhenko.familybot.payment
 
+import dev.storozhenko.familybot.infrastructure.payload
+import dev.storozhenko.familybot.models.dictionary.Phrase
+import dev.storozhenko.familybot.models.shop.PreCheckOutResponse
+import dev.storozhenko.familybot.models.shop.ShopItem
+import dev.storozhenko.familybot.services.payment.processors.AutoPidorPaymentProcessor
+import dev.storozhenko.familybot.services.settings.AutoPidorTimesLeft
 import org.junit.jupiter.api.Assertions
 import org.mockito.ArgumentCaptor
 import org.mockito.kotlin.mock
@@ -7,12 +13,6 @@ import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.bots.AbsSender
-import dev.storozhenko.familybot.infrastructure.payload
-import dev.storozhenko.familybot.models.dictionary.Phrase
-import dev.storozhenko.familybot.models.shop.PreCheckOutResponse
-import dev.storozhenko.familybot.models.shop.ShopItem
-import dev.storozhenko.familybot.services.payment.processors.AutoPidorPaymentProcessor
-import dev.storozhenko.familybot.services.settings.AutoPidorTimesLeft
 
 class PidorAutoSelectPaymentProcessorTest : PaymentProcessorTest() {
 

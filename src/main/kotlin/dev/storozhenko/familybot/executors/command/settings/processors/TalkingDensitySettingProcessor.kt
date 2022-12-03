@@ -1,13 +1,13 @@
 package dev.storozhenko.familybot.executors.command.settings.processors
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.getMessageTokens
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.models.dictionary.Phrase
 import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.settings.TalkingDensity
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class TalkingDensitySettingProcessor(
@@ -21,7 +21,6 @@ class TalkingDensitySettingProcessor(
     }
 
     override fun process(context: ExecutorContext): suspend (AbsSender) -> Unit {
-
         val value = context.update.getMessageTokens()[2]
         val amountOfDensity = value.toLongOrNull() ?: return {
             it.send(

@@ -1,12 +1,5 @@
 package dev.storozhenko.familybot.executors.continious
 
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.randomInt
 import dev.storozhenko.familybot.executors.command.nonpublic.ROULETTE_MESSAGE
 import dev.storozhenko.familybot.models.router.ExecutorContext
@@ -15,6 +8,13 @@ import dev.storozhenko.familybot.models.telegram.Pidor
 import dev.storozhenko.familybot.repos.CommonRepository
 import dev.storozhenko.familybot.services.pidor.PidorCompetitionService
 import dev.storozhenko.familybot.telegram.BotConfig
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Instant
 
 @Component

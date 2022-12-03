@@ -1,7 +1,5 @@
 package dev.storozhenko.familybot.executors.command.settings
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.getMessageTokens
 import dev.storozhenko.familybot.common.extensions.isFromAdmin
 import dev.storozhenko.familybot.common.extensions.send
@@ -11,6 +9,8 @@ import dev.storozhenko.familybot.getLogger
 import dev.storozhenko.familybot.models.dictionary.Phrase
 import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.models.telegram.Command
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class AdvancedSettingsExecutor(
@@ -21,7 +21,6 @@ class AdvancedSettingsExecutor(
     private val log = getLogger()
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-
         val messageTokens = context.update.getMessageTokens()
         if (messageTokens.size == 1) {
             return {
@@ -35,11 +34,11 @@ class AdvancedSettingsExecutor(
         return {
             if (!it.isFromAdmin(context)) {
                 sendErrorMessage(
-                    context, context.phrase(Phrase.ADVANCED_SETTINGS_ADMIN_ONLY)
+                    context,
+                    context.phrase(Phrase.ADVANCED_SETTINGS_ADMIN_ONLY)
                 ).invoke(it)
             } else {
                 runCatching {
-
                     val processor = processors
                         .find { processor -> processor.canProcess(context) }
                     return@runCatching processor

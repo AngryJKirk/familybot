@@ -1,8 +1,5 @@
 package dev.storozhenko.familybot.services.pidor
 
-import kotlinx.coroutines.runBlocking
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.sendContextFree
 import dev.storozhenko.familybot.executors.command.PidorExecutor
 import dev.storozhenko.familybot.getLogger
@@ -15,6 +12,9 @@ import dev.storozhenko.familybot.services.settings.ChatEasyKey
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.talking.Dictionary
 import dev.storozhenko.familybot.telegram.BotConfig
+import kotlinx.coroutines.runBlocking
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class PidorAutoSelectService(

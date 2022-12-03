@@ -1,12 +1,12 @@
 package dev.storozhenko.familybot.suits
 
+import dev.storozhenko.familybot.telegram.BotStarter
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.images.builder.ImageFromDockerfile
-import dev.storozhenko.familybot.telegram.BotStarter
 import java.nio.file.Paths
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future

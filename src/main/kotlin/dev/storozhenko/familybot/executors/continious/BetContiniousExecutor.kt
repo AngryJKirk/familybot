@@ -1,11 +1,5 @@
 package dev.storozhenko.familybot.executors.continious
 
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.send.SendDice
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.common.extensions.untilNextMonth
 import dev.storozhenko.familybot.models.dictionary.Phrase
@@ -20,6 +14,12 @@ import dev.storozhenko.familybot.services.settings.BetTolerance
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.settings.UserAndChatEasyKey
 import dev.storozhenko.familybot.telegram.BotConfig
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.methods.send.SendDice
+import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
@@ -46,7 +46,6 @@ class BetContiniousExecutor(
     }
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-
         val user = context.user
         val chatId = context.message.chatId
         val key = context.userAndChatKey

@@ -1,9 +1,9 @@
 package dev.storozhenko.familybot.services.pidor
 
-import org.springframework.scheduling.annotation.Scheduled
-import org.springframework.stereotype.Component
 import dev.storozhenko.familybot.getLogger
 import dev.storozhenko.familybot.telegram.FamilyBot
+import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.stereotype.Component
 
 @Component
 class PidorAutoSelectScheduler(

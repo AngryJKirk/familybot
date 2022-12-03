@@ -1,11 +1,11 @@
 package dev.storozhenko.familybot.services.payment
 
-import org.springframework.stereotype.Component
 import dev.storozhenko.familybot.getLogger
 import dev.storozhenko.familybot.models.shop.PreCheckOutResponse
 import dev.storozhenko.familybot.models.shop.ShopPayload
 import dev.storozhenko.familybot.models.shop.SuccessPaymentResponse
 import dev.storozhenko.familybot.telegram.FamilyBot
+import org.springframework.stereotype.Component
 
 @Component
 class PaymentService(

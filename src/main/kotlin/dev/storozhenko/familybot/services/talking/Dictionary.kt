@@ -1,11 +1,11 @@
 package dev.storozhenko.familybot.services.talking
 
-import org.springframework.stereotype.Component
 import dev.storozhenko.familybot.models.dictionary.Phrase
 import dev.storozhenko.familybot.models.dictionary.PhraseTheme
 import dev.storozhenko.familybot.services.settings.ChatEasyKey
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.settings.UkrainianLanguage
+import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.Month
 

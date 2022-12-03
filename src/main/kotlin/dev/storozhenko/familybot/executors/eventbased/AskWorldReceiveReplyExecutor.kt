@@ -1,5 +1,21 @@
 package dev.storozhenko.familybot.executors.eventbased
 
+import dev.storozhenko.familybot.common.extensions.boldNullable
+import dev.storozhenko.familybot.common.extensions.italic
+import dev.storozhenko.familybot.common.extensions.send
+import dev.storozhenko.familybot.executors.Configurable
+import dev.storozhenko.familybot.executors.Executor
+import dev.storozhenko.familybot.models.askworld.AskWorldReply
+import dev.storozhenko.familybot.models.dictionary.Phrase
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.router.FunctionId
+import dev.storozhenko.familybot.models.router.Priority
+import dev.storozhenko.familybot.models.telegram.MessageContentType
+import dev.storozhenko.familybot.repos.AskWorldRepository
+import dev.storozhenko.familybot.services.settings.ChatEasyKey
+import dev.storozhenko.familybot.services.talking.Dictionary
+import dev.storozhenko.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.telegram.FamilyBot
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
@@ -18,22 +34,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendVoice
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.bots.AbsSender
-import dev.storozhenko.familybot.common.extensions.boldNullable
-import dev.storozhenko.familybot.common.extensions.italic
-import dev.storozhenko.familybot.common.extensions.send
-import dev.storozhenko.familybot.executors.Configurable
-import dev.storozhenko.familybot.executors.Executor
-import dev.storozhenko.familybot.models.askworld.AskWorldReply
-import dev.storozhenko.familybot.models.dictionary.Phrase
-import dev.storozhenko.familybot.models.router.ExecutorContext
-import dev.storozhenko.familybot.models.router.FunctionId
-import dev.storozhenko.familybot.models.router.Priority
-import dev.storozhenko.familybot.models.telegram.MessageContentType
-import dev.storozhenko.familybot.repos.AskWorldRepository
-import dev.storozhenko.familybot.services.settings.ChatEasyKey
-import dev.storozhenko.familybot.services.talking.Dictionary
-import dev.storozhenko.familybot.telegram.BotConfig
-import dev.storozhenko.familybot.telegram.FamilyBot
 import java.time.Instant
 
 @Component
@@ -74,7 +74,6 @@ class AskWorldReceiveReplyExecutor(
     }
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-
         val message = context.message
         val reply = message.text ?: "MEDIA: $message"
         val chat = context.chat
@@ -178,7 +177,6 @@ class AskWorldReceiveReplyExecutor(
         chatIdToReply: String,
         message: Message
     ): SendVideo {
-
         return SendVideo(
             chatIdToReply,
             InputFile(message.video.fileId)

@@ -1,8 +1,5 @@
 package dev.storozhenko.familybot.services.pidor
 
-import kotlinx.coroutines.delay
-import org.springframework.stereotype.Service
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.sendContextFree
 import dev.storozhenko.familybot.common.extensions.startOfCurrentMonth
@@ -15,6 +12,9 @@ import dev.storozhenko.familybot.services.settings.ChatEasyKey
 import dev.storozhenko.familybot.services.talking.Dictionary
 import dev.storozhenko.familybot.telegram.BotConfig
 import dev.storozhenko.familybot.telegram.FamilyBot
+import kotlinx.coroutines.delay
+import org.springframework.stereotype.Service
+import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Instant
 import java.time.LocalDate
 
@@ -26,7 +26,6 @@ class PidorCompetitionService(
 ) {
 
     fun pidorCompetition(chat: Chat, chatEasyKey: ChatEasyKey): suspend (AbsSender) -> Unit {
-
         if (isEndOfMonth()) {
             val thisMonthPidors = getPidorsOfThisMonth(chat)
             if (thisMonthPidors.size < 2) {

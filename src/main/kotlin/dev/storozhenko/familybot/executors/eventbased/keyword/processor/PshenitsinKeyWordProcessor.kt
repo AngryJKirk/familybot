@@ -1,7 +1,5 @@
 package dev.storozhenko.familybot.executors.eventbased.keyword.processor
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.executors.eventbased.keyword.KeyWordProcessor
 import dev.storozhenko.familybot.models.router.ExecutorContext
@@ -9,6 +7,8 @@ import dev.storozhenko.familybot.services.settings.ChatEasyKey
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.settings.PshenitsinTolerance
 import dev.storozhenko.familybot.services.talking.TalkingService
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Duration
 
 @Component

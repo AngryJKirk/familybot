@@ -1,7 +1,5 @@
 package dev.storozhenko.familybot.executors.command.nonpublic
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.executors.command.CommandExecutor
 import dev.storozhenko.familybot.getLogger
@@ -10,6 +8,8 @@ import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.models.telegram.Command
 import dev.storozhenko.familybot.repos.AskWorldRepository
 import dev.storozhenko.familybot.services.misc.BanService
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -48,7 +48,6 @@ class BanAskWorldExecutor(
     }
 
     private fun ban(context: ExecutorContext, question: AskWorldQuestion): suspend (AbsSender) -> Unit {
-
         val tokens = context.update.message.text.split(" ")
         val banReason = tokens[1]
         val isChat = tokens.getOrNull(2) == "chat"

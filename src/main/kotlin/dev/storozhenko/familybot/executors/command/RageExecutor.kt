@@ -1,7 +1,5 @@
 package dev.storozhenko.familybot.executors.command
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.common.extensions.untilNextDay
 import dev.storozhenko.familybot.executors.Configurable
@@ -14,6 +12,8 @@ import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.settings.FirstTimeInChat
 import dev.storozhenko.familybot.services.settings.RageMode
 import dev.storozhenko.familybot.services.settings.RageTolerance
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Duration
 
 @Component

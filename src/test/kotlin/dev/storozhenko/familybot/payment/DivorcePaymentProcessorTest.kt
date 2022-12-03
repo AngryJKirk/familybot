@@ -1,7 +1,5 @@
 package dev.storozhenko.familybot.payment
 
-import org.junit.jupiter.api.Assertions
-import org.springframework.beans.factory.annotation.Autowired
 import dev.storozhenko.familybot.common.extensions.toChat
 import dev.storozhenko.familybot.common.extensions.toUser
 import dev.storozhenko.familybot.infrastructure.createSimpleUpdate
@@ -13,6 +11,8 @@ import dev.storozhenko.familybot.models.shop.ShopItem
 import dev.storozhenko.familybot.models.shop.ShopPayload
 import dev.storozhenko.familybot.repos.MarriagesRepository
 import dev.storozhenko.familybot.services.payment.processors.DivorcePaymentProcessor
+import org.junit.jupiter.api.Assertions
+import org.springframework.beans.factory.annotation.Autowired
 
 class DivorcePaymentProcessorTest : PaymentProcessorTest() {
 

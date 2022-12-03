@@ -3,7 +3,6 @@ package dev.storozhenko.familybot.telegram
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.bind.ConstructorBinding
 
-
 @ConfigurationProperties("settings", ignoreInvalidFields = false)
 data class BotConfigInjector @ConstructorBinding constructor(
     val botToken: String,

@@ -1,5 +1,11 @@
 package dev.storozhenko.familybot.executors
 
+import dev.storozhenko.familybot.executors.eventbased.keyword.KeyWordExecutor
+import dev.storozhenko.familybot.infrastructure.createSimpleContext
+import dev.storozhenko.familybot.infrastructure.singleStickerContext
+import dev.storozhenko.familybot.models.router.Priority
+import dev.storozhenko.familybot.models.telegram.stickers.Sticker
+import dev.storozhenko.familybot.suits.ExecutorTest
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.extension.ExtendWith
@@ -9,12 +15,6 @@ import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker
-import dev.storozhenko.familybot.executors.eventbased.keyword.KeyWordExecutor
-import dev.storozhenko.familybot.infrastructure.createSimpleContext
-import dev.storozhenko.familybot.infrastructure.singleStickerContext
-import dev.storozhenko.familybot.models.router.Priority
-import dev.storozhenko.familybot.models.telegram.stickers.Sticker
-import dev.storozhenko.familybot.suits.ExecutorTest
 
 @ExtendWith(SpringExtension::class)
 class KeyWordExecutorTest : ExecutorTest() {

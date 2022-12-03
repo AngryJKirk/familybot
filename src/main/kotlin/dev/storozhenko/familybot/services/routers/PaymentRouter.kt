@@ -1,10 +1,5 @@
 package dev.storozhenko.familybot.services.routers
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.api.objects.Update
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.from
 import dev.storozhenko.familybot.common.extensions.key
 import dev.storozhenko.familybot.common.extensions.parseJson
@@ -20,6 +15,11 @@ import dev.storozhenko.familybot.services.payment.PaymentService
 import dev.storozhenko.familybot.services.settings.ChatEasyKey
 import dev.storozhenko.familybot.services.talking.Dictionary
 import dev.storozhenko.familybot.telegram.BotConfig
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class PaymentRouter(
@@ -66,7 +66,6 @@ class PaymentRouter(
     }
 
     fun proceedSuccessfulPayment(update: Update): suspend (AbsSender) -> Unit {
-
         val shopPayload = getPayload(update.message.successfulPayment.invoicePayload)
         return { sender ->
             runCatching { paymentService.processSuccessfulPayment(shopPayload) }

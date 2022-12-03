@@ -1,6 +1,5 @@
 package dev.storozhenko.familybot.services.payment.processors
 
-import org.springframework.stereotype.Component
 import dev.storozhenko.familybot.getLogger
 import dev.storozhenko.familybot.models.dictionary.Phrase
 import dev.storozhenko.familybot.models.shop.PreCheckOutResponse
@@ -11,6 +10,7 @@ import dev.storozhenko.familybot.services.payment.PaymentProcessor
 import dev.storozhenko.familybot.services.settings.AskWorldChatUsages
 import dev.storozhenko.familybot.services.settings.AskWorldUserUsages
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
+import org.springframework.stereotype.Component
 
 @Component
 class AskWorldLimitPaymentProcessor(

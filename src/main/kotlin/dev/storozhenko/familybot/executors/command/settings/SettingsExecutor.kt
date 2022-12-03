@@ -1,8 +1,5 @@
 package dev.storozhenko.familybot.executors.command.settings
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.executors.command.CommandExecutor
 import dev.storozhenko.familybot.models.dictionary.Phrase
@@ -11,6 +8,9 @@ import dev.storozhenko.familybot.models.router.FunctionId
 import dev.storozhenko.familybot.models.telegram.Chat
 import dev.storozhenko.familybot.models.telegram.Command
 import dev.storozhenko.familybot.repos.FunctionsConfigureRepository
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class SettingsExecutor(

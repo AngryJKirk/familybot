@@ -1,7 +1,5 @@
 package dev.storozhenko.familybot.executors.command.stats
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.formatTopList
 import dev.storozhenko.familybot.common.extensions.send
@@ -11,6 +9,8 @@ import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.models.telegram.Command
 import dev.storozhenko.familybot.models.telegram.CommandByUser
 import dev.storozhenko.familybot.repos.CommandHistoryRepository
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class CommandStatExecutor(
@@ -22,7 +22,6 @@ class CommandStatExecutor(
     }
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-
         val all = repositoryCommand.getAll(context.chat).groupBy(CommandByUser::command)
 
         val topList = all

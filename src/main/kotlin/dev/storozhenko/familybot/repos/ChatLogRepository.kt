@@ -1,12 +1,12 @@
 package dev.storozhenko.familybot.repos
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import dev.storozhenko.familybot.common.extensions.randomLong
+import dev.storozhenko.familybot.models.telegram.User
 import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Component
-import dev.storozhenko.familybot.common.extensions.randomLong
-import dev.storozhenko.familybot.models.telegram.User
 import java.time.Duration
 
 @Component

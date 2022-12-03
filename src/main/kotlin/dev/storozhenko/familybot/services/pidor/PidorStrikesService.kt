@@ -1,7 +1,5 @@
 package dev.storozhenko.familybot.services.pidor
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.sendContextFree
 import dev.storozhenko.familybot.models.dictionary.Phrase
@@ -11,6 +9,8 @@ import dev.storozhenko.familybot.services.settings.ChatEasyKey
 import dev.storozhenko.familybot.services.talking.Dictionary
 import dev.storozhenko.familybot.telegram.BotConfig
 import dev.storozhenko.familybot.telegram.FamilyBot
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.bots.AbsSender
 import java.lang.Integer.max
 
 @Component

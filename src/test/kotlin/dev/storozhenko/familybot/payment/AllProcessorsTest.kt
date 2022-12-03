@@ -1,11 +1,11 @@
 package dev.storozhenko.familybot.payment
 
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import dev.storozhenko.familybot.models.shop.ShopItem
 import dev.storozhenko.familybot.services.payment.PaymentProcessor
 import dev.storozhenko.familybot.suits.FamilybotApplicationTest
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 
 class AllProcessorsTest : FamilybotApplicationTest() {
 

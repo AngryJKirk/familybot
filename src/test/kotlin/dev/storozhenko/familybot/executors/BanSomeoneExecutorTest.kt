@@ -1,17 +1,5 @@
 package dev.storozhenko.familybot.executors
 
-import kotlinx.coroutines.runBlocking
-import org.junit.Ignore
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.MethodSource
-import org.mockito.kotlin.any
-import org.mockito.kotlin.clearInvocations
-import org.mockito.kotlin.verify
-import org.springframework.beans.factory.annotation.Autowired
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import dev.storozhenko.familybot.common.extensions.key
 import dev.storozhenko.familybot.common.extensions.toChat
 import dev.storozhenko.familybot.common.extensions.toUser
@@ -25,6 +13,18 @@ import dev.storozhenko.familybot.services.misc.BanService
 import dev.storozhenko.familybot.services.settings.EasyKey
 import dev.storozhenko.familybot.suits.ExecutorTest
 import dev.storozhenko.familybot.telegram.BotConfig
+import kotlinx.coroutines.runBlocking
+import org.junit.Ignore
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
+import org.mockito.kotlin.any
+import org.mockito.kotlin.clearInvocations
+import org.mockito.kotlin.verify
+import org.springframework.beans.factory.annotation.Autowired
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import java.util.stream.Stream
 
 class BanSomeoneExecutorTest : ExecutorTest() {

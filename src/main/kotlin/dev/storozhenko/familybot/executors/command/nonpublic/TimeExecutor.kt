@@ -18,7 +18,6 @@ class TimeExecutor : CommandExecutor() {
     private val timeFormatter =
         DateTimeFormatter.ofPattern("HH:mm")
 
-
     companion object {
         private val times = mapOf(
             "Время в Лондоне:    " to "Europe/London",
@@ -26,7 +25,7 @@ class TimeExecutor : CommandExecutor() {
             "Время в Ульяновске: " to "Europe/Samara",
             "Время в Ташкенте:   " to "Asia/Tashkent",
             "Время в Аргентине:  " to "America/Argentina/Buenos_Aires",
-            "Время в Малайзии:   " to "Asia/Kuala_Lumpur",
+            "Время в Малайзии:   " to "Asia/Kuala_Lumpur"
         )
             .map { (prefix, zone) -> prefix.code() to ZoneId.of(zone) }
             .toMap()
@@ -47,5 +46,4 @@ class TimeExecutor : CommandExecutor() {
     private fun getDateString(now: Instant, zone: ZoneId): String {
         return now.atZone(zone).format(timeFormatter).bold()
     }
-
 }

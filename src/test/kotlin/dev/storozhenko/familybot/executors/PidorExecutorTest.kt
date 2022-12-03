@@ -1,5 +1,9 @@
 package dev.storozhenko.familybot.executors
 
+import dev.storozhenko.familybot.executors.command.PidorExecutor
+import dev.storozhenko.familybot.infrastructure.createSimpleCommandContext
+import dev.storozhenko.familybot.repos.CommonRepository
+import dev.storozhenko.familybot.suits.CommandExecutorTest
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.mockito.ArgumentCaptor
@@ -8,10 +12,6 @@ import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import dev.storozhenko.familybot.executors.command.PidorExecutor
-import dev.storozhenko.familybot.infrastructure.createSimpleCommandContext
-import dev.storozhenko.familybot.repos.CommonRepository
-import dev.storozhenko.familybot.suits.CommandExecutorTest
 
 class PidorExecutorTest : CommandExecutorTest() {
 
@@ -41,7 +41,7 @@ class PidorExecutorTest : CommandExecutorTest() {
         Assertions.assertEquals(
             pidorsBefore.size + 1,
             pidorsAfterFirstInvoke.size,
-            "Should be exactly one more pidor after command execute",
+            "Should be exactly one more pidor after command execute"
         )
         Assertions.assertEquals(
             allPidors.size + 1,

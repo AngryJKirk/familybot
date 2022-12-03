@@ -1,9 +1,9 @@
 package dev.storozhenko.familybot.repos
 
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.stereotype.Component
 import dev.storozhenko.familybot.common.extensions.toMarriage
 import dev.storozhenko.familybot.models.Marriage
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.stereotype.Component
 import java.sql.Timestamp
 import java.time.Instant
 

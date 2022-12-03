@@ -1,10 +1,10 @@
 package dev.storozhenko.familybot.repos
 
+import dev.storozhenko.familybot.models.telegram.Chat
+import dev.storozhenko.familybot.models.telegram.User
 import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
-import dev.storozhenko.familybot.models.telegram.Chat
-import dev.storozhenko.familybot.models.telegram.User
 import java.sql.Timestamp
 import java.time.Instant
 

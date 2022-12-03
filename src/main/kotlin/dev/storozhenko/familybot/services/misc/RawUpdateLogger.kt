@@ -1,11 +1,11 @@
 package dev.storozhenko.familybot.services.misc
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.Update
 import dev.storozhenko.familybot.common.extensions.toChat
 import dev.storozhenko.familybot.common.extensions.toJson
 import dev.storozhenko.familybot.common.extensions.toUser
 import dev.storozhenko.familybot.repos.RawChatLogRepository
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.objects.Update
 import java.time.Instant
 
 @Component

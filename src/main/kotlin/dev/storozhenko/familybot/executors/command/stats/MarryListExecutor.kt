@@ -1,7 +1,5 @@
 package dev.storozhenko.familybot.executors.command.stats
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.PluralizedWordsProvider
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.pluralize
@@ -12,6 +10,8 @@ import dev.storozhenko.familybot.models.dictionary.Phrase
 import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.models.telegram.Command
 import dev.storozhenko.familybot.repos.MarriagesRepository
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Duration
 import java.time.Instant
 
@@ -64,7 +64,6 @@ class MarryListExecutor(
     override fun command() = Command.MARRY_LIST
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-
         val marriages = marriagesRepository.getAllMarriages(context.chat.id)
         if (marriages.isEmpty()) {
             return { sender -> sender.send(context, context.phrase(Phrase.MARRY_EMPTY_LIST)) }

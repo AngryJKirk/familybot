@@ -1,11 +1,5 @@
 package dev.storozhenko.familybot.repos
 
-import io.micrometer.core.annotation.Timed
-import org.springframework.dao.DataIntegrityViolationException
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.core.RowMapper
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
-import org.springframework.stereotype.Component
 import dev.storozhenko.familybot.common.extensions.getUuid
 import dev.storozhenko.familybot.common.extensions.toChat
 import dev.storozhenko.familybot.common.extensions.toUser
@@ -18,6 +12,12 @@ import dev.storozhenko.familybot.services.scenario.ScenarioPoll
 import dev.storozhenko.familybot.services.scenario.ScenarioState
 import dev.storozhenko.familybot.services.scenario.ScenarioWay
 import dev.storozhenko.familybot.telegram.FamilyBot
+import io.micrometer.core.annotation.Timed
+import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.RowMapper
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import org.springframework.stereotype.Component
 import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.Instant
@@ -245,7 +245,8 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
             INNER JOIN scenario_move sm ON scenario_states.scenario_move_id = sm.move_id
             WHERE chat_id = :chat_id
         """,
-            mapOf("chat_id" to chat.id), scenarioStateRowMapper
+            mapOf("chat_id" to chat.id),
+            scenarioStateRowMapper
         )
     }
 
@@ -257,7 +258,8 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
             INNER JOIN scenario_move sm ON m2w.move_id = sm.move_id
             WHERE sm.move_id = :move_id
         """,
-            mapOf("move_id" to moveId), scenarioWayRowMapper
+            mapOf("move_id" to moveId),
+            scenarioWayRowMapper
         )
     }
 

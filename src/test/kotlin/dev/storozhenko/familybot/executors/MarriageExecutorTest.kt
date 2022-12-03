@@ -1,11 +1,5 @@
 package dev.storozhenko.familybot.executors
 
-import kotlinx.coroutines.runBlocking
-import org.mockito.kotlin.argumentCaptor
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
-import org.springframework.beans.factory.annotation.Autowired
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import dev.storozhenko.familybot.common.extensions.key
 import dev.storozhenko.familybot.executors.command.MarriageExecutor
 import dev.storozhenko.familybot.infrastructure.createContext
@@ -19,6 +13,12 @@ import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.settings.ProposalTo
 import dev.storozhenko.familybot.services.talking.Dictionary
 import dev.storozhenko.familybot.suits.CommandExecutorTest
+import kotlinx.coroutines.runBlocking
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.springframework.beans.factory.annotation.Autowired
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull

@@ -1,10 +1,5 @@
 package dev.storozhenko.familybot.executors.command
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.send.SendSticker
-import org.telegram.telegrambots.meta.api.objects.InputFile
-import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.chatId
 import dev.storozhenko.familybot.common.extensions.key
 import dev.storozhenko.familybot.common.extensions.send
@@ -20,6 +15,11 @@ import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.settings.ProposalTo
 import dev.storozhenko.familybot.services.settings.UserAndChatEasyKey
 import dev.storozhenko.familybot.telegram.FamilyBot
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.methods.send.SendSticker
+import org.telegram.telegrambots.meta.api.objects.InputFile
+import org.telegram.telegrambots.meta.api.objects.Message
+import org.telegram.telegrambots.meta.bots.AbsSender
 import java.io.InputStream
 import java.time.Duration
 
@@ -35,7 +35,6 @@ class MarriageExecutor(
     override fun command() = Command.MARRY
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-
         if (!context.message.isReply) {
             return { sender -> sender.send(context, context.phrase(Phrase.MARRY_RULES)) }
         }
@@ -101,7 +100,7 @@ class MarriageExecutor(
 
     private fun isProposedAlready(
         proposalSource: Message,
-        proposalTarget: Message,
+        proposalTarget: Message
     ): Boolean {
         return keyValueService.get(ProposalTo, proposalTarget.key()) == proposalSource.from.id
     }

@@ -1,8 +1,8 @@
 package dev.storozhenko.familybot.models.askworld
 
+import dev.storozhenko.familybot.models.telegram.Chat
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.bots.AbsSender
-import dev.storozhenko.familybot.models.telegram.Chat
 
 sealed interface AskWorldQuestionData
 

@@ -1,11 +1,11 @@
 package dev.storozhenko.familybot.services.talking
 
-import org.springframework.stereotype.Component
-import org.tomlj.TomlTable
 import dev.storozhenko.familybot.common.extensions.readTomlFromStatic
 import dev.storozhenko.familybot.models.dictionary.Phrase
 import dev.storozhenko.familybot.models.dictionary.PhraseTheme
 import dev.storozhenko.familybot.telegram.FamilyBot
+import org.springframework.stereotype.Component
+import org.tomlj.TomlTable
 
 @Component
 class DictionaryReader {

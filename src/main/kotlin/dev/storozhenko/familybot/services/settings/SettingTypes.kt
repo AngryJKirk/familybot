@@ -33,4 +33,4 @@ object ProposalTo : LongKeyType<UserAndChatEasyKey>
 object MessageCounter : LongKeyType<UserAndChatEasyKey>
 object PickPidorAbilityCount : LongKeyType<UserEasyKey>
 object AutoPidorTimesLeft : LongKeyType<ChatEasyKey>
-object TikTokDownload: BooleanKeyType<ChatEasyKey>
+object TikTokDownload : BooleanKeyType<ChatEasyKey>

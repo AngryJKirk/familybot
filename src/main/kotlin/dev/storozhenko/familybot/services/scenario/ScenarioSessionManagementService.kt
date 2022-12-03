@@ -1,5 +1,13 @@
 package dev.storozhenko.familybot.services.scenario
 
+import dev.storozhenko.familybot.common.extensions.bold
+import dev.storozhenko.familybot.common.extensions.italic
+import dev.storozhenko.familybot.common.extensions.send
+import dev.storozhenko.familybot.common.extensions.toHourMinuteString
+import dev.storozhenko.familybot.getLogger
+import dev.storozhenko.familybot.models.dictionary.Phrase
+import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.telegram.FamilyBot
 import kotlinx.coroutines.delay
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
@@ -9,14 +17,6 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 import org.telegram.telegrambots.meta.bots.AbsSender
-import dev.storozhenko.familybot.common.extensions.bold
-import dev.storozhenko.familybot.common.extensions.italic
-import dev.storozhenko.familybot.common.extensions.send
-import dev.storozhenko.familybot.common.extensions.toHourMinuteString
-import dev.storozhenko.familybot.getLogger
-import dev.storozhenko.familybot.models.dictionary.Phrase
-import dev.storozhenko.familybot.models.router.ExecutorContext
-import dev.storozhenko.familybot.telegram.FamilyBot
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -56,7 +56,6 @@ class ScenarioSessionManagementService(
     }
 
     fun listGames(context: ExecutorContext): suspend (AbsSender) -> Unit {
-
         return {
             it.send(
                 context,

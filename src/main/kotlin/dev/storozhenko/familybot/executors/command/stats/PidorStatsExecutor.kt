@@ -1,7 +1,5 @@
 package dev.storozhenko.familybot.executors.command.stats
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.PluralizedWordsProvider
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.formatTopList
@@ -13,6 +11,8 @@ import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.models.router.FunctionId
 import dev.storozhenko.familybot.models.telegram.Command
 import dev.storozhenko.familybot.repos.CommonRepository
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class PidorStatsExecutor(

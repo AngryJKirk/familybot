@@ -1,6 +1,5 @@
 package dev.storozhenko.familybot.services.payment.processors
 
-import org.springframework.stereotype.Component
 import dev.storozhenko.familybot.common.extensions.isToday
 import dev.storozhenko.familybot.common.extensions.key
 import dev.storozhenko.familybot.common.extensions.startOfDay
@@ -15,6 +14,7 @@ import dev.storozhenko.familybot.repos.CommonRepository
 import dev.storozhenko.familybot.services.payment.PaymentProcessor
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.settings.PidorTolerance
+import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -27,7 +27,6 @@ class ResetPidorPaymentProcessor(
     override fun itemType() = ShopItem.DROP_PIDOR
 
     override fun preCheckOut(shopPayload: ShopPayload): PreCheckOutResponse {
-
         val chat = Chat(shopPayload.chatId, null)
         val isNonePidorToday = commonRepository
             .getPidorsByChat(chat)

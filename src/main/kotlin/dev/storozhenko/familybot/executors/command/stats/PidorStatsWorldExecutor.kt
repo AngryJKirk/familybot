@@ -1,7 +1,5 @@
 package dev.storozhenko.familybot.executors.command.stats
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.DateConstants
 import dev.storozhenko.familybot.common.extensions.PluralizedWordsProvider
 import dev.storozhenko.familybot.common.extensions.bold
@@ -15,6 +13,8 @@ import dev.storozhenko.familybot.models.router.FunctionId
 import dev.storozhenko.familybot.models.telegram.Command
 import dev.storozhenko.familybot.models.telegram.Pidor
 import dev.storozhenko.familybot.repos.CommonRepository
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class PidorStatsWorldExecutor(
@@ -30,7 +30,6 @@ class PidorStatsWorldExecutor(
     }
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-
         val pidorsByChat = repository.getAllPidors(
             startDate = DateConstants.theBirthDayOfFamilyBot
         )

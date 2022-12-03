@@ -1,9 +1,9 @@
 package dev.storozhenko.familybot.repos
 
-import org.springframework.stereotype.Component
-import org.tomlj.TomlTable
 import dev.storozhenko.familybot.common.extensions.readTomlFromStatic
 import dev.storozhenko.familybot.telegram.FamilyBot
+import org.springframework.stereotype.Component
+import org.tomlj.TomlTable
 
 @Component
 class QuoteRepository {

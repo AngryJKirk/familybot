@@ -1,7 +1,5 @@
 package dev.storozhenko.familybot.executors.eventbased
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import dev.storozhenko.familybot.common.extensions.randomBoolean
 import dev.storozhenko.familybot.common.extensions.randomInt
 import dev.storozhenko.familybot.common.extensions.send
@@ -14,6 +12,8 @@ import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.settings.RageMode
 import dev.storozhenko.familybot.services.settings.TalkingDensity
 import dev.storozhenko.familybot.services.talking.TalkingService
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class TalkingExecutor(
@@ -40,7 +40,6 @@ class TalkingExecutor(
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         val rageModEnabled = isRageModeEnabled(context)
         if (shouldReply(rageModEnabled, context)) {
-
             return {
                 val messageText = talkingService.getReplyToUser(context)
                     .let { message -> if (rageModEnabled) rageModeFormat(message) else message }

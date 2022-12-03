@@ -1,5 +1,9 @@
 package dev.storozhenko.familybot
 
+import dev.storozhenko.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.telegram.BotConfigInjector
+import dev.storozhenko.familybot.telegram.BotStarter
+import dev.storozhenko.familybot.telegram.FamilyBot
 import io.micrometer.core.aop.TimedAspect
 import io.micrometer.core.instrument.MeterRegistry
 import org.slf4j.Logger
@@ -11,10 +15,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.scheduling.annotation.EnableScheduling
-import dev.storozhenko.familybot.telegram.BotConfig
-import dev.storozhenko.familybot.telegram.BotConfigInjector
-import dev.storozhenko.familybot.telegram.BotStarter
-import dev.storozhenko.familybot.telegram.FamilyBot
 
 @SpringBootApplication
 @EnableScheduling
@@ -68,8 +68,8 @@ class FamilyBotApplication(
 
     private fun notEmptyCheckAllowOptional(value: () -> String?, log: String): String? {
         return value()?.takeIf(String::isNotBlank).also {
-            if(it == null){
-              logger.warn(log)
+            if (it == null) {
+                logger.warn(log)
             }
         }
     }
