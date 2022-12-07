@@ -13,7 +13,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendVideo
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.bots.AbsSender
 import java.io.File
-import java.util.UUID
+import java.util.*
 
 @Component
 class TikTokDownloadExecutor(
@@ -42,8 +42,8 @@ class TikTokDownloadExecutor(
 
     override fun canExecute(context: ExecutorContext): Boolean {
         return botConfig.ytdlLocation != null &&
-            getTikTokUrls(context).isNotEmpty() &&
-            easyKeyValueService.get(TikTokDownload, context.chatKey, false)
+                getTikTokUrls(context).isNotEmpty() &&
+                easyKeyValueService.get(TikTokDownload, context.chatKey, false)
     }
 
     override fun priority(context: ExecutorContext) = Priority.VERY_LOW
@@ -53,8 +53,9 @@ class TikTokDownloadExecutor(
             .message
             .entities
             ?.filter { it.type == "url" }
-            ?.filter { it.text?.contains("tiktok", ignoreCase = true) ?: false }
-            ?.map { it.text } ?: emptyList()
+            ?.mapNotNull { it.text }
+            ?.filter(::containsUrl)
+            ?: emptyList()
     }
 
     private fun download(url: String): File {
@@ -67,5 +68,11 @@ class TikTokDownloadExecutor(
         process.waitFor()
         log.info("Finished running yt-dlp")
         return File(filename)
+    }
+
+    private fun containsUrl(text: String): Boolean {
+        return text.contains("instagram.com/reel/", ignoreCase = true)
+                || text.contains("tiktok", ignoreCase = true)
+
     }
 }
