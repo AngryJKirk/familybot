@@ -21,9 +21,9 @@ fun String?.boldNullable(): String? {
 }
 
 fun String.bold(): String = "<b>$this</b>"
-
 fun String.italic(): String = "<i>$this</i>"
 fun String.code(): String = "<code>$this</code>"
+
 fun pluralize(count: Int, pluralizedWordsProvider: PluralizedWordsProvider) =
     pluralize(count.toLong(), pluralizedWordsProvider)
 
