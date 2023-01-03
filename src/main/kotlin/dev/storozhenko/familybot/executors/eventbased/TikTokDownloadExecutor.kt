@@ -26,7 +26,7 @@ class TikTokDownloadExecutor(
         val urls = getTikTokUrls(context)
         return { sender ->
             urls.forEach { url ->
-                sender.execute(SendChatAction(context.chat.idString, "upload_video"))
+                sender.execute(SendChatAction(context.chat.idString, "upload_video", null))
                 val downloadedFile = download(url)
                 val video = SendVideo
                     .builder()

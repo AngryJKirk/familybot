@@ -131,7 +131,7 @@ private suspend fun AbsSender.sendInternal(
             "typeDelay=$typeDelay"
     )
     if (shouldTypeBeforeSend) {
-        this.execute(SendChatAction(chatId, "typing"))
+        this.execute(SendChatAction(chatId, "typing", null))
         if (testEnvironment.not()) {
             delay(randomInt(typeDelay.first, typeDelay.second).toLong())
         }
