@@ -1,12 +1,6 @@
 package dev.storozhenko.familybot.executors.command
 
-import dev.storozhenko.familybot.common.extensions.bold
-import dev.storozhenko.familybot.common.extensions.isToday
-import dev.storozhenko.familybot.common.extensions.send
-import dev.storozhenko.familybot.common.extensions.sendContextFree
-import dev.storozhenko.familybot.common.extensions.toUser
-import dev.storozhenko.familybot.common.extensions.untilNextDay
-import dev.storozhenko.familybot.common.extensions.user
+import dev.storozhenko.familybot.common.extensions.*
 import dev.storozhenko.familybot.executors.Configurable
 import dev.storozhenko.familybot.getLogger
 import dev.storozhenko.familybot.models.dictionary.Phrase
@@ -19,10 +13,7 @@ import dev.storozhenko.familybot.models.telegram.User
 import dev.storozhenko.familybot.repos.CommonRepository
 import dev.storozhenko.familybot.services.pidor.PidorCompetitionService
 import dev.storozhenko.familybot.services.pidor.PidorStrikesService
-import dev.storozhenko.familybot.services.settings.ChatEasyKey
-import dev.storozhenko.familybot.services.settings.EasyKeyValueService
-import dev.storozhenko.familybot.services.settings.PickPidorAbilityCount
-import dev.storozhenko.familybot.services.settings.PidorTolerance
+import dev.storozhenko.familybot.services.settings.*
 import dev.storozhenko.familybot.services.talking.Dictionary
 import dev.storozhenko.familybot.telegram.BotConfig
 import kotlinx.coroutines.Deferred
@@ -82,7 +73,13 @@ class PidorExecutor(
         }
         return Pair({ sender ->
             log.info("Pidor is not found, initiating search procedure")
-            val nextPidor = getNextPidorAsync(users, sender, chat)
+            val nextPidor = if (easyKeyValueService.get(BotOwnerPidorSkip, key, false)) {
+                val filteredUsers = users.filter { botConfig.developerId != it.id.toString() }
+                getNextPidorAsync(filteredUsers, sender, chat)
+            } else {
+                getNextPidorAsync(users, sender, chat)
+            }
+
 
             listOf(
                 Phrase.PIDOR_SEARCH_START,
@@ -183,13 +180,14 @@ class PidorExecutor(
                 SendMessage(
                     chat.idString,
                     dictionary.get(Phrase.PIROR_DISCOVERED_ONE, key) + " " +
-                        formatName(pidorsByChat.first(), key)
+                            formatName(pidorsByChat.first(), key)
                 ).apply { enableHtml(true) }
             }
+
             else -> SendMessage(
                 chat.idString,
                 dictionary.get(Phrase.PIROR_DISCOVERED_MANY, key) + " " +
-                    pidorsByChat.joinToString { formatName(it, key) }
+                        pidorsByChat.joinToString { formatName(it, key) }
             ).apply { enableHtml(true) }
         }
     }

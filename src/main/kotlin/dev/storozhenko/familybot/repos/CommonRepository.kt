@@ -38,7 +38,7 @@ class CommonRepository(private val template: JdbcTemplate) {
     fun getUsers(chat: Chat, activeOnly: Boolean = false): List<User> {
         var select = "SELECT * FROM users INNER JOIN users2chats u ON users.id = u.user_id WHERE u.chat_id = ${chat.id}"
         if (activeOnly) {
-            select += "and u.active = true"
+            select += " and u.active = true"
         }
         return template.query(select) { rs, _ -> rs.toUser() }
     }
