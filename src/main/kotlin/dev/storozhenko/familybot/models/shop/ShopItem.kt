@@ -16,7 +16,7 @@ enum class ShopItem(val title: Phrase, val description: Phrase, val price: Int) 
     DROP_ASK_WORLD_LIMIT(Phrase.DROP_ASK_WORLD_LIMIT_TITLE, Phrase.DROP_ASK_WORLD_LIMIT_DESC, 200.rubles()),
     PICK_PIDOR(Phrase.PICK_PIDOR_TITLE, Phrase.PICK_PIDOR_DESC, 210.rubles()),
     AUTO_PIDOR(Phrase.AUTO_PIDOR_TITLE, Phrase.AUTO_PIDOR_DESC, 250.rubles()),
-    I_AM_RICH(Phrase.I_AM_RICH_TITLE, Phrase.I_AM_RICH_DESC, 5000.rubles());
+    I_AM_RICH(Phrase.I_AM_RICH_TITLE, Phrase.I_AM_RICH_DESC, 1000.rubles());
 
     companion object {
         fun toKeyBoard(context: ExecutorContext): InlineKeyboardMarkup {
