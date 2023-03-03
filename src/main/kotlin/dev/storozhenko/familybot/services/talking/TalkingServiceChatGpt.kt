@@ -64,7 +64,9 @@ class TalkingServiceChatGpt(
             .presencePenalty(1.0)
             .maxTokens(200)
             .build()
-        return openAI.createChatCompletion(request).choices.first().message.content
+        val message = openAI.createChatCompletion(request).choices.first().message
+        chatMessages.add(message)
+        return message.content
     }
 
     private fun createInitialMessages(): MutableList<ChatMessage> {
