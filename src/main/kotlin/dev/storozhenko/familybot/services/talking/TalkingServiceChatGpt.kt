@@ -37,7 +37,7 @@ class TalkingServiceChatGpt(botConfig: BotConfig) : TalkingService {
         chatMessages.add(ChatMessage("user", context.message.text))
         val request = ChatCompletionRequest.builder().model("gpt-3.5-turbo")
             .messages(chatMessages)
-            .temperature(1.5)
+            .temperature(1.0)
             .topP(1.0)
             .frequencyPenalty(1.0)
             .presencePenalty(1.0)
