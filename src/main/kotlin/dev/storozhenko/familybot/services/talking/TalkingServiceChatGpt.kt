@@ -59,7 +59,7 @@ class TalkingServiceChatGpt(
         chatMessages.add(
             ChatMessage(
                 "user",
-                "$text\n$suffix"
+                "$text\n$suffix\nВ ответах говори исключительно в мужском роде."
             )
         )
         val request = ChatCompletionRequest.builder().model("gpt-3.5-turbo")
