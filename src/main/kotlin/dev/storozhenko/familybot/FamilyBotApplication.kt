@@ -55,6 +55,10 @@ class FamilyBotApplication(
             notEmptyCheckAllowOptional(
                 botConfigInjector::ytdlLocation,
                 "yt-dlp is missing, downloading function won't work"
+            ),
+            notEmptyCheckAllowOptional(
+                botConfigInjector::openAiToken,
+                "OpenAI token is missing, API won't work"
             )
         )
     }

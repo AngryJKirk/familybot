@@ -9,5 +9,6 @@ data class BotConfig(
     val yandexKey: String?,
     val paymentToken: String?,
     val testEnvironment: Boolean,
-    val ytdlLocation: String?
+    val ytdlLocation: String?,
+    val openAiToken: String?
 )

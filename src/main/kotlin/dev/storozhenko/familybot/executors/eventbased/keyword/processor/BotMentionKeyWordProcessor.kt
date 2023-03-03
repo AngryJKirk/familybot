@@ -8,7 +8,9 @@ import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.settings.FuckOffOverride
 import dev.storozhenko.familybot.services.settings.FuckOffTolerance
 import dev.storozhenko.familybot.services.talking.TalkingService
+import dev.storozhenko.familybot.services.talking.TalkingServiceOld
 import dev.storozhenko.familybot.telegram.BotConfig
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -17,7 +19,7 @@ import java.time.Duration
 @Component
 class BotMentionKeyWordProcessor(
     private val botConfig: BotConfig,
-    private val talkingService: TalkingService,
+    @Qualifier("GPT") private val talkingService: TalkingService,
     private val easyKeyValueService: EasyKeyValueService
 ) : KeyWordProcessor {
 

@@ -12,5 +12,6 @@ data class BotConfigInjector @ConstructorBinding constructor(
     val botNameAliases: String?,
     val yandexKey: String?,
     val paymentToken: String?,
-    val ytdlLocation: String?
+    val ytdlLocation: String?,
+    val openAiToken: String?
 )

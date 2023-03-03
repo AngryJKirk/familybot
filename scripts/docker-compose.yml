@@ -68,6 +68,7 @@ services:
       - YANDEX_API_TOKEN
       - PAYMENT_TOKEN
       - YTDL_LOCATION
+      - OPEN_AI_TOKEN
     depends_on:
       - family-db
       - family-redis

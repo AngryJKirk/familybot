@@ -7,6 +7,7 @@ settings:
   yandex-key: ${YANDEX_API_TOKEN:}
   payment-token: ${PAYMENT_TOKEN:}
   ytdlLocation: ${YTDL_LOCATION:}
+  openAiToken: ${OPEN_AI_TOKEN:}
 spring:
   datasource:
     url: ${JDBC_URL:jdbc:postgresql://localhost:5432/family}
