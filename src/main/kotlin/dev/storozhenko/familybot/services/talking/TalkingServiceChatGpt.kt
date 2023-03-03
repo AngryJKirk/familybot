@@ -30,7 +30,7 @@ class TalkingServiceChatGpt(botConfig: BotConfig) : TalkingService {
     override suspend fun getReplyToUser(context: ExecutorContext, shouldBeQuestion: Boolean): String {
         var chatMessages =
             map.computeIfAbsent(context.chat.idString) { _ -> mutableListOf(ChatMessage("system", prefix)) }
-        if(chatMessages.size > 20){
+        if(chatMessages.size > 20 || context.message.text == "/reset"){
             chatMessages = mutableListOf(ChatMessage("system", prefix))
             map[context.chat.idString] = chatMessages
         }
