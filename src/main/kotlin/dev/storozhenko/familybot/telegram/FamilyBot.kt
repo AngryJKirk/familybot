@@ -24,15 +24,11 @@ class FamilyBot(
     val router: Router,
     val pollRouter: PollRouter,
     val paymentRouter: PaymentRouter
-) : TelegramLongPollingBot() {
+) : TelegramLongPollingBot(config.botToken) {
 
     private val log = LoggerFactory.getLogger(FamilyBot::class.java)
     private val routerScope = CoroutineScope(Dispatchers.Default)
     private val channels = HashMap<Long, Channel<Update>>()
-
-    override fun getBotToken(): String {
-        return config.botToken
-    }
 
     override fun onUpdateReceived(tgUpdate: Update?) {
         val update = tgUpdate ?: throw InternalException("Update should not be null")
