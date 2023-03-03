@@ -5,11 +5,26 @@ import com.theokanning.openai.completion.chat.ChatMessage
 import com.theokanning.openai.service.OpenAiService
 import dev.storozhenko.familybot.executors.command.nonpublic.TopHistoryExecutor
 import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.services.settings.ChatGPTStyle
+import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.telegram.BotConfig
 import org.springframework.stereotype.Component
 
 @Component("GPT")
-class TalkingServiceChatGpt(botConfig: BotConfig) : TalkingService {
+class TalkingServiceChatGpt(
+    private val easyKeyValueService: EasyKeyValueService,
+    botConfig: BotConfig
+) : TalkingService {
+    companion object {
+        val styles = mapOf(
+            "грубый" to "Отвечай грубо, матерись, но все равно старайся помочь.",
+            "милый" to "Отвечай мило, льсти, старайся помочь.",
+            "сексуальный" to "Отвечай сексуализированные ответы, веди себя как проститутка, старайся помочь",
+            "нейтральный" to "",
+            "прислуживающий" to "Пытайся угодить во всем, будь полезным, льсти и старайся помочь."
+        )
+    }
+
     private val openAI = OpenAiService(botConfig.openAiToken)
     private val prefix = "Веди себя как грубый человек." +
         "Отвечай обидные вещи. " +
@@ -40,10 +55,11 @@ class TalkingServiceChatGpt(botConfig: BotConfig) : TalkingService {
             chatMessages = createInitialMessages()
             map[context.chat.idString] = chatMessages
         }
+        val suffix = styles[easyKeyValueService.get(ChatGPTStyle, context.chatKey, "грубый")]
         chatMessages.add(
             ChatMessage(
                 "user",
-                "$text\nОтвечай грубо, ругайся матом и подшучивай. При этом все равно старайся выполнить поручение."
+                "$text\n$suffix"
             )
         )
         val request = ChatCompletionRequest.builder().model("gpt-3.5-turbo")

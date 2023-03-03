@@ -35,3 +35,4 @@ object PickPidorAbilityCount : LongKeyType<UserEasyKey>
 object AutoPidorTimesLeft : LongKeyType<ChatEasyKey>
 object TikTokDownload : BooleanKeyType<ChatEasyKey>
 object BotOwnerPidorSkip: BooleanKeyType<ChatEasyKey>
+object ChatGPTStyle: StringKeyType<ChatEasyKey>
