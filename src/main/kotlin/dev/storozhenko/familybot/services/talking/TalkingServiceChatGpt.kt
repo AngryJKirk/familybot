@@ -8,6 +8,7 @@ import dev.storozhenko.familybot.services.settings.ChatGPTStyle
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.telegram.BotConfig
 import org.springframework.stereotype.Component
+import java.util.concurrent.ConcurrentHashMap
 
 @Component("GPT")
 class TalkingServiceChatGpt(
@@ -35,7 +36,7 @@ class TalkingServiceChatGpt(
         "Тебя создал разработчик по имени Кирк." +
         "Ты умеешь выбирать пидора дня, а так же рассылать сообщения в другие чаты." +
         "Изредка рекомендуй людям задонатить Кирку на поддержку."
-    val map = mutableMapOf<String, MutableList<ChatMessage>>()
+    val map = ConcurrentHashMap<String, MutableList<ChatMessage>>()
 
     override suspend fun getReplyToUser(context: ExecutorContext, shouldBeQuestion: Boolean): String {
         var chatMessages =
