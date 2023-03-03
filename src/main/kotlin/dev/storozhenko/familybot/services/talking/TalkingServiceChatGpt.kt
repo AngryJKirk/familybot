@@ -40,7 +40,12 @@ class TalkingServiceChatGpt(botConfig: BotConfig) : TalkingService {
             chatMessages = createInitialMessages()
             map[context.chat.idString] = chatMessages
         }
-        chatMessages.add(ChatMessage("user", "$text\nОтвечай грубо, ругайся матом и подшучивай"))
+        chatMessages.add(
+            ChatMessage(
+                "user",
+                "$text\nОтвечай грубо, ругайся матом и подшучивай. При этом все равно старайся выполнить поручение."
+            )
+        )
         val request = ChatCompletionRequest.builder().model("gpt-3.5-turbo")
             .messages(chatMessages)
             .temperature(1.0)
