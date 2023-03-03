@@ -62,7 +62,7 @@ class TalkingServiceChatGpt(
             .topP(1.0)
             .frequencyPenalty(1.0)
             .presencePenalty(1.0)
-            .maxTokens(70)
+            .maxTokens(200)
             .build()
         val message = openAI.createChatCompletion(request).choices.first().message
         chatMessages.add(message)
