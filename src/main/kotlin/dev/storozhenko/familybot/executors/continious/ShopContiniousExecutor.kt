@@ -35,7 +35,7 @@ class ShopContiniousExecutor(
             ?: return {}
 
         return {
-            val additionalTax = if (context.update.from().isPremium) {
+            val additionalTax = if (context.update.from().isPremium == true) {
                 10.rubles()
             } else {
                 0
