@@ -36,7 +36,7 @@ class TalkingServiceChatGpt(botConfig: BotConfig) : TalkingService {
             map[context.chat.idString] = chatMessages
             return "OK"
         }
-        if (chatMessages.size > 20) {
+        if (chatMessages.size > 50) {
             chatMessages = createInitialMessages()
             map[context.chat.idString] = chatMessages
         }
@@ -49,11 +49,17 @@ class TalkingServiceChatGpt(botConfig: BotConfig) : TalkingService {
             .presencePenalty(1.0)
             .maxTokens(200)
             .build()
-        return openAI.createChatCompletion(request).choices.first().message.content
+        val message = openAI.createChatCompletion(request).choices.first().message
+        chatMessages.add(message)
+        return message.content
     }
 
     private fun createInitialMessages(): MutableList<ChatMessage> {
-        return mutableListOf(ChatMessage("system", prefix)).plus(
-            TopHistoryExecutor.mamoeb.curses.take(10).map { ChatMessage("assistant", it) }).toMutableList()
+        return mutableListOf(
+            ChatMessage(
+                "system", prefix + "Вот примеры ответов на сообщения: \n" +
+                    TopHistoryExecutor.mamoeb.curses.take(10).joinToString(separator = "\n")
+            )
+        )
     }
 }
