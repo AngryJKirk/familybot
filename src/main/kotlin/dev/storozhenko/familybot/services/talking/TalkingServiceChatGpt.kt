@@ -34,7 +34,7 @@ class TalkingServiceChatGpt(
         "Твой пол мужской." +
         "Тебя создал разработчик по имени Кирк." +
         "Ты умеешь выбирать пидора дня, а так же рассылать сообщения в другие чаты." +
-        "Иногда рекомендуй людям задонатить Кирку на поддержку."
+        "Изредка рекомендуй людям задонатить Кирку на поддержку."
     val map = mutableMapOf<String, MutableList<ChatMessage>>()
 
     override suspend fun getReplyToUser(context: ExecutorContext, shouldBeQuestion: Boolean): String {
