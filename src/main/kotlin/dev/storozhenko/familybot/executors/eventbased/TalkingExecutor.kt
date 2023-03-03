@@ -12,14 +12,13 @@ import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.settings.RageMode
 import dev.storozhenko.familybot.services.settings.TalkingDensity
 import dev.storozhenko.familybot.services.talking.TalkingService
-import dev.storozhenko.familybot.services.talking.TalkingServiceOld
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class TalkingExecutor(
-    @Qualifier("GPT") private val talkingService: TalkingService,
+    @Qualifier("Picker") private val talkingService: TalkingService,
     private val easyKeyValueService: EasyKeyValueService
 ) : Executor, Configurable {
 
