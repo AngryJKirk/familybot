@@ -13,14 +13,16 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class TopHistoryExecutor : CommandExecutor() {
-    private val mamoeb: Mamoeb = this::class.java.classLoader
-        .getResourceAsStream("static/curses")
-        ?.readAllBytes()
-        ?.let { Base64.decodeBase64(it) }
-        ?.decodeToString()
-        ?.parseJson<Mamoeb>()
-        ?: throw FamilyBot.InternalException("curses is missing")
+    companion object {
+        val mamoeb: Mamoeb = this::class.java.classLoader
+            .getResourceAsStream("static/curses")
+            ?.readAllBytes()
+            ?.let { Base64.decodeBase64(it) }
+            ?.decodeToString()
+            ?.parseJson<Mamoeb>()
+            ?: throw FamilyBot.InternalException("curses is missing")
 
+    }
     override fun command(): Command {
         return Command.TOP_HISTORY
     }

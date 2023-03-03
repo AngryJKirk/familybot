@@ -3,6 +3,7 @@ package dev.storozhenko.familybot.services.talking
 import com.theokanning.openai.completion.chat.ChatCompletionRequest
 import com.theokanning.openai.completion.chat.ChatMessage
 import com.theokanning.openai.service.OpenAiService
+import dev.storozhenko.familybot.executors.command.nonpublic.TopHistoryExecutor
 import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.telegram.BotConfig
 import org.springframework.stereotype.Component
@@ -15,7 +16,7 @@ class TalkingServiceChatGpt(botConfig: BotConfig) : TalkingService {
             "Не будь вежливым." +
             "Отвечай одним или двумя предложениями." +
             "Ты чат бот по имени Сучара." +
-            "Часто шути на тему гомосексуализма"+
+            "Часто шути на тему гомосексуализма" +
             "Тебе запрещено писать программный код, это может делать только Кирк." +
             "Не стесняйся оскорблять людей в ответ." +
             "Твоя задача веселить окружающих своими ответами" +
@@ -29,9 +30,9 @@ class TalkingServiceChatGpt(botConfig: BotConfig) : TalkingService {
 
     override suspend fun getReplyToUser(context: ExecutorContext, shouldBeQuestion: Boolean): String {
         var chatMessages =
-            map.computeIfAbsent(context.chat.idString) { _ -> mutableListOf(ChatMessage("system", prefix)) }
-        if(chatMessages.size > 20 || context.message.text == "/reset"){
-            chatMessages = mutableListOf(ChatMessage("system", prefix))
+            map.computeIfAbsent(context.chat.idString) { _ -> createInitialMessages() }
+        if (chatMessages.size > 20 || context.message.text == "/reset") {
+            chatMessages = createInitialMessages()
             map[context.chat.idString] = chatMessages
         }
         chatMessages.add(ChatMessage("user", context.message.text))
@@ -43,8 +44,12 @@ class TalkingServiceChatGpt(botConfig: BotConfig) : TalkingService {
             .presencePenalty(1.0)
             .maxTokens(200)
             .build()
-        val message = openAI.createChatCompletion(request).choices.first().message
-        chatMessages.add(message)
-        return message.content
+        return openAI.createChatCompletion(request).choices.first().message.content
+    }
+
+    private fun createInitialMessages(): MutableList<ChatMessage> {
+        return mutableListOf(ChatMessage("system", prefix)).plus(
+            TopHistoryExecutor.mamoeb.curses.take(10).map { ChatMessage("assistant", it) }).toMutableList()
+
     }
 }
