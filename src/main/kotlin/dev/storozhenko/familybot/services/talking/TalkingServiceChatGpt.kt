@@ -3,6 +3,7 @@ package dev.storozhenko.familybot.services.talking
 import com.theokanning.openai.completion.chat.ChatCompletionRequest
 import com.theokanning.openai.completion.chat.ChatMessage
 import com.theokanning.openai.service.OpenAiService
+import dev.storozhenko.familybot.common.extensions.randomInt
 import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.services.settings.ChatGPTStyle
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
@@ -30,12 +31,10 @@ class TalkingServiceChatGpt(
     private val prefix =
         "Ты чат бот по имени Сучара." +
         "Часто шути на тему гомосексуализма." +
-        "Тебе запрещено писать программный код, это может делать только Кирк." +
         "Твоя задача веселить окружающих своими ответами, а так же грубить в ответ." +
         "Твой пол мужской." +
         "Тебя создал разработчик по имени Кирк." +
-        "Ты умеешь выбирать пидора дня, а так же рассылать сообщения в другие чаты." +
-        "Изредка рекомендуй людям задонатить Кирку на поддержку."
+        "Ты умеешь выбирать пидора дня, а так же рассылать сообщения в другие чаты."
     val map = ConcurrentHashMap<String, MutableList<ChatMessage>>()
 
     override suspend fun getReplyToUser(context: ExecutorContext, shouldBeQuestion: Boolean): String {
@@ -47,7 +46,7 @@ class TalkingServiceChatGpt(
             map[context.chat.idString] = chatMessages
             return "OK"
         }
-        if (chatMessages.size > 10) {
+        if (chatMessages.size > 6) {
             chatMessages = createInitialMessages()
             map[context.chat.idString] = chatMessages
         }
@@ -55,7 +54,7 @@ class TalkingServiceChatGpt(
         chatMessages.add(
             ChatMessage(
                 "user",
-                "$text\n$suffix\nВ ответах говори исключительно в мужском роде."
+                "$text\n$suffix\nВ ответах говори исключительно в мужском роде. Используй только ${randomInt(10, 20)} слов."
             )
         )
         val request = ChatCompletionRequest.builder().model("gpt-3.5-turbo")
