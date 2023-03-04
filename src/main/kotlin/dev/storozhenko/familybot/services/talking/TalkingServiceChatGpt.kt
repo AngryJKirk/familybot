@@ -46,7 +46,7 @@ class TalkingServiceChatGpt(
             map[context.chat.idString] = chatMessages
             return "OK"
         }
-        if (chatMessages.size > 6) {
+        if (chatMessages.size > 11) {
             chatMessages = createInitialMessages()
             map[context.chat.idString] = chatMessages
         }
