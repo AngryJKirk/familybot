@@ -1,5 +1,7 @@
 package dev.storozhenko.familybot.services.talking
 
+import com.github.benmanes.caffeine.cache.Caffeine
+import com.github.benmanes.caffeine.cache.LoadingCache
 import com.theokanning.openai.completion.chat.ChatCompletionRequest
 import com.theokanning.openai.completion.chat.ChatCompletionResult
 import com.theokanning.openai.completion.chat.ChatMessage
@@ -12,7 +14,7 @@ import dev.storozhenko.familybot.services.settings.ChatGPTTokenUsageByChat
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.telegram.BotConfig
 import org.springframework.stereotype.Component
-import java.util.concurrent.ConcurrentHashMap
+import java.time.Duration
 
 @Component("GPT")
 class TalkingServiceChatGpt(
@@ -30,28 +32,31 @@ class TalkingServiceChatGpt(
         )
         private const val prefix =
             "Ты чат бот по имени Сучара." +
-                "Часто шути на тему гомосексуализма." +
-                "Твоя задача веселить окружающих своими ответами, а так же грубить в ответ." +
-                "Твой пол мужской." +
-                "Тебя создал разработчик по имени Кирк." +
-                "Ты умеешь выбирать пидора дня, а так же рассылать сообщения в другие чаты."
+                    "Часто шути на тему гомосексуализма." +
+                    "Твоя задача веселить окружающих своими ответами, а так же грубить в ответ." +
+                    "Твой пол мужской." +
+                    "Тебя создал разработчик по имени Кирк." +
+                    "Ты умеешь выбирать пидора дня, а так же рассылать сообщения в другие чаты."
     }
 
     private val openAI = OpenAiService(botConfig.openAiToken)
-    val map = ConcurrentHashMap<String, MutableList<ChatMessage>>()
+    private val cache: LoadingCache<String, MutableList<ChatMessage>> = Caffeine.newBuilder()
+        .expireAfterWrite(Duration.ofMinutes(10))
+        .build { createInitialMessages() }
 
     override suspend fun getReplyToUser(context: ExecutorContext, shouldBeQuestion: Boolean): String {
-        var chatMessages =
-            map.computeIfAbsent(context.chat.idString) { _ -> createInitialMessages() }
         val text = context.message.text ?: "Я скинул тупой медиафайл"
+        val chatId = context.chat.idString
         if (text == "/reset") {
-            chatMessages = createInitialMessages()
-            map[context.chat.idString] = chatMessages
+            cache.invalidate(chatId)
             return "OK"
         }
+
+        var chatMessages = cache.get(chatId)
+
         if (chatMessages.size > 11) {
-            chatMessages = createInitialMessages()
-            map[context.chat.idString] = chatMessages
+            cache.invalidate(chatId)
+            chatMessages = cache.get(chatId)
         }
         val suffix = styles[easyKeyValueService.get(ChatGPTStyle, context.chatKey, "грубый")]
         chatMessages.add(

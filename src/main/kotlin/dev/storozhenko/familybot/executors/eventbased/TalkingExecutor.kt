@@ -3,6 +3,7 @@ package dev.storozhenko.familybot.executors.eventbased
 import dev.storozhenko.familybot.common.extensions.randomBoolean
 import dev.storozhenko.familybot.common.extensions.randomInt
 import dev.storozhenko.familybot.common.extensions.send
+import dev.storozhenko.familybot.common.extensions.sendDeferred
 import dev.storozhenko.familybot.executors.Configurable
 import dev.storozhenko.familybot.executors.Executor
 import dev.storozhenko.familybot.models.router.ExecutorContext
@@ -12,6 +13,8 @@ import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.settings.RageMode
 import dev.storozhenko.familybot.services.settings.TalkingDensity
 import dev.storozhenko.familybot.services.talking.TalkingService
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -42,14 +45,14 @@ class TalkingExecutor(
         val rageModEnabled = isRageModeEnabled(context)
         if (shouldReply(rageModEnabled, context)) {
             return {
-                val messageText = talkingService.getReplyToUser(context)
-                    .let { message -> if (rageModEnabled) rageModeFormat(message) else message }
+                val messageText = coroutineScope {  async {  talkingService.getReplyToUser(context)
+                    .let { message -> if (rageModEnabled) rageModeFormat(message) else message }} }
                 val delay = if (rageModEnabled.not()) {
                     1000 to 2000
                 } else {
                     100 to 500
                 }
-                it.send(
+                it.sendDeferred(
                     context,
                     messageText,
                     replyToUpdate = true,
