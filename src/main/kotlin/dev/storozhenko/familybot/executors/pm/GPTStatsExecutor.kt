@@ -41,6 +41,6 @@ class GPTStatsExecutor(
     }
 
     private fun formatValue(value: Long): String {
-        return "$value ≈$${(value / 1000 * 0.002)}".padEnd(13, ' ').code()
+        return "$value ≈$${String.format("%.3f", value / 1000 * 0.002)}".padEnd(13, ' ').code()
     }
 }
