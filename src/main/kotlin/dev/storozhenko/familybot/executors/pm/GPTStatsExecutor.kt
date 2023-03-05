@@ -31,6 +31,7 @@ class GPTStatsExecutor(
         val message = stats
             .map { (chat, value) -> formatChat(chats[chat.chatId]) to value }
             .sortedByDescending { (_, value) -> value }
+            .take(20)
             .joinToString(separator = "\n") { (chat, value) ->
                 "${formatValue(value)} ⬅️   $chat"
             }
