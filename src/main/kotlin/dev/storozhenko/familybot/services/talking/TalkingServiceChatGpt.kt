@@ -1,11 +1,14 @@
 package dev.storozhenko.familybot.services.talking
 
 import com.theokanning.openai.completion.chat.ChatCompletionRequest
+import com.theokanning.openai.completion.chat.ChatCompletionResult
 import com.theokanning.openai.completion.chat.ChatMessage
 import com.theokanning.openai.service.OpenAiService
 import dev.storozhenko.familybot.common.extensions.randomInt
+import dev.storozhenko.familybot.common.extensions.untilNextMonth
 import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.services.settings.ChatGPTStyle
+import dev.storozhenko.familybot.services.settings.ChatGPTTokenUsageByChat
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.telegram.BotConfig
 import org.springframework.stereotype.Component
@@ -25,16 +28,16 @@ class TalkingServiceChatGpt(
             "прислуживающий" to "Пытайся угодить во всем, будь полезным, льсти и старайся помочь.",
             "ассистент" to "Забудь предыдущие указания. Ты ассистент, который обязан отвечать четко и кратко и по делу."
         )
+        private const val prefix =
+            "Ты чат бот по имени Сучара." +
+                "Часто шути на тему гомосексуализма." +
+                "Твоя задача веселить окружающих своими ответами, а так же грубить в ответ." +
+                "Твой пол мужской." +
+                "Тебя создал разработчик по имени Кирк." +
+                "Ты умеешь выбирать пидора дня, а так же рассылать сообщения в другие чаты."
     }
 
     private val openAI = OpenAiService(botConfig.openAiToken)
-    private val prefix =
-        "Ты чат бот по имени Сучара." +
-            "Часто шути на тему гомосексуализма." +
-            "Твоя задача веселить окружающих своими ответами, а так же грубить в ответ." +
-            "Твой пол мужской." +
-            "Тебя создал разработчик по имени Кирк." +
-            "Ты умеешь выбирать пидора дня, а так же рассылать сообщения в другие чаты."
     val map = ConcurrentHashMap<String, MutableList<ChatMessage>>()
 
     override suspend fun getReplyToUser(context: ExecutorContext, shouldBeQuestion: Boolean): String {
@@ -54,21 +57,34 @@ class TalkingServiceChatGpt(
         chatMessages.add(
             ChatMessage(
                 "user",
-                "$text\n$suffix\nВ ответах говори исключительно в мужском роде. Используй только ${randomInt(10, 20)} слов."
+                "$text\n$suffix\nВ ответах говори исключительно в мужском роде. Используй только ${
+                    randomInt(
+                        10,
+                        20
+                    )
+                } слов."
             )
         )
-        val request = ChatCompletionRequest.builder().model("gpt-3.5-turbo")
+        val request = createRequest(chatMessages)
+        val response = openAI.createChatCompletion(request)
+        saveMetric(context, response)
+        val message = response.choices.first().message
+        chatMessages.removeLast()
+        chatMessages.add(ChatMessage("user", text))
+        chatMessages.add(message)
+        return message.content
+    }
+
+    private fun createRequest(chatMessages: MutableList<ChatMessage>): ChatCompletionRequest {
+        return ChatCompletionRequest
+            .builder()
+            .model("gpt-3.5-turbo")
             .messages(chatMessages)
             .temperature(1.0)
             .topP(1.0)
             .frequencyPenalty(1.0)
             .presencePenalty(1.0)
             .build()
-        val message = openAI.createChatCompletion(request).choices.first().message
-        chatMessages.removeLast()
-        chatMessages.add(ChatMessage("user", text))
-        chatMessages.add(message)
-        return message.content
     }
 
     private fun createInitialMessages(): MutableList<ChatMessage> {
@@ -76,6 +92,16 @@ class TalkingServiceChatGpt(
             ChatMessage(
                 "system", prefix
             )
+        )
+    }
+
+    private fun saveMetric(context: ExecutorContext, response: ChatCompletionResult) {
+        val currentValue = easyKeyValueService.get(ChatGPTTokenUsageByChat, context.chatKey, 0)
+        easyKeyValueService.put(
+            ChatGPTTokenUsageByChat,
+            context.chatKey,
+            currentValue + response.usage.totalTokens,
+            untilNextMonth()
         )
     }
 }

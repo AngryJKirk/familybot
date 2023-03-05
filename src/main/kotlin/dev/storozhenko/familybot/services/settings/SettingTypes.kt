@@ -38,3 +38,4 @@ object BotOwnerPidorSkip: BooleanKeyType<ChatEasyKey>
 object ChatGPTStyle: StringKeyType<ChatEasyKey>
 object ChatGPTPaidTill: LongKeyType<ChatEasyKey>
 object ChatGPTFreeMessagesLeft: LongKeyType<ChatEasyKey>
+object ChatGPTTokenUsageByChat: LongKeyType<ChatEasyKey>
