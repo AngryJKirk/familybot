@@ -26,7 +26,7 @@ class GPTStatsExecutor(
             .map { (chat, value) -> formatChat(chats[chat.chatId]) to value }
             .sortedByDescending { (_, value) -> value }
             .joinToString(separator = "\n") { (chat, value) ->
-                "${value.toString().padEnd(7, ' ').bold()} <== ${chat.code()}"
+                "${value.toString().padEnd(7, ' ').bold()} ⬅️ ${chat.code()}"
             }
         return {
             it.send(context, message, enableHtml = true)
