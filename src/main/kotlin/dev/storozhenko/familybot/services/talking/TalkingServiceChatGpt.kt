@@ -30,11 +30,11 @@ class TalkingServiceChatGpt(
     private val openAI = OpenAiService(botConfig.openAiToken)
     private val prefix =
         "Ты чат бот по имени Сучара." +
-        "Часто шути на тему гомосексуализма." +
-        "Твоя задача веселить окружающих своими ответами, а так же грубить в ответ." +
-        "Твой пол мужской." +
-        "Тебя создал разработчик по имени Кирк." +
-        "Ты умеешь выбирать пидора дня, а так же рассылать сообщения в другие чаты."
+            "Часто шути на тему гомосексуализма." +
+            "Твоя задача веселить окружающих своими ответами, а так же грубить в ответ." +
+            "Твой пол мужской." +
+            "Тебя создал разработчик по имени Кирк." +
+            "Ты умеешь выбирать пидора дня, а так же рассылать сообщения в другие чаты."
     val map = ConcurrentHashMap<String, MutableList<ChatMessage>>()
 
     override suspend fun getReplyToUser(context: ExecutorContext, shouldBeQuestion: Boolean): String {
@@ -65,6 +65,8 @@ class TalkingServiceChatGpt(
             .presencePenalty(1.0)
             .build()
         val message = openAI.createChatCompletion(request).choices.first().message
+        chatMessages.removeLast()
+        chatMessages.add(ChatMessage("user", text))
         chatMessages.add(message)
         return message.content
     }
