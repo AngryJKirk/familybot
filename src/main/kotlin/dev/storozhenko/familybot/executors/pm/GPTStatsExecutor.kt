@@ -26,7 +26,7 @@ class GPTStatsExecutor(
             .map { (chat, value) -> formatChat(chats[chat.chatId]) to value }
             .sortedByDescending { (_, value) -> value }
             .joinToString(separator = "\n") { (chat, value) ->
-                "${value.toString().padEnd(7, ' ').code()} ⬅️ ${chat.bold()}"
+                "${formatValue(value)} ⬅️   $chat"
             }
         return {
             it.send(context, message, enableHtml = true)
@@ -37,6 +37,10 @@ class GPTStatsExecutor(
         if (chat == null) {
             return "хуйня какая-то, чата нет"
         }
-        return "${chat.name}:${chat.id}"
+        return "${chat.name}:${chat.id}".bold()
+    }
+
+    private fun formatValue(value: Long): String {
+        return "$value ≈$${(value / 1000 * 0.002)}".padEnd(13, ' ').code()
     }
 }
