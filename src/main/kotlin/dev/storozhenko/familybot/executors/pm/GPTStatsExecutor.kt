@@ -22,14 +22,17 @@ class GPTStatsExecutor(
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         val chats = commonRepository.getChats().associateBy { it.id }
-        val message = easyKeyValueService.getAllByPartKey(ChatGPTTokenUsageByChat)
+        val stats = easyKeyValueService.getAllByPartKey(ChatGPTTokenUsageByChat)
+        val message = stats
             .map { (chat, value) -> formatChat(chats[chat.chatId]) to value }
             .sortedByDescending { (_, value) -> value }
             .joinToString(separator = "\n") { (chat, value) ->
                 "${formatValue(value)} ⬅️   $chat"
             }
+        val total = formatValue(stats.values.sum())
         return {
             it.send(context, message, enableHtml = true)
+            it.send(context, "Всего потрачено: $total", enableHtml = true)
         }
     }
 
