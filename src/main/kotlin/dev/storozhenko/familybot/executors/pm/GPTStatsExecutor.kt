@@ -9,8 +9,13 @@ import dev.storozhenko.familybot.repos.CommonRepository
 import dev.storozhenko.familybot.services.settings.ChatGPTTokenUsageByChat
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.telegram.BotConfig
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
 import org.telegram.telegrambots.meta.bots.AbsSender
+import kotlin.time.Duration.Companion.minutes
 
 @Component
 class GPTStatsExecutor(
@@ -21,7 +26,7 @@ class GPTStatsExecutor(
     override fun getMessagePrefix() = "gpt"
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        val chats = commonRepository.getChats().associateBy { it.id }
+        val chats = commonRepository.getChatsAll().associateBy { it.id }
         val stats = easyKeyValueService.getAllByPartKey(ChatGPTTokenUsageByChat)
         val message = stats
             .map { (chat, value) -> formatChat(chats[chat.chatId]) to value }
@@ -31,8 +36,16 @@ class GPTStatsExecutor(
             }
         val total = formatValue(stats.values.sum())
         return {
-            it.send(context, message, enableHtml = true)
-            it.send(context, "Всего потрачено: $total", enableHtml = true)
+            val message1 = it.send(context, message, enableHtml = true)
+            val message2 = it.send(context, "Всего потрачено: $total", enableHtml = true)
+            coroutineScope {
+                launch {
+                    delay(1.minutes)
+                    it.execute(DeleteMessage(context.chat.idString, context.message.messageId))
+                    it.execute(DeleteMessage(message1.chat.id.toString(), message1.messageId))
+                    it.execute(DeleteMessage(message2.chat.id.toString(), message2.messageId))
+                }
+            }
         }
     }
 

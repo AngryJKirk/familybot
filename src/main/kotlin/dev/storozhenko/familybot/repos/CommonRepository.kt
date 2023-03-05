@@ -58,6 +58,11 @@ class CommonRepository(private val template: JdbcTemplate) {
         return template.query("SELECT * FROM chats WHERE active = TRUE ") { rs, _ -> rs.toChat() }
     }
 
+    @Timed("repository.CommonRepository.getChatsAll")
+    fun getChatsAll(): List<Chat> {
+        return template.query("SELECT * FROM chats") { rs, _ -> rs.toChat() }
+    }
+
     @Timed("repository.CommonRepository.addPidor")
     fun addPidor(pidor: Pidor) {
         template.update(
