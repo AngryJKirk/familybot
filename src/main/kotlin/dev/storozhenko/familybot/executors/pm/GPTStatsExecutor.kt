@@ -1,5 +1,7 @@
 package dev.storozhenko.familybot.executors.pm
 
+import dev.storozhenko.familybot.common.extensions.bold
+import dev.storozhenko.familybot.common.extensions.code
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.models.telegram.Chat
@@ -23,9 +25,11 @@ class GPTStatsExecutor(
         val message = easyKeyValueService.getAllByPartKey(ChatGPTTokenUsageByChat)
             .map { (chat, value) -> formatChat(chats[chat.chatId]) to value }
             .sortedByDescending { (_, value) -> value }
-            .joinToString(separator = "\n") { (chat, value) -> "$chat => $value" }
+            .joinToString(separator = "\n") { (chat, value) ->
+                "${value.toString().padEnd(7, ' ').bold()} <== ${chat.code()}"
+            }
         return {
-            it.send(context, message)
+            it.send(context, message, enableHtml = true)
         }
     }
 
