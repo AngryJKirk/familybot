@@ -22,6 +22,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendDice
 import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import kotlin.time.Duration.Companion.seconds
 
 @Component
 class BetContiniousExecutor(
@@ -79,7 +80,7 @@ class BetContiniousExecutor(
             )
             it.send(context, context.phrase(Phrase.BET_ZATRAVOCHKA), shouldTypeBeforeSend = true)
             val diceMessage = it.execute(SendDice(chatId.toString()))
-            delay(4000)
+            delay(4.seconds)
             val isItWinner = winnableNumbers.contains(diceMessage.dice.value)
             if (isItWinner) {
                 coroutineScope { launch { repeat(number) { pidorRepository.removePidorRecord(user) } } }
@@ -91,7 +92,7 @@ class BetContiniousExecutor(
                 it.send(context, explainPhrase(number, context), shouldTypeBeforeSend = true)
             }
             easyKeyValueService.put(BetTolerance, key, true, untilNextMonth())
-            delay(2000)
+            delay(2.seconds)
             pidorCompetitionService.pidorCompetition(context.chat, context.chatKey).invoke(it)
         }
     }

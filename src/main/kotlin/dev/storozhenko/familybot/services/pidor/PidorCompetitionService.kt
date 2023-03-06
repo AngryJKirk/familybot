@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service
 import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Instant
 import java.time.LocalDate
+import kotlin.time.Duration.Companion.seconds
 
 @Service
 class PidorCompetitionService(
@@ -44,7 +45,7 @@ class PidorCompetitionService(
                     )
                     val oneMorePidor = competitors.random()
                     repository.addPidor(Pidor(oneMorePidor, Instant.now()))
-                    delay(1000)
+                    delay(1.seconds)
                     val oneMorePidorMessage =
                         dictionary.get(Phrase.COMPETITION_ONE_MORE_PIDOR, chatEasyKey)
                             .bold() + " " + oneMorePidor.getGeneralName()

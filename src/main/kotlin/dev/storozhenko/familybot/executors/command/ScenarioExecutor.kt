@@ -9,6 +9,7 @@ import dev.storozhenko.familybot.services.scenario.ScenarioSessionManagementServ
 import kotlinx.coroutines.delay
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
+import kotlin.time.Duration.Companion.seconds
 
 @Component
 class ScenarioExecutor(
@@ -47,7 +48,7 @@ class ScenarioExecutor(
             currentGame.isEnd -> {
                 {
                     scenarioSessionManagementService.processCurrentGame(context).invoke(it)
-                    delay(2000L)
+                    delay(2.seconds)
                     scenarioSessionManagementService.listGames(context).invoke(it)
                 }
             }

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Instant
+import kotlin.time.Duration.Companion.seconds
 
 @Component
 @Deprecated(message = "Replaced with BetContinious")
@@ -60,7 +61,7 @@ class RouletteContiniousExecutor(
                         )
                     }
                 }
-                delay(1000)
+                delay(1.seconds)
                 it.execute(SendMessage(chatId, "В наказание твое пидорское очко уходит к остальным"))
             }
         }
@@ -70,7 +71,7 @@ class RouletteContiniousExecutor(
             if (rouletteNumber == number) {
                 it.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
                 coroutineScope { launch { repeat(5) { pidorRepository.removePidorRecord(user) } } }
-                delay(2000)
+                delay(2.seconds)
                 it.execute(SendMessage(chatId, "Но он пока не треснул. Свое пидорское очко можешь забрать. "))
             } else {
                 it.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
@@ -86,7 +87,7 @@ class RouletteContiniousExecutor(
                         }
                     }
                 }
-                delay(2000)
+                delay(2.seconds)
                 it.execute(
                     SendMessage(
                         chatId,
@@ -94,7 +95,7 @@ class RouletteContiniousExecutor(
                     )
                 )
             }
-            delay(2000)
+            delay(2.seconds)
             pidorCompetitionService.pidorCompetition(context.chat, context.chatKey).invoke(it)
         }
     }
