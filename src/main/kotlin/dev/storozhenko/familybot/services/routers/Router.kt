@@ -45,6 +45,8 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.minutes
 
 @Component
 class Router(
@@ -168,7 +170,7 @@ class Router(
             val key = context.userAndChatKey
             val currentValue = easyKeyValueService.get(CommandLimit, key)
             if (currentValue == null) {
-                easyKeyValueService.put(CommandLimit, key, 1, Duration.of(5, ChronoUnit.MINUTES))
+                easyKeyValueService.put(CommandLimit, key, 1, 5.minutes)
             } else {
                 easyKeyValueService.increment(CommandLimit, key)
             }
@@ -226,7 +228,7 @@ class Router(
         val firstBotInteractionDate = easyKeyValueService.get(FirstBotInteraction, key)
         if (firstBotInteractionDate == null) {
             easyKeyValueService.put(FirstBotInteraction, key, Instant.now().prettyFormat())
-            easyKeyValueService.put(FirstTimeInChat, key, true, Duration.of(1, ChronoUnit.DAYS))
+            easyKeyValueService.put(FirstTimeInChat, key, true, 1.days)
         }
         val leftChatMember = message.leftChatMember
         val newChatMembers = message.newChatMembers

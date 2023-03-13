@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 @Component
 class PshenitsinKeyWordProcessor(
@@ -46,7 +47,7 @@ class PshenitsinKeyWordProcessor(
                 replyToUpdate = true
             )
 
-            keyValueService.put(PshenitsinTolerance, context.chatKey, true, Duration.ofMinutes(1))
+            keyValueService.put(PshenitsinTolerance, context.chatKey, true, 1.minutes)
         }
     }
 

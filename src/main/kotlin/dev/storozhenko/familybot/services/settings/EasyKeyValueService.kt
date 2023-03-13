@@ -3,7 +3,7 @@ package dev.storozhenko.familybot.services.settings
 import dev.storozhenko.familybot.telegram.FamilyBot
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Component
-import java.time.Duration
+import kotlin.time.toJavaDuration
 
 @Component
 class EasyKeyValueService(
@@ -14,13 +14,13 @@ class EasyKeyValueService(
         easyKeyType: EasyKeyType<T, K>,
         key: K,
         value: T,
-        duration: Duration? = null
+        duration: kotlin.time.Duration? = null
     ) {
         val keyValue = getKeyValue(easyKeyType, key)
         if (duration == null) {
             redisTemplate.opsForValue().set(keyValue, value.toString())
         } else {
-            redisTemplate.opsForValue().set(keyValue, value.toString(), duration)
+            redisTemplate.opsForValue().set(keyValue, value.toString(), duration.toJavaDuration())
         }
     }
 

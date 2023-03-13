@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Duration
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 
 @Component
 class BotMentionKeyWordProcessor(
@@ -24,8 +26,8 @@ class BotMentionKeyWordProcessor(
     private val easyKeyValueService: EasyKeyValueService
 ) : KeyWordProcessor {
 
-    private val defaultFuckOffDuration = Duration.ofMinutes(15)
-    private val defaultToleranceDuration = Duration.ofHours(24)
+    private val defaultFuckOffDuration = 15.minutes
+    private val defaultToleranceDuration = 24.hours
 
     private val fuckOffPhrases = setOf(
         Regex(".*завали.{0,10}ебало.*", RegexOption.IGNORE_CASE),

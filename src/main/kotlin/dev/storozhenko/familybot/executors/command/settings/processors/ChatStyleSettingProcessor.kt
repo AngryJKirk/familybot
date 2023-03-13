@@ -5,12 +5,14 @@ import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.services.settings.ChatGPTStyle
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
-import dev.storozhenko.familybot.services.talking.TalkingServiceChatGpt
+import dev.storozhenko.familybot.services.talking.GptStyle
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
-class ChatStyleSettingProcessor(private val easyKeyValueService: EasyKeyValueService) : SettingProcessor {
+class ChatStyleSettingProcessor(
+    private val easyKeyValueService: EasyKeyValueService,
+) : SettingProcessor {
 
     override fun canProcess(context: ExecutorContext): Boolean {
         return context.update.getMessageTokens()[1] == "стиль"
@@ -18,7 +20,7 @@ class ChatStyleSettingProcessor(private val easyKeyValueService: EasyKeyValueSer
 
     override fun process(context: ExecutorContext): suspend (AbsSender) -> Unit {
         val value = context.update.getMessageTokens()[2]
-        val keys = TalkingServiceChatGpt.styles.keys
+        val keys = GptStyle.values().map(GptStyle::value)
         if (value in keys) {
             easyKeyValueService.put(ChatGPTStyle, context.chatKey, value)
             return { it.send(context, "ок") }

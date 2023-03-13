@@ -22,6 +22,7 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.bots.AbsSender
 import java.io.InputStream
 import java.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 @Component
 class MarriageExecutor(
@@ -119,7 +120,7 @@ class MarriageExecutor(
             ProposalTo,
             key = proposalTarget.key(),
             value = proposalSource.from.id,
-            duration = Duration.ofMinutes(10)
+            duration = 10.minutes
         )
         return { sender ->
             sender.send(
