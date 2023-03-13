@@ -2,7 +2,6 @@ package dev.storozhenko.familybot.executors.eventbased
 
 import dev.storozhenko.familybot.common.extensions.randomBoolean
 import dev.storozhenko.familybot.common.extensions.randomInt
-import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.common.extensions.sendDeferred
 import dev.storozhenko.familybot.executors.Configurable
 import dev.storozhenko.familybot.executors.Executor
@@ -45,23 +44,27 @@ class TalkingExecutor(
         val rageModEnabled = isRageModeEnabled(context)
         if (shouldReply(rageModEnabled, context)) {
             return {
-                val messageText = coroutineScope {  async {  talkingService.getReplyToUser(context)
-                    .let { message -> if (rageModEnabled) rageModeFormat(message) else message }} }
-                val delay = if (rageModEnabled.not()) {
-                    1000 to 2000
-                } else {
-                    100 to 500
-                }
-                it.sendDeferred(
-                    context,
-                    messageText,
-                    replyToUpdate = true,
-                    shouldTypeBeforeSend = true,
-                    typeDelay = delay,
-                    enableHtml = true
-                )
-                if (rageModEnabled) {
-                    decrementRageModeMessagesAmount(context)
+                coroutineScope {
+                    val messageText = async {
+                        talkingService.getReplyToUser(context)
+                            .let { message -> if (rageModEnabled) rageModeFormat(message) else message }
+                    }
+                    val delay = if (rageModEnabled.not()) {
+                        1000 to 2000
+                    } else {
+                        100 to 500
+                    }
+                    it.sendDeferred(
+                        context,
+                        messageText,
+                        replyToUpdate = true,
+                        shouldTypeBeforeSend = true,
+                        typeDelay = delay,
+                        enableHtml = true
+                    )
+                    if (rageModEnabled) {
+                        decrementRageModeMessagesAmount(context)
+                    }
                 }
             }
         } else {

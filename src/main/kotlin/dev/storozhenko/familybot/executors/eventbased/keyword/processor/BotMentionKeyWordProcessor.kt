@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.executors.eventbased.keyword.processor
 
 import dev.storozhenko.familybot.common.extensions.randomBoolean
-import dev.storozhenko.familybot.common.extensions.send
+import dev.storozhenko.familybot.common.extensions.sendDeferred
 import dev.storozhenko.familybot.executors.eventbased.keyword.KeyWordProcessor
 import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
@@ -9,6 +9,8 @@ import dev.storozhenko.familybot.services.settings.FuckOffOverride
 import dev.storozhenko.familybot.services.settings.FuckOffTolerance
 import dev.storozhenko.familybot.services.talking.TalkingService
 import dev.storozhenko.familybot.telegram.BotConfig
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
@@ -43,11 +45,15 @@ class BotMentionKeyWordProcessor(
         }
         val shouldBeQuestion = isBotMention(context.message) || isBotNameMention(context.message)
         return {
-            val reply = talkingService.getReplyToUser(
-                context,
-                randomBoolean() && shouldBeQuestion
-            )
-            it.send(context, reply, replyToUpdate = true, shouldTypeBeforeSend = true, enableHtml = true)
+            coroutineScope {
+                val reply = async {
+                    talkingService.getReplyToUser(
+                        context,
+                        randomBoolean() && shouldBeQuestion
+                    )
+                }
+                it.sendDeferred(context, reply, replyToUpdate = true, shouldTypeBeforeSend = true, enableHtml = true)
+            }
         }
     }
 
