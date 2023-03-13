@@ -8,6 +8,7 @@ import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.models.telegram.Command
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
+import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -19,13 +20,13 @@ class TimeExecutor : CommandExecutor() {
         DateTimeFormatter.ofPattern("HH:mm")
 
     companion object {
+        private const val MORTGAGE_DATE = 1678706466L
         private val times = mapOf(
-            "Время в Лондоне:    " to "Europe/London",
-            "Время в Москве:     " to "Europe/Moscow",
-            "Время в Ульяновске: " to "Europe/Samara",
-            "Время в Ташкенте:   " to "Asia/Tashkent",
-            "Время в Аргентине:  " to "America/Argentina/Buenos_Aires",
-            "Время в Тайланде:   " to "Asia/Bangkok"
+            "Время в Лондоне:          " to "Europe/London",
+            "Время в Москве:           " to "Europe/Moscow",
+            "Время в Ульяновске:       " to "Europe/Samara",
+            "Время в Ташкенте:         " to "Asia/Tashkent",
+            "Время в Аргентине:        " to "America/Argentina/Buenos_Aires",
         )
             .map { (prefix, zone) -> prefix.code() to ZoneId.of(zone) }
             .toMap()
@@ -39,11 +40,12 @@ class TimeExecutor : CommandExecutor() {
             .sortedBy { (_, time) -> time }
             .joinToString(separator = "\n") { (prefix, time) -> prefix + time.format(timeFormatter).bold() }
         return {
-            it.send(context, result, replyToUpdate = true, enableHtml = true)
+            it.send(context, "$result\n${getMortgageDate()}", replyToUpdate = true, enableHtml = true)
         }
     }
 
-    private fun getDateString(now: Instant, zone: ZoneId): String {
-        return now.atZone(zone).format(timeFormatter).bold()
+    fun getMortgageDate(): String {
+        val duration = Duration.between(Instant.ofEpochSecond(MORTGAGE_DATE), Instant.now())
+        return "Время в Ипотечной Кабале: ${duration.toHours()}:${duration.toMinutes() % 60}"
     }
 }
