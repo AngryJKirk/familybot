@@ -46,6 +46,6 @@ class TimeExecutor : CommandExecutor() {
 
     fun getMortgageDate(): String {
         val duration = Duration.between(Instant.ofEpochSecond(MORTGAGE_DATE), Instant.now())
-        return "Время в Ипотечной Кабале: ${duration.toHours()}:${duration.toMinutes() % 60}"
+        return "Время в Ипотечной Кабале: ".code() +  "${duration.toHours()}:${duration.toMinutes() % 60}".bold()
     }
 }
