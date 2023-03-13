@@ -47,7 +47,7 @@ class BotMentionKeyWordProcessor(
                 context,
                 randomBoolean() && shouldBeQuestion
             )
-            it.send(context, reply, replyToUpdate = true, shouldTypeBeforeSend = true)
+            it.send(context, reply, replyToUpdate = true, shouldTypeBeforeSend = true, enableHtml = true)
         }
     }
 

@@ -57,7 +57,8 @@ class TalkingExecutor(
                     messageText,
                     replyToUpdate = true,
                     shouldTypeBeforeSend = true,
-                    typeDelay = delay
+                    typeDelay = delay,
+                    enableHtml = true
                 )
                 if (rageModEnabled) {
                     decrementRageModeMessagesAmount(context)
