@@ -71,7 +71,7 @@ class TikTokDownloadExecutor(
     }
 
     private fun containsUrl(text: String): Boolean {
-        return text.contains("instagram.com/reel/", ignoreCase = true)
+        return text.contains("instagram.com/reel", ignoreCase = true)
                 || text.contains("tiktok", ignoreCase = true)
 
     }
