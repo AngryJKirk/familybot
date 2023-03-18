@@ -48,4 +48,3 @@ private fun formatChat(chat: Chat?): String {
 private fun formatValue(value: Long): String {
     return "$value ≈$${String.format("%.3f", value / 1000 * 0.002)}".padEnd(13, ' ').code()
 }
-}
