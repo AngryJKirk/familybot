@@ -1,4 +1,4 @@
-package dev.storozhenko.familybot.executors.pm
+package dev.storozhenko.familybot.common
 
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod
 import org.telegram.telegrambots.meta.api.methods.groupadministration.SetChatPhoto
