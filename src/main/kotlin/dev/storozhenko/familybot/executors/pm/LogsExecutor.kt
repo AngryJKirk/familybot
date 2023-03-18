@@ -14,7 +14,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 class LogsExecutor(botConfig: BotConfig) : OnlyBotOwnerExecutor(botConfig) {
     override fun getMessagePrefix() = "logs"
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun executeInternal(context: ExecutorContext): suspend (AbsSender) -> Unit {
         val tokens = context.update.getMessageTokens()
         if (tokens.getOrNull(1) == "clear") {
             ErrorLogsDeferredAppender.errors.clear()

@@ -14,7 +14,7 @@ class ManualPidorSelectExecutor(
 ) : OnlyBotOwnerExecutor(botConfig) {
     override fun getMessagePrefix() = "pidor_manual"
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun executeInternal(context: ExecutorContext): suspend (AbsSender) -> Unit {
         return {
             val response = runCatching {
                 pidorAutoSelectService.autoSelect(it)

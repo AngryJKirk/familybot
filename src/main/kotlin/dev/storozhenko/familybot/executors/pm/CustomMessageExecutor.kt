@@ -15,7 +15,7 @@ class CustomMessageExecutor(
     botConfig: BotConfig
 ) :
     OnlyBotOwnerExecutor(botConfig) {
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun executeInternal(context: ExecutorContext): suspend (AbsSender) -> Unit {
         val tokens = context.update.getMessageTokens(delimiter = "|")
 
         val chats = commonRepository

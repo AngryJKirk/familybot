@@ -25,7 +25,7 @@ class GPTStatsExecutor(
 ) : OnlyBotOwnerExecutor(botConfig) {
     override fun getMessagePrefix() = "gpt"
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun executeInternal(context: ExecutorContext): suspend (AbsSender) -> Unit {
         val chats = commonRepository.getChatsAll().associateBy { it.id }
         val stats = easyKeyValueService.getAllByPartKey(ChatGPTTokenUsageByChat)
         val message = stats

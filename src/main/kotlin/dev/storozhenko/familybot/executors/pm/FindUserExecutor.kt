@@ -18,7 +18,7 @@ class FindUserExecutor(
     private val delimiter = "\n===================\n"
     override fun getMessagePrefix() = "user|"
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun executeInternal(context: ExecutorContext): suspend (AbsSender) -> Unit {
         val tokens = context.update.getMessageTokens("|")
         val usersToChats = commonRepository
             .findUsersByName(tokens[1])

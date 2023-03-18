@@ -22,7 +22,7 @@ class PatchNoteExecutor(
     private val patchNotePrefix = "patch_note"
     private val log = getLogger()
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun executeInternal(context: ExecutorContext): suspend (AbsSender) -> Unit {
         if (context.message.isReply.not()) {
             return { sender -> sender.send(context, "No reply message found, master") }
         }

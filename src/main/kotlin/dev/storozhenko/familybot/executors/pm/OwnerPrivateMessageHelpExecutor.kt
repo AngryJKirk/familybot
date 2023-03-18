@@ -17,7 +17,7 @@ class OwnerPrivateMessageHelpExecutor(
         .sortedBy { (prefix, _) -> prefix }
         .joinToString("\n") { (prefix, executorName) -> "$prefix — $executorName" }
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun executeInternal(context: ExecutorContext): suspend (AbsSender) -> Unit {
         return { sender -> sender.send(context, helpMessage) }
     }
 }

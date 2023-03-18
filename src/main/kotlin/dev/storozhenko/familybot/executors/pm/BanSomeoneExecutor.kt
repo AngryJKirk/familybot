@@ -18,7 +18,7 @@ class BanSomeoneExecutor(
 
     private val banPrefix = "ban|"
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override fun executeInternal(context: ExecutorContext): suspend (AbsSender) -> Unit {
         val command = context.update.getMessageTokens(delimiter = "|")
         val identification = command[1]
         val isUnban = command.getOrNull(3) == "unban"
