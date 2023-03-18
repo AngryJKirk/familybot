@@ -9,13 +9,8 @@ import dev.storozhenko.familybot.repos.CommonRepository
 import dev.storozhenko.familybot.services.settings.ChatGPTTokenUsageByChat
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.telegram.BotConfig
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
 import org.telegram.telegrambots.meta.bots.AbsSender
-import kotlin.time.Duration.Companion.minutes
 
 @Component
 class GPTStatsExecutor(
@@ -37,27 +32,20 @@ class GPTStatsExecutor(
             }
         val total = formatValue(stats.values.sum())
         return {
-            val message1 = it.send(context, message, enableHtml = true)
-            val message2 = it.send(context, "Всего потрачено: $total", enableHtml = true)
-            coroutineScope {
-                launch {
-                    delay(1.minutes)
-                    it.execute(DeleteMessage(context.chat.idString, context.message.messageId))
-                    it.execute(DeleteMessage(message1.chat.id.toString(), message1.messageId))
-                    it.execute(DeleteMessage(message2.chat.id.toString(), message2.messageId))
-                }
-            }
+            it.send(context, message, enableHtml = true)
+            it.send(context, "Всего потрачено: $total", enableHtml = true)
         }
     }
+}
 
-    private fun formatChat(chat: Chat?): String {
-        if (chat == null) {
-            return "хуйня какая-то, чата нет"
-        }
-        return "${chat.name}:${chat.id}".bold()
+private fun formatChat(chat: Chat?): String {
+    if (chat == null) {
+        return "хуйня какая-то, чата нет"
     }
+    return "${chat.name}:${chat.id}".bold()
+}
 
-    private fun formatValue(value: Long): String {
-        return "$value ≈$${String.format("%.3f", value / 1000 * 0.002)}".padEnd(13, ' ').code()
-    }
+private fun formatValue(value: Long): String {
+    return "$value ≈$${String.format("%.3f", value / 1000 * 0.002)}".padEnd(13, ' ').code()
+}
 }
