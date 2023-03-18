@@ -34,7 +34,11 @@ public class TrackingAbsSender extends AbsSender {
 
     @Override
     public <T extends Serializable, Method extends BotApiMethod<T>> T execute(Method method) throws TelegramApiException {
-        return absSender.execute(method);
+        T execute = absSender.execute(method);
+        if (execute instanceof Message) {
+            tracking.add((Message) execute);
+        }
+        return execute;
     }
 
     @Override
