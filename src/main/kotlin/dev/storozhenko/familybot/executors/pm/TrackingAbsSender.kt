@@ -21,11 +21,13 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.bots.AbsSender
 import org.telegram.telegrambots.meta.updateshandlers.SentCallback
 import java.io.Serializable
-import java.lang.reflect.Method
 import java.util.concurrent.CompletableFuture
 
 @Suppress("UNCHECKED_CAST")
-class TrackingAbsSender(private val absSender: AbsSender) : AbsSender() {
+class TrackingAbsSender(
+    private val absSender: AbsSender,
+    val tracking: MutableList<Message> = ArrayList()
+) : AbsSender() {
 
     override fun <T : Serializable?, Method : BotApiMethod<T>?, Callback : SentCallback<T>?> executeAsync(
         method: Method,
@@ -41,7 +43,7 @@ class TrackingAbsSender(private val absSender: AbsSender) : AbsSender() {
     override fun <T : Serializable?, Method : BotApiMethod<T>?> execute(method: Method): T {
         val execute = absSender.execute(method)
         if (execute is Message) {
-            tracking.add(execute as Message)
+            tracking.add(execute)
         }
         return execute
     }
@@ -196,8 +198,6 @@ class TrackingAbsSender(private val absSender: AbsSender) : AbsSender() {
     public override fun <T : Serializable?, Method : BotApiMethod<T>?> sendApiMethod(method: Method): T {
         return callProtectedMethod(absSender, "sendApiMethod", method) as T
     }
-
-    val tracking: MutableList<Message> = ArrayList()
 
     companion object {
         fun callProtectedMethod(obj: Any, methodName: String, vararg args: Any?): Any? {

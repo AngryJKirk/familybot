@@ -18,7 +18,7 @@ class RawUpdateLogger(private val rawChatLogRepository: RawChatLogRepository) {
             else -> null
         }
 
-        if (rawMessage == null || rawMessage.from?.isBot == true) {
+        if (rawMessage == null || rawMessage.from?.isBot == true || rawMessage.forwardFrom != null) {
             return
         }
 
