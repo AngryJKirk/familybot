@@ -53,6 +53,9 @@ class TalkingServiceChatGpt(
 
         val chatMessages = getPastMessages(style, context)
         val systemMessage = getSystemMessage(style, context)
+        if (text == "/debug") {
+            return chatMessages.plus(systemMessage).joinToString("\n", transform = ChatMessage::toString)
+        }
         if (style == GptStyle.ASSISTANT) {
             chatMessages.add(ChatMessage("user", text))
         } else {
