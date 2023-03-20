@@ -66,11 +66,11 @@ class TalkingServiceChatGpt(
                 )
             )
         }
-        chatMessages.add(systemMessage)
+        chatMessages.add(0, systemMessage)
         val request = createRequest(chatMessages)
         val response = openAI.createChatCompletion(request)
         saveMetric(context, response)
-        chatMessages.removeLast()
+        chatMessages.removeFirst()
         val message = response.choices.first().message
         return if (style == GptStyle.ASSISTANT) {
             chatMessages.add(message)
@@ -114,7 +114,7 @@ class TalkingServiceChatGpt(
         } else {
             gptSettingsReader.getUniverseValue(style.universe)
         }
-        return ChatMessage("system", universeValue)
+        return ChatMessage("system", universeValue.trimIndent())
     }
 
     private fun createRequest(chatMessages: MutableList<ChatMessage>): ChatCompletionRequest {
