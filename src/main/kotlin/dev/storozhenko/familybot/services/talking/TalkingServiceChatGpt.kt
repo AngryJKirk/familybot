@@ -7,8 +7,11 @@ import com.theokanning.openai.completion.chat.ChatMessage
 import com.theokanning.openai.service.OpenAiService
 import dev.storozhenko.familybot.common.extensions.code
 import dev.storozhenko.familybot.common.extensions.randomInt
+import dev.storozhenko.familybot.common.extensions.startOfDay
 import dev.storozhenko.familybot.common.extensions.untilNextMonth
 import dev.storozhenko.familybot.models.router.ExecutorContext
+import dev.storozhenko.familybot.models.router.FunctionId
+import dev.storozhenko.familybot.repos.CommonRepository
 import dev.storozhenko.familybot.services.settings.ChatGPTStyle
 import dev.storozhenko.familybot.services.settings.ChatGPTTokenUsageByChat
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
@@ -16,11 +19,13 @@ import dev.storozhenko.familybot.telegram.BotConfig
 import dev.storozhenko.familybot.telegram.FamilyBot
 import org.springframework.stereotype.Component
 import java.time.Duration
+import java.util.LinkedList
 
 @Component("GPT")
 class TalkingServiceChatGpt(
     private val easyKeyValueService: EasyKeyValueService,
     private val gptSettingsReader: GptSettingsReader,
+    private val commonRepository: CommonRepository,
     botConfig: BotConfig
 ) : TalkingService {
     companion object {
@@ -31,12 +36,11 @@ class TalkingServiceChatGpt(
 
     private val caches = GptStyle
         .values()
-        .associateWith { style ->
+        .associateWith { _ ->
             Caffeine.newBuilder()
                 .expireAfterWrite(Duration.ofMinutes(10))
-                .build<String, MutableList<ChatMessage>> { createInitialMessages(style) }
+                .build<String, MutableList<ChatMessage>> { LinkedList() }
         }
-
 
     override suspend fun getReplyToUser(context: ExecutorContext, shouldBeQuestion: Boolean): String {
         val text = context.message.text ?: "Я скинул тупой медиафайл"
@@ -47,7 +51,7 @@ class TalkingServiceChatGpt(
         }
         val style = getStyle(context)
 
-        val chatMessages = getPastMessages(style, chatId)
+        val chatMessages = getPastMessages(style, context)
 
         if (style == GptStyle.ASSISTANT) {
             chatMessages.add(ChatMessage("user", text))
@@ -81,8 +85,9 @@ class TalkingServiceChatGpt(
 
     private fun getPastMessages(
         style: GptStyle,
-        chatId: String
+        context: ExecutorContext
     ): MutableList<ChatMessage> {
+        val chatId = context.chat.idString
         val cache = caches[style] ?: throw FamilyBot.InternalException("Internal logic error, check logs")
         var chatMessages = cache.get(chatId)
 
@@ -90,6 +95,14 @@ class TalkingServiceChatGpt(
             cache.invalidate(chatId)
             chatMessages = cache.get(chatId)
         }
+
+        val pidorMessage = getCurrentPidors(context)
+        val universeValue = if (pidorMessage != null && style != GptStyle.ASSISTANT) {
+            gptSettingsReader.getUniverseValue(style.universe) + pidorMessage
+        } else {
+            gptSettingsReader.getUniverseValue(style.universe)
+        }
+        chatMessages.add(0, ChatMessage("system", universeValue))
         return chatMessages
     }
 
@@ -103,14 +116,6 @@ class TalkingServiceChatGpt(
             .frequencyPenalty(1.0)
             .presencePenalty(1.0)
             .build()
-    }
-
-    private fun createInitialMessages(style: GptStyle): MutableList<ChatMessage> {
-        return mutableListOf(
-            ChatMessage(
-                "system", gptSettingsReader.getUniverseValue(style.universe)
-            )
-        )
     }
 
     private fun saveMetric(context: ExecutorContext, response: ChatCompletionResult) {
@@ -131,5 +136,18 @@ class TalkingServiceChatGpt(
     private fun getMessageSizeLimiter(): String {
         val randomInt = randomInt(10, 20)
         return "В ответах говори исключительно в мужском роде. Используй только $randomInt слов."
+    }
+
+    private fun getCurrentPidors(context: ExecutorContext): String? {
+        if (easyKeyValueService.get(FunctionId.Pidor, context.chatKey, false).not()) {
+            return null
+        }
+        val pidorsByChat = commonRepository.getPidorsByChat(context.chat, startDate = startOfDay())
+        return if (pidorsByChat.isEmpty()) {
+            null
+        } else {
+            val currentPidors = pidorsByChat.joinToString(", ") { it.user.getGeneralName(mention = true) }
+            "\nСписок текущих пидоров: $currentPidors. Если не спросят, то не упоминай их"
+        }
     }
 }
