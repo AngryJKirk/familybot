@@ -1,5 +1,6 @@
 package dev.storozhenko.familybot.executors.command.nonpublic
 
+import dev.storozhenko.familybot.common.extensions.DateConstants
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.code
 import dev.storozhenko.familybot.common.extensions.send
@@ -20,7 +21,6 @@ class TimeExecutor : CommandExecutor() {
         DateTimeFormatter.ofPattern("HH:mm")
 
     companion object {
-        private const val MORTGAGE_DATE = 1678706466L
         private val times = mapOf(
             "Время в Лондоне:          " to "Europe/London",
             "Время в Москве:           " to "Europe/Moscow",
@@ -45,7 +45,7 @@ class TimeExecutor : CommandExecutor() {
     }
 
     fun getMortgageDate(): String {
-        val duration = Duration.between(Instant.ofEpochSecond(MORTGAGE_DATE), Instant.now())
-        return "Время в Ипотечной Кабале: ".code() +  "${duration.toHours()}:${duration.toMinutes() % 60}".bold()
+        val duration = Duration.between(Instant.ofEpochSecond(DateConstants.VITYA_MORTGAGE_DATE), Instant.now())
+        return "Время в Ипотечной Кабале: ".code() + "${duration.toHours()}:${duration.toMinutes() % 60}".bold()
     }
 }

@@ -11,6 +11,7 @@ import java.time.temporal.ChronoUnit
 import kotlin.time.toKotlinDuration
 
 object DateConstants {
+    const val VITYA_MORTGAGE_DATE = 1678706466L
     val theBirthDayOfFamilyBot: Instant = LocalDateTime.of(
         2017,
         Month.DECEMBER,
