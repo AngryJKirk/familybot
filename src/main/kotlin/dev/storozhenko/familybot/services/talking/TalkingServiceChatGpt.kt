@@ -52,7 +52,7 @@ class TalkingServiceChatGpt(
         val style = getStyle(context)
 
         val chatMessages = getPastMessages(style, context)
-
+        val systemMessage = getSystemMessage(style, context)
         if (style == GptStyle.ASSISTANT) {
             chatMessages.add(ChatMessage("user", text))
         } else {
@@ -63,10 +63,11 @@ class TalkingServiceChatGpt(
                 )
             )
         }
-
+        chatMessages.add(systemMessage)
         val request = createRequest(chatMessages)
         val response = openAI.createChatCompletion(request)
         saveMetric(context, response)
+        chatMessages.removeLast()
         val message = response.choices.first().message
         return if (style == GptStyle.ASSISTANT) {
             chatMessages.add(message)
@@ -96,14 +97,21 @@ class TalkingServiceChatGpt(
             chatMessages = cache.get(chatId)
         }
 
+        return chatMessages
+    }
+
+    private fun getSystemMessage(
+        style: GptStyle,
+        context: ExecutorContext
+    ): ChatMessage {
+
         val pidorMessage = getCurrentPidors(context)
         val universeValue = if (pidorMessage != null && style != GptStyle.ASSISTANT) {
             gptSettingsReader.getUniverseValue(style.universe) + pidorMessage
         } else {
             gptSettingsReader.getUniverseValue(style.universe)
         }
-        chatMessages.add(0, ChatMessage("system", universeValue))
-        return chatMessages
+        return ChatMessage("system", universeValue)
     }
 
     private fun createRequest(chatMessages: MutableList<ChatMessage>): ChatCompletionRequest {

@@ -3,9 +3,12 @@ package dev.storozhenko.familybot.telegram
 import dev.storozhenko.familybot.common.extensions.toChat
 import dev.storozhenko.familybot.common.extensions.toJson
 import dev.storozhenko.familybot.common.extensions.toUser
+import dev.storozhenko.familybot.models.router.FunctionId
 import dev.storozhenko.familybot.services.routers.PaymentRouter
 import dev.storozhenko.familybot.services.routers.PollRouter
 import dev.storozhenko.familybot.services.routers.Router
+import dev.storozhenko.familybot.services.settings.ChatEasyKey
+import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -23,7 +26,8 @@ class FamilyBot(
     val config: BotConfig,
     val router: Router,
     val pollRouter: PollRouter,
-    val paymentRouter: PaymentRouter
+    val paymentRouter: PaymentRouter,
+    val easyKeyValueService: EasyKeyValueService
 ) : TelegramLongPollingBot(config.botToken) {
 
     private val log = LoggerFactory.getLogger(FamilyBot::class.java)
@@ -73,6 +77,16 @@ class FamilyBot(
             val logMessage = "Telegram error: ${e.apiResponse}, ${e.errorCode}, update is ${update.toJson()}"
             if (e.errorCode in 400..499) {
                 log.warn(logMessage, e)
+                if (e.apiResponse.contains("CHAT_WRITE_FORBIDDEN")) {
+                    listOf(FunctionId.Chatting, FunctionId.Huificate, FunctionId.TalkBack)
+                        .forEach { function ->
+                            easyKeyValueService.put(
+                                function,
+                                ChatEasyKey(update.toChat().id),
+                                false
+                            )
+                        }
+                }
             } else {
                 log.error(logMessage, e)
             }

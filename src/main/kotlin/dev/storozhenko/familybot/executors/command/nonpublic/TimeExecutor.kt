@@ -40,6 +40,7 @@ class TimeExecutor : CommandExecutor() {
             .sortedBy { (_, time) -> time }
             .joinToString(separator = "\n") { (prefix, time) -> prefix + time.format(timeFormatter).bold() }
         return {
+            it.me
             it.send(context, "$result\n${getMortgageDate()}", replyToUpdate = true, enableHtml = true)
         }
     }
