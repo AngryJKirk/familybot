@@ -138,20 +138,24 @@ private suspend fun AbsSender.sendInternal(
     }
     val textToSend = text()
     SenderLogger.log.info("Sending message, text=$textToSend")
-    val messageObj = SendMessage(chatId, textToSend).apply { enableHtml(enableHtml) }
-
-    if (replyMessageId != null) {
-        messageObj.replyToMessageId = replyMessageId
-    }
-    if (replyToUpdate) {
-        messageObj.replyToMessageId = messageId
-    }
-
-    val message = messageObj.apply(customization)
-
-    SenderLogger.log.info("Sending message: ${message.toJson()}")
-
-    return this.execute(message)
+    return textToSend
+        .chunked(3900)
+        .map {
+            SendMessage(chatId, textToSend)
+                .apply {
+                    enableHtml(enableHtml)
+                    if (replyMessageId != null) {
+                        replyToMessageId = replyMessageId
+                    }
+                    if (replyToUpdate) {
+                        replyToMessageId = messageId
+                    }
+                    customization()
+                }
+        }.map { message ->
+            SenderLogger.log.info("Sending message: ${message.toJson()}")
+            this.execute(message)
+        }.first()
 }
 
 suspend fun AbsSender.sendSticker(
