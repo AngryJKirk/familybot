@@ -32,7 +32,7 @@ class TalkingServiceChatGpt(
         private val codeMarkupPattern = Regex("`{1,3}([^`]+)`{1,3}")
     }
 
-    private val openAI = OpenAiService(botConfig.openAiToken, Duration.ofMinutes(1))
+    private val openAI = OpenAiService(botConfig.openAiToken, Duration.ofMinutes(2))
 
     private val caches = GptStyle
         .values()
