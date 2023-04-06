@@ -38,7 +38,7 @@ class GPTStatsExecutor(
         return {
             it.send(context, message, enableHtml = true)
             it.send(context, "Всего потрачено: $total", enableHtml = true)
-            it.send(context, "Активные подписки:\n$subs")
+            it.send(context, "Активные подписки:\n$subs", enableHtml = true)
         }
     }
 
