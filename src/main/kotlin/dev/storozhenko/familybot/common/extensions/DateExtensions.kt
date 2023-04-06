@@ -1,11 +1,6 @@
 package dev.storozhenko.familybot.common.extensions
 
-import java.time.Duration
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.Month
-import java.time.ZoneId
-import java.time.ZoneOffset
+import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.time.toKotlinDuration
@@ -56,7 +51,16 @@ fun Duration.toHourMinuteString(): String {
 private val dateTimeFormatter =
     DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault())
 
-fun Instant.prettyFormat(): String = dateTimeFormatter.format(this)
+private val dateTimeFormatterDateOnly =
+    DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.systemDefault())
+
+fun Instant.prettyFormat(dateOnly: Boolean = false): String {
+    return if (dateOnly) {
+        dateTimeFormatterDateOnly.format(this)
+    } else {
+        dateTimeFormatter.format(this)
+    }
+}
 
 fun untilNextDay(): kotlin.time.Duration {
     val currentTime = Instant.now()

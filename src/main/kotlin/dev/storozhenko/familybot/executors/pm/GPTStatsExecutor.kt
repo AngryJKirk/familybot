@@ -48,7 +48,7 @@ class GPTStatsExecutor(
             .filter { (_, timestamp) -> timestamp > Instant.now().epochSecond }
             .sortedBy { (_, timestamp) -> timestamp }
             .map { (chatKey, timestamp) -> chats[chatKey.chatId] to Instant.ofEpochSecond(timestamp) }
-            .joinToString(separator = "\n") { (chat, date) -> "${chat?.name ?: "#no_name"} paid till ${date.prettyFormat()}" }
+            .joinToString(separator = "\n") { (chat, date) -> date.prettyFormat().code() + "  ⌛️  " +  (chat?.name ?: "#no_name").bold() }
     }
 
     private fun formatChat(chat: Chat?): String {
