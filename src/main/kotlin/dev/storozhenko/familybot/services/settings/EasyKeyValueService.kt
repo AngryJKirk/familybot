@@ -4,7 +4,6 @@ import dev.storozhenko.familybot.telegram.FamilyBot
 import org.springframework.data.redis.core.ScanOptions.scanOptions
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Component
-import sun.jvm.hotspot.oops.CellTypeState.value
 import kotlin.time.toJavaDuration
 
 @Component
