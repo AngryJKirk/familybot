@@ -38,7 +38,7 @@ class GPTStatsExecutor(
         return {
             it.send(context, message, enableHtml = true)
             it.send(context, "Всего потрачено: $total", enableHtml = true)
-            it.send(context, "Активные подписки:\n$subs", enableHtml = true)
+            it.send(context, subs, enableHtml = true)
         }
     }
 
@@ -49,8 +49,8 @@ class GPTStatsExecutor(
             .filter { (_, timestamp) -> timestamp > Instant.now().epochSecond }
         val inactiveSubs = allSubs
             .filter { (_, timestamp) -> timestamp <= Instant.now().epochSecond }
-        val activeSubsAmount = "Активных подписок: ${activeSubs.size}"
-        val inactiveSubsAmount = "Неактивных подписок: ${inactiveSubs.size}"
+        val activeSubsAmount = "Активных подписок: ${activeSubs.size.toString().bold()}"
+        val inactiveSubsAmount = "Неактивных подписок: ${inactiveSubs.size.toString().bold()}"
         return listOf(activeSubsAmount, inactiveSubsAmount).plus(activeSubs
             .sortedBy { (_, timestamp) -> timestamp }
             .map { (chatKey, timestamp) ->
