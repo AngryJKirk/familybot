@@ -1,8 +1,10 @@
 package dev.storozhenko.familybot.services.settings
 
 import dev.storozhenko.familybot.telegram.FamilyBot
+import org.springframework.data.redis.core.ScanOptions.scanOptions
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Component
+import sun.jvm.hotspot.oops.CellTypeState.value
 import kotlin.time.toJavaDuration
 
 @Component
@@ -49,12 +51,17 @@ class EasyKeyValueService(
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Any, K : EasyKey> getAllByPartKey(easyKeyType: EasyKeyType<T, K>): Map<K, T> {
-        val keys = redisTemplate.keys(easyKeyType.getName() + "*")
-        if (keys.isEmpty()) {
-            return emptyMap()
+        val keys = mutableMapOf<K, T>()
+        val scanOptions = scanOptions().match(easyKeyType.getName() + "*").build()
+        redisTemplate.scan(scanOptions).use { cursor ->
+            cursor.forEach { key ->
+                val rawValue = redisTemplate.opsForValue().get(key) ?: return@forEach
+                val easyKey = parseEasyKey(key) as K
+                val easyValue = cast(easyKeyType, rawValue)
+                keys[easyKey] = easyValue
+            }
         }
-        val values = redisTemplate.opsForValue().multiGet(keys) ?: return emptyMap()
-        return keys.zip(values).associate { (k, v) -> parseEasyKey(k) as K to cast(easyKeyType, v) }
+        return keys
     }
 
     private fun <T : Any, K : EasyKey> getKeyValue(easyKeyType: EasyKeyType<T, K>, key: K): String {
@@ -62,6 +69,10 @@ class EasyKeyValueService(
     }
 
     private fun parseEasyKey(rawValue: String): EasyKey {
+        if (rawValue.contains(PlainKey.PREFIX)) {
+            val (_, _, key) = rawValue.split(":")
+            return PlainKey(key)
+        }
         val rawSplit = rawValue.split(":")
         if (rawSplit.size != 3) {
             throw IllegalArgumentException("Wrong key format")
