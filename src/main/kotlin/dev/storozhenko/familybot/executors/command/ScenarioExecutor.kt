@@ -45,6 +45,7 @@ class ScenarioExecutor(
             currentGame == null -> {
                 scenarioSessionManagementService.listGames(context)
             }
+
             currentGame.isEnd -> {
                 {
                     scenarioSessionManagementService.processCurrentGame(context).invoke(it)
@@ -52,6 +53,7 @@ class ScenarioExecutor(
                     scenarioSessionManagementService.listGames(context).invoke(it)
                 }
             }
+
             else -> {
                 scenarioSessionManagementService.processCurrentGame(context)
             }

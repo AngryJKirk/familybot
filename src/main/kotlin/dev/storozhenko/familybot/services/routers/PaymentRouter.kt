@@ -1,10 +1,6 @@
 package dev.storozhenko.familybot.services.routers
 
-import dev.storozhenko.familybot.common.extensions.from
-import dev.storozhenko.familybot.common.extensions.key
-import dev.storozhenko.familybot.common.extensions.parseJson
-import dev.storozhenko.familybot.common.extensions.toChat
-import dev.storozhenko.familybot.common.extensions.toUser
+import dev.storozhenko.familybot.common.extensions.*
 import dev.storozhenko.familybot.getLogger
 import dev.storozhenko.familybot.models.dictionary.Phrase
 import dev.storozhenko.familybot.models.shop.PreCheckOutResponse
@@ -49,6 +45,7 @@ class PaymentRouter(
                             sender.execute(AnswerPreCheckoutQuery(update.preCheckoutQuery.id, true))
                             log.info("Pre checkout query is valid")
                         }
+
                         is PreCheckOutResponse.Error -> {
                             val message = dictionary.get(response.explainPhrase, settingsKey)
                             sender.execute(

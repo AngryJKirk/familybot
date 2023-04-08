@@ -24,9 +24,9 @@ class PaymentService(
 
     private fun getProcessor(shopPayload: ShopPayload): PaymentProcessor {
         val paymentProcessor = (
-            processors[shopPayload.shopItem]
-                ?: throw FamilyBot.InternalException("Can't find proper payment processor for ${shopPayload.shopItem}")
-            )
+                processors[shopPayload.shopItem]
+                    ?: throw FamilyBot.InternalException("Can't find proper payment processor for ${shopPayload.shopItem}")
+                )
         log.info("Payment processor for shopPayload=$shopPayload is ${paymentProcessor::class.java.simpleName}")
         return paymentProcessor
     }

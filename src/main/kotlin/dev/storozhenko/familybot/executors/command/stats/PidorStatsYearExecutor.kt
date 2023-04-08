@@ -1,10 +1,6 @@
 package dev.storozhenko.familybot.executors.command.stats
 
-import dev.storozhenko.familybot.common.extensions.PluralizedWordsProvider
-import dev.storozhenko.familybot.common.extensions.bold
-import dev.storozhenko.familybot.common.extensions.formatTopList
-import dev.storozhenko.familybot.common.extensions.send
-import dev.storozhenko.familybot.common.extensions.startOfTheYear
+import dev.storozhenko.familybot.common.extensions.*
 import dev.storozhenko.familybot.executors.Configurable
 import dev.storozhenko.familybot.executors.command.CommandExecutor
 import dev.storozhenko.familybot.models.dictionary.Phrase

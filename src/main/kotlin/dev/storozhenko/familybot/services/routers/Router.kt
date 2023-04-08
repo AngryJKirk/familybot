@@ -1,11 +1,6 @@
 package dev.storozhenko.familybot.services.routers
 
-import dev.storozhenko.familybot.common.extensions.context
-import dev.storozhenko.familybot.common.extensions.key
-import dev.storozhenko.familybot.common.extensions.prettyFormat
-import dev.storozhenko.familybot.common.extensions.send
-import dev.storozhenko.familybot.common.extensions.toChat
-import dev.storozhenko.familybot.common.extensions.toUser
+import dev.storozhenko.familybot.common.extensions.*
 import dev.storozhenko.familybot.common.meteredCanExecute
 import dev.storozhenko.familybot.common.meteredExecute
 import dev.storozhenko.familybot.common.meteredPriority
@@ -24,27 +19,17 @@ import dev.storozhenko.familybot.repos.CommandHistoryRepository
 import dev.storozhenko.familybot.repos.CommonRepository
 import dev.storozhenko.familybot.repos.FunctionsConfigureRepository
 import dev.storozhenko.familybot.services.misc.RawUpdateLogger
-import dev.storozhenko.familybot.services.settings.CommandLimit
-import dev.storozhenko.familybot.services.settings.EasyKeyValueService
-import dev.storozhenko.familybot.services.settings.FirstBotInteraction
-import dev.storozhenko.familybot.services.settings.FirstTimeInChat
-import dev.storozhenko.familybot.services.settings.MessageCounter
+import dev.storozhenko.familybot.services.settings.*
 import dev.storozhenko.familybot.services.talking.Dictionary
 import dev.storozhenko.familybot.telegram.BotConfig
 import io.micrometer.core.instrument.MeterRegistry
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
 import org.telegram.telegrambots.meta.bots.AbsSender
-import java.time.Duration
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
 
@@ -186,6 +171,9 @@ class Router(
     }
 
     private fun logChatMessage(context: ExecutorContext) {
+        if (context.message.forwardFrom != null) {
+            return
+        }
         val key = context.userAndChatKey
         if (easyKeyValueService.get(MessageCounter, key) != null) {
             easyKeyValueService.increment(MessageCounter, key)
@@ -244,6 +232,7 @@ class Router(
                     repository.changeUserActiveStatusNew(leftChatMember.toUser(chat = chat), false)
                 }
             }
+
             newChatMembers?.isNotEmpty() == true -> {
                 if (newChatMembers.any { it.isBot && it.userName == botConfig.botName }) {
                     logger.info("Bot was added to $chat")
@@ -255,6 +244,7 @@ class Router(
                         .forEach { repository.addUser(it.toUser(chat = chat)) }
                 }
             }
+
             message.from.isBot.not() || message.from.userName == "GroupAnonymousBot" -> {
                 repository.addUser(message.from.toUser(chat = chat))
             }

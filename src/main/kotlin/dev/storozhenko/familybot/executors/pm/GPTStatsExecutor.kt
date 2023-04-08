@@ -53,7 +53,7 @@ class GPTStatsExecutor(
             .sortedBy { (_, timestamp) -> timestamp }
             .map { (chatKey, timestamp) ->
                 Instant.ofEpochSecond(timestamp).prettyFormat(dateOnly = true).code() + "  ⌛️  " +
-                    (chats[chatKey.chatId]?.name ?: "#no_name").bold()
+                        (chats[chatKey.chatId]?.name ?: "#no_name").bold()
             })
             .joinToString(separator = "\n")
     }

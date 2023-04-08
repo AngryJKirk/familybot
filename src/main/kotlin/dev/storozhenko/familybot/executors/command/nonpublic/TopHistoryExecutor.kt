@@ -23,6 +23,7 @@ class TopHistoryExecutor : CommandExecutor() {
             ?: throw FamilyBot.InternalException("curses is missing")
 
     }
+
     override fun command(): Command {
         return Command.TOP_HISTORY
     }

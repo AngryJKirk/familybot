@@ -20,5 +20,6 @@ data class PlainKey(val key: String) : EasyKey {
     companion object {
         const val PREFIX = "plain_key"
     }
+
     override fun value() = "$PREFIX:$key"
 }

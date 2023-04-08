@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.common.extensions
 
 import dev.storozhenko.familybot.models.dictionary.Pluralization
-import java.util.Locale
+import java.util.*
 
 fun String?.dropLastDelimiter(): String? {
     if (this.isNullOrEmpty()) {

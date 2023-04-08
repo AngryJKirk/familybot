@@ -7,11 +7,9 @@ import dev.storozhenko.familybot.services.settings.ChatEasyKey
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.settings.PshenitsinTolerance
 import dev.storozhenko.familybot.services.talking.TalkingService
-import dev.storozhenko.familybot.services.talking.TalkingServiceOld
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
-import java.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 @Component

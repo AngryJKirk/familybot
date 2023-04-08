@@ -14,7 +14,6 @@ import dev.storozhenko.familybot.services.settings.RageMode
 import dev.storozhenko.familybot.services.settings.RageTolerance
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
-import java.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 @Component
@@ -81,7 +80,7 @@ class RageExecutor(
     private fun isRageForced(context: ExecutorContext): Boolean {
         return context.message.text.contains(
             "FORCED" +
-                context.user.id.toString().takeLast(4)
+                    context.user.id.toString().takeLast(4)
         )
     }
 }

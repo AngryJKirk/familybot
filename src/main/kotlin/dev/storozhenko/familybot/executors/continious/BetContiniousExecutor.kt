@@ -42,8 +42,8 @@ class BetContiniousExecutor(
     override fun canExecute(context: ExecutorContext): Boolean {
         val message = context.message
         return message.isReply &&
-            message.replyToMessage.from.userName == botConfig.botName &&
-            (message.replyToMessage.text ?: "") in getDialogMessages(context)
+                message.replyToMessage.from.userName == botConfig.botName &&
+                (message.replyToMessage.text ?: "") in getDialogMessages(context)
     }
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
@@ -131,12 +131,14 @@ class BetContiniousExecutor(
                     .replace("$1", context.phrase(Phrase.PLURALIZED_PIDORSKOE_ONE))
                     .replace("$2", context.phrase(Phrase.PLURALIZED_OCHKO_ONE))
             }
+
             Pluralization.FEW -> {
                 winPhraseTemplate
                     .replace("$0", betNumber.toString())
                     .replace("$1", context.phrase(Phrase.PLURALIZED_PIDORSKOE_FEW))
                     .replace("$2", context.phrase(Phrase.PLURALIZED_OCHKO_FEW))
             }
+
             Pluralization.MANY -> {
                 winPhraseTemplate
                     .replace("$0", betNumber.toString())
@@ -153,6 +155,7 @@ class BetContiniousExecutor(
             Pluralization.ONE -> {
                 context.phrase(Phrase.BET_EXPLAIN_SINGLE_DAY)
             }
+
             else -> {
                 explainTemplate
                     .replace("$0", betNumber.toString())

@@ -1,12 +1,6 @@
 package dev.storozhenko.familybot.executors.command.stats
 
-import dev.storozhenko.familybot.common.extensions.bold
-import dev.storozhenko.familybot.common.extensions.capitalized
-import dev.storozhenko.familybot.common.extensions.dropLastDelimiter
-import dev.storozhenko.familybot.common.extensions.italic
-import dev.storozhenko.familybot.common.extensions.send
-import dev.storozhenko.familybot.common.extensions.startOfCurrentMonth
-import dev.storozhenko.familybot.common.extensions.toRussian
+import dev.storozhenko.familybot.common.extensions.*
 import dev.storozhenko.familybot.executors.Configurable
 import dev.storozhenko.familybot.executors.command.CommandExecutor
 import dev.storozhenko.familybot.models.dictionary.Phrase

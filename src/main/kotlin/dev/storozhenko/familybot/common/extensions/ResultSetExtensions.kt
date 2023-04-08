@@ -2,14 +2,10 @@ package dev.storozhenko.familybot.common.extensions
 
 import dev.storozhenko.familybot.models.Marriage
 import dev.storozhenko.familybot.models.askworld.AskWorldQuestion
-import dev.storozhenko.familybot.models.telegram.Chat
-import dev.storozhenko.familybot.models.telegram.Command
-import dev.storozhenko.familybot.models.telegram.CommandByUser
-import dev.storozhenko.familybot.models.telegram.Pidor
-import dev.storozhenko.familybot.models.telegram.User
+import dev.storozhenko.familybot.models.telegram.*
 import dev.storozhenko.familybot.telegram.FamilyBot
 import java.sql.ResultSet
-import java.util.UUID
+import java.util.*
 
 fun ResultSet.toUser(): User = User(
     this.getLong("id"),

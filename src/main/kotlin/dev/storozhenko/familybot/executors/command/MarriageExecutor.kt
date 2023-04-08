@@ -1,10 +1,6 @@
 package dev.storozhenko.familybot.executors.command
 
-import dev.storozhenko.familybot.common.extensions.chatId
-import dev.storozhenko.familybot.common.extensions.key
-import dev.storozhenko.familybot.common.extensions.send
-import dev.storozhenko.familybot.common.extensions.toChat
-import dev.storozhenko.familybot.common.extensions.toUser
+import dev.storozhenko.familybot.common.extensions.*
 import dev.storozhenko.familybot.models.Marriage
 import dev.storozhenko.familybot.models.dictionary.Phrase
 import dev.storozhenko.familybot.models.router.ExecutorContext
@@ -21,7 +17,6 @@ import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.bots.AbsSender
 import java.io.InputStream
-import java.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 @Component

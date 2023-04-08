@@ -19,7 +19,7 @@ import dev.storozhenko.familybot.telegram.BotConfig
 import dev.storozhenko.familybot.telegram.FamilyBot
 import org.springframework.stereotype.Component
 import java.time.Duration
-import java.util.LinkedList
+import java.util.*
 
 @Component("GPT")
 class TalkingServiceChatGpt(
