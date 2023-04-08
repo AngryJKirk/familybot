@@ -5,16 +5,14 @@ import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.repos.CommonRepository
 import dev.storozhenko.familybot.services.misc.BanService
-import dev.storozhenko.familybot.telegram.BotConfig
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class BanSomeoneExecutor(
     private val banService: BanService,
-    private val commonRepository: CommonRepository,
-    botConfig: BotConfig
-) : OnlyBotOwnerExecutor(botConfig) {
+    private val commonRepository: CommonRepository
+) : OnlyBotOwnerExecutor() {
 
     private val banPrefix = "ban|"
 

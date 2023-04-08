@@ -4,7 +4,6 @@ import dev.storozhenko.familybot.common.TrackingAbsSender
 import dev.storozhenko.familybot.getLogger
 import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.models.router.Priority
-import dev.storozhenko.familybot.telegram.BotConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -13,15 +12,14 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
 import org.telegram.telegrambots.meta.bots.AbsSender
 import kotlin.time.Duration.Companion.minutes
 
-abstract class OnlyBotOwnerExecutor(private val botConfig: BotConfig) : PrivateMessageExecutor {
+abstract class OnlyBotOwnerExecutor : PrivateMessageExecutor {
     companion object {
         private val deleteMessageScope = CoroutineScope(Dispatchers.Default)
     }
 
     override fun canExecute(context: ExecutorContext): Boolean {
         val message = context.message
-        return botConfig.developer == message.from.userName &&
-            message.text?.startsWith(getMessagePrefix(), ignoreCase = true) ?: false
+        return context.isFromDeveloper && message.text?.startsWith(getMessagePrefix(), ignoreCase = true) ?: false
     }
 
     override fun priority(context: ExecutorContext) = Priority.HIGH

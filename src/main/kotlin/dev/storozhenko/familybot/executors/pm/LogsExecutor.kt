@@ -4,14 +4,13 @@ import dev.storozhenko.familybot.common.ErrorLogsDeferredAppender
 import dev.storozhenko.familybot.common.extensions.getMessageTokens
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.models.router.ExecutorContext
-import dev.storozhenko.familybot.telegram.BotConfig
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
-class LogsExecutor(botConfig: BotConfig) : OnlyBotOwnerExecutor(botConfig) {
+class LogsExecutor : OnlyBotOwnerExecutor() {
     override fun getMessagePrefix() = "logs"
 
     override fun executeInternal(context: ExecutorContext): suspend (AbsSender) -> Unit {

@@ -10,7 +10,6 @@ import dev.storozhenko.familybot.repos.CommonRepository
 import dev.storozhenko.familybot.services.settings.ChatGPTPaidTill
 import dev.storozhenko.familybot.services.settings.ChatGPTTokenUsageByChat
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
-import dev.storozhenko.familybot.telegram.BotConfig
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Instant
@@ -18,9 +17,8 @@ import java.time.Instant
 @Component
 class GPTStatsExecutor(
     private val commonRepository: CommonRepository,
-    private val easyKeyValueService: EasyKeyValueService,
-    botConfig: BotConfig
-) : OnlyBotOwnerExecutor(botConfig) {
+    private val easyKeyValueService: EasyKeyValueService
+) : OnlyBotOwnerExecutor() {
     override fun getMessagePrefix() = "gpt"
 
     override fun executeInternal(context: ExecutorContext): suspend (AbsSender) -> Unit {

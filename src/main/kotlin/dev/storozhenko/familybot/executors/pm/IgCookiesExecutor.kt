@@ -7,7 +7,6 @@ import dev.storozhenko.familybot.services.misc.IgCookieService
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.settings.IGCookie
 import dev.storozhenko.familybot.services.settings.PlainKey
-import dev.storozhenko.familybot.telegram.BotConfig
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.facilities.filedownloader.TelegramFileDownloader
 import org.telegram.telegrambots.meta.api.methods.GetFile
@@ -17,10 +16,9 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 class IgCookiesExecutor(
     private val easyKeyValueService: EasyKeyValueService,
     private val igCookieService: IgCookieService,
-    private val downloader: TelegramFileDownloader,
-    botConfig: BotConfig
+    private val downloader: TelegramFileDownloader
 ) :
-    OnlyBotOwnerExecutor(botConfig) {
+    OnlyBotOwnerExecutor() {
     companion object {
         val IG_COOKIE_KEY = PlainKey("IG_COOKIE_KEY")
     }
