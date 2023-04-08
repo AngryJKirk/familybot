@@ -15,3 +15,7 @@ data class UserEasyKey(val userId: Long) : EasyKey {
 data class UserAndChatEasyKey(val userId: Long, val chatId: Long) : EasyKey {
     override fun value() = "$chatId:$userId"
 }
+
+data class PlainKey(val key: String) : EasyKey {
+    override fun value() = "plain_key:$key"
+}

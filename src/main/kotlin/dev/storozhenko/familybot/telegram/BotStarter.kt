@@ -2,9 +2,11 @@ package dev.storozhenko.familybot.telegram
 
 import dev.storozhenko.familybot.common.extensions.readTomlFromStatic
 import org.springframework.boot.context.event.ApplicationReadyEvent
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.context.event.EventListener
+import org.telegram.telegrambots.facilities.filedownloader.TelegramFileDownloader
 import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
@@ -56,6 +58,11 @@ class BotStarter {
                 .scope(BotCommandScopeAllPrivateChats())
                 .build()
         )
+    }
+
+    @Bean
+    fun telegramDownloader(botConfig: BotConfig): TelegramFileDownloader {
+        return TelegramFileDownloader { botConfig.botToken }
     }
 
     private fun extractValue(toml: TomlParseResult, key: String): String {

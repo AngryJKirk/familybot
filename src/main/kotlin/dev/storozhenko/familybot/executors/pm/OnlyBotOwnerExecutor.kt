@@ -21,7 +21,7 @@ abstract class OnlyBotOwnerExecutor(private val botConfig: BotConfig) : PrivateM
     override fun canExecute(context: ExecutorContext): Boolean {
         val message = context.message
         return botConfig.developer == message.from.userName &&
-            message.text.startsWith(getMessagePrefix(), ignoreCase = true)
+            message.text?.startsWith(getMessagePrefix(), ignoreCase = true) ?: false
     }
 
     override fun priority(context: ExecutorContext) = Priority.HIGH

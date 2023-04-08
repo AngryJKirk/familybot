@@ -4,6 +4,7 @@ import dev.storozhenko.familybot.executors.Executor
 import dev.storozhenko.familybot.getLogger
 import dev.storozhenko.familybot.models.router.ExecutorContext
 import dev.storozhenko.familybot.models.router.Priority
+import dev.storozhenko.familybot.services.misc.IgCookieService
 import dev.storozhenko.familybot.services.settings.EasyKeyValueService
 import dev.storozhenko.familybot.services.settings.TikTokDownload
 import dev.storozhenko.familybot.telegram.BotConfig
@@ -18,7 +19,8 @@ import java.util.*
 @Component
 class TikTokDownloadExecutor(
     private val easyKeyValueService: EasyKeyValueService,
-    private val botConfig: BotConfig
+    private val botConfig: BotConfig,
+    private val cookieService: IgCookieService
 ) : Executor {
     private val log = getLogger()
 
@@ -60,8 +62,14 @@ class TikTokDownloadExecutor(
 
     private fun download(url: String): File {
         val filename = "/tmp/${UUID.randomUUID()}.mp4"
-        val process = ProcessBuilder(botConfig.ytdlLocation, url, "-o", filename).start()
-        log.info("Running yt-dlp...")
+        val cookiePath = cookieService.getPath()
+        val process = if (isIG(url) && cookiePath != null) {
+            log.info("Running yt-dlp with cookies...")
+            ProcessBuilder(botConfig.ytdlLocation, url, "-o", filename, "--cookies", cookiePath).start()
+        } else {
+            log.info("Running yt-dlp...")
+            ProcessBuilder(botConfig.ytdlLocation, url, "-o", filename).start()
+        }
         process.inputStream.reader(Charsets.UTF_8).use {
             log.info(it.readText())
         }
@@ -71,8 +79,11 @@ class TikTokDownloadExecutor(
     }
 
     private fun containsUrl(text: String): Boolean {
-        return text.contains("instagram.com/reel", ignoreCase = true)
-                || text.contains("tiktok", ignoreCase = true)
+        return isIG(text) || isTikTok(text)
 
     }
+
+    private fun isTikTok(text: String) = text.contains("tiktok", ignoreCase = true)
+
+    private fun isIG(text: String) = text.contains("instagram.com/reel", ignoreCase = true)
 }
