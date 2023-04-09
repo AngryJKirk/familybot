@@ -1,8 +1,8 @@
 package dev.storozhenko.familybot.executors
 
-import dev.storozhenko.familybot.executors.command.PidorExecutor
+import dev.storozhenko.familybot.feature.pidor.PidorExecutor
 import dev.storozhenko.familybot.infrastructure.createSimpleCommandContext
-import dev.storozhenko.familybot.repos.CommonRepository
+import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
 import dev.storozhenko.familybot.suits.CommandExecutorTest
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions

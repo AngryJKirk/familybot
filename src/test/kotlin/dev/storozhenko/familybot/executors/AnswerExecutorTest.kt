@@ -1,9 +1,9 @@
 package dev.storozhenko.familybot.executors
 
 import dev.storozhenko.familybot.common.extensions.capitalized
-import dev.storozhenko.familybot.executors.command.AnswerExecutor
+import dev.storozhenko.familybot.feature.answer.AnswerExecutor
 import dev.storozhenko.familybot.infrastructure.createSimpleCommandContext
-import dev.storozhenko.familybot.models.telegram.Command
+import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.suits.CommandExecutorTest
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore

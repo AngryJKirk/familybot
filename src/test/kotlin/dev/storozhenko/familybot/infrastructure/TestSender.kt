@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.infrastructure
 
-import dev.storozhenko.familybot.models.telegram.stickers.Sticker
+import dev.storozhenko.familybot.core.models.telegram.stickers.Sticker
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer

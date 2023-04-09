@@ -2,11 +2,11 @@ package dev.storozhenko.familybot.payment
 
 import dev.storozhenko.familybot.infrastructure.payload
 import dev.storozhenko.familybot.infrastructure.randomLong
-import dev.storozhenko.familybot.models.shop.PreCheckOutResponse
-import dev.storozhenko.familybot.models.shop.ShopItem
-import dev.storozhenko.familybot.services.payment.processors.PickPidorPaymentProcessor
-import dev.storozhenko.familybot.services.settings.PickPidorAbilityCount
-import dev.storozhenko.familybot.services.settings.UserEasyKey
+import dev.storozhenko.familybot.feature.shop.model.PreCheckOutResponse
+import dev.storozhenko.familybot.feature.shop.model.ShopItem
+import dev.storozhenko.familybot.feature.shop.services.processors.PickPidorPaymentProcessor
+import dev.storozhenko.familybot.core.keyvalue.models.PickPidorAbilityCount
+import dev.storozhenko.familybot.core.keyvalue.models.UserEasyKey
 import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
 

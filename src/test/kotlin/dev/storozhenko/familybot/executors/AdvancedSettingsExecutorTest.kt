@@ -1,14 +1,14 @@
 package dev.storozhenko.familybot.executors
 
-import dev.storozhenko.familybot.executors.command.settings.AdvancedSettingsExecutor
+import dev.storozhenko.familybot.feature.settings.AdvancedSettingsExecutor
 import dev.storozhenko.familybot.infrastructure.createSimpleContext
 import dev.storozhenko.familybot.infrastructure.randomLong
-import dev.storozhenko.familybot.models.telegram.Command
-import dev.storozhenko.familybot.services.settings.ChatEasyKey
-import dev.storozhenko.familybot.services.settings.EasyKeyType
-import dev.storozhenko.familybot.services.settings.EasyKeyValueService
-import dev.storozhenko.familybot.services.settings.TalkingDensity
-import dev.storozhenko.familybot.services.settings.UkrainianLanguage
+import dev.storozhenko.familybot.core.models.telegram.Command
+import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
+import dev.storozhenko.familybot.core.keyvalue.models.EasyKeyType
+import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
+import dev.storozhenko.familybot.core.keyvalue.models.TalkingDensity
+import dev.storozhenko.familybot.core.keyvalue.models.UkrainianLanguage
 import dev.storozhenko.familybot.suits.CommandExecutorTest
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore

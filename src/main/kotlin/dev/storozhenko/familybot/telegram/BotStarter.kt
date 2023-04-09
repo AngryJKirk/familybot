@@ -2,11 +2,11 @@ package dev.storozhenko.familybot.telegram
 
 import dev.storozhenko.familybot.common.extensions.readTomlFromStatic
 import org.springframework.boot.context.event.ApplicationReadyEvent
-import org.springframework.context.annotation.Bean
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.context.properties.bind.ConstructorBinding
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.context.event.EventListener
-import org.telegram.telegrambots.facilities.filedownloader.TelegramFileDownloader
 import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
@@ -60,13 +60,34 @@ class BotStarter {
         )
     }
 
-    @Bean
-    fun telegramDownloader(botConfig: BotConfig): TelegramFileDownloader {
-        return TelegramFileDownloader { botConfig.botToken }
-    }
-
     private fun extractValue(toml: TomlParseResult, key: String): String {
         return toml.getString(key)
             ?: throw FamilyBot.InternalException("Missing command description for key=$key")
     }
 }
+
+data class BotConfig(
+    val botToken: String,
+    val botName: String,
+    val developer: String,
+    val developerId: String,
+    val botNameAliases: List<String>,
+    val yandexKey: String?,
+    val paymentToken: String?,
+    val testEnvironment: Boolean,
+    val ytdlLocation: String?,
+    val openAiToken: String?
+)
+
+@ConfigurationProperties("settings", ignoreInvalidFields = false)
+data class BotConfigInjector @ConstructorBinding constructor(
+    val botToken: String,
+    val botName: String,
+    val developer: String,
+    val developerId: String,
+    val botNameAliases: String?,
+    val yandexKey: String?,
+    val paymentToken: String?,
+    val ytdlLocation: String?,
+    val openAiToken: String?
+)

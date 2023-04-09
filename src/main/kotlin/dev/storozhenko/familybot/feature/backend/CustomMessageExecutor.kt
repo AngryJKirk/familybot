@@ -1,0 +1,35 @@
+package dev.storozhenko.familybot.feature.backend
+
+import dev.storozhenko.familybot.common.extensions.getMessageTokens
+import dev.storozhenko.familybot.common.extensions.send
+import dev.storozhenko.familybot.core.executors.OnlyBotOwnerExecutor
+import dev.storozhenko.familybot.core.routers.models.ExecutorContext
+import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.bots.AbsSender
+
+@Component
+class CustomMessageExecutor(
+    private val commonRepository: CommonRepository
+) :
+    OnlyBotOwnerExecutor() {
+    override fun executeInternal(context: ExecutorContext): suspend (AbsSender) -> Unit {
+        val tokens = context.update.getMessageTokens(delimiter = "|")
+
+        val chats = commonRepository
+            .getChats()
+            .filter { chat -> chat.name?.contains(tokens[1], ignoreCase = true) ?: false }
+        if (chats.size != 1) {
+            return { sender ->
+                sender.send(context, "Chat is not found, specify search: $chats")
+            }
+        }
+        return { sender ->
+            sender.execute(SendMessage(chats.first().idString, tokens[2]))
+            sender.send(context, "Message \"${tokens[2]}\" has been sent")
+        }
+    }
+
+    override fun getMessagePrefix() = "custom_message|"
+}

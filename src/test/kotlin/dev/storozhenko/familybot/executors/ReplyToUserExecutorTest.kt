@@ -1,12 +1,12 @@
 package dev.storozhenko.familybot.executors
 
-import dev.storozhenko.familybot.executors.eventbased.keyword.KeyWordExecutor
+import dev.storozhenko.familybot.feature.talking.services.keyword.KeyWordExecutor
 import dev.storozhenko.familybot.infrastructure.createSimpleContext
 import dev.storozhenko.familybot.infrastructure.createSimpleMessage
 import dev.storozhenko.familybot.infrastructure.createSimpleUser
 import dev.storozhenko.familybot.infrastructure.randomString
-import dev.storozhenko.familybot.models.router.ExecutorContext
-import dev.storozhenko.familybot.models.router.Priority
+import dev.storozhenko.familybot.core.routers.models.ExecutorContext
+import dev.storozhenko.familybot.core.routers.models.Priority
 import dev.storozhenko.familybot.suits.ExecutorTest
 import dev.storozhenko.familybot.telegram.BotConfig
 import kotlinx.coroutines.runBlocking

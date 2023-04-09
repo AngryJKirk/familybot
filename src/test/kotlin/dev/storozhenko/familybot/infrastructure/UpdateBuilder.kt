@@ -1,13 +1,13 @@
 package dev.storozhenko.familybot.infrastructure
 
 import dev.storozhenko.familybot.common.extensions.context
-import dev.storozhenko.familybot.models.router.ExecutorContext
-import dev.storozhenko.familybot.models.telegram.Command
-import dev.storozhenko.familybot.models.telegram.stickers.Sticker
-import dev.storozhenko.familybot.services.settings.EasyKeyValueService
-import dev.storozhenko.familybot.services.settings.UkrainianLanguage
-import dev.storozhenko.familybot.services.talking.Dictionary
-import dev.storozhenko.familybot.services.talking.DictionaryReader
+import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
+import dev.storozhenko.familybot.core.keyvalue.models.UkrainianLanguage
+import dev.storozhenko.familybot.core.models.telegram.Command
+import dev.storozhenko.familybot.core.models.telegram.stickers.Sticker
+import dev.storozhenko.familybot.core.routers.models.ExecutorContext
+import dev.storozhenko.familybot.feature.talking.services.Dictionary
+import dev.storozhenko.familybot.feature.talking.services.DictionaryReader
 import dev.storozhenko.familybot.telegram.BotConfig
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
@@ -37,8 +37,8 @@ private val botConfig = BotConfig(
     openAiToken = null
 )
 
-fun createSimpleContext(text: String? = null): ExecutorContext {
-    return update(text).context(botConfig, dictionary)
+fun createSimpleContext(text: String? = null, custom: Update.() -> Unit = {}): ExecutorContext {
+    return update(text).apply(custom).context(botConfig, dictionary)
 }
 
 fun Update.createContext() = this.context(botConfig, dictionary)

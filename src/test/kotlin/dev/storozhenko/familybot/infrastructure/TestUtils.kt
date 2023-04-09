@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.infrastructure
 
-import dev.storozhenko.familybot.models.shop.ShopItem
-import dev.storozhenko.familybot.models.shop.ShopPayload
+import dev.storozhenko.familybot.feature.shop.model.ShopItem
+import dev.storozhenko.familybot.feature.shop.model.ShopPayload
 import java.util.UUID
 import java.util.concurrent.ThreadLocalRandom
 

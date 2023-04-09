@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.payment
 
-import dev.storozhenko.familybot.models.shop.ShopItem
-import dev.storozhenko.familybot.services.payment.PaymentProcessor
+import dev.storozhenko.familybot.feature.shop.model.ShopItem
+import dev.storozhenko.familybot.feature.shop.services.PaymentProcessor
 import dev.storozhenko.familybot.suits.FamilybotApplicationTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

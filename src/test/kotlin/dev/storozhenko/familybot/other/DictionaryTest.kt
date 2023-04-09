@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.other
 
-import dev.storozhenko.familybot.models.dictionary.Phrase
-import dev.storozhenko.familybot.services.talking.DictionaryReader
+import dev.storozhenko.familybot.core.models.dictionary.Phrase
+import dev.storozhenko.familybot.feature.talking.services.DictionaryReader
 import dev.storozhenko.familybot.suits.FamilybotApplicationTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

@@ -15,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.scheduling.annotation.EnableScheduling
+import org.telegram.telegrambots.facilities.filedownloader.TelegramFileDownloader
 
 @SpringBootApplication
 @EnableScheduling
@@ -23,6 +24,11 @@ class FamilyBotApplication(
     private val env: ConfigurableEnvironment
 ) {
     private val logger = getLogger()
+
+    @Bean
+    fun telegramDownloader(botConfig: BotConfig): TelegramFileDownloader {
+        return TelegramFileDownloader { botConfig.botToken }
+    }
 
     @Bean
     fun timedAspect(registry: MeterRegistry): TimedAspect {
@@ -38,39 +44,39 @@ class FamilyBotApplication(
             botConfigInjector.botNameAliases.split(",")
         }
         return BotConfig(
-            notEmptyCheck(botConfigInjector.botToken, "botToken"),
-            notEmptyCheck(botConfigInjector.botName, "botName"),
-            notEmptyCheck(botConfigInjector.developer, "developer"),
-            notEmptyCheck(botConfigInjector.developerId, "developerId"),
+            required(botConfigInjector.botToken, "botToken"),
+            required(botConfigInjector.botName, "botName"),
+            required(botConfigInjector.developer, "developer"),
+            required(botConfigInjector.developerId, "developerId"),
             botNameAliases,
-            notEmptyCheckAllowOptional(
+            optional(
                 botConfigInjector::yandexKey,
                 "Yandex API key is not found, language API won't work"
             ),
-            notEmptyCheckAllowOptional(
+            optional(
                 botConfigInjector::paymentToken,
                 "Payment token is not found, payment API won't work"
             ),
             env.activeProfiles.contains(BotStarter.TESTING_PROFILE_NAME),
-            notEmptyCheckAllowOptional(
+            optional(
                 botConfigInjector::ytdlLocation,
                 "yt-dlp is missing, downloading function won't work"
             ),
-            notEmptyCheckAllowOptional(
+            optional(
                 botConfigInjector::openAiToken,
                 "OpenAI token is missing, API won't work"
             )
         )
     }
 
-    private fun notEmptyCheck(value: String, valueName: String): String {
+    private fun required(value: String, valueName: String): String {
         if (value.isBlank()) {
             throw FamilyBot.InternalException("Value of '$valueName' must be not empty")
         }
         return value
     }
 
-    private fun notEmptyCheckAllowOptional(value: () -> String?, log: String): String? {
+    private fun optional(value: () -> String?, log: String): String? {
         return value()?.takeIf(String::isNotBlank).also {
             if (it == null) {
                 logger.warn(log)

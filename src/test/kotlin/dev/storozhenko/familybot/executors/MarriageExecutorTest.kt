@@ -1,17 +1,17 @@
 package dev.storozhenko.familybot.executors
 
 import dev.storozhenko.familybot.common.extensions.key
-import dev.storozhenko.familybot.executors.command.MarriageExecutor
+import dev.storozhenko.familybot.feature.marriage.MarriageExecutor
 import dev.storozhenko.familybot.infrastructure.createContext
 import dev.storozhenko.familybot.infrastructure.createSimpleCommand
 import dev.storozhenko.familybot.infrastructure.createSimpleCommandContext
 import dev.storozhenko.familybot.infrastructure.createSimpleMessage
 import dev.storozhenko.familybot.infrastructure.createSimpleUser
-import dev.storozhenko.familybot.models.dictionary.Phrase
-import dev.storozhenko.familybot.repos.MarriagesRepository
-import dev.storozhenko.familybot.services.settings.EasyKeyValueService
-import dev.storozhenko.familybot.services.settings.ProposalTo
-import dev.storozhenko.familybot.services.talking.Dictionary
+import dev.storozhenko.familybot.core.models.dictionary.Phrase
+import dev.storozhenko.familybot.feature.marriage.repos.MarriagesRepository
+import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
+import dev.storozhenko.familybot.core.keyvalue.models.ProposalTo
+import dev.storozhenko.familybot.feature.talking.services.Dictionary
 import dev.storozhenko.familybot.suits.CommandExecutorTest
 import kotlinx.coroutines.runBlocking
 import org.mockito.kotlin.argumentCaptor

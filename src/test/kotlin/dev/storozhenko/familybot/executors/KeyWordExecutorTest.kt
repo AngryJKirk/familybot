@@ -1,10 +1,10 @@
 package dev.storozhenko.familybot.executors
 
-import dev.storozhenko.familybot.executors.eventbased.keyword.KeyWordExecutor
+import dev.storozhenko.familybot.feature.talking.services.keyword.KeyWordExecutor
 import dev.storozhenko.familybot.infrastructure.createSimpleContext
 import dev.storozhenko.familybot.infrastructure.singleStickerContext
-import dev.storozhenko.familybot.models.router.Priority
-import dev.storozhenko.familybot.models.telegram.stickers.Sticker
+import dev.storozhenko.familybot.core.routers.models.Priority
+import dev.storozhenko.familybot.core.models.telegram.stickers.Sticker
 import dev.storozhenko.familybot.suits.ExecutorTest
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions

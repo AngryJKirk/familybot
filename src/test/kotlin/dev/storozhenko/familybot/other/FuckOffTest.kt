@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.other
 
-import dev.storozhenko.familybot.executors.eventbased.keyword.processor.BotMentionKeyWordProcessor
+import dev.storozhenko.familybot.feature.talking.services.keyword.processor.BotMentionKeyWordProcessor
 import dev.storozhenko.familybot.infrastructure.createSimpleContext
 import dev.storozhenko.familybot.infrastructure.createSimpleMessage
 import dev.storozhenko.familybot.infrastructure.createSimpleUser

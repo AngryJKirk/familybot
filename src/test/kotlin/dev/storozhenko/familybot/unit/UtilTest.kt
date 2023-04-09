@@ -7,9 +7,9 @@ import dev.storozhenko.familybot.common.extensions.startOfTheYear
 import dev.storozhenko.familybot.common.extensions.toRussian
 import dev.storozhenko.familybot.infrastructure.randomLong
 import dev.storozhenko.familybot.infrastructure.randomString
-import dev.storozhenko.familybot.models.dictionary.Pluralization
-import dev.storozhenko.familybot.models.telegram.Chat
-import dev.storozhenko.familybot.models.telegram.User
+import dev.storozhenko.familybot.core.models.dictionary.Pluralization
+import dev.storozhenko.familybot.core.models.telegram.Chat
+import dev.storozhenko.familybot.core.models.telegram.User
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest

@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.payment
 
-import dev.storozhenko.familybot.services.settings.EasyKeyValueService
+import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.suits.FamilybotApplicationTest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

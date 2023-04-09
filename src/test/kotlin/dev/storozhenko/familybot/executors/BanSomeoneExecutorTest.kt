@@ -3,14 +3,14 @@ package dev.storozhenko.familybot.executors
 import dev.storozhenko.familybot.common.extensions.key
 import dev.storozhenko.familybot.common.extensions.toChat
 import dev.storozhenko.familybot.common.extensions.toUser
-import dev.storozhenko.familybot.executors.pm.BanSomeoneExecutor
+import dev.storozhenko.familybot.core.keyvalue.models.EasyKey
+import dev.storozhenko.familybot.core.routers.models.ExecutorContext
+import dev.storozhenko.familybot.core.routers.models.Priority
+import dev.storozhenko.familybot.feature.ban.BanSomeoneExecutor
+import dev.storozhenko.familybot.feature.ban.services.BanService
 import dev.storozhenko.familybot.infrastructure.createSimpleContext
 import dev.storozhenko.familybot.infrastructure.createSimpleUpdate
 import dev.storozhenko.familybot.infrastructure.randomString
-import dev.storozhenko.familybot.models.router.ExecutorContext
-import dev.storozhenko.familybot.models.router.Priority
-import dev.storozhenko.familybot.services.misc.BanService
-import dev.storozhenko.familybot.services.settings.EasyKey
 import dev.storozhenko.familybot.suits.ExecutorTest
 import dev.storozhenko.familybot.telegram.BotConfig
 import kotlinx.coroutines.runBlocking
@@ -116,7 +116,7 @@ class BanSomeoneExecutorTest : ExecutorTest() {
 
     private fun updateFromDeveloper(messageText: String): ExecutorContext {
         val developerUsername = botConfig.developer
-        return createSimpleContext(messageText).apply {
+        return createSimpleContext(messageText) {
             message.from.userName = developerUsername
             message.chat.apply {
                 type = "private"

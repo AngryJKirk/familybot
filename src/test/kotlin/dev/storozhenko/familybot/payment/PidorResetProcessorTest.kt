@@ -1,15 +1,15 @@
 package dev.storozhenko.familybot.payment
 
 import dev.storozhenko.familybot.common.extensions.toUser
+import dev.storozhenko.familybot.core.keyvalue.models.PidorTolerance
+import dev.storozhenko.familybot.core.models.telegram.Chat
+import dev.storozhenko.familybot.core.models.telegram.Pidor
+import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
+import dev.storozhenko.familybot.feature.shop.model.PreCheckOutResponse
+import dev.storozhenko.familybot.feature.shop.model.ShopItem
+import dev.storozhenko.familybot.feature.shop.services.processors.ResetPidorPaymentProcessor
 import dev.storozhenko.familybot.infrastructure.createSimpleUpdate
 import dev.storozhenko.familybot.infrastructure.payload
-import dev.storozhenko.familybot.models.shop.PreCheckOutResponse
-import dev.storozhenko.familybot.models.shop.ShopItem
-import dev.storozhenko.familybot.models.telegram.Chat
-import dev.storozhenko.familybot.models.telegram.Pidor
-import dev.storozhenko.familybot.repos.CommonRepository
-import dev.storozhenko.familybot.services.payment.processors.ResetPidorPaymentProcessor
-import dev.storozhenko.familybot.services.settings.PidorTolerance
 import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Instant

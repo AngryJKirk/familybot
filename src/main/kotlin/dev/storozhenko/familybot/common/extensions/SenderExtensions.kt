@@ -1,9 +1,9 @@
 package dev.storozhenko.familybot.common.extensions
 
 import dev.storozhenko.familybot.getLogger
-import dev.storozhenko.familybot.models.router.ExecutorContext
-import dev.storozhenko.familybot.models.telegram.stickers.Sticker
-import dev.storozhenko.familybot.models.telegram.stickers.StickerPack
+import dev.storozhenko.familybot.core.routers.models.ExecutorContext
+import dev.storozhenko.familybot.core.models.telegram.stickers.Sticker
+import dev.storozhenko.familybot.core.models.telegram.stickers.StickerPack
 import dev.storozhenko.familybot.telegram.BotConfig
 import dev.storozhenko.familybot.telegram.FamilyBot
 import kotlinx.coroutines.Deferred

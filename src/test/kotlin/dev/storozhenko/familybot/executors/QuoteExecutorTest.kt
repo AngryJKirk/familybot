@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.executors
 
-import dev.storozhenko.familybot.executors.command.nonpublic.QuoteExecutor
+import dev.storozhenko.familybot.feature.tribute.QuoteExecutor
 import dev.storozhenko.familybot.infrastructure.createSimpleCommandContext
 import dev.storozhenko.familybot.suits.CommandExecutorTest
 import kotlinx.coroutines.runBlocking

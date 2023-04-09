@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.executors
 
-import dev.storozhenko.familybot.executors.command.CommandExecutor
-import dev.storozhenko.familybot.executors.command.stats.MeCommandExecutor
+import dev.storozhenko.familybot.core.executors.CommandExecutor
+import dev.storozhenko.familybot.feature.stats.MeCommandExecutor
 import dev.storozhenko.familybot.infrastructure.createSimpleCommandContext
 import dev.storozhenko.familybot.suits.CommandExecutorTest
 import kotlinx.coroutines.runBlocking
