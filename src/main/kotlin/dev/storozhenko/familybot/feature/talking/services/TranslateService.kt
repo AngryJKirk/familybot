@@ -1,9 +1,9 @@
 package dev.storozhenko.familybot.feature.talking.services
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.storozhenko.familybot.BotConfig
+import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.getLogger
-import dev.storozhenko.familybot.telegram.BotConfig
-import dev.storozhenko.familybot.telegram.FamilyBot
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod

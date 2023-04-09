@@ -1,11 +1,11 @@
 package dev.storozhenko.familybot.feature.askworld.repos
 
 import dev.storozhenko.familybot.common.extensions.toAskWorldQuestion
-import dev.storozhenko.familybot.feature.askworld.models.AskWorldQuestion
-import dev.storozhenko.familybot.feature.askworld.models.AskWorldReply
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.User
-import dev.storozhenko.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.core.telegram.FamilyBot
+import dev.storozhenko.familybot.feature.askworld.models.AskWorldQuestion
+import dev.storozhenko.familybot.feature.askworld.models.AskWorldReply
 import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
@@ -24,15 +24,15 @@ class AskWorldRepository(private val template: JdbcTemplate) {
                           ask_world_questions.chat_id,
                           ask_world_questions.user_id,
                           ask_world_questions.date,
-                          c2.name as chat_name,
-                          u.name as common_name,
+                          c2.name AS chat_name,
+                          u.name AS common_name,
                           u.username
-                            from ask_world_questions
-                            INNER JOIN chats c2 on ask_world_questions.chat_id = c2.id
-                            INNER JOIN users u on ask_world_questions.user_id = u.id
-                            where ask_world_questions.id =
+                            FROM ask_world_questions
+                            INNER JOIN chats c2 ON ask_world_questions.chat_id = c2.id
+                            INNER JOIN users u ON ask_world_questions.user_id = u.id
+                            WHERE ask_world_questions.id =
             (SELECT ask_world_questions_delivery.id
-            from ask_world_questions_delivery where message_id = ? and chat_id = ?)""",
+            FROM ask_world_questions_delivery WHERE message_id = ? AND chat_id = ?)""",
             { rs, _ -> rs.toAskWorldQuestion() },
             messageId,
             chatId
@@ -48,13 +48,13 @@ class AskWorldRepository(private val template: JdbcTemplate) {
                           ask_world_questions.chat_id,
                           ask_world_questions.user_id,
                           ask_world_questions.date,
-                          c2.name as chat_name,
-                          u.name as common_name,
+                          c2.name AS chat_name,
+                          u.name AS common_name,
                           u.username
-                            from ask_world_questions
-                            INNER JOIN chats c2 on ask_world_questions.chat_id = c2.id
-                            INNER JOIN users u on ask_world_questions.user_id = u.id
-                where date >= ? and question = ?""",
+                            FROM ask_world_questions
+                            INNER JOIN chats c2 ON ask_world_questions.chat_id = c2.id
+                            INNER JOIN users u ON ask_world_questions.user_id = u.id
+                WHERE date >= ? AND question = ?""",
             { rs, _ -> rs.toAskWorldQuestion() },
             Timestamp.from(date),
             message
@@ -70,13 +70,13 @@ class AskWorldRepository(private val template: JdbcTemplate) {
                           ask_world_questions.chat_id,
                           ask_world_questions.user_id,
                           ask_world_questions.date,
-                          c2.name as chat_name,
-                          u.name as common_name,
+                          c2.name AS chat_name,
+                          u.name AS common_name,
                           u.username
-                            from ask_world_questions
-                            INNER JOIN chats c2 on ask_world_questions.chat_id = c2.id
-                            INNER JOIN users u on ask_world_questions.user_id = u.id
-                where chat_id = ? and lower(question) like ?""",
+                            FROM ask_world_questions
+                            INNER JOIN chats c2 ON ask_world_questions.chat_id = c2.id
+                            INNER JOIN users u ON ask_world_questions.user_id = u.id
+                WHERE chat_id = ? AND LOWER(question) LIKE ?""",
             { rs, _ -> rs.toAskWorldQuestion() },
             chat.id,
             "%${message.lowercase()}%"
@@ -96,7 +96,7 @@ class AskWorldRepository(private val template: JdbcTemplate) {
     @Timed("repository.AskWorldRepository.addQuestion")
     fun addQuestion(question: AskWorldQuestion): Long {
         return template.queryForObject(
-            "INSERT into ask_world_questions (question, chat_id, user_id, date) VALUES (?, ?, ?, ?) returning id",
+            "INSERT INTO ask_world_questions (question, chat_id, user_id, date) VALUES (?, ?, ?, ?) RETURNING id",
             { rs, _ -> rs.getLong("id") },
             question.message,
             question.chat.id,
@@ -116,13 +116,13 @@ class AskWorldRepository(private val template: JdbcTemplate) {
                           ask_world_questions.chat_id,
                           ask_world_questions.user_id,
                           ask_world_questions.date,
-                          c2.name as chat_name,
-                          u.name as common_name,
+                          c2.name AS chat_name,
+                          u.name AS common_name,
                           u.username
-                            from ask_world_questions
-                            INNER JOIN chats c2 on ask_world_questions.chat_id = c2.id
-                            INNER JOIN users u on ask_world_questions.user_id = u.id
-                where date >= ?""",
+                            FROM ask_world_questions
+                            INNER JOIN chats c2 ON ask_world_questions.chat_id = c2.id
+                            INNER JOIN users u ON ask_world_questions.user_id = u.id
+                WHERE date >= ?""",
             { rs, _ -> rs.toAskWorldQuestion() },
             Timestamp.from(date)
         )
@@ -131,7 +131,7 @@ class AskWorldRepository(private val template: JdbcTemplate) {
     @Timed("repository.AskWorldRepository.addReply")
     fun addReply(reply: AskWorldReply): Long {
         return template.queryForObject(
-            "INSERT into ask_world_replies (question_id, reply, chat_id, user_id, date) VALUES (?, ?, ?, ?, ?) returning id",
+            "INSERT INTO ask_world_replies (question_id, reply, chat_id, user_id, date) VALUES (?, ?, ?, ?, ?) RETURNING id",
             { rs, _ -> rs.getLong("id") },
             reply.questionId,
             reply.message,

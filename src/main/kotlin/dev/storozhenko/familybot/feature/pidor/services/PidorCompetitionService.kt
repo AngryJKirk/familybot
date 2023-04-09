@@ -1,17 +1,17 @@
 package dev.storozhenko.familybot.feature.pidor.services
 
+import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.sendContextFree
 import dev.storozhenko.familybot.common.extensions.startOfCurrentMonth
+import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Chat
-import dev.storozhenko.familybot.feature.pidor.models.Pidor
 import dev.storozhenko.familybot.core.models.telegram.User
-import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
-import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
+import dev.storozhenko.familybot.core.telegram.FamilyBot
+import dev.storozhenko.familybot.feature.pidor.models.Pidor
+import dev.storozhenko.familybot.feature.pidor.repos.PidorRepository
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
-import dev.storozhenko.familybot.telegram.BotConfig
-import dev.storozhenko.familybot.telegram.FamilyBot
 import kotlinx.coroutines.delay
 import org.springframework.stereotype.Service
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -21,9 +21,9 @@ import kotlin.time.Duration.Companion.seconds
 
 @Service
 class PidorCompetitionService(
-    private val repository: CommonRepository,
     private val dictionary: Dictionary,
-    private val botConfig: BotConfig
+    private val botConfig: BotConfig,
+    private val pidorRepository: PidorRepository
 ) {
 
     fun pidorCompetition(chat: Chat, chatEasyKey: ChatEasyKey): suspend (AbsSender) -> Unit {
@@ -44,7 +44,7 @@ class PidorCompetitionService(
                         enableHtml = true
                     )
                     val oneMorePidor = competitors.random()
-                    repository.addPidor(Pidor(oneMorePidor, Instant.now()))
+                    pidorRepository.addPidor(Pidor(oneMorePidor, Instant.now()))
                     delay(1.seconds)
                     val oneMorePidorMessage =
                         dictionary.get(Phrase.COMPETITION_ONE_MORE_PIDOR, chatEasyKey)
@@ -57,7 +57,7 @@ class PidorCompetitionService(
     }
 
     private fun getPidorsOfThisMonth(chat: Chat): List<Pidor> {
-        return repository.getPidorsByChat(
+        return pidorRepository.getPidorsByChat(
             chat,
             startDate = startOfCurrentMonth()
         )

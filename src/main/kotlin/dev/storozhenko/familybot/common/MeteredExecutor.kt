@@ -3,7 +3,7 @@ package dev.storozhenko.familybot.common
 import dev.storozhenko.familybot.core.executors.Executor
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.routers.models.Priority
-import dev.storozhenko.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.core.telegram.FamilyBot
 import io.micrometer.core.instrument.MeterRegistry
 import org.telegram.telegrambots.meta.bots.AbsSender
 

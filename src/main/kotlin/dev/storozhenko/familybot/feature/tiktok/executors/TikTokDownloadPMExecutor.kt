@@ -1,9 +1,9 @@
 package dev.storozhenko.familybot.feature.tiktok.executors
 
 import dev.storozhenko.familybot.core.executors.PrivateMessageExecutor
+import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.routers.models.Priority
-import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.feature.settings.models.TikTokDownload
 import org.springframework.stereotype.Component
 

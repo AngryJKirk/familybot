@@ -1,5 +1,6 @@
 package dev.storozhenko.familybot.feature.gambling
 
+import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.common.extensions.untilNextMonth
 import dev.storozhenko.familybot.core.executors.ContiniousConversationExecutor
@@ -11,10 +12,9 @@ import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.models.telegram.User
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.pidor.models.Pidor
-import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
+import dev.storozhenko.familybot.feature.pidor.repos.PidorRepository
 import dev.storozhenko.familybot.feature.pidor.services.PidorCompetitionService
 import dev.storozhenko.familybot.feature.settings.models.BetTolerance
-import dev.storozhenko.familybot.telegram.BotConfig
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -27,7 +27,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @Component
 class BetContiniousExecutor(
-    private val pidorRepository: CommonRepository,
+    private val pidorRepository: PidorRepository,
     private val pidorCompetitionService: PidorCompetitionService,
     private val easyKeyValueService: EasyKeyValueService,
     private val botConfig: BotConfig
@@ -43,8 +43,8 @@ class BetContiniousExecutor(
     override fun canExecute(context: ExecutorContext): Boolean {
         val message = context.message
         return message.isReply &&
-                message.replyToMessage.from.userName == botConfig.botName &&
-                (message.replyToMessage.text ?: "") in getDialogMessages(context)
+            message.replyToMessage.from.userName == botConfig.botName &&
+            (message.replyToMessage.text ?: "") in getDialogMessages(context)
     }
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {

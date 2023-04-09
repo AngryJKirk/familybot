@@ -7,7 +7,7 @@ import dev.storozhenko.familybot.common.extensions.toHourMinuteString
 import dev.storozhenko.familybot.getLogger
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
-import dev.storozhenko.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.core.telegram.FamilyBot
 import kotlinx.coroutines.delay
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery

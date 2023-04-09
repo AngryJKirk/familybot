@@ -1,5 +1,6 @@
-package dev.storozhenko.familybot.telegram
+package dev.storozhenko.familybot.core.telegram
 
+import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.toChat
 import dev.storozhenko.familybot.common.extensions.toJson
 import dev.storozhenko.familybot.common.extensions.toUser
@@ -72,7 +73,7 @@ class FamilyBot(
             val user = update.toUser()
             MDC.put("chat", "${user.chat.name}:${user.chat.id}")
             MDC.put("user", "${user.name}:${user.id}")
-            router.processUpdate(update).invoke(this@FamilyBot)
+            router.processUpdate(update)
         } catch (e: TelegramApiRequestException) {
             val logMessage = "Telegram error: ${e.apiResponse}, ${e.errorCode}, update is ${update.toJson()}"
             if (e.errorCode in 400..499) {

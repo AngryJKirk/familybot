@@ -4,15 +4,15 @@ import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.common.extensions.untilNextDay
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.executors.Configurable
-import dev.storozhenko.familybot.getLogger
-import dev.storozhenko.familybot.core.models.dictionary.Phrase
-import dev.storozhenko.familybot.core.routers.models.ExecutorContext
-import dev.storozhenko.familybot.feature.settings.models.FunctionId
-import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
+import dev.storozhenko.familybot.core.models.dictionary.Phrase
+import dev.storozhenko.familybot.core.models.telegram.Command
+import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.settings.models.FirstTimeInChat
+import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.feature.settings.models.RageMode
 import dev.storozhenko.familybot.feature.settings.models.RageTolerance
+import dev.storozhenko.familybot.getLogger
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 import kotlin.time.Duration.Companion.minutes
@@ -81,7 +81,7 @@ class RageExecutor(
     private fun isRageForced(context: ExecutorContext): Boolean {
         return context.message.text.contains(
             "FORCED" +
-                    context.user.id.toString().takeLast(4)
+                context.user.id.toString().takeLast(4)
         )
     }
 }

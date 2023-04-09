@@ -1,16 +1,20 @@
 package dev.storozhenko.familybot.core.routers
 
-import dev.storozhenko.familybot.common.extensions.*
-import dev.storozhenko.familybot.getLogger
+import dev.storozhenko.familybot.BotConfig
+import dev.storozhenko.familybot.common.extensions.from
+import dev.storozhenko.familybot.common.extensions.key
+import dev.storozhenko.familybot.common.extensions.parseJson
+import dev.storozhenko.familybot.common.extensions.toChat
+import dev.storozhenko.familybot.common.extensions.toUser
+import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
+import dev.storozhenko.familybot.core.repos.UserRepository
 import dev.storozhenko.familybot.feature.shop.model.PreCheckOutResponse
 import dev.storozhenko.familybot.feature.shop.model.ShopPayload
 import dev.storozhenko.familybot.feature.shop.model.SuccessPaymentResponse
-import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
 import dev.storozhenko.familybot.feature.shop.services.PaymentService
-import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
-import dev.storozhenko.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.getLogger
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -20,7 +24,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 @Component
 class PaymentRouter(
     private val paymentService: PaymentService,
-    private val commonRepository: CommonRepository,
+    private val commonRepository: UserRepository,
     private val dictionary: Dictionary,
     private val botConfig: BotConfig
 ) {

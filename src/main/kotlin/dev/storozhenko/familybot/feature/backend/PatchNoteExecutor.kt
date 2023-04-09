@@ -2,10 +2,10 @@ package dev.storozhenko.familybot.feature.backend
 
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.OnlyBotOwnerExecutor
-import dev.storozhenko.familybot.getLogger
-import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.models.telegram.Chat
-import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
+import dev.storozhenko.familybot.core.repos.UserRepository
+import dev.storozhenko.familybot.core.routers.models.ExecutorContext
+import dev.storozhenko.familybot.getLogger
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -15,7 +15,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class PatchNoteExecutor(
-    private val commonRepository: CommonRepository
+    private val commonRepository: UserRepository
 ) : OnlyBotOwnerExecutor() {
 
     private val patchNotePrefix = "patch_note"

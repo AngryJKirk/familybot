@@ -3,16 +3,16 @@ package dev.storozhenko.familybot.feature.backend
 import dev.storozhenko.familybot.common.extensions.getMessageTokens
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.OnlyBotOwnerExecutor
-import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.User
-import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
+import dev.storozhenko.familybot.core.repos.UserRepository
+import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class FindUserExecutor(
-    private val commonRepository: CommonRepository
+    private val commonRepository: UserRepository
 ) : OnlyBotOwnerExecutor() {
     private val delimiter = "\n===================\n"
     override fun getMessagePrefix() = "user|"
@@ -36,10 +36,10 @@ class FindUserExecutor(
 
     private fun format(userToChats: List<Pair<User, List<Chat>>>): String {
         return "Search user result:\n" +
-                userToChats
-                    .joinToString(separator = delimiter) { (user, chats) ->
-                        "User: ${formatUser(user)} in chats [${formatChats(chats)}]"
-                    }
+            userToChats
+                .joinToString(separator = delimiter) { (user, chats) ->
+                    "User: ${formatUser(user)} in chats [${formatChats(chats)}]"
+                }
     }
 
     private fun formatUser(user: User): String {

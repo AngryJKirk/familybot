@@ -5,17 +5,17 @@ import dev.storozhenko.familybot.common.extensions.italic
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.Configurable
 import dev.storozhenko.familybot.core.executors.Executor
-import dev.storozhenko.familybot.core.models.dictionary.Phrase
-import dev.storozhenko.familybot.core.routers.models.ExecutorContext
-import dev.storozhenko.familybot.feature.settings.models.FunctionId
-import dev.storozhenko.familybot.core.routers.models.Priority
-import dev.storozhenko.familybot.core.models.telegram.MessageContentType
-import dev.storozhenko.familybot.feature.askworld.repos.AskWorldRepository
 import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
+import dev.storozhenko.familybot.core.models.dictionary.Phrase
+import dev.storozhenko.familybot.core.models.telegram.MessageContentType
+import dev.storozhenko.familybot.core.routers.models.ExecutorContext
+import dev.storozhenko.familybot.core.routers.models.Priority
+import dev.storozhenko.familybot.BotConfig
+import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.feature.askworld.models.AskWorldReply
+import dev.storozhenko.familybot.feature.askworld.repos.AskWorldRepository
+import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
-import dev.storozhenko.familybot.telegram.BotConfig
-import dev.storozhenko.familybot.telegram.FamilyBot
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
@@ -283,7 +283,7 @@ class AskWorldReceiveReplyExecutor(
             SendMessage(
                 chatIdToReply,
                 "$answerTitle ${context.chat.name.boldNullable()} " +
-                        "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\":"
+                    "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\":"
             ).apply {
                 enableHtml(true)
             }
@@ -302,7 +302,7 @@ class AskWorldReceiveReplyExecutor(
             SendMessage(
                 chatIdToReply,
                 "$answerTitle ${context.chat.name.boldNullable()} " +
-                        "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}"
+                    "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}"
             ).apply {
                 enableHtml(true)
             }

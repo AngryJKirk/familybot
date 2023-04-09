@@ -8,7 +8,7 @@ import dev.storozhenko.familybot.core.models.telegram.stickers.Sticker
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
 import dev.storozhenko.familybot.feature.talking.services.DictionaryReader
-import dev.storozhenko.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.BotConfig
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock

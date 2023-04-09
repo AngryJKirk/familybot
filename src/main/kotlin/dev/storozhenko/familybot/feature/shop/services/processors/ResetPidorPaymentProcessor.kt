@@ -4,10 +4,10 @@ import dev.storozhenko.familybot.common.extensions.isToday
 import dev.storozhenko.familybot.common.extensions.key
 import dev.storozhenko.familybot.common.extensions.startOfDay
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
-import dev.storozhenko.familybot.feature.settings.models.PidorTolerance
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Chat
-import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
+import dev.storozhenko.familybot.feature.pidor.repos.PidorRepository
+import dev.storozhenko.familybot.feature.settings.models.PidorTolerance
 import dev.storozhenko.familybot.feature.shop.model.PreCheckOutResponse
 import dev.storozhenko.familybot.feature.shop.model.ShopItem
 import dev.storozhenko.familybot.feature.shop.model.ShopPayload
@@ -21,14 +21,14 @@ import java.time.temporal.ChronoUnit
 @Component
 class ResetPidorPaymentProcessor(
     private val easyKeyValueService: EasyKeyValueService,
-    private val commonRepository: CommonRepository
+    private val pidorRepository: PidorRepository
 ) : PaymentProcessor {
     private val log = getLogger()
     override fun itemType() = ShopItem.DROP_PIDOR
 
     override fun preCheckOut(shopPayload: ShopPayload): PreCheckOutResponse {
         val chat = Chat(shopPayload.chatId, null)
-        val isNonePidorToday = commonRepository
+        val isNonePidorToday = pidorRepository
             .getPidorsByChat(chat)
             .none { pidor -> pidor.date.isToday() }
         log.info("Doing pre checkout, shopPayload=$shopPayload, isNonePidorsToday is $isNonePidorToday")
@@ -42,7 +42,7 @@ class ResetPidorPaymentProcessor(
     override fun processSuccess(shopPayload: ShopPayload): SuccessPaymentResponse {
         val chat = Chat(shopPayload.chatId, null)
         val now = Instant.now()
-        val amountOfRemovedPidors = commonRepository.removePidorRecords(
+        val amountOfRemovedPidors = pidorRepository.removePidorRecords(
             chat,
             from = now.startOfDay(),
             until = now.plus(1, ChronoUnit.DAYS).startOfDay()

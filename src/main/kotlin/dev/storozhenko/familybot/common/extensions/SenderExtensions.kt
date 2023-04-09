@@ -1,11 +1,11 @@
 package dev.storozhenko.familybot.common.extensions
 
-import dev.storozhenko.familybot.getLogger
-import dev.storozhenko.familybot.core.routers.models.ExecutorContext
+import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.core.models.telegram.stickers.Sticker
 import dev.storozhenko.familybot.core.models.telegram.stickers.StickerPack
-import dev.storozhenko.familybot.telegram.BotConfig
-import dev.storozhenko.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.core.routers.models.ExecutorContext
+import dev.storozhenko.familybot.core.telegram.FamilyBot
+import dev.storozhenko.familybot.getLogger
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -118,11 +118,11 @@ private suspend fun AbsSender.sendInternal(
 ): Message {
     SenderLogger.log.info(
         "Sending message, update=${update?.toJson() ?: "[N/A]"}, " +
-                "replyMessageId=$replyMessageId," +
-                "enableHtml=$enableHtml," +
-                "replyToUpdate=$replyToUpdate," +
-                "shouldTypeBeforeSend=$shouldTypeBeforeSend," +
-                "typeDelay=$typeDelay"
+            "replyMessageId=$replyMessageId," +
+            "enableHtml=$enableHtml," +
+            "replyToUpdate=$replyToUpdate," +
+            "shouldTypeBeforeSend=$shouldTypeBeforeSend," +
+            "typeDelay=$typeDelay"
     )
     if (shouldTypeBeforeSend) {
         this.execute(SendChatAction(chatId, "typing", null))

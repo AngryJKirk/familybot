@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.feature.tribute.repos
 
 import dev.storozhenko.familybot.common.extensions.readTomlFromStatic
-import dev.storozhenko.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.core.telegram.FamilyBot
 import org.springframework.stereotype.Component
 import org.tomlj.TomlTable
 

@@ -3,8 +3,8 @@ package dev.storozhenko.familybot.feature.ban.executors
 import dev.storozhenko.familybot.common.extensions.getMessageTokens
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.OnlyBotOwnerExecutor
+import dev.storozhenko.familybot.core.repos.UserRepository
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
-import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
 import dev.storozhenko.familybot.feature.ban.services.BanService
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 @Component
 class BanSomeoneExecutor(
     private val banService: BanService,
-    private val commonRepository: CommonRepository
+    private val commonRepository: UserRepository
 ) : OnlyBotOwnerExecutor() {
 
     private val banPrefix = "ban|"

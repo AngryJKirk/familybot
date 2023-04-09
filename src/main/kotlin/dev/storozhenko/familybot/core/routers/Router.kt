@@ -1,33 +1,42 @@
 package dev.storozhenko.familybot.core.routers
 
-import dev.storozhenko.familybot.common.extensions.*
+import dev.storozhenko.familybot.BotConfig
+import dev.storozhenko.familybot.common.extensions.context
+import dev.storozhenko.familybot.common.extensions.key
+import dev.storozhenko.familybot.common.extensions.prettyFormat
+import dev.storozhenko.familybot.common.extensions.send
+import dev.storozhenko.familybot.common.extensions.toChat
+import dev.storozhenko.familybot.common.extensions.toUser
 import dev.storozhenko.familybot.common.meteredCanExecute
 import dev.storozhenko.familybot.common.meteredExecute
 import dev.storozhenko.familybot.common.meteredPriority
+import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.executors.Configurable
 import dev.storozhenko.familybot.core.executors.Executor
-import dev.storozhenko.familybot.core.executors.CommandExecutor
-import dev.storozhenko.familybot.feature.security.AntiDdosExecutor
 import dev.storozhenko.familybot.core.executors.PrivateMessageExecutor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
-import dev.storozhenko.familybot.getLogger
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
+import dev.storozhenko.familybot.core.models.telegram.CommandByUser
+import dev.storozhenko.familybot.core.repos.UserRepository
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.routers.models.Priority
-import dev.storozhenko.familybot.core.models.telegram.CommandByUser
+import dev.storozhenko.familybot.feature.logging.RawUpdateLogger
 import dev.storozhenko.familybot.feature.logging.repos.ChatLogRepository
 import dev.storozhenko.familybot.feature.logging.repos.CommandHistoryRepository
-import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
-import dev.storozhenko.familybot.feature.settings.repos.FunctionsConfigureRepository
-import dev.storozhenko.familybot.feature.talking.services.Dictionary
+import dev.storozhenko.familybot.feature.security.AntiDdosExecutor
 import dev.storozhenko.familybot.feature.settings.models.CommandLimit
 import dev.storozhenko.familybot.feature.settings.models.FirstBotInteraction
 import dev.storozhenko.familybot.feature.settings.models.FirstTimeInChat
 import dev.storozhenko.familybot.feature.settings.models.MessageCounter
-import dev.storozhenko.familybot.feature.logging.RawUpdateLogger
-import dev.storozhenko.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.feature.settings.repos.FunctionsConfigureRepository
+import dev.storozhenko.familybot.feature.talking.services.Dictionary
+import dev.storozhenko.familybot.getLogger
 import io.micrometer.core.instrument.MeterRegistry
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -39,7 +48,7 @@ import kotlin.time.Duration.Companion.minutes
 
 @Component
 class Router(
-    private val repository: CommonRepository,
+    private val repository: UserRepository,
     private val commandHistoryRepository: CommandHistoryRepository,
     private val executors: List<Executor>,
     private val chatLogRepository: ChatLogRepository,

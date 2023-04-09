@@ -1,10 +1,10 @@
 package dev.storozhenko.familybot.feature.tribute.executors
 
+import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.core.executors.ContiniousConversationExecutor
-import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.models.telegram.Command
+import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.tribute.repos.QuoteRepository
-import dev.storozhenko.familybot.telegram.BotConfig
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -30,11 +30,11 @@ class QuoteContiniousExecutor(
             it.execute(AnswerCallbackQuery(callbackQuery.id))
             it.execute(
                 (
-                        SendMessage(
-                            callbackQuery.message.chatId.toString(),
-                            quoteRepository.getByTag(callbackQuery.data) ?: "Такого тега нет, идите нахуй"
-                        )
-                        )
+                    SendMessage(
+                        callbackQuery.message.chatId.toString(),
+                        quoteRepository.getByTag(callbackQuery.data) ?: "Такого тега нет, идите нахуй"
+                    )
+                    )
             )
         }
     }

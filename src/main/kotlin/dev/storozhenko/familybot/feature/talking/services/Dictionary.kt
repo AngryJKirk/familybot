@@ -1,9 +1,9 @@
 package dev.storozhenko.familybot.feature.talking.services
 
+import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
+import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.dictionary.PhraseTheme
-import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
-import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.feature.settings.models.UkrainianLanguage
 import org.springframework.stereotype.Component
 import java.time.LocalDate

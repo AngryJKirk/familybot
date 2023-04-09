@@ -5,18 +5,18 @@ import com.theokanning.openai.completion.chat.ChatCompletionRequest
 import com.theokanning.openai.completion.chat.ChatCompletionResult
 import com.theokanning.openai.completion.chat.ChatMessage
 import com.theokanning.openai.service.OpenAiService
+import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.code
 import dev.storozhenko.familybot.common.extensions.randomInt
 import dev.storozhenko.familybot.common.extensions.startOfDay
 import dev.storozhenko.familybot.common.extensions.untilNextMonth
+import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
-import dev.storozhenko.familybot.feature.settings.models.FunctionId
-import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
+import dev.storozhenko.familybot.core.telegram.FamilyBot
+import dev.storozhenko.familybot.feature.pidor.repos.PidorRepository
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTStyle
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTTokenUsageByChat
-import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
-import dev.storozhenko.familybot.telegram.BotConfig
-import dev.storozhenko.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import org.springframework.stereotype.Component
 import java.time.Duration
 import java.util.*
@@ -25,7 +25,7 @@ import java.util.*
 class TalkingServiceChatGpt(
     private val easyKeyValueService: EasyKeyValueService,
     private val gptSettingsReader: GptSettingsReader,
-    private val commonRepository: CommonRepository,
+    private val pidorRepository: PidorRepository,
     botConfig: BotConfig
 ) : TalkingService {
     companion object {
@@ -153,7 +153,7 @@ class TalkingServiceChatGpt(
         if (easyKeyValueService.get(FunctionId.Pidor, context.chatKey, false).not()) {
             return null
         }
-        val pidorsByChat = commonRepository.getPidorsByChat(context.chat, startDate = startOfDay())
+        val pidorsByChat = pidorRepository.getPidorsByChat(context.chat, startDate = startOfDay())
         return if (pidorsByChat.isEmpty()) {
             null
         } else {

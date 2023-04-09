@@ -2,16 +2,16 @@ package dev.storozhenko.familybot.feature.backend
 
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.OnlyBotOwnerExecutor
-import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.models.telegram.Chat
-import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
+import dev.storozhenko.familybot.core.repos.UserRepository
+import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMemberCount
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class GetChatListExecutor(
-    private val commonRepository: CommonRepository
+    private val commonRepository: UserRepository
 ) : OnlyBotOwnerExecutor() {
 
     override fun getMessagePrefix() = "chats"

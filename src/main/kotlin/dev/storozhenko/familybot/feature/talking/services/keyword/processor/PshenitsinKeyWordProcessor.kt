@@ -1,12 +1,12 @@
 package dev.storozhenko.familybot.feature.talking.services.keyword.processor
 
 import dev.storozhenko.familybot.common.extensions.send
-import dev.storozhenko.familybot.feature.talking.services.keyword.KeyWordProcessor
-import dev.storozhenko.familybot.core.routers.models.ExecutorContext
-import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
+import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
+import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.settings.models.PshenitsinTolerance
 import dev.storozhenko.familybot.feature.talking.services.TalkingService
+import dev.storozhenko.familybot.feature.talking.services.keyword.KeyWordProcessor
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender

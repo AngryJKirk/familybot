@@ -7,7 +7,7 @@ import dev.storozhenko.familybot.getLogger
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.User
 import dev.storozhenko.familybot.services.scenario.*
-import dev.storozhenko.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.core.telegram.FamilyBot
 import io.micrometer.core.annotation.Timed
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.jdbc.core.JdbcTemplate

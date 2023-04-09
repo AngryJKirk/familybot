@@ -1,10 +1,10 @@
-package dev.storozhenko.familybot.feature.pidor.services
+package dev.storozhenko.familybot.feature.pidor.repos
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import dev.storozhenko.familybot.common.extensions.parseJson
 import dev.storozhenko.familybot.common.extensions.toJson
-import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
+import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
 import dev.storozhenko.familybot.feature.settings.models.PidorStrikeStats
 import org.springframework.stereotype.Component
 

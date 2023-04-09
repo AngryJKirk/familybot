@@ -1,5 +1,6 @@
 package dev.storozhenko.familybot.feature.askworld.executors
 
+import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.boldNullable
 import dev.storozhenko.familybot.common.extensions.italic
 import dev.storozhenko.familybot.common.extensions.key
@@ -11,13 +12,13 @@ import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.Command
+import dev.storozhenko.familybot.core.repos.UserRepository
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.askworld.models.AskWorldQuestion
 import dev.storozhenko.familybot.feature.askworld.models.AskWorldQuestionData
 import dev.storozhenko.familybot.feature.askworld.models.Success
 import dev.storozhenko.familybot.feature.askworld.models.ValidationError
 import dev.storozhenko.familybot.feature.askworld.repos.AskWorldRepository
-import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
 import dev.storozhenko.familybot.feature.settings.models.AskWorldChatUsages
 import dev.storozhenko.familybot.feature.settings.models.AskWorldDensity
 import dev.storozhenko.familybot.feature.settings.models.AskWorldUserUsages
@@ -26,7 +27,6 @@ import dev.storozhenko.familybot.feature.settings.processors.AskWorldDensityValu
 import dev.storozhenko.familybot.feature.settings.repos.FunctionsConfigureRepository
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
 import dev.storozhenko.familybot.getLogger
-import dev.storozhenko.familybot.telegram.BotConfig
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -43,7 +43,7 @@ import java.time.temporal.ChronoUnit
 @Component
 class AskWorldInitialExecutor(
     private val askWorldRepository: AskWorldRepository,
-    private val commonRepository: CommonRepository,
+    private val commonRepository: UserRepository,
     private val configureRepository: FunctionsConfigureRepository,
     private val botConfig: BotConfig,
     private val dictionary: Dictionary,
@@ -169,9 +169,9 @@ class AskWorldInitialExecutor(
 
             val isScam =
                 shouldBeCensored(message) ||
-                        shouldBeCensored(context.chat.name ?: "") ||
-                        isSpam(message) ||
-                        containsLongWords(message)
+                    shouldBeCensored(context.chat.name ?: "") ||
+                    isSpam(message) ||
+                    containsLongWords(message)
 
             if (message.length > 2000) {
                 return ValidationError {
@@ -254,16 +254,16 @@ class AskWorldInitialExecutor(
 
     private fun shouldBeCensored(message: String): Boolean {
         return message.contains("http", ignoreCase = true) ||
-                message.contains("www", ignoreCase = true) ||
-                message.contains("jpg", ignoreCase = true) ||
-                message.contains("png", ignoreCase = true) ||
-                message.contains("jpeg", ignoreCase = true) ||
-                message.contains("bmp", ignoreCase = true) ||
-                message.contains("gif", ignoreCase = true) ||
-                message.contains("_bot", ignoreCase = true) ||
-                message.contains("t.me", ignoreCase = true) ||
-                message.contains("Bot", ignoreCase = false) ||
-                message.contains("@")
+            message.contains("www", ignoreCase = true) ||
+            message.contains("jpg", ignoreCase = true) ||
+            message.contains("png", ignoreCase = true) ||
+            message.contains("jpeg", ignoreCase = true) ||
+            message.contains("bmp", ignoreCase = true) ||
+            message.contains("gif", ignoreCase = true) ||
+            message.contains("_bot", ignoreCase = true) ||
+            message.contains("t.me", ignoreCase = true) ||
+            message.contains("Bot", ignoreCase = false) ||
+            message.contains("@")
     }
 
     private fun isSpam(message: String): Boolean {

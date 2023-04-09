@@ -3,15 +3,15 @@ package dev.storozhenko.familybot.feature.backend
 import dev.storozhenko.familybot.common.extensions.getMessageTokens
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.OnlyBotOwnerExecutor
+import dev.storozhenko.familybot.core.repos.UserRepository
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
-import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class CustomMessageExecutor(
-    private val commonRepository: CommonRepository
+    private val commonRepository: UserRepository
 ) :
     OnlyBotOwnerExecutor() {
     override fun executeInternal(context: ExecutorContext): suspend (AbsSender) -> Unit {

@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.feature.talking.services
 
 import dev.storozhenko.familybot.common.extensions.readTomlFromStatic
-import dev.storozhenko.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.core.telegram.FamilyBot
 import org.springframework.stereotype.Component
 import org.tomlj.TomlTable
 
@@ -39,7 +39,6 @@ class GptSettingsReader {
     fun getStyleValue(style: GptStyle): String {
         return styles[style] ?: ""
     }
-
 }
 
 enum class GptStyle(val value: String, val universe: GptUniverse = GptUniverse.DEFAULT) {
@@ -54,7 +53,6 @@ enum class GptStyle(val value: String, val universe: GptUniverse = GptUniverse.D
         private val lookUpMap = GptStyle.values().associateBy(GptStyle::value)
         fun lookUp(value: String) = lookUpMap[value]
     }
-
 }
 
 enum class GptUniverse {

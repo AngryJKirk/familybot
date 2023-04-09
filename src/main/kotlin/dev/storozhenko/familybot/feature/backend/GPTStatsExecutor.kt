@@ -5,19 +5,19 @@ import dev.storozhenko.familybot.common.extensions.code
 import dev.storozhenko.familybot.common.extensions.prettyFormat
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.OnlyBotOwnerExecutor
-import dev.storozhenko.familybot.core.routers.models.ExecutorContext
+import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.models.telegram.Chat
-import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
+import dev.storozhenko.familybot.core.repos.UserRepository
+import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTPaidTill
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTTokenUsageByChat
-import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Instant
 
 @Component
 class GPTStatsExecutor(
-    private val commonRepository: CommonRepository,
+    private val commonRepository: UserRepository,
     private val easyKeyValueService: EasyKeyValueService
 ) : OnlyBotOwnerExecutor() {
     override fun getMessagePrefix() = "gpt"
@@ -54,7 +54,7 @@ class GPTStatsExecutor(
             .sortedBy { (_, timestamp) -> timestamp }
             .map { (chatKey, timestamp) ->
                 Instant.ofEpochSecond(timestamp).prettyFormat(dateOnly = true).code() + "  ⌛️  " +
-                        (chats[chatKey.chatId]?.name ?: "#no_name").bold()
+                    (chats[chatKey.chatId]?.name ?: "#no_name").bold()
             })
             .joinToString(separator = "\n")
     }

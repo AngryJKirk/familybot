@@ -1,8 +1,9 @@
 package dev.storozhenko.familybot.executors
 
+import dev.storozhenko.familybot.core.repos.UserRepository
 import dev.storozhenko.familybot.feature.pidor.executors.PidorExecutor
+import dev.storozhenko.familybot.feature.pidor.repos.PidorRepository
 import dev.storozhenko.familybot.infrastructure.createSimpleCommandContext
-import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
 import dev.storozhenko.familybot.suits.CommandExecutorTest
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
@@ -18,8 +19,9 @@ class PidorExecutorTest : CommandExecutorTest() {
     @Autowired
     lateinit var pidorExecutor: PidorExecutor
 
+
     @Autowired
-    lateinit var commonRepository: CommonRepository
+    lateinit var pidorRepository: PidorRepository
 
     @Autowired
     lateinit var redisTemplate: StringRedisTemplate
@@ -29,15 +31,15 @@ class PidorExecutorTest : CommandExecutorTest() {
     override fun executeTest() {
         val context = createSimpleCommandContext(pidorExecutor.command())
         val pidorsBefore =
-            commonRepository.getPidorsByChat(context.chat)
-        val allPidors = commonRepository.getAllPidors()
+            pidorRepository.getPidorsByChat(context.chat)
+        val allPidors = pidorRepository.getAllPidors()
 
         runBlocking { pidorExecutor.execute(context).invoke(sender) }
         val firstCaptor = ArgumentCaptor.forClass(SendMessage::class.java)
         verify(sender, times(11)).execute(firstCaptor.capture())
 
         val pidorsAfterFirstInvoke =
-            commonRepository.getPidorsByChat(context.chat)
+            pidorRepository.getPidorsByChat(context.chat)
         Assertions.assertEquals(
             pidorsBefore.size + 1,
             pidorsAfterFirstInvoke.size,
@@ -63,7 +65,7 @@ class PidorExecutorTest : CommandExecutorTest() {
         verify(sender, times(12)).execute(secondCaptor.capture())
 
         val pidorsAfterSecondInvoke =
-            commonRepository.getPidorsByChat(context.chat)
+            pidorRepository.getPidorsByChat(context.chat)
 
         Assertions.assertEquals(
             pidorsAfterFirstInvoke.size,
@@ -83,8 +85,8 @@ class PidorExecutorTest : CommandExecutorTest() {
             firstPidorName.text.contains(lastPidorAfterSecondInvoke.user.getGeneralName(true)),
             "Pidor in message and in database should match"
         )
-        commonRepository.getAllPidors().forEach { (user) ->
-            commonRepository.removePidorRecord(user)
+        pidorRepository.getAllPidors().forEach { (user) ->
+            pidorRepository.removePidorRecord(user)
         }
 
         redisTemplate.delete(redisTemplate.keys("*"))

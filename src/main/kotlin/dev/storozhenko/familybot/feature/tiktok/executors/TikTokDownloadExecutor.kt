@@ -1,13 +1,13 @@
 package dev.storozhenko.familybot.feature.tiktok.executors
 
+import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.core.executors.Executor
-import dev.storozhenko.familybot.getLogger
+import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.routers.models.Priority
-import dev.storozhenko.familybot.feature.tiktok.services.IgCookieService
-import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.feature.settings.models.TikTokDownload
-import dev.storozhenko.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.feature.tiktok.services.IgCookieService
+import dev.storozhenko.familybot.getLogger
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo
@@ -44,8 +44,8 @@ class TikTokDownloadExecutor(
 
     override fun canExecute(context: ExecutorContext): Boolean {
         return botConfig.ytdlLocation != null &&
-                getTikTokUrls(context).isNotEmpty() &&
-                easyKeyValueService.get(TikTokDownload, context.chatKey, false)
+            getTikTokUrls(context).isNotEmpty() &&
+            easyKeyValueService.get(TikTokDownload, context.chatKey, false)
     }
 
     override fun priority(context: ExecutorContext) = Priority.VERY_LOW
@@ -80,7 +80,6 @@ class TikTokDownloadExecutor(
 
     private fun containsUrl(text: String): Boolean {
         return isIG(text) || isTikTok(text)
-
     }
 
     private fun isTikTok(text: String) = text.contains("tiktok", ignoreCase = true)

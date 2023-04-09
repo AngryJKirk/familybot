@@ -12,7 +12,7 @@ import dev.storozhenko.familybot.infrastructure.createSimpleContext
 import dev.storozhenko.familybot.infrastructure.createSimpleUpdate
 import dev.storozhenko.familybot.infrastructure.randomString
 import dev.storozhenko.familybot.suits.ExecutorTest
-import dev.storozhenko.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.BotConfig
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.jupiter.api.Assertions

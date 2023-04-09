@@ -9,7 +9,7 @@ import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.feature.settings.repos.FunctionsConfigureRepository
-import dev.storozhenko.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.BotConfig
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage

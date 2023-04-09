@@ -1,5 +1,6 @@
 package dev.storozhenko.familybot.feature.pidor.executors
 
+import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.*
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.executors.Configurable
@@ -9,9 +10,10 @@ import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.models.telegram.User
+import dev.storozhenko.familybot.core.repos.UserRepository
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.pidor.models.Pidor
-import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
+import dev.storozhenko.familybot.feature.pidor.repos.PidorRepository
 import dev.storozhenko.familybot.feature.pidor.services.PidorCompetitionService
 import dev.storozhenko.familybot.feature.pidor.services.PidorStrikesService
 import dev.storozhenko.familybot.feature.settings.models.BotOwnerPidorSkip
@@ -20,7 +22,6 @@ import dev.storozhenko.familybot.feature.settings.models.PickPidorAbilityCount
 import dev.storozhenko.familybot.feature.settings.models.PidorTolerance
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
 import dev.storozhenko.familybot.getLogger
-import dev.storozhenko.familybot.telegram.BotConfig
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -34,7 +35,8 @@ import java.time.temporal.ChronoUnit
 
 @Component
 class PidorExecutor(
-    private val repository: CommonRepository,
+    private val userRepository: UserRepository,
+    private val pidorRepository: PidorRepository,
     private val pidorCompetitionService: PidorCompetitionService,
     private val pidorStrikesService: PidorStrikesService,
     private val easyKeyValueService: EasyKeyValueService,
@@ -62,7 +64,7 @@ class PidorExecutor(
         key: ChatEasyKey,
         silent: Boolean = false
     ): Pair<(suspend (AbsSender) -> Unit), Boolean> {
-        val users = repository.getUsers(chat, activeOnly = true)
+        val users = userRepository.getUsers(chat, activeOnly = true)
 
         val pidorToleranceValue = easyKeyValueService.get(PidorTolerance, key)
         if (isLimitOfPidorsExceeded(users, pidorToleranceValue ?: 0)) {
@@ -133,13 +135,13 @@ class PidorExecutor(
                     users
                         .map { user -> launch { checkIfUserStillThere(user, sender) } }
                         .forEach { job -> job.join() }
-                    val actualizedUsers = repository.getUsers(chat, activeOnly = true)
+                    val actualizedUsers = userRepository.getUsers(chat, activeOnly = true)
                     log.info("Users to roll: {}", actualizedUsers)
                     val nextPidor = actualizedUsers.randomOrNull() ?: getFallbackPidor(chat)
 
                     log.info("Pidor is rolled to $nextPidor")
                     val newPidor = Pidor(nextPidor, Instant.now())
-                    repository.addPidor(newPidor)
+                    pidorRepository.addPidor(newPidor)
                     nextPidor
                 }
                     .onFailure { e -> log.error("Something bad is happened on rolling, investigate", e) }
@@ -150,7 +152,7 @@ class PidorExecutor(
 
     private fun getFallbackPidor(chat: Chat): User {
         log.error("Can't find pidor due to empty user list for $chat, switching to fallback pidor")
-        return repository
+        return pidorRepository
             .getPidorsByChat(chat, startDate = Instant.now().minus(10, ChronoUnit.DAYS))
             .random()
             .user
@@ -163,9 +165,9 @@ class PidorExecutor(
         val userFromChat = getUserFromChat(user, sender)
         if (userFromChat == null) {
             log.warn("Some user {} has left without notification", user)
-            repository.changeUserActiveStatusNew(user, false)
+            userRepository.changeUserActiveStatusNew(user, false)
         } else {
-            repository.addUser(userFromChat)
+            userRepository.addUser(userFromChat)
         }
     }
 
@@ -174,7 +176,7 @@ class PidorExecutor(
     }
 
     private fun getMessageForPidors(chat: Chat, key: ChatEasyKey): SendMessage? {
-        val pidorsByChat: List<List<Pidor>> = repository
+        val pidorsByChat: List<List<Pidor>> = pidorRepository
             .getPidorsByChat(chat)
             .filter { pidor -> pidor.date.isToday() }
             .groupBy { (user) -> user.id }
@@ -185,14 +187,14 @@ class PidorExecutor(
                 SendMessage(
                     chat.idString,
                     dictionary.get(Phrase.PIROR_DISCOVERED_ONE, key) + " " +
-                            formatName(pidorsByChat.first(), key)
+                        formatName(pidorsByChat.first(), key)
                 ).apply { enableHtml(true) }
             }
 
             else -> SendMessage(
                 chat.idString,
                 dictionary.get(Phrase.PIROR_DISCOVERED_MANY, key) + " " +
-                        pidorsByChat.joinToString { formatName(it, key) }
+                    pidorsByChat.joinToString { formatName(it, key) }
             ).apply { enableHtml(true) }
         }
     }
@@ -271,8 +273,8 @@ class PidorExecutor(
             }
         }
         val pickedUser = replyMessage.from.toUser(context.chat)
-        repository.addUser(pickedUser)
-        repository.addPidor(Pidor(pickedUser, Instant.now()))
+        userRepository.addUser(pickedUser)
+        pidorRepository.addPidor(Pidor(pickedUser, Instant.now()))
         easyKeyValueService.decrement(PickPidorAbilityCount, context.userKey)
         return {
             it.send(

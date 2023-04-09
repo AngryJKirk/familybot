@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.feature.pidor.services
 
+import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.getLogger
-import dev.storozhenko.familybot.telegram.FamilyBot
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 

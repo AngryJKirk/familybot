@@ -1,21 +1,26 @@
 package dev.storozhenko.familybot.feature.pidor.executors
 
-import dev.storozhenko.familybot.common.extensions.*
-import dev.storozhenko.familybot.core.executors.Configurable
+import dev.storozhenko.familybot.common.extensions.PluralizedWordsProvider
+import dev.storozhenko.familybot.common.extensions.bold
+import dev.storozhenko.familybot.common.extensions.formatTopList
+import dev.storozhenko.familybot.common.extensions.send
+import dev.storozhenko.familybot.common.extensions.startOfCurrentMonth
+import dev.storozhenko.familybot.common.extensions.toRussian
 import dev.storozhenko.familybot.core.executors.CommandExecutor
+import dev.storozhenko.familybot.core.executors.Configurable
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
-import dev.storozhenko.familybot.core.routers.models.ExecutorContext
-import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.core.models.telegram.Command
+import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.pidor.models.Pidor
-import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
+import dev.storozhenko.familybot.feature.pidor.repos.PidorRepository
+import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.LocalDate
 
 @Component
 class PidorStatsMonthExecutor(
-    private val repository: CommonRepository
+    private val pidorRepository: PidorRepository
 ) : CommandExecutor(), Configurable {
 
     override fun getFunctionId(context: ExecutorContext): FunctionId {
@@ -29,7 +34,7 @@ class PidorStatsMonthExecutor(
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
         val now = LocalDate.now()
 
-        val pidorsByChat = repository.getPidorsByChat(
+        val pidorsByChat = pidorRepository.getPidorsByChat(
             context.chat,
             startDate = startOfCurrentMonth()
         )

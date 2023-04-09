@@ -1,9 +1,7 @@
 package dev.storozhenko.familybot
 
-import dev.storozhenko.familybot.telegram.BotConfig
-import dev.storozhenko.familybot.telegram.BotConfigInjector
-import dev.storozhenko.familybot.telegram.BotStarter
-import dev.storozhenko.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.core.telegram.BotStarter
+import dev.storozhenko.familybot.core.telegram.FamilyBot
 import io.micrometer.core.aop.TimedAspect
 import io.micrometer.core.instrument.MeterRegistry
 import org.slf4j.Logger
@@ -11,7 +9,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.WebApplicationType
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.boot.context.properties.bind.ConstructorBinding
 import org.springframework.context.annotation.Bean
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.scheduling.annotation.EnableScheduling
@@ -84,6 +84,32 @@ class FamilyBotApplication(
         }
     }
 }
+
+data class BotConfig(
+    val botToken: String,
+    val botName: String,
+    val developer: String,
+    val developerId: String,
+    val botNameAliases: List<String>,
+    val yandexKey: String?,
+    val paymentToken: String?,
+    val testEnvironment: Boolean,
+    val ytdlLocation: String?,
+    val openAiToken: String?
+)
+
+@ConfigurationProperties("settings", ignoreInvalidFields = false)
+data class BotConfigInjector @ConstructorBinding constructor(
+    val botToken: String,
+    val botName: String,
+    val developer: String,
+    val developerId: String,
+    val botNameAliases: String?,
+    val yandexKey: String?,
+    val paymentToken: String?,
+    val ytdlLocation: String?,
+    val openAiToken: String?
+)
 
 @Suppress("unused")
 inline fun <reified T> T.getLogger(): Logger = LoggerFactory.getLogger(T::class.java)

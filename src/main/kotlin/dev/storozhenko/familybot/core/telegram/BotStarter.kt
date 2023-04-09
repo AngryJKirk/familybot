@@ -1,9 +1,7 @@
-package dev.storozhenko.familybot.telegram
+package dev.storozhenko.familybot.core.telegram
 
 import dev.storozhenko.familybot.common.extensions.readTomlFromStatic
 import org.springframework.boot.context.event.ApplicationReadyEvent
-import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.bind.ConstructorBinding
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.context.event.EventListener
@@ -66,28 +64,3 @@ class BotStarter {
     }
 }
 
-data class BotConfig(
-    val botToken: String,
-    val botName: String,
-    val developer: String,
-    val developerId: String,
-    val botNameAliases: List<String>,
-    val yandexKey: String?,
-    val paymentToken: String?,
-    val testEnvironment: Boolean,
-    val ytdlLocation: String?,
-    val openAiToken: String?
-)
-
-@ConfigurationProperties("settings", ignoreInvalidFields = false)
-data class BotConfigInjector @ConstructorBinding constructor(
-    val botToken: String,
-    val botName: String,
-    val developer: String,
-    val developerId: String,
-    val botNameAliases: String?,
-    val yandexKey: String?,
-    val paymentToken: String?,
-    val ytdlLocation: String?,
-    val openAiToken: String?
-)

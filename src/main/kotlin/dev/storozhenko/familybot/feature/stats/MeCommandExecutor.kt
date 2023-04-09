@@ -5,17 +5,17 @@ import dev.storozhenko.familybot.common.extensions.PluralizedWordsProvider
 import dev.storozhenko.familybot.common.extensions.pluralize
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.CommandExecutor
+import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
+import dev.storozhenko.familybot.core.keyvalue.models.UserAndChatEasyKey
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
-import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.models.telegram.User
+import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.logging.repos.CommandHistoryRepository
-import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
 import dev.storozhenko.familybot.feature.logging.repos.RawChatLogRepository
-import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
+import dev.storozhenko.familybot.feature.pidor.repos.PidorRepository
 import dev.storozhenko.familybot.feature.settings.models.MessageCounter
-import dev.storozhenko.familybot.core.keyvalue.models.UserAndChatEasyKey
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
@@ -23,7 +23,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class MeCommandExecutor(
-    private val commonRepository: CommonRepository,
+    private val pidorRepository: PidorRepository,
     private val commandHistoryRepository: CommandHistoryRepository,
     private val rawChatLogRepository: RawChatLogRepository,
     private val easyKeyValueService: EasyKeyValueService
@@ -83,7 +83,7 @@ class MeCommandExecutor(
     }
 
     private fun getPidorsCount(chat: Chat, user: User, context: ExecutorContext): String {
-        val pidorCount = commonRepository
+        val pidorCount = pidorRepository
             .getPidorsByChat(chat, startDate = DateConstants.theBirthDayOfFamilyBot)
             .filter { (pidor) -> pidor.id == user.id }
             .size

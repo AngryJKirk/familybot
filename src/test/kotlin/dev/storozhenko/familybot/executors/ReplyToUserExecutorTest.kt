@@ -8,7 +8,7 @@ import dev.storozhenko.familybot.infrastructure.randomString
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.routers.models.Priority
 import dev.storozhenko.familybot.suits.ExecutorTest
-import dev.storozhenko.familybot.telegram.BotConfig
+import dev.storozhenko.familybot.BotConfig
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.mockito.kotlin.argumentCaptor

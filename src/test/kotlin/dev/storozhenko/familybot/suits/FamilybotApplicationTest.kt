@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.suits
 
-import dev.storozhenko.familybot.telegram.BotStarter
+import dev.storozhenko.familybot.core.telegram.BotStarter
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles

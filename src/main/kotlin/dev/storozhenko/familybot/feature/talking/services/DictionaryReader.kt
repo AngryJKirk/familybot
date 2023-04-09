@@ -3,7 +3,7 @@ package dev.storozhenko.familybot.feature.talking.services
 import dev.storozhenko.familybot.common.extensions.readTomlFromStatic
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.dictionary.PhraseTheme
-import dev.storozhenko.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.core.telegram.FamilyBot
 import org.springframework.stereotype.Component
 import org.tomlj.TomlTable
 
@@ -69,7 +69,7 @@ class DictionaryReader {
         if (missingDefaultPhrases.isNotEmpty()) {
             throw FamilyBot.InternalException(
                 "Some dictionary defaults missing. " +
-                        "Check $missingDefaultPhrases"
+                    "Check $missingDefaultPhrases"
             )
         }
     }

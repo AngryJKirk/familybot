@@ -12,10 +12,10 @@ import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
+import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.feature.marriage.model.Marriage
 import dev.storozhenko.familybot.feature.marriage.repos.MarriagesRepository
 import dev.storozhenko.familybot.feature.settings.models.ProposalTo
-import dev.storozhenko.familybot.telegram.FamilyBot
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker
 import org.telegram.telegrambots.meta.api.objects.InputFile

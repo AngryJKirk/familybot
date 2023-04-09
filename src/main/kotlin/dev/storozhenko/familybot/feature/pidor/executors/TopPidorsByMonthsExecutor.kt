@@ -7,17 +7,17 @@ import dev.storozhenko.familybot.common.extensions.italic
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.common.extensions.startOfCurrentMonth
 import dev.storozhenko.familybot.common.extensions.toRussian
-import dev.storozhenko.familybot.core.executors.Configurable
 import dev.storozhenko.familybot.core.executors.CommandExecutor
+import dev.storozhenko.familybot.core.executors.Configurable
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.dictionary.Pluralization
-import dev.storozhenko.familybot.core.routers.models.ExecutorContext
-import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.core.models.telegram.Command
-import dev.storozhenko.familybot.feature.pidor.models.Pidor
 import dev.storozhenko.familybot.core.models.telegram.User
-import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
-import dev.storozhenko.familybot.telegram.FamilyBot
+import dev.storozhenko.familybot.core.routers.models.ExecutorContext
+import dev.storozhenko.familybot.core.telegram.FamilyBot
+import dev.storozhenko.familybot.feature.pidor.models.Pidor
+import dev.storozhenko.familybot.feature.pidor.repos.PidorRepository
+import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Instant
@@ -27,7 +27,7 @@ import java.time.ZoneId
 
 @Component
 class TopPidorsByMonthsExecutor(
-    private val commonRepository: CommonRepository
+    private val pidorRepository: PidorRepository
 ) : CommandExecutor(), Configurable {
 
     override fun getFunctionId(context: ExecutorContext): FunctionId {
@@ -43,7 +43,7 @@ class TopPidorsByMonthsExecutor(
     }
 
     override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        val result = commonRepository
+        val result = pidorRepository
             .getPidorsByChat(context.chat)
             .filter { it.date.isBefore(startOfCurrentMonth()) }
             .groupBy { map(it.date) }
