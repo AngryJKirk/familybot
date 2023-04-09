@@ -6,23 +6,20 @@ import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.routers.models.Priority
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class PrivateMessageHelpExecutor(
     private val helpExecutor: HelpCommandExecutor
 ) : PrivateMessageExecutor {
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         if (helpExecutor.canExecute(context)) {
-            return helpExecutor.execute(context)
+            helpExecutor.execute(context)
         } else {
-            return {
-                it.send(
-                    context,
-                    context.phrase(Phrase.PRIVATE_MESSAGE_HELP),
-                    shouldTypeBeforeSend = true
-                )
-            }
+            context.sender.send(
+                context,
+                context.phrase(Phrase.PRIVATE_MESSAGE_HELP),
+                shouldTypeBeforeSend = true
+            )
         }
     }
 

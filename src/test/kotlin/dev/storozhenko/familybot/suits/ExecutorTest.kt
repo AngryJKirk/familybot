@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test
 
 abstract class ExecutorTest : FamilybotApplicationTest() {
 
-    protected val testSender = TestSender()
-    protected val sender = TestSender().sender
+    val sender = TestSender().sender
 
     @Test
     fun runPriorityTest() {

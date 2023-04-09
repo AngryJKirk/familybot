@@ -6,7 +6,6 @@ import dev.storozhenko.familybot.core.models.telegram.User
 import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.feature.askworld.models.AskWorldQuestion
 import dev.storozhenko.familybot.feature.askworld.models.AskWorldReply
-import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 import java.sql.Timestamp
@@ -15,7 +14,6 @@ import java.time.Instant
 @Component
 class AskWorldRepository(private val template: JdbcTemplate) {
 
-    @Timed("repository.AskWorldRepository.findQuestionByMessageId")
     fun findQuestionByMessageId(messageId: Long, chatId: Long): AskWorldQuestion? {
         return template.query(
             """SELECT
@@ -39,7 +37,6 @@ class AskWorldRepository(private val template: JdbcTemplate) {
         ).firstOrNull()
     }
 
-    @Timed("repository.AskWorldRepository.findQuestionByText")
     fun findQuestionByText(message: String, date: Instant): List<AskWorldQuestion> {
         return template.query(
             """SELECT
@@ -61,7 +58,6 @@ class AskWorldRepository(private val template: JdbcTemplate) {
         )
     }
 
-    @Timed("repository.AskWorldRepository.searchQuestion")
     fun searchQuestion(message: String, chat: Chat): List<AskWorldQuestion> {
         return template.query(
             """SELECT
@@ -83,7 +79,6 @@ class AskWorldRepository(private val template: JdbcTemplate) {
         )
     }
 
-    @Timed("repository.AskWorldRepository.addQuestionDeliver")
     fun addQuestionDeliver(question: AskWorldQuestion, chat: Chat) {
         template.update(
             "INSERT INTO ask_world_questions_delivery (id, chat_id, message_id) VALUES (?, ?, ?)",
@@ -93,7 +88,6 @@ class AskWorldRepository(private val template: JdbcTemplate) {
         )
     }
 
-    @Timed("repository.AskWorldRepository.addQuestion")
     fun addQuestion(question: AskWorldQuestion): Long {
         return template.queryForObject(
             "INSERT INTO ask_world_questions (question, chat_id, user_id, date) VALUES (?, ?, ?, ?) RETURNING id",
@@ -105,7 +99,6 @@ class AskWorldRepository(private val template: JdbcTemplate) {
         ) ?: throw FamilyBot.InternalException("Something has gone wrong, investigate please")
     }
 
-    @Timed("repository.AskWorldRepository.getQuestionsFromDate")
     fun getQuestionsFromDate(
         date: Instant
     ): List<AskWorldQuestion> {
@@ -128,7 +121,6 @@ class AskWorldRepository(private val template: JdbcTemplate) {
         )
     }
 
-    @Timed("repository.AskWorldRepository.addReply")
     fun addReply(reply: AskWorldReply): Long {
         return template.queryForObject(
             "INSERT INTO ask_world_replies (question_id, reply, chat_id, user_id, date) VALUES (?, ?, ?, ?, ?) RETURNING id",
@@ -141,7 +133,6 @@ class AskWorldRepository(private val template: JdbcTemplate) {
         ) ?: throw FamilyBot.InternalException("Something has gone wrong, investigate please")
     }
 
-    @Timed("repository.AskWorldRepository.isReplied")
     fun isReplied(
         askWorldQuestion: AskWorldQuestion,
         chat: Chat,

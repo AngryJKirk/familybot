@@ -3,7 +3,6 @@ package dev.storozhenko.familybot.feature.logging.repos
 import com.github.benmanes.caffeine.cache.Caffeine
 import dev.storozhenko.familybot.common.extensions.randomLong
 import dev.storozhenko.familybot.core.models.telegram.User
-import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Component
@@ -30,7 +29,6 @@ class ChatLogRepository(private val template: JdbcTemplate) {
 
     private val commonPoolMaxId: Long = getMaxCommonMessageId()
 
-    @Timed("repository.ChatLogRepository.add")
     fun add(user: User, message: String) {
         template.update(
             "INSERT INTO chat_log (chat_id, user_id, message) VALUES (?, ?, ?)",
@@ -40,12 +38,10 @@ class ChatLogRepository(private val template: JdbcTemplate) {
         )
     }
 
-    @Timed("repository.ChatLogRepository.get")
     fun get(user: User): List<String> {
         return allByUserCache[user] ?: allByUserLoader(user)
     }
 
-    @Timed("repository.ChatLogRepository.getRandomMessagesFromCommonPool")
     fun getRandomMessagesFromCommonPool(): List<String> {
         if (commonPoolMaxId <= 1) {
             return listOf("хуй соси губой тряси")

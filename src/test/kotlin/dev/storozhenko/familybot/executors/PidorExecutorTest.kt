@@ -1,6 +1,5 @@
 package dev.storozhenko.familybot.executors
 
-import dev.storozhenko.familybot.core.repos.UserRepository
 import dev.storozhenko.familybot.feature.pidor.executors.PidorExecutor
 import dev.storozhenko.familybot.feature.pidor.repos.PidorRepository
 import dev.storozhenko.familybot.infrastructure.createSimpleCommandContext
@@ -19,7 +18,6 @@ class PidorExecutorTest : CommandExecutorTest() {
     @Autowired
     lateinit var pidorExecutor: PidorExecutor
 
-
     @Autowired
     lateinit var pidorRepository: PidorRepository
 
@@ -34,7 +32,7 @@ class PidorExecutorTest : CommandExecutorTest() {
             pidorRepository.getPidorsByChat(context.chat)
         val allPidors = pidorRepository.getAllPidors()
 
-        runBlocking { pidorExecutor.execute(context).invoke(sender) }
+        runBlocking { pidorExecutor.execute(context) }
         val firstCaptor = ArgumentCaptor.forClass(SendMessage::class.java)
         verify(sender, times(11)).execute(firstCaptor.capture())
 
@@ -61,7 +59,7 @@ class PidorExecutorTest : CommandExecutorTest() {
             "Pidor in message and in database should match"
         )
         val secondCaptor = ArgumentCaptor.forClass(SendMessage::class.java)
-        runBlocking { pidorExecutor.execute(context).invoke(sender) }
+        runBlocking { pidorExecutor.execute(context) }
         verify(sender, times(12)).execute(secondCaptor.capture())
 
         val pidorsAfterSecondInvoke =

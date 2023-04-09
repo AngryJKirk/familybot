@@ -8,7 +8,6 @@ import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
@@ -26,7 +25,7 @@ class TimeExecutor : CommandExecutor() {
             "Время в Москве:           " to "Europe/Moscow",
             "Время в Ульяновске:       " to "Europe/Samara",
             "Время в Ташкенте:         " to "Asia/Tashkent",
-            "Время в Аргентине:        " to "America/Argentina/Buenos_Aires",
+            "Время в Аргентине:        " to "America/Argentina/Buenos_Aires"
         )
             .map { (prefix, zone) -> prefix.code() to ZoneId.of(zone) }
             .toMap()
@@ -34,15 +33,12 @@ class TimeExecutor : CommandExecutor() {
 
     override fun command() = Command.TIME
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val now = Instant.now()
         val result = times.map { (prefix, zone) -> prefix to now.atZone(zone) }
             .sortedBy { (_, time) -> time }
             .joinToString(separator = "\n") { (prefix, time) -> prefix + time.format(timeFormatter).bold() }
-        return {
-            it.me
-            it.send(context, "$result\n${getMortgageDate()}", replyToUpdate = true, enableHtml = true)
-        }
+        context.sender.send(context, "$result\n${getMortgageDate()}", replyToUpdate = true, enableHtml = true)
     }
 
     fun getMortgageDate(): String {

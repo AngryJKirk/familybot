@@ -2,14 +2,13 @@ package dev.storozhenko.familybot.feature.scenario.executors
 
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.CommandExecutor
-import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.models.telegram.Command
+import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.services.scenario.ScenarioGameplayService
 import dev.storozhenko.familybot.services.scenario.ScenarioService
 import dev.storozhenko.familybot.services.scenario.ScenarioSessionManagementService
 import kotlinx.coroutines.delay
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import kotlin.time.Duration.Companion.seconds
 
 @Component
@@ -25,34 +24,32 @@ class ScenarioExecutor(
         const val STORY_PREFIX = "story"
     }
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         if (context.message.text.contains(STORY_PREFIX)) {
-            return tellTheStory(context)
+            tellTheStory(context)
+            return
         }
 
         if (context.isFromDeveloper && context.message.text.contains(MOVE_PREFIX)) {
-            return moveState(context)
+            moveState(context)
+            return
         }
 
-        return processGame(context)
+        processGame(context)
     }
 
-    private fun processGame(
-        context: ExecutorContext
-    ): suspend (AbsSender) -> Unit {
+    private suspend fun processGame(context: ExecutorContext) {
         val chat = context.chat
         val currentGame = scenarioService.getCurrentGame(chat)
-        return when {
+        when {
             currentGame == null -> {
                 scenarioSessionManagementService.listGames(context)
             }
 
             currentGame.isEnd -> {
-                {
-                    scenarioSessionManagementService.processCurrentGame(context).invoke(it)
-                    delay(2.seconds)
-                    scenarioSessionManagementService.listGames(context).invoke(it)
-                }
+                scenarioSessionManagementService.processCurrentGame(context)
+                delay(2.seconds)
+                scenarioSessionManagementService.listGames(context)
             }
 
             else -> {
@@ -61,21 +58,19 @@ class ScenarioExecutor(
         }
     }
 
-    private fun tellTheStory(
+    private suspend fun tellTheStory(
         context: ExecutorContext
-    ): suspend (AbsSender) -> Unit {
+    ) {
         val story = scenarioService.getAllStoryOfCurrentGame(context.chat)
-        return { it.send(context, story, enableHtml = true) }
+        context.sender.send(context, story, enableHtml = true)
     }
 
-    private fun moveState(
+    private suspend fun moveState(
         context: ExecutorContext
-    ): suspend (AbsSender) -> Unit {
+    ) {
         val nextMove = scenarioGameplayService.nextState(context.chat)
         if (nextMove == null) {
-            return { it.send(context, "State hasn't been moved") }
-        } else {
-            return {}
+            context.sender.send(context, "State hasn't been moved")
         }
     }
 }

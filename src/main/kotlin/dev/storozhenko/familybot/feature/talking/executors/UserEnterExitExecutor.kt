@@ -10,27 +10,24 @@ import dev.storozhenko.familybot.core.routers.models.Priority
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class UserEnterExitExecutor(private val botConfig: BotConfig) :
     Executor,
     Configurable {
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val message = context.message
         val phrase = when {
             isUserLeft(message) -> Phrase.USER_LEAVING_CHAT
             isNewChat(message) -> Phrase.BOT_WELCOME_MESSAGE
             else -> Phrase.USER_ENTERING_CHAT
         }
-        return {
-            it.send(
-                context,
-                context.phrase(phrase),
-                replyToUpdate = true,
-                shouldTypeBeforeSend = true
-            )
-        }
+        context.sender.send(
+            context,
+            context.phrase(phrase),
+            replyToUpdate = true,
+            shouldTypeBeforeSend = true
+        )
     }
 
     override fun canExecute(context: ExecutorContext) =

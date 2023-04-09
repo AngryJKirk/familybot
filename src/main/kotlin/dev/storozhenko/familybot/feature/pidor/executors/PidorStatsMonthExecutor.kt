@@ -15,7 +15,6 @@ import dev.storozhenko.familybot.feature.pidor.models.Pidor
 import dev.storozhenko.familybot.feature.pidor.repos.PidorRepository
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.LocalDate
 
 @Component
@@ -31,7 +30,7 @@ class PidorStatsMonthExecutor(
         return Command.STATS_MONTH
     }
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val now = LocalDate.now()
 
         val pidorsByChat = pidorRepository.getPidorsByChat(
@@ -47,6 +46,6 @@ class PidorStatsMonthExecutor(
                 )
             )
         val title = "${context.phrase(Phrase.PIDOR_STAT_MONTH)} ${now.month.toRussian()}:\n".bold()
-        return { it.send(context, title + pidorsByChat.joinToString("\n"), enableHtml = true) }
+        context.sender.send(context, title + pidorsByChat.joinToString("\n"), enableHtml = true)
     }
 }

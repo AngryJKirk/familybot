@@ -1,5 +1,6 @@
 package dev.storozhenko.familybot.feature.askworld.executors
 
+import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.boldNullable
 import dev.storozhenko.familybot.common.extensions.italic
 import dev.storozhenko.familybot.common.extensions.send
@@ -10,7 +11,6 @@ import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.MessageContentType
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.routers.models.Priority
-import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.feature.askworld.models.AskWorldReply
 import dev.storozhenko.familybot.feature.askworld.repos.AskWorldRepository
@@ -73,7 +73,7 @@ class AskWorldReceiveReplyExecutor(
         return Priority.LOW
     }
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val message = context.message
         val reply = message.text ?: "MEDIA: $message"
         val chat = context.chat
@@ -81,18 +81,16 @@ class AskWorldReceiveReplyExecutor(
         val chatId = chat.id
         val messageId = message.replyToMessage.messageId
         val question =
-            askWorldRepository.findQuestionByMessageId(messageId + chatId, chatId) ?: return {}
+            askWorldRepository.findQuestionByMessageId(messageId + chatId, chatId) ?: return
         if (askWorldRepository.isReplied(question, chat, user)) {
-            return {
-                it.execute(
-                    SendMessage(
-                        chat.idString,
-                        context.phrase(Phrase.ASK_WORLD_ANSWER_COULD_BE_ONLY_ONE)
-                    ).apply {
-                        replyToMessageId = message.messageId
-                    }
-                )
-            }
+            context.sender.execute(
+                SendMessage(
+                    chat.idString,
+                    context.phrase(Phrase.ASK_WORLD_ANSWER_COULD_BE_ONLY_ONE)
+                ).apply {
+                    replyToMessageId = message.messageId
+                }
+            )
         }
         val contentType = detectContentType(message)
         val askWorldReply = AskWorldReply(
@@ -105,37 +103,35 @@ class AskWorldReceiveReplyExecutor(
             Instant.now()
         )
 
-        return { sender ->
-            runCatching {
-                coroutineScope { launch { askWorldRepository.addReply(askWorldReply) } }
-                val questionTitle = question.message.takeIf { it.length < 100 } ?: (question.message.take(100) + "...")
-                val chatIdToReply = question.chat.idString
+        runCatching {
+            coroutineScope { launch { askWorldRepository.addReply(askWorldReply) } }
+            val questionTitle = question.message.takeIf { it.length < 100 } ?: (question.message.take(100) + "...")
+            val chatIdToReply = question.chat.idString
 
-                val answerTitle = dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT, ChatEasyKey(question.chat.id))
-                if (contentType == MessageContentType.TEXT) {
-                    sendAnswerWithQuestion(
-                        sender,
-                        chatIdToReply,
-                        answerTitle,
-                        context,
-                        questionTitle,
-                        reply
-                    )
-                } else {
-                    sendOnlyQuestion(
-                        sender,
-                        chatIdToReply,
-                        answerTitle,
-                        context,
-                        questionTitle
-                    )
-                    dispatchMedia(sender, contentType, chatIdToReply, message)
-                }
-                sender.send(context, "Принято и отправлено")
-            }.onFailure { e ->
-                sender.send(context, "Принято")
-                log.info("Could not send reply instantly", e)
+            val answerTitle = dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT, ChatEasyKey(question.chat.id))
+            if (contentType == MessageContentType.TEXT) {
+                sendAnswerWithQuestion(
+                    context.sender,
+                    chatIdToReply,
+                    answerTitle,
+                    context,
+                    questionTitle,
+                    reply
+                )
+            } else {
+                sendOnlyQuestion(
+                    context.sender,
+                    chatIdToReply,
+                    answerTitle,
+                    context,
+                    questionTitle
+                )
+                dispatchMedia(context.sender, contentType, chatIdToReply, message)
             }
+            context.sender.send(context, "Принято и отправлено")
+        }.onFailure { e ->
+            context.sender.send(context, "Принято")
+            log.info("Could not send reply instantly", e)
         }
     }
 
@@ -283,7 +279,7 @@ class AskWorldReceiveReplyExecutor(
             SendMessage(
                 chatIdToReply,
                 "$answerTitle ${context.chat.name.boldNullable()} " +
-                    "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\":"
+                        "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\":"
             ).apply {
                 enableHtml(true)
             }
@@ -302,7 +298,7 @@ class AskWorldReceiveReplyExecutor(
             SendMessage(
                 chatIdToReply,
                 "$answerTitle ${context.chat.name.boldNullable()} " +
-                    "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}"
+                        "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}"
             ).apply {
                 enableHtml(true)
             }

@@ -11,7 +11,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class PatchNoteExecutor(
@@ -21,15 +20,15 @@ class PatchNoteExecutor(
     private val patchNotePrefix = "patch_note"
     private val log = getLogger()
 
-    override fun executeInternal(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun executeInternal(context: ExecutorContext) {
         if (context.message.isReply.not()) {
-            return { sender -> sender.send(context, "No reply message found, master") }
+            context.sender.send(context, "No reply message found, master")
+            return
         }
-        return { sender ->
-            val chats = commonRepository.getChats()
-            log.info("Sending in {} chats", chats.size)
-            chats.forEach { tryToSendMessage(sender, it, context) }
-        }
+
+        val chats = commonRepository.getChats()
+        log.info("Sending in {} chats", chats.size)
+        chats.forEach { tryToSendMessage(it, context) }
     }
 
     override fun getMessagePrefix() = patchNotePrefix
@@ -39,7 +38,6 @@ class PatchNoteExecutor(
     }
 
     private suspend fun tryToSendMessage(
-        sender: AbsSender,
         chat: Chat,
         context: ExecutorContext
     ) {
@@ -47,7 +45,7 @@ class PatchNoteExecutor(
             launch {
                 delay(500)
                 runCatching {
-                    sender.execute(
+                    context.sender.execute(
                         ForwardMessage(
                             chat.idString,
                             context.user.id.toString(),

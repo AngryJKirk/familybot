@@ -8,7 +8,6 @@ import dev.storozhenko.familybot.feature.tribute.repos.QuoteRepository
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class QuoteContiniousExecutor(
@@ -24,18 +23,16 @@ class QuoteContiniousExecutor(
         return setOf(QUOTE_MESSAGE)
     }
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        return {
-            val callbackQuery = context.update.callbackQuery
-            it.execute(AnswerCallbackQuery(callbackQuery.id))
-            it.execute(
-                (
+    override suspend fun execute(context: ExecutorContext) {
+        val callbackQuery = context.update.callbackQuery
+        context.sender.execute(AnswerCallbackQuery(callbackQuery.id))
+        context.sender.execute(
+            (
                     SendMessage(
                         callbackQuery.message.chatId.toString(),
                         quoteRepository.getByTag(callbackQuery.data) ?: "Такого тега нет, идите нахуй"
                     )
                     )
-            )
-        }
+        )
     }
 }

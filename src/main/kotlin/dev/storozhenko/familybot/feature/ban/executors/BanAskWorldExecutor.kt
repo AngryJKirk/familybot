@@ -9,7 +9,6 @@ import dev.storozhenko.familybot.feature.askworld.repos.AskWorldRepository
 import dev.storozhenko.familybot.feature.ban.services.BanService
 import dev.storozhenko.familybot.getLogger
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -21,9 +20,9 @@ class BanAskWorldExecutor(
     private val log = getLogger()
     override fun command() = Command.BAN
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val message = context.message
-        if (message.isReply.not()) return {}
+        if (message.isReply.not()) return
 
         val replyToMessage = message.replyToMessage
         val questions = askWorldRepository.getQuestionsFromDate(Instant.now().minus(1, ChronoUnit.DAYS))
@@ -32,14 +31,11 @@ class BanAskWorldExecutor(
             }
         log.info("Trying to ban, questions found: {}", questions)
         when (questions.size) {
-            0 -> return { it.send(context, "Can't find anyone, sorry, my master") }
-            1 -> return ban(context, questions.first())
-            else -> return { sender ->
-                questions
-                    .distinctBy { question -> question.user.id }
-                    .map { question -> ban(context, question) }
-                    .forEach { it.invoke(sender) }
-            }
+            0 -> context.sender.send(context, "Can't find anyone, sorry, my master")
+            1 -> ban(context, questions.first())
+            else -> questions
+                .distinctBy { question -> question.user.id }
+                .forEach { question -> ban(context, question) }
         }
     }
 
@@ -47,18 +43,16 @@ class BanAskWorldExecutor(
         return context.isFromDeveloper && super.canExecute(context)
     }
 
-    private fun ban(context: ExecutorContext, question: AskWorldQuestion): suspend (AbsSender) -> Unit {
+    private suspend fun ban(context: ExecutorContext, question: AskWorldQuestion) {
         val tokens = context.update.message.text.split(" ")
         val banReason = tokens[1]
         val isChat = tokens.getOrNull(2) == "chat"
         if (isChat) {
             banService.banChat(question.chat, banReason)
-            return { it.send(context, "${question.chat} is banned, my master", replyToUpdate = true) }
+            context.sender.send(context, "${question.chat} is banned, my master", replyToUpdate = true)
         } else {
             banService.banUser(question.user, banReason)
-            return {
-                it.send(context, "${question.user} is banned, my master", replyToUpdate = true)
-            }
+            context.sender.send(context, "${question.user} is banned, my master", replyToUpdate = true)
         }
     }
 }

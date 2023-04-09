@@ -1,14 +1,14 @@
 package dev.storozhenko.familybot.executors
 
-import dev.storozhenko.familybot.feature.settings.executors.AdvancedSettingsExecutor
-import dev.storozhenko.familybot.infrastructure.createSimpleContext
-import dev.storozhenko.familybot.infrastructure.randomLong
-import dev.storozhenko.familybot.core.models.telegram.Command
+import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
 import dev.storozhenko.familybot.core.keyvalue.models.EasyKeyType
-import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
+import dev.storozhenko.familybot.core.models.telegram.Command
+import dev.storozhenko.familybot.feature.settings.executors.AdvancedSettingsExecutor
 import dev.storozhenko.familybot.feature.settings.models.TalkingDensity
 import dev.storozhenko.familybot.feature.settings.models.UkrainianLanguage
+import dev.storozhenko.familybot.infrastructure.createSimpleContext
+import dev.storozhenko.familybot.infrastructure.randomLong
 import dev.storozhenko.familybot.suits.CommandExecutorTest
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
@@ -58,7 +58,7 @@ class AdvancedSettingsExecutorTest : CommandExecutorTest() {
         expectedSettingValue: T
     ) {
         val context = createSimpleContext(command)
-        runBlocking { advancedSettingsExecutor.execute(context).invoke(sender) }
+        runBlocking { advancedSettingsExecutor.execute(context) }
         val actualSettingValue = easyKeyValueService.get(easyKeyType, context.chatKey)
         Assertions.assertEquals(expectedSettingValue, actualSettingValue)
     }

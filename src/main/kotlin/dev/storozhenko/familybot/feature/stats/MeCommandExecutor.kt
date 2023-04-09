@@ -19,7 +19,6 @@ import dev.storozhenko.familybot.feature.settings.models.MessageCounter
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class MeCommandExecutor(
@@ -33,22 +32,20 @@ class MeCommandExecutor(
         return Command.ME
     }
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val chat = context.chat
         val user = context.user
-        return {
-            val message = coroutineScope {
-                val messageCount = async { getMessageCount(chat, user, context) }
-                val pidorCount = async { getPidorsCount(chat, user, context) }
-                val commandCount = async { getCommandCount(user, context) }
-                setOf(
-                    pidorCount.await(),
-                    commandCount.await(),
-                    messageCount.await()
-                ).joinToString("\n")
-            }
-            it.send(context, message, replyToUpdate = true)
+        val message = coroutineScope {
+            val messageCount = async { getMessageCount(chat, user, context) }
+            val pidorCount = async { getPidorsCount(chat, user, context) }
+            val commandCount = async { getCommandCount(user, context) }
+            setOf(
+                pidorCount.await(),
+                commandCount.await(),
+                messageCount.await()
+            ).joinToString("\n")
         }
+        context.sender.send(context, message, replyToUpdate = true)
     }
 
     private fun getMessageCount(chat: Chat, user: User, context: ExecutorContext): String {

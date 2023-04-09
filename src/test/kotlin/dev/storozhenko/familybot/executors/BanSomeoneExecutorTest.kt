@@ -1,5 +1,6 @@
 package dev.storozhenko.familybot.executors
 
+import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.key
 import dev.storozhenko.familybot.common.extensions.toChat
 import dev.storozhenko.familybot.common.extensions.toUser
@@ -12,7 +13,6 @@ import dev.storozhenko.familybot.infrastructure.createSimpleContext
 import dev.storozhenko.familybot.infrastructure.createSimpleUpdate
 import dev.storozhenko.familybot.infrastructure.randomString
 import dev.storozhenko.familybot.suits.ExecutorTest
-import dev.storozhenko.familybot.BotConfig
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.jupiter.api.Assertions
@@ -83,7 +83,7 @@ class BanSomeoneExecutorTest : ExecutorTest() {
         clearInvocations(sender)
         val description = randomString()
         val update = updateFromDeveloper("${banSomeoneExecutor.getMessagePrefix()}${banModel.key}|$description")
-        runBlocking { banSomeoneExecutor.execute(update).invoke(sender) }
+        runBlocking { banSomeoneExecutor.execute(update) }
         verify(sender).execute(any<SendMessage>())
 
         banService.findBanByKey(banModel.easyKey)

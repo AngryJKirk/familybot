@@ -7,9 +7,6 @@ import dev.storozhenko.familybot.common.extensions.prettyFormat
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.common.extensions.toChat
 import dev.storozhenko.familybot.common.extensions.toUser
-import dev.storozhenko.familybot.common.meteredCanExecute
-import dev.storozhenko.familybot.common.meteredExecute
-import dev.storozhenko.familybot.common.meteredPriority
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.executors.Configurable
 import dev.storozhenko.familybot.core.executors.Executor
@@ -31,7 +28,6 @@ import dev.storozhenko.familybot.feature.settings.models.MessageCounter
 import dev.storozhenko.familybot.feature.settings.repos.FunctionsConfigureRepository
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
 import dev.storozhenko.familybot.getLogger
-import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,7 +52,6 @@ class Router(
     private val rawUpdateLogger: RawUpdateLogger,
     private val botConfig: BotConfig,
     private val dictionary: Dictionary,
-    private val meterRegistry: MeterRegistry,
     private val easyKeyValueService: EasyKeyValueService
 ) {
 
@@ -67,7 +62,7 @@ class Router(
         logger.error("Exception in logging job", exception)
     }
 
-    suspend fun processUpdate(update: Update): suspend (AbsSender) -> Unit {
+    suspend fun processUpdate(update: Update, sender: AbsSender) {
         val message = update.message
             ?: update.editedMessage
             ?: update.callbackQuery.message
@@ -80,27 +75,27 @@ class Router(
         } else {
             registerUpdate(message, update)
             if (update.hasEditedMessage()) {
-                return {}
+                return
             }
         }
-        val context = update.context(botConfig, dictionary)
+        val context = update.context(botConfig, dictionary, sender)
 
         val executor = if (isGroup) {
             selectExecutor(context) ?: selectRandom(context)
         } else {
-            selectExecutor(context, forSingleUser = true) ?: return {}
+            selectExecutor(context, forSingleUser = true) ?: return
         }
 
         logger.info("Executor to apply: ${executor.javaClass.simpleName}")
 
-        return if (isExecutorDisabled(executor, context)) {
+        if (isExecutorDisabled(executor, context)) {
             when (executor) {
                 is CommandExecutor -> disabledCommand(context)
                 is AntiDdosExecutor -> antiDdosSkip(context)
-                else -> { _ -> }
+                else -> {}
             }
         } else {
-            executor.meteredExecute(context, meterRegistry)
+            executor.execute(context)
         }.also {
             loggingScope.launch(loggingExceptionHandler) {
                 logChatCommand(executor, context)
@@ -125,30 +120,27 @@ class Router(
             logChatMessage(context)
         }
         val executor = executors
-            .filter { it.meteredPriority(context, meterRegistry) == Priority.RANDOM }
+            .filter { it.priority(context) == Priority.RANDOM }
             .random()
 
         logger.info("Random priority executor ${executor.javaClass.simpleName} was selected")
         return executor
     }
 
-    private fun antiDdosSkip(context: ExecutorContext): suspend (AbsSender) -> Unit =
-        marker@{ it ->
-            val executor = executors
-                .filterIsInstance<CommandExecutor>()
-                .find { it.meteredCanExecute(context, meterRegistry) } ?: return@marker
-            val function = if (isExecutorDisabled(executor, context)) {
-                disabledCommand(context)
-            } else {
-                executor.meteredExecute(context, meterRegistry)
-            }
-
-            function.invoke(it)
+    private suspend fun antiDdosSkip(context: ExecutorContext) {
+        val executor = executors
+            .filterIsInstance<CommandExecutor>()
+            .find { it.canExecute(context) } ?: return
+        if (isExecutorDisabled(executor, context)) {
+            disabledCommand(context)
+        } else {
+            executor.execute(context)
         }
+    }
 
-    private fun disabledCommand(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    private suspend fun disabledCommand(context: ExecutorContext) {
         val phrase = context.phrase(Phrase.COMMAND_IS_OFF)
-        return { it -> it.send(context, phrase) }
+        context.sender.send(context, phrase)
     }
 
     private fun isExecutorDisabled(executor: Executor, context: ExecutorContext): Boolean {
@@ -212,12 +204,12 @@ class Router(
         }
         return executorsToProcess
             .asSequence()
-            .map { executor -> executor to executor.meteredPriority(context, meterRegistry) }
+            .map { executor -> executor to executor.priority(context) }
             .filter { (_, priority) -> priority higherThan Priority.RANDOM }
             .sortedByDescending { (_, priority) -> priority.priorityValue }
             .map { (executor, _) -> executor }
             .find { executor ->
-                executor.meteredCanExecute(context, meterRegistry)
+                executor.canExecute(context)
             }
     }
 

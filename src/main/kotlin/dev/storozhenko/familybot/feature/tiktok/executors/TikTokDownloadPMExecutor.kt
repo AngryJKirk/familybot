@@ -12,7 +12,7 @@ class TikTokDownloadPMExecutor(
     private val tikTokDownloadExecutor: TikTokDownloadExecutor,
     private val easyKeyValueService: EasyKeyValueService
 ) : PrivateMessageExecutor {
-    override fun execute(context: ExecutorContext) = tikTokDownloadExecutor.execute(context)
+    override suspend fun execute(context: ExecutorContext) = tikTokDownloadExecutor.execute(context)
 
     override fun canExecute(context: ExecutorContext): Boolean {
         easyKeyValueService.put(TikTokDownload, context.chatKey, true)

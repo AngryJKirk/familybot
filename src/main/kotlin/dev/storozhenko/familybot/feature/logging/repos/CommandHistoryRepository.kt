@@ -6,7 +6,6 @@ import dev.storozhenko.familybot.common.extensions.toCommandByUser
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.CommandByUser
 import dev.storozhenko.familybot.core.models.telegram.User
-import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
@@ -17,7 +16,6 @@ import java.time.temporal.ChronoUnit
 @Component
 class CommandHistoryRepository(val template: JdbcTemplate) {
 
-    @Timed("repository.CommandHistoryRepository.getAll")
     fun getAll(chat: Chat, from: Instant = DateConstants.theBirthDayOfFamilyBot): List<CommandByUser> {
         return template.query(
             "SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ? AND history.command_date >= ?",
@@ -27,7 +25,6 @@ class CommandHistoryRepository(val template: JdbcTemplate) {
         )
     }
 
-    @Timed("repository.CommandHistoryRepository.add")
     fun add(commandByUser: CommandByUser) {
         template.update(
             "INSERT INTO history (command_id, user_id, chat_id, command_date) VALUES (?, ?, ?, ?)",
@@ -38,7 +35,6 @@ class CommandHistoryRepository(val template: JdbcTemplate) {
         )
     }
 
-    @Timed("repository.CommandHistoryRepository.get")
     fun get(
         user: User,
         from: Instant = Instant.now().minus(5, ChronoUnit.MINUTES),

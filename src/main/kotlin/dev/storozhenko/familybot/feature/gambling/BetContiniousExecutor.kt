@@ -20,7 +20,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendDice
-import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import kotlin.time.Duration.Companion.seconds
@@ -43,59 +42,55 @@ class BetContiniousExecutor(
     override fun canExecute(context: ExecutorContext): Boolean {
         val message = context.message
         return message.isReply &&
-            message.replyToMessage.from.userName == botConfig.botName &&
-            (message.replyToMessage.text ?: "") in getDialogMessages(context)
+                message.replyToMessage.from.userName == botConfig.botName &&
+                (message.replyToMessage.text ?: "") in getDialogMessages(context)
     }
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val user = context.user
         val chatId = context.message.chatId
         val key = context.userAndChatKey
 
         if (isBetAlreadyDone(key)) {
-            return {
-                it.send(context, context.phrase(Phrase.BET_ALREADY_WAS), shouldTypeBeforeSend = true)
-            }
+            context.sender.send(context, context.phrase(Phrase.BET_ALREADY_WAS), shouldTypeBeforeSend = true)
+            return
         }
         val number = extractBetNumber(context)
         if (number == null || number !in 1..3) {
-            return {
-                it.send(
-                    context,
-                    context.phrase(Phrase.BET_BREAKING_THE_RULES_FIRST),
-                    shouldTypeBeforeSend = true
-                )
-                it.send(
-                    context,
-                    context.phrase(Phrase.BET_BREAKING_THE_RULES_SECOND),
-                    shouldTypeBeforeSend = true
-                )
-            }
-        }
-        val winnableNumbers = diceNumbers.shuffled().subList(0, 3)
-        return {
-            it.send(
+            context.sender.send(
                 context,
-                "${context.phrase(Phrase.BET_WINNABLE_NUMBERS_ANNOUNCEMENT)} ${formatWinnableNumbers(winnableNumbers)}",
+                context.phrase(Phrase.BET_BREAKING_THE_RULES_FIRST),
                 shouldTypeBeforeSend = true
             )
-            it.send(context, context.phrase(Phrase.BET_ZATRAVOCHKA), shouldTypeBeforeSend = true)
-            val diceMessage = it.execute(SendDice(chatId.toString()))
-            delay(4.seconds)
-            val isItWinner = winnableNumbers.contains(diceMessage.dice.value)
-            if (isItWinner) {
-                coroutineScope { launch { repeat(number) { pidorRepository.removePidorRecord(user) } } }
-                it.send(context, context.phrase(Phrase.BET_WIN), shouldTypeBeforeSend = true)
-                it.send(context, winEndPhrase(number, context), shouldTypeBeforeSend = true)
-            } else {
-                coroutineScope { launch { addPidorsMultiplyTimesWithDayShift(number, user) } }
-                it.send(context, context.phrase(Phrase.BET_LOSE), shouldTypeBeforeSend = true)
-                it.send(context, explainPhrase(number, context), shouldTypeBeforeSend = true)
-            }
-            easyKeyValueService.put(BetTolerance, key, true, untilNextMonth())
-            delay(2.seconds)
-            pidorCompetitionService.pidorCompetition(context.chat, context.chatKey).invoke(it)
+            context.sender.send(
+                context,
+                context.phrase(Phrase.BET_BREAKING_THE_RULES_SECOND),
+                shouldTypeBeforeSend = true
+            )
+            return
         }
+        val winnableNumbers = diceNumbers.shuffled().subList(0, 3)
+        context.sender.send(
+            context,
+            "${context.phrase(Phrase.BET_WINNABLE_NUMBERS_ANNOUNCEMENT)} ${formatWinnableNumbers(winnableNumbers)}",
+            shouldTypeBeforeSend = true
+        )
+        context.sender.send(context, context.phrase(Phrase.BET_ZATRAVOCHKA), shouldTypeBeforeSend = true)
+        val diceMessage = context.sender.execute(SendDice(chatId.toString()))
+        delay(4.seconds)
+        val isItWinner = winnableNumbers.contains(diceMessage.dice.value)
+        if (isItWinner) {
+            coroutineScope { launch { repeat(number) { pidorRepository.removePidorRecord(user) } } }
+            context.sender.send(context, context.phrase(Phrase.BET_WIN), shouldTypeBeforeSend = true)
+            context.sender.send(context, winEndPhrase(number, context), shouldTypeBeforeSend = true)
+        } else {
+            coroutineScope { launch { addPidorsMultiplyTimesWithDayShift(number, user) } }
+            context.sender.send(context, context.phrase(Phrase.BET_LOSE), shouldTypeBeforeSend = true)
+            context.sender.send(context, explainPhrase(number, context), shouldTypeBeforeSend = true)
+        }
+        easyKeyValueService.put(BetTolerance, key, true, untilNextMonth())
+        delay(2.seconds)
+        pidorCompetitionService.pidorCompetition(context.chat, context.chatKey).invoke(context.sender)
     }
 
     private fun addPidorsMultiplyTimesWithDayShift(number: Int, user: User) {

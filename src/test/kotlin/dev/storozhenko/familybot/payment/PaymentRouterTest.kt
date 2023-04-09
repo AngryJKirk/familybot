@@ -2,17 +2,17 @@ package dev.storozhenko.familybot.payment
 
 import dev.storozhenko.familybot.common.extensions.from
 import dev.storozhenko.familybot.common.extensions.toJson
+import dev.storozhenko.familybot.core.models.dictionary.Phrase
+import dev.storozhenko.familybot.core.routers.PaymentRouter
+import dev.storozhenko.familybot.feature.shop.model.PreCheckOutResponse
+import dev.storozhenko.familybot.feature.shop.model.ShopItem
+import dev.storozhenko.familybot.feature.shop.model.SuccessPaymentResponse
+import dev.storozhenko.familybot.feature.shop.services.PaymentService
 import dev.storozhenko.familybot.infrastructure.TestSender
 import dev.storozhenko.familybot.infrastructure.createSimpleUpdate
 import dev.storozhenko.familybot.infrastructure.payload
 import dev.storozhenko.familybot.infrastructure.randomInt
 import dev.storozhenko.familybot.infrastructure.randomString
-import dev.storozhenko.familybot.core.models.dictionary.Phrase
-import dev.storozhenko.familybot.feature.shop.model.PreCheckOutResponse
-import dev.storozhenko.familybot.feature.shop.model.ShopItem
-import dev.storozhenko.familybot.feature.shop.model.SuccessPaymentResponse
-import dev.storozhenko.familybot.feature.shop.services.PaymentService
-import dev.storozhenko.familybot.core.routers.PaymentRouter
 import dev.storozhenko.familybot.suits.FamilybotApplicationTest
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions

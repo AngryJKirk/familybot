@@ -1,9 +1,9 @@
 package dev.storozhenko.familybot.executors
 
 import dev.storozhenko.familybot.common.extensions.capitalized
+import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.feature.answer.AnswerExecutor
 import dev.storozhenko.familybot.infrastructure.createSimpleCommandContext
-import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.suits.CommandExecutorTest
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
@@ -50,7 +50,7 @@ class AnswerExecutorTest : CommandExecutorTest() {
     fun executeParametrizedTest(values: List<String>) {
         val postfix = " " + values.joinToString(separator = " или ")
         val context = createSimpleCommandContext(Command.ANSWER, postfix = postfix)
-        runBlocking { answerExecutor.execute(context).invoke(sender) }
+        runBlocking { answerExecutor.execute(context) }
         val sendMessageCaptor = ArgumentCaptor.forClass(SendMessage::class.java)
         verify(sender, Mockito.atLeastOnce()).execute(any<SendChatAction>())
         verify(sender, Mockito.atLeastOnce()).execute(sendMessageCaptor.capture())

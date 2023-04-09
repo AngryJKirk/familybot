@@ -11,7 +11,6 @@ import dev.storozhenko.familybot.core.routers.models.Priority
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.feature.settings.models.TalkingDensity
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import java.util.regex.Pattern
 
 @Component
@@ -24,14 +23,12 @@ class HuificatorExecutor(private val easyKeyValueService: EasyKeyValueService) :
         return Priority.RANDOM
     }
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        val text = context.message.text ?: return {}
+    override suspend fun execute(context: ExecutorContext) {
+        val text = context.message.text ?: return
 
         if (shouldHuificate(context)) {
-            val huifyed = huify(text) ?: return { }
-            return { it -> it.send(context, huifyed, shouldTypeBeforeSend = true) }
-        } else {
-            return { }
+            val huifyed = huify(text) ?: return
+            context.sender.send(context, huifyed, shouldTypeBeforeSend = true)
         }
     }
 

@@ -14,6 +14,7 @@ import dev.storozhenko.familybot.feature.talking.services.Dictionary
 import org.telegram.telegrambots.meta.api.objects.EntityType
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Month
 import java.time.format.TextStyle
 import java.util.Locale
@@ -71,7 +72,7 @@ fun Update.from(): TelegramUser {
     }
 }
 
-fun Update.context(botConfig: BotConfig, dictionary: Dictionary): ExecutorContext {
+fun Update.context(botConfig: BotConfig, dictionary: Dictionary, sender: AbsSender): ExecutorContext {
     val message = message ?: editedMessage ?: callbackQuery.message
     val isFromDeveloper = botConfig.developer == from().userName
     val chat = toChat()
@@ -87,6 +88,7 @@ fun Update.context(botConfig: BotConfig, dictionary: Dictionary): ExecutorContex
         user.key(),
         chat.key(),
         botConfig.testEnvironment,
+        sender,
         dictionary
     )
 }

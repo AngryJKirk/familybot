@@ -2,15 +2,15 @@ package dev.storozhenko.familybot.payment
 
 import dev.storozhenko.familybot.common.extensions.toChat
 import dev.storozhenko.familybot.common.extensions.toUser
-import dev.storozhenko.familybot.infrastructure.createSimpleUpdate
-import dev.storozhenko.familybot.infrastructure.createSimpleUser
-import dev.storozhenko.familybot.infrastructure.payload
 import dev.storozhenko.familybot.feature.marriage.model.Marriage
+import dev.storozhenko.familybot.feature.marriage.repos.MarriagesRepository
 import dev.storozhenko.familybot.feature.shop.model.PreCheckOutResponse
 import dev.storozhenko.familybot.feature.shop.model.ShopItem
 import dev.storozhenko.familybot.feature.shop.model.ShopPayload
-import dev.storozhenko.familybot.feature.marriage.repos.MarriagesRepository
 import dev.storozhenko.familybot.feature.shop.services.processors.DivorcePaymentProcessor
+import dev.storozhenko.familybot.infrastructure.createSimpleUpdate
+import dev.storozhenko.familybot.infrastructure.createSimpleUser
+import dev.storozhenko.familybot.infrastructure.payload
 import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
 

@@ -9,7 +9,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
-import org.telegram.telegrambots.meta.bots.AbsSender
 import kotlin.time.Duration.Companion.minutes
 
 abstract class OnlyBotOwnerExecutor : PrivateMessageExecutor {
@@ -26,23 +25,22 @@ abstract class OnlyBotOwnerExecutor : PrivateMessageExecutor {
 
     abstract fun getMessagePrefix(): String
 
-    abstract fun executeInternal(context: ExecutorContext): suspend (AbsSender) -> Unit
+    abstract suspend fun executeInternal(context: ExecutorContext)
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         if (context.testEnvironment) return executeInternal(context)
-        return { sender ->
-            val trackingAbsSender = TrackingAbsSender(sender)
-            executeInternal(context).invoke(trackingAbsSender)
-            val idsToDelete = trackingAbsSender.tracking
-                .map { DeleteMessage(it.chat.id.toString(), it.messageId) }
-                .plus(DeleteMessage(context.chat.idString, context.message.messageId))
 
-            deleteMessageScope.launch {
-                runCatching {
-                    delay(3.minutes)
-                    idsToDelete.forEach(sender::execute)
-                }.onFailure { e -> getLogger().error("Failed to delete message", e) }
-            }
+        val trackingAbsSender = TrackingAbsSender(context.sender)
+        executeInternal(context.copy(sender = trackingAbsSender))
+        val idsToDelete = trackingAbsSender.tracking
+            .map { DeleteMessage(it.chat.id.toString(), it.messageId) }
+            .plus(DeleteMessage(context.chat.idString, context.message.messageId))
+
+        deleteMessageScope.launch {
+            runCatching {
+                delay(3.minutes)
+                idsToDelete.forEach { context.sender.execute(it) }
+            }.onFailure { e -> getLogger().error("Failed to delete message", e) }
         }
     }
 }

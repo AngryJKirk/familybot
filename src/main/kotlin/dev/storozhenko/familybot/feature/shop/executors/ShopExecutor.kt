@@ -9,7 +9,6 @@ import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.shop.model.ShopItem
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class ShopExecutor(
@@ -19,21 +18,18 @@ class ShopExecutor(
 
     override fun command() = Command.SHOP
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         if (isEnabled.not()) {
-            return { sender ->
-                sender.send(context, context.phrase(Phrase.SHOP_DISABLED))
-            }
+            context.sender.send(context, context.phrase(Phrase.SHOP_DISABLED))
+            return
         }
 
-        return {
-            it.send(
-                context,
-                context.phrase(Phrase.SHOP_KEYBOARD),
-                replyToUpdate = true,
-                customization = customization(context)
-            )
-        }
+        context.sender.send(
+            context,
+            context.phrase(Phrase.SHOP_KEYBOARD),
+            replyToUpdate = true,
+            customization = customization(context)
+        )
     }
 
     private fun customization(context: ExecutorContext): SendMessage.() -> Unit {

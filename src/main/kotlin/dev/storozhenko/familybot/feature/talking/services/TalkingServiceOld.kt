@@ -5,7 +5,6 @@ import dev.storozhenko.familybot.core.models.telegram.User
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.logging.repos.ChatLogRepository
 import dev.storozhenko.familybot.feature.settings.models.UkrainianLanguage
-import io.micrometer.core.annotation.Timed
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
@@ -21,7 +20,6 @@ class TalkingServiceOld(
         private const val minimalDatabaseSizeThreshold = 300
     }
 
-    @Timed("service.TalkingService.getReplyToUser")
     override suspend fun getReplyToUser(context: ExecutorContext, shouldBeQuestion: Boolean): String {
         val message = coroutineScope {
             async {

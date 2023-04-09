@@ -16,7 +16,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class TalkingExecutor(
@@ -40,35 +39,32 @@ class TalkingExecutor(
         }
     }
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val rageModEnabled = isRageModeEnabled(context)
-        if (shouldReply(rageModEnabled, context)) {
-            return {
-                coroutineScope {
-                    val messageText = async {
-                        talkingService.getReplyToUser(context)
-                            .let { message -> if (rageModEnabled) rageModeFormat(message) else message }
-                    }
-                    val delay = if (rageModEnabled.not()) {
-                        1000 to 2000
-                    } else {
-                        100 to 500
-                    }
-                    it.sendDeferred(
-                        context,
-                        messageText,
-                        replyToUpdate = true,
-                        shouldTypeBeforeSend = true,
-                        typeDelay = delay,
-                        enableHtml = true
-                    )
-                    if (rageModEnabled) {
-                        decrementRageModeMessagesAmount(context)
-                    }
-                }
+        if (!shouldReply(rageModEnabled, context)) {
+            return
+        }
+        coroutineScope {
+            val messageText = async {
+                talkingService.getReplyToUser(context)
+                    .let { message -> if (rageModEnabled) rageModeFormat(message) else message }
             }
-        } else {
-            return {}
+            val delay = if (rageModEnabled.not()) {
+                1000 to 2000
+            } else {
+                100 to 500
+            }
+            context.sender.sendDeferred(
+                context,
+                messageText,
+                replyToUpdate = true,
+                shouldTypeBeforeSend = true,
+                typeDelay = delay,
+                enableHtml = true
+            )
+            if (rageModEnabled) {
+                decrementRageModeMessagesAmount(context)
+            }
         }
     }
 

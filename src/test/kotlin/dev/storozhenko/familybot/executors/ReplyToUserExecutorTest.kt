@@ -1,14 +1,14 @@
 package dev.storozhenko.familybot.executors
 
+import dev.storozhenko.familybot.BotConfig
+import dev.storozhenko.familybot.core.routers.models.ExecutorContext
+import dev.storozhenko.familybot.core.routers.models.Priority
 import dev.storozhenko.familybot.feature.talking.services.keyword.KeyWordExecutor
 import dev.storozhenko.familybot.infrastructure.createSimpleContext
 import dev.storozhenko.familybot.infrastructure.createSimpleMessage
 import dev.storozhenko.familybot.infrastructure.createSimpleUser
 import dev.storozhenko.familybot.infrastructure.randomString
-import dev.storozhenko.familybot.core.routers.models.ExecutorContext
-import dev.storozhenko.familybot.core.routers.models.Priority
 import dev.storozhenko.familybot.suits.ExecutorTest
-import dev.storozhenko.familybot.BotConfig
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.mockito.kotlin.argumentCaptor
@@ -42,7 +42,7 @@ class ReplyToUserExecutorTest : ExecutorTest() {
         val update = updateWithReplyToBotMessage()
         runBlocking {
             replyToUserExecutor.canExecute(update)
-            replyToUserExecutor.execute(update).invoke(sender)
+            replyToUserExecutor.execute(update)
         }
         argumentCaptor<SendMessage> {
             verify(sender, times(2)).execute(capture())

@@ -5,7 +5,6 @@ import dev.storozhenko.familybot.core.executors.OnlyBotOwnerExecutor
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.pidor.services.PidorAutoSelectService
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class ManualPidorSelectExecutor(
@@ -13,14 +12,12 @@ class ManualPidorSelectExecutor(
 ) : OnlyBotOwnerExecutor() {
     override fun getMessagePrefix() = "pidor_manual"
 
-    override fun executeInternal(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        return {
-            val response = runCatching {
-                pidorAutoSelectService.autoSelect(it)
-                "it's done"
-            }
-                .onFailure { exception -> exception.message }
-            it.send(context, response.getOrDefault("error"))
+    override suspend fun executeInternal(context: ExecutorContext) {
+        val response = runCatching {
+            pidorAutoSelectService.autoSelect(context.sender)
+            "it's done"
         }
+            .onFailure { exception -> exception.message }
+        context.sender.send(context, response.getOrDefault("error"))
     }
 }

@@ -11,7 +11,6 @@ import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.marriage.model.Marriage
 import dev.storozhenko.familybot.feature.marriage.repos.MarriagesRepository
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Duration
 import java.time.Instant
 
@@ -63,13 +62,13 @@ class MarryListExecutor(
 
     override fun command() = Command.MARRY_LIST
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val marriages = marriagesRepository.getAllMarriages(context.chat.id)
         if (marriages.isEmpty()) {
-            return { sender -> sender.send(context, context.phrase(Phrase.MARRY_EMPTY_LIST)) }
+            context.sender.send(context, context.phrase(Phrase.MARRY_EMPTY_LIST))
         } else {
             val marriageList = format(marriages, context)
-            return { sender -> sender.send(context, marriageList, enableHtml = true) }
+            context.sender.send(context, marriageList, enableHtml = true)
         }
     }
 

@@ -2,8 +2,6 @@ package dev.storozhenko.familybot
 
 import dev.storozhenko.familybot.core.telegram.BotStarter
 import dev.storozhenko.familybot.core.telegram.FamilyBot
-import io.micrometer.core.aop.TimedAspect
-import io.micrometer.core.instrument.MeterRegistry
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringApplication
@@ -28,11 +26,6 @@ class FamilyBotApplication(
     @Bean
     fun telegramDownloader(botConfig: BotConfig): TelegramFileDownloader {
         return TelegramFileDownloader { botConfig.botToken }
-    }
-
-    @Bean
-    fun timedAspect(registry: MeterRegistry): TimedAspect {
-        return TimedAspect(registry)
     }
 
     @Bean

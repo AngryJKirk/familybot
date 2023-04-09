@@ -1,10 +1,13 @@
 package dev.storozhenko.familybot.executors
 
-import dev.storozhenko.familybot.feature.talking.services.keyword.KeyWordExecutor
-import dev.storozhenko.familybot.infrastructure.createSimpleContext
-import dev.storozhenko.familybot.infrastructure.singleStickerContext
-import dev.storozhenko.familybot.core.routers.models.Priority
+import dev.storozhenko.familybot.common.extensions.context
 import dev.storozhenko.familybot.core.models.telegram.stickers.Sticker
+import dev.storozhenko.familybot.core.routers.models.Priority
+import dev.storozhenko.familybot.feature.talking.services.keyword.KeyWordExecutor
+import dev.storozhenko.familybot.infrastructure.botConfig
+import dev.storozhenko.familybot.infrastructure.createSimpleContext
+import dev.storozhenko.familybot.infrastructure.dictionary
+import dev.storozhenko.familybot.infrastructure.singleStickerUpdate
 import dev.storozhenko.familybot.suits.ExecutorTest
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
@@ -23,9 +26,9 @@ class KeyWordExecutorTest : ExecutorTest() {
     lateinit var keyWordExecutor: KeyWordExecutor
 
     companion object {
-        private val leftZigaSticker = singleStickerContext(Sticker.LEFT_ZIGA)
-        private val rightZigaSticker = singleStickerContext(Sticker.RIGHT_ZIGA)
-        private val noZigaSticker = singleStickerContext(Sticker.SWEET_DREAMS)
+        private val leftZigaSticker = singleStickerUpdate(Sticker.LEFT_ZIGA)
+        private val rightZigaSticker = singleStickerUpdate(Sticker.RIGHT_ZIGA)
+        private val noZigaSticker = singleStickerUpdate(Sticker.SWEET_DREAMS)
     }
 
     override fun priorityTest() {
@@ -34,14 +37,14 @@ class KeyWordExecutorTest : ExecutorTest() {
     }
 
     override fun canExecuteTest() {
-        Assertions.assertTrue(keyWordExecutor.canExecute(leftZigaSticker))
-        Assertions.assertTrue(keyWordExecutor.canExecute(rightZigaSticker))
-        Assertions.assertFalse(keyWordExecutor.canExecute(noZigaSticker))
+        Assertions.assertTrue(keyWordExecutor.canExecute(leftZigaSticker.context(botConfig, dictionary, sender)))
+        Assertions.assertTrue(keyWordExecutor.canExecute(rightZigaSticker.context(botConfig, dictionary, sender)))
+        Assertions.assertFalse(keyWordExecutor.canExecute(noZigaSticker.context(botConfig, dictionary, sender)))
     }
 
     override fun executeTest() {
-        runBlocking { keyWordExecutor.execute(leftZigaSticker).invoke(sender) }
-        runBlocking { keyWordExecutor.execute(rightZigaSticker).invoke(sender) }
+        runBlocking { keyWordExecutor.execute(leftZigaSticker.context(botConfig, dictionary, sender)) }
+        runBlocking { keyWordExecutor.execute(rightZigaSticker.context(botConfig, dictionary, sender)) }
         verify(sender, times(2)).execute(any<SendSticker>())
     }
 }

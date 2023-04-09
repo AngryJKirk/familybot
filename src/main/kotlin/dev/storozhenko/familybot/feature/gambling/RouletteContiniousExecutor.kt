@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Instant
 import kotlin.time.Duration.Companion.seconds
 
@@ -39,20 +38,43 @@ class RouletteContiniousExecutor(
     override fun canExecute(context: ExecutorContext): Boolean {
         val message = context.message
         return message.isReply &&
-            message.replyToMessage.from.userName == botConfig.botName &&
-            (message.replyToMessage.text ?: "") in getDialogMessages(context)
+                message.replyToMessage.from.userName == botConfig.botName &&
+                (message.replyToMessage.text ?: "") in getDialogMessages(context)
     }
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val user = context.user
         val chatId = context.chat.idString
 
         val number = context.message.text.split(" ")[0].toIntOrNull()
         if (number !in 1..6) {
-            return {
-                it.execute(SendMessage(chatId, "Мушку спили и в следующий раз играй по правилам"))
-                coroutineScope {
-                    launch {
+            context.sender.execute(SendMessage(chatId, "Мушку спили и в следующий раз играй по правилам"))
+            coroutineScope {
+                launch {
+                    pidorRepository.addPidor(
+                        Pidor(
+                            user,
+                            Instant.now()
+                        )
+                    )
+                }
+            }
+            delay(1.seconds)
+            context.sender.execute(SendMessage(chatId, "В наказание твое пидорское очко уходит к остальным"))
+            return
+        }
+        val rouletteNumber = randomInt(1, 7)
+        log.info("Roulette win number is $rouletteNumber and guessed number is $number")
+        if (rouletteNumber == number) {
+            context.sender.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
+            coroutineScope { launch { repeat(5) { pidorRepository.removePidorRecord(user) } } }
+            delay(2.seconds)
+            context.sender.execute(SendMessage(chatId, "Но он пока не треснул. Свое пидорское очко можешь забрать. "))
+        } else {
+            context.sender.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
+            coroutineScope {
+                launch {
+                    repeat(3) {
                         pidorRepository.addPidor(
                             Pidor(
                                 user,
@@ -61,42 +83,16 @@ class RouletteContiniousExecutor(
                         )
                     }
                 }
-                delay(1.seconds)
-                it.execute(SendMessage(chatId, "В наказание твое пидорское очко уходит к остальным"))
-            }
-        }
-        val rouletteNumber = randomInt(1, 7)
-        log.info("Roulette win number is $rouletteNumber and guessed number is $number")
-        return {
-            if (rouletteNumber == number) {
-                it.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
-                coroutineScope { launch { repeat(5) { pidorRepository.removePidorRecord(user) } } }
-                delay(2.seconds)
-                it.execute(SendMessage(chatId, "Но он пока не треснул. Свое пидорское очко можешь забрать. "))
-            } else {
-                it.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
-                coroutineScope {
-                    launch {
-                        repeat(3) {
-                            pidorRepository.addPidor(
-                                Pidor(
-                                    user,
-                                    Instant.now()
-                                )
-                            )
-                        }
-                    }
-                }
-                delay(2.seconds)
-                it.execute(
-                    SendMessage(
-                        chatId,
-                        "Сорян, но ты проиграл. Твое пидорское очко уходит в зрительный зал трижды. Правильный ответ был $rouletteNumber."
-                    )
-                )
             }
             delay(2.seconds)
-            pidorCompetitionService.pidorCompetition(context.chat, context.chatKey).invoke(it)
+            context.sender.execute(
+                SendMessage(
+                    chatId,
+                    "Сорян, но ты проиграл. Твое пидорское очко уходит в зрительный зал трижды. Правильный ответ был $rouletteNumber."
+                )
+            )
         }
+        delay(2.seconds)
+        pidorCompetitionService.pidorCompetition(context.chat, context.chatKey).invoke(context.sender)
     }
 }

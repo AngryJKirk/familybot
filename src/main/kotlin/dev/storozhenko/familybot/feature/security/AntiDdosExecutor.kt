@@ -3,15 +3,14 @@ package dev.storozhenko.familybot.feature.security
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.Configurable
 import dev.storozhenko.familybot.core.executors.Executor
+import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
-import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.core.routers.models.Priority
 import dev.storozhenko.familybot.feature.settings.models.CommandLimit
-import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
+import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class AntiDdosExecutor(
@@ -21,13 +20,13 @@ class AntiDdosExecutor(
         return FunctionId.ANTIDDOS
     }
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val update = context.update
         val message = context.phrase(Phrase.STOP_DDOS)
-        return when {
+        when {
             update.hasCallbackQuery() -> callbackQueryCase(context, message)
             update.hasMessage() -> messageCase(context, message)
-            else -> { _ -> }
+            else -> {}
         }
     }
 
@@ -43,16 +42,18 @@ class AntiDdosExecutor(
         return Priority.HIGH
     }
 
-    private fun messageCase(
+    private suspend fun messageCase(
         context: ExecutorContext,
         message: String
-    ): suspend (AbsSender) -> Unit = { it.send(context, message) }
+    ) {
+        context.sender.send(context, message)
+    }
 
     private fun callbackQueryCase(
         context: ExecutorContext,
         message: String
-    ): suspend (AbsSender) -> Unit = { it ->
-        it.execute(
+    ) {
+        context.sender.execute(
             AnswerCallbackQuery(context.update.callbackQuery.id)
                 .apply {
                     showAlert = true

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo
 import org.telegram.telegrambots.meta.api.objects.InputFile
-import org.telegram.telegrambots.meta.bots.AbsSender
 import java.io.File
 import java.util.UUID
 
@@ -24,28 +23,26 @@ class TikTokDownloadExecutor(
 ) : Executor {
     private val log = getLogger()
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val urls = getTikTokUrls(context)
-        return { sender ->
-            urls.forEach { url ->
-                sender.execute(SendChatAction(context.chat.idString, "upload_video", null))
-                val downloadedFile = download(url)
-                val video = SendVideo
-                    .builder()
-                    .video(InputFile(downloadedFile))
-                    .chatId(context.chat.id)
-                    .replyToMessageId(context.message.messageId)
-                    .build()
-                sender.execute(video)
-                downloadedFile.delete()
-            }
+        urls.forEach { url ->
+            context.sender.execute(SendChatAction(context.chat.idString, "upload_video", null))
+            val downloadedFile = download(url)
+            val video = SendVideo
+                .builder()
+                .video(InputFile(downloadedFile))
+                .chatId(context.chat.id)
+                .replyToMessageId(context.message.messageId)
+                .build()
+            context.sender.execute(video)
+            downloadedFile.delete()
         }
     }
 
     override fun canExecute(context: ExecutorContext): Boolean {
         return botConfig.ytdlLocation != null &&
-            getTikTokUrls(context).isNotEmpty() &&
-            easyKeyValueService.get(TikTokDownload, context.chatKey, false)
+                getTikTokUrls(context).isNotEmpty() &&
+                easyKeyValueService.get(TikTokDownload, context.chatKey, false)
     }
 
     override fun priority(context: ExecutorContext) = Priority.VERY_LOW

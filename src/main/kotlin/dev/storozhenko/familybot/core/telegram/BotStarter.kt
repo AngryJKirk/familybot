@@ -63,4 +63,3 @@ class BotStarter {
             ?: throw FamilyBot.InternalException("Missing command description for key=$key")
     }
 }
-

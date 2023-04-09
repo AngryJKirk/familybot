@@ -5,21 +5,21 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>dev.storozhenko</groupId>
     <artifactId>familybot</artifactId>
-    <version>2.0.0</version>
+    <version>3.0.0</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.1</version>
+        <version>3.0.5</version>
     </parent>
 
     <properties>
-        <kotlin.version>1.8.0</kotlin.version>
+        <kotlin.version>1.8.20</kotlin.version>
         <telegrambots.version>6.5.0</telegrambots.version>
-        <testcontainers.version>1.17.6</testcontainers.version>
+        <testcontainers.version>1.18.0</testcontainers.version>
         <mockito-kotlin.version>4.1.0</mockito-kotlin.version>
         <tomlj.version>1.1.0</tomlj.version>
-        <spring.version>3.0.2</spring.version>
+        <spring.version>3.0.5</spring.version>
         <kotlinx-coroutines.version>1.6.4</kotlinx-coroutines.version>
     </properties>
 
@@ -67,24 +67,12 @@
         <!--Other-->
 
         <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-graphite</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.lettuce</groupId>
             <artifactId>lettuce-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>

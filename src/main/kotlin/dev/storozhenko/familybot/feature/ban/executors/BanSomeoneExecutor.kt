@@ -7,7 +7,6 @@ import dev.storozhenko.familybot.core.repos.UserRepository
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.ban.services.BanService
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class BanSomeoneExecutor(
@@ -17,7 +16,7 @@ class BanSomeoneExecutor(
 
     private val banPrefix = "ban|"
 
-    override fun executeInternal(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun executeInternal(context: ExecutorContext) {
         val command = context.update.getMessageTokens(delimiter = "|")
         val identification = command[1]
         val isUnban = command.getOrNull(3) == "unban"
@@ -28,15 +27,14 @@ class BanSomeoneExecutor(
 
         val description = command[2]
         if (chat != null) {
-            return {
-                if (isUnban) {
-                    banService.removeBan(context.chatKey)
-                    it.send(context, "Unbanned chat: $chat")
-                } else {
-                    banService.banChat(chat, description, isForever)
-                    it.send(context, "Banned chat: $chat")
-                }
+            if (isUnban) {
+                banService.removeBan(context.chatKey)
+                context.sender.send(context, "Unbanned chat: $chat")
+            } else {
+                banService.banChat(chat, description, isForever)
+                context.sender.send(context, "Banned chat: $chat")
             }
+            return
         }
 
         val user = chats
@@ -45,20 +43,17 @@ class BanSomeoneExecutor(
             .firstOrNull { identification.replace("@", "") in listOf(it.name, it.nickname, it.id.toString()) }
 
         if (user != null) {
-            return {
-                if (isUnban) {
-                    banService.removeBan(context.userKey)
-                    it.send(context, "Unbanned user: $user")
-                } else {
-                    banService.banUser(user, description, isForever)
-                    it.send(context, "Banned user: $user")
-                }
+            if (isUnban) {
+                banService.removeBan(context.userKey)
+                context.sender.send(context, "Unbanned user: $user")
+            } else {
+                banService.banUser(user, description, isForever)
+                context.sender.send(context, "Banned user: $user")
             }
+            return
         }
 
-        return {
-            it.send(context, "No one found")
-        }
+        context.sender.send(context, "No one found")
     }
 
     override fun getMessagePrefix() = banPrefix

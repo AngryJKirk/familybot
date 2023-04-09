@@ -10,7 +10,6 @@ import dev.storozhenko.familybot.core.models.telegram.CommandByUser
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.logging.repos.CommandHistoryRepository
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class CommandStatExecutor(
@@ -21,7 +20,7 @@ class CommandStatExecutor(
         return Command.COMMAND_STATS
     }
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val all = repositoryCommand.getAll(context.chat).groupBy(CommandByUser::command)
 
         val topList = all
@@ -29,13 +28,11 @@ class CommandStatExecutor(
             .map { format(it, context) }
             .joinToString("\n")
 
-        return {
-            it.send(
-                context,
-                "${context.phrase(Phrase.STATS_BY_COMMAND)}:\n".bold() + topList,
-                enableHtml = true
-            )
-        }
+        context.sender.send(
+            context,
+            "${context.phrase(Phrase.STATS_BY_COMMAND)}:\n".bold() + topList,
+            enableHtml = true
+        )
     }
 
     private fun format(it: Map.Entry<Command, List<CommandByUser>>, context: ExecutorContext) =

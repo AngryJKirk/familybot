@@ -14,7 +14,6 @@ import kotlinx.coroutines.coroutineScope
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.bots.AbsSender
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
@@ -40,21 +39,26 @@ class BotMentionKeyWordProcessor(
         return isReplyToBot(message) || isBotMention(message) || isBotNameMention(message)
     }
 
-    override fun process(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun process(context: ExecutorContext) {
         if (isFuckOff(context)) {
-            return fuckOff(context)
+            fuckOff(context)
+            return
         }
         val shouldBeQuestion = isBotMention(context.message) || isBotNameMention(context.message)
-        return {
-            coroutineScope {
-                val reply = async {
-                    talkingService.getReplyToUser(
-                        context,
-                        randomBoolean() && shouldBeQuestion
-                    )
-                }
-                it.sendDeferred(context, reply, replyToUpdate = true, shouldTypeBeforeSend = true, enableHtml = true)
+        coroutineScope {
+            val reply = async {
+                talkingService.getReplyToUser(
+                    context,
+                    randomBoolean() && shouldBeQuestion
+                )
             }
+            context.sender.sendDeferred(
+                context,
+                reply,
+                replyToUpdate = true,
+                shouldTypeBeforeSend = true,
+                enableHtml = true
+            )
         }
     }
 
@@ -82,10 +86,9 @@ class BotMentionKeyWordProcessor(
         }
     }
 
-    fun fuckOff(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    fun fuckOff(context: ExecutorContext) {
         easyKeyValueService.put(FuckOffOverride, context.chatKey, true, defaultFuckOffDuration)
         easyKeyValueService.put(FuckOffTolerance, context.userAndChatKey, true, defaultToleranceDuration)
-        return {}
     }
 
     private fun isUserUnderTolerance(context: ExecutorContext) =

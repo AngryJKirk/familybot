@@ -1,11 +1,14 @@
 package dev.storozhenko.familybot.other
 
+import dev.storozhenko.familybot.BotConfig
+import dev.storozhenko.familybot.common.extensions.context
+import dev.storozhenko.familybot.feature.talking.services.Dictionary
 import dev.storozhenko.familybot.feature.talking.services.keyword.processor.BotMentionKeyWordProcessor
-import dev.storozhenko.familybot.infrastructure.createSimpleContext
+import dev.storozhenko.familybot.infrastructure.TestSender
 import dev.storozhenko.familybot.infrastructure.createSimpleMessage
+import dev.storozhenko.familybot.infrastructure.createSimpleUpdate
 import dev.storozhenko.familybot.infrastructure.createSimpleUser
 import dev.storozhenko.familybot.suits.FamilybotApplicationTest
-import dev.storozhenko.familybot.BotConfig
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
@@ -18,6 +21,9 @@ class FuckOffTest : FamilybotApplicationTest() {
 
     @Autowired
     lateinit var botConfig: BotConfig
+
+    @Autowired
+    lateinit var dictionary: Dictionary
 
     @ParameterizedTest
     @ValueSource(
@@ -39,7 +45,7 @@ class FuckOffTest : FamilybotApplicationTest() {
     )
     fun `should be able to process valid message`(phrase: String) {
         val botName = botConfig.botName
-        val context = createSimpleContext(phrase)
+        val context = createSimpleUpdate(phrase).context(botConfig, dictionary, TestSender().sender)
         context.message.replyToMessage = createSimpleMessage()
         context.message.replyToMessage.from = createSimpleUser(true, botName)
         val canProcess = botMentionKeyWordProcessor.isFuckOff(context)

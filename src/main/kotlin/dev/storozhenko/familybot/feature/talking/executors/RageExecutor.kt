@@ -14,7 +14,6 @@ import dev.storozhenko.familybot.feature.settings.models.RageMode
 import dev.storozhenko.familybot.feature.settings.models.RageTolerance
 import dev.storozhenko.familybot.getLogger
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import kotlin.time.Duration.Companion.minutes
 
 @Component
@@ -36,38 +35,33 @@ class RageExecutor(
         return Command.RAGE
     }
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val key = context.chatKey
         if (isRageForced(context)) {
             log.warn("Someone forced ${command()}")
             easyKeyValueService.put(RageMode, key, AMOUNT_OF_RAGE_MESSAGES, 10.minutes)
-            return {
-                it.send(context, context.phrase(Phrase.RAGE_INITIAL), shouldTypeBeforeSend = true)
-            }
+            context.sender.send(context, context.phrase(Phrase.RAGE_INITIAL), shouldTypeBeforeSend = true)
+            return
         }
 
         if (isFirstLaunch(context)) {
             log.info("First launch of ${command()} was detected, avoiding that")
-            return {
-                it.send(context, context.phrase(Phrase.TECHNICAL_ISSUE), shouldTypeBeforeSend = true)
-            }
+            context.sender.send(context, context.phrase(Phrase.TECHNICAL_ISSUE), shouldTypeBeforeSend = true)
+            return
         }
 
         if (isCooldown(context)) {
             log.info("There is a cooldown of ${command()}")
-            return {
-                it.send(
-                    context,
-                    context.phrase(Phrase.RAGE_DONT_CARE_ABOUT_YOU),
-                    shouldTypeBeforeSend = true
-                )
-            }
+            context.sender.send(
+                context,
+                context.phrase(Phrase.RAGE_DONT_CARE_ABOUT_YOU),
+                shouldTypeBeforeSend = true
+            )
+            return
         }
         easyKeyValueService.put(RageMode, key, AMOUNT_OF_RAGE_MESSAGES, 10.minutes)
         easyKeyValueService.put(RageTolerance, key, true, untilNextDay())
-        return {
-            it.send(context, context.phrase(Phrase.RAGE_INITIAL), shouldTypeBeforeSend = true)
-        }
+        context.sender.send(context, context.phrase(Phrase.RAGE_INITIAL), shouldTypeBeforeSend = true)
     }
 
     private fun isCooldown(context: ExecutorContext): Boolean {
@@ -81,7 +75,7 @@ class RageExecutor(
     private fun isRageForced(context: ExecutorContext): Boolean {
         return context.message.text.contains(
             "FORCED" +
-                context.user.id.toString().takeLast(4)
+                    context.user.id.toString().takeLast(4)
         )
     }
 }

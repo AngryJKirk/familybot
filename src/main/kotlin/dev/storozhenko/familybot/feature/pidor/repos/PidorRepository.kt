@@ -6,7 +6,6 @@ import dev.storozhenko.familybot.common.extensions.toPidor
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.User
 import dev.storozhenko.familybot.feature.pidor.models.Pidor
-import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
@@ -16,7 +15,7 @@ import java.time.Instant
 
 @Component
 class PidorRepository(private val template: JdbcTemplate) {
-    @Timed("repository.CommonRepository.addPidor")
+
     fun addPidor(pidor: Pidor) {
         template.update(
             "INSERT INTO pidors (id, pidor_date, chat_id) VALUES (?, ?, ?)",
@@ -26,7 +25,6 @@ class PidorRepository(private val template: JdbcTemplate) {
         )
     }
 
-    @Timed("repository.CommonRepository.removePidorRecord")
     fun removePidorRecord(user: User): Int {
         return template.update(
             "DELETE FROM pidors WHERE id = ? AND chat_id = ? AND pidor_date = (SELECT pidor_date FROM pidors WHERE id = ? AND chat_id = ? AND pidor_date > DATE_TRUNC('month', CURRENT_DATE) LIMIT 1)",
@@ -37,7 +35,6 @@ class PidorRepository(private val template: JdbcTemplate) {
         )
     }
 
-    @Timed("repository.CommonRepository.removePidorRecords")
     fun removePidorRecords(chat: Chat, from: Instant, until: Instant): Int {
         return template.update(
             "DELETE FROM pidors WHERE chat_id = ? AND pidor_date >= ? AND pidor_date <= ?",
@@ -47,7 +44,6 @@ class PidorRepository(private val template: JdbcTemplate) {
         )
     }
 
-    @Timed("repository.CommonRepository.getPidorsByChat")
     fun getPidorsByChat(
         chat: Chat,
         startDate: Instant = DateConstants.theBirthDayOfFamilyBot,
@@ -62,7 +58,6 @@ class PidorRepository(private val template: JdbcTemplate) {
         ) ?: emptyList()
     }
 
-    @Timed("repository.CommonRepository.getAllPidors")
     fun getAllPidors(
         startDate: Instant = DateConstants.theBirthDayOfFamilyBot,
         endDate: Instant = Instant.now()

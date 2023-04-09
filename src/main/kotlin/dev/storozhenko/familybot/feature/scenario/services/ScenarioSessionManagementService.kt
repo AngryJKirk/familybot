@@ -4,10 +4,10 @@ import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.italic
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.common.extensions.toHourMinuteString
-import dev.storozhenko.familybot.getLogger
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.telegram.FamilyBot
+import dev.storozhenko.familybot.getLogger
 import kotlinx.coroutines.delay
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
@@ -16,7 +16,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
-import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -30,120 +29,113 @@ class ScenarioSessionManagementService(
 ) {
     private val log = getLogger()
 
-    fun startGame(context: ExecutorContext, scenario: Scenario): suspend (AbsSender) -> Unit {
+    suspend fun startGame(context: ExecutorContext, scenario: Scenario) {
         val chat = context.chat
 
         val currentMove = scenarioGameplayService.getCurrentScenarioState(chat)
         if (currentMove != null && currentMove.move.isEnd.not()) {
-            return {
-                it.execute(
-                    AnswerCallbackQuery().apply {
-                        callbackQueryId = context.update.callbackQuery.id
-                        showAlert = true
-                        text = context.phrase(Phrase.SCENARIO_IS_RUNNING_ALREADY)
-                    }
-                )
-            }
+            context.sender.execute(
+                AnswerCallbackQuery().apply {
+                    callbackQueryId = context.update.callbackQuery.id
+                    showAlert = true
+                    text = context.phrase(Phrase.SCENARIO_IS_RUNNING_ALREADY)
+                }
+            )
+            return
         }
         scenarioGameplayService.startGame(scenario, chat)
-        return {
-            it.send(context, context.phrase(Phrase.SCENARIO_IS_STARTING))
-            currentGame(context).invoke(it)
-        }
+        context.sender.send(context, context.phrase(Phrase.SCENARIO_IS_STARTING))
+        currentGame(context)
     }
 
-    fun processCurrentGame(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        return currentGame(context)
+    suspend fun processCurrentGame(context: ExecutorContext) {
+        currentGame(context)
     }
 
-    fun listGames(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        return {
-            it.send(
-                context,
-                context.phrase(Phrase.SCENARIO_RULES)
-            )
-            it.send(
-                context,
-                context.phrase(Phrase.SCENARIO_CHOOSE),
-                replyToUpdate = true,
-                customization = createKeyboardMarkup()
-            )
-        }
+    suspend fun listGames(context: ExecutorContext) {
+        context.sender.send(
+            context,
+            context.phrase(Phrase.SCENARIO_RULES)
+        )
+        context.sender.send(
+            context,
+            context.phrase(Phrase.SCENARIO_CHOOSE),
+            replyToUpdate = true,
+            customization = createKeyboardMarkup()
+        )
     }
 
-    private fun currentGame(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    private suspend fun currentGame(context: ExecutorContext) {
         val chat = context.chat
         val previousMove = scenarioGameplayService.getCurrentScenarioState(chat)?.move
             ?: throw FamilyBot.InternalException("Internal logic error, current state wasn't found")
         if (previousMove.isEnd) {
-            return sendFinal(previousMove, context)
+            sendFinal(previousMove, context)
+            return
         }
         val recentPoll = scenarioPollManagingService.getRecentPoll(chat, previousMove)
-            ?: return { sender ->
-                continueGame(
-                    context,
-                    previousMove,
-                    sender,
-                    scenarioService.getPreviousMove(previousMove)
-                )
-            }
+        if (recentPoll == null) {
+            continueGame(
+                context,
+                previousMove,
+                scenarioService.getPreviousMove(previousMove)
+            )
+            return
+        }
 
-        return { sender ->
-            val dayAgo = Instant.now().minus(1, ChronoUnit.DAYS)
-            if (dayAgo.isAfter(recentPoll.createDate)) {
-                val nextMove = scenarioGameplayService.nextState(recentPoll.chat)
-                if (nextMove != null) {
-                    if (nextMove.isEnd) {
-                        sendFinal(nextMove, context).invoke(sender)
-                    } else {
-                        continueGame(context, nextMove, sender, previousMove)
-                    }
+        val dayAgo = Instant.now().minus(1, ChronoUnit.DAYS)
+        if (dayAgo.isAfter(recentPoll.createDate)) {
+            val nextMove = scenarioGameplayService.nextState(recentPoll.chat)
+            if (nextMove != null) {
+                if (nextMove.isEnd) {
+                    sendFinal(nextMove, context)
                 } else {
-                    sender.send(
-                        context,
-                        context.phrase(Phrase.SCENARIO_POLL_DRAW)
-                    )
-                    val evenMorePreviousMove = scenarioService.getPreviousMove(previousMove)
-                    delay(2.seconds)
-                    continueGame(context, previousMove, sender, evenMorePreviousMove)
+                    continueGame(context, nextMove, previousMove)
                 }
             } else {
-                val timeLeft =
-                    Duration.between(
-                        Instant.now(),
-                        recentPoll.createDate.plus(1, ChronoUnit.DAYS)
-                    ).toHourMinuteString()
+                context.sender.send(
+                    context,
+                    context.phrase(Phrase.SCENARIO_POLL_DRAW)
+                )
+                val evenMorePreviousMove = scenarioService.getPreviousMove(previousMove)
+                delay(2.seconds)
+                continueGame(context, previousMove, evenMorePreviousMove)
+            }
+        } else {
+            val timeLeft =
+                Duration.between(
+                    Instant.now(),
+                    recentPoll.createDate.plus(1, ChronoUnit.DAYS)
+                ).toHourMinuteString()
 
-                runCatching {
-                    sender.send(
+            runCatching {
+                context.sender.send(
+                    context,
+                    context.phrase(Phrase.SCENARIO_POLL_EXISTS).replace("\$timeLeft", timeLeft),
+                    replyMessageId = recentPoll.messageId
+                )
+            }
+                .onFailure { throwable ->
+                    log.error("Sending poll reply fucked up", throwable)
+                    context.sender.send(
                         context,
-                        context.phrase(Phrase.SCENARIO_POLL_EXISTS).replace("\$timeLeft", timeLeft),
-                        replyMessageId = recentPoll.messageId
+                        context.phrase(Phrase.SCENARIO_POLL_EXISTS_FALLBACK).replace("\$timeLeft", timeLeft)
                     )
                 }
-                    .onFailure { throwable ->
-                        log.error("Sending poll reply fucked up", throwable)
-                        sender.send(
-                            context,
-                            context.phrase(Phrase.SCENARIO_POLL_EXISTS_FALLBACK).replace("\$timeLeft", timeLeft)
-                        )
-                    }
-            }
         }
     }
 
     private suspend fun continueGame(
         context: ExecutorContext,
         nextMove: ScenarioMove,
-        sender: AbsSender,
         previousMove: ScenarioMove?
     ) {
         if (previousMove != null) {
-            sender.send(context, getExpositionMessage(nextMove, previousMove), enableHtml = true)
+            context.sender.send(context, getExpositionMessage(nextMove, previousMove), enableHtml = true)
             delay(2.seconds)
         }
 
-        val message = sendPoll(context, nextMove).invoke(sender)
+        val message = sendPoll(context, nextMove)
         scenarioPollManagingService.savePollToScenario(
             ScenarioPoll(
                 message.poll.id,
@@ -184,10 +176,10 @@ class ScenarioSessionManagementService(
         }
     }
 
-    private fun sendPoll(
+    private suspend fun sendPoll(
         context: ExecutorContext,
         scenarioMove: ScenarioMove
-    ): suspend (AbsSender) -> Message {
+    ): Message {
         return when {
             scenarioMove.ways.any { it.description.length > 100 } -> sendSeparately(scenarioMove, context)
             scenarioMove.description.length > 255 -> sendDescriptionSeparately(scenarioMove, context)
@@ -195,10 +187,10 @@ class ScenarioSessionManagementService(
         }
     }
 
-    private fun sendSeparately(
+    private suspend fun sendSeparately(
         scenarioMove: ScenarioMove,
         context: ExecutorContext
-    ): suspend (AbsSender) -> Message {
+    ): Message {
         val moveDescription = scenarioMove.description
         val scenarioOptions = scenarioMove
             .ways
@@ -206,65 +198,58 @@ class ScenarioSessionManagementService(
             .mapIndexed { i, description -> "${(i + 1).toString().bold()}. $description" }
             .joinToString("\n")
         val messageToSend = moveDescription + "\n\n" + scenarioOptions
-        return {
-            val message = it.send(context, messageToSend, enableHtml = true)
-            it.execute(
-                SendPoll().apply {
-                    chatId = context.chat.idString
-                    question = context.phrase(Phrase.SCENARIO_POLL_DEFAULT_QUESTION)
-                    options = (1..scenarioMove.ways.size).map { i -> "Вариант $i" }
-                    replyToMessageId = message.messageId
-                    isAnonymous = false
-                }
-            )
-        }
+        val message = context.sender.send(context, messageToSend, enableHtml = true)
+        return context.sender.execute(
+            SendPoll().apply {
+                chatId = context.chat.idString
+                question = context.phrase(Phrase.SCENARIO_POLL_DEFAULT_QUESTION)
+                options = (1..scenarioMove.ways.size).map { i -> "Вариант $i" }
+                replyToMessageId = message.messageId
+                isAnonymous = false
+            }
+        )
     }
 
-    private fun sendDescriptionSeparately(
+    private suspend fun sendDescriptionSeparately(
         scenarioMove: ScenarioMove,
         context: ExecutorContext
-    ): suspend (AbsSender) -> Message {
+    ): Message {
         val moveDescription = scenarioMove.description
         val scenarioOptions = scenarioMove.ways.map(ScenarioWay::description)
-        return {
-            it.send(context, moveDescription)
-            it.execute(
-                SendPoll().apply {
-                    chatId = context.chat.idString
-                    question = context.phrase(Phrase.SCENARIO_POLL_DEFAULT_QUESTION)
-                    options = scenarioOptions
-                    isAnonymous = false
-                }
-            )
-        }
+        context.sender.send(context, moveDescription)
+        return context.sender.execute(
+            SendPoll().apply {
+                chatId = context.chat.idString
+                question = context.phrase(Phrase.SCENARIO_POLL_DEFAULT_QUESTION)
+                options = scenarioOptions
+                isAnonymous = false
+            }
+        )
     }
 
     private fun sendInOneMessage(
         scenarioMove: ScenarioMove,
         context: ExecutorContext
-    ): suspend (AbsSender) -> Message {
+    ): Message {
         val scenarioOptions = scenarioMove.ways.map(ScenarioWay::description)
-        return {
-            it.execute(
-                SendPoll()
-                    .apply {
-                        chatId = context.chat.idString
-                        question = scenarioMove.description
-                        options = scenarioOptions
-                        isAnonymous = false
-                    }
-            )
-        }
+        return context.sender.execute(
+            SendPoll()
+                .apply {
+                    chatId = context.chat.idString
+                    question = scenarioMove.description
+                    options = scenarioOptions
+                    isAnonymous = false
+                }
+        )
     }
 
-    private fun sendFinal(previousMove: ScenarioMove, context: ExecutorContext): suspend (AbsSender) -> Unit =
-        { sender ->
-            val evenMorePreviousMove = scenarioService.getPreviousMove(previousMove)
-                ?: throw FamilyBot.InternalException("Scenario seems broken")
-            sender.send(context, getExpositionMessage(previousMove, evenMorePreviousMove), enableHtml = true)
-            delay(2.seconds)
-            sender.send(context, previousMove.description)
-            delay(2.seconds)
-            sender.send(context, context.phrase(Phrase.SCENARIO_END))
-        }
+    private suspend fun sendFinal(previousMove: ScenarioMove, context: ExecutorContext) {
+        val evenMorePreviousMove = scenarioService.getPreviousMove(previousMove)
+            ?: throw FamilyBot.InternalException("Scenario seems broken")
+        context.sender.send(context, getExpositionMessage(previousMove, evenMorePreviousMove), enableHtml = true)
+        delay(2.seconds)
+        context.sender.send(context, previousMove.description)
+        delay(2.seconds)
+        context.sender.send(context, context.phrase(Phrase.SCENARIO_END))
+    }
 }

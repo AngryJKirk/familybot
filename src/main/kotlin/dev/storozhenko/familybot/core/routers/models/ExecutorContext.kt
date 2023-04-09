@@ -10,8 +10,9 @@ import dev.storozhenko.familybot.core.models.telegram.User
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.bots.AbsSender
 
-class ExecutorContext(
+data class ExecutorContext(
     val update: Update,
     val message: Message,
     val command: Command?,
@@ -22,6 +23,7 @@ class ExecutorContext(
     val userKey: UserEasyKey,
     val chatKey: ChatEasyKey,
     val testEnvironment: Boolean,
+    val sender: AbsSender,
     private val dictionary: Dictionary
 ) {
     fun phrase(phrase: Phrase) = dictionary.get(phrase, chatKey)

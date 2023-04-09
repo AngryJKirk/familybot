@@ -11,7 +11,6 @@ import dev.storozhenko.familybot.getLogger
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.facilities.filedownloader.TelegramFileDownloader
 import org.telegram.telegrambots.meta.api.methods.GetFile
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class IgCookiesExecutor(
@@ -32,19 +31,17 @@ class IgCookiesExecutor(
         return document.fileName == getMessagePrefix()
     }
 
-    override fun executeInternal(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        return { sender ->
-            val document = context.message.document
-            runCatching {
-                val filePath = sender.execute(GetFile(document.fileId)).filePath
-                val value = downloader.downloadFile(filePath).readText()
-                easyKeyValueService.put(IGCookie, IG_COOKIE_KEY, value)
-                igCookieService.saveToFile(value)
-                sender.send(context, "Ok")
-            }.onFailure {
-                sender.send(context, it.message ?: "wtf")
-                getLogger().error("Bad happened during cookie upload", it)
-            }
+    override suspend fun executeInternal(context: ExecutorContext) {
+        val document = context.message.document
+        runCatching {
+            val filePath = context.sender.execute(GetFile(document.fileId)).filePath
+            val value = downloader.downloadFile(filePath).readText()
+            easyKeyValueService.put(IGCookie, IG_COOKIE_KEY, value)
+            igCookieService.saveToFile(value)
+            context.sender.send(context, "Ok")
+        }.onFailure {
+            context.sender.send(context, it.message ?: "wtf")
+            getLogger().error("Bad happened during cookie upload", it)
         }
     }
 }

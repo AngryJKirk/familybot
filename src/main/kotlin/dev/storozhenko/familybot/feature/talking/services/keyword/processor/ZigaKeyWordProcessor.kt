@@ -6,7 +6,6 @@ import dev.storozhenko.familybot.core.models.telegram.stickers.StickerPack
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.talking.services.keyword.KeyWordProcessor
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class ZigaKeyWordProcessor : KeyWordProcessor {
@@ -18,14 +17,12 @@ class ZigaKeyWordProcessor : KeyWordProcessor {
         return isRightPack && zigaStickers.any { it.stickerEmoji == incomeSticker.emoji }
     }
 
-    override fun process(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        return {
-            val stickerToSend = if (context.message.sticker?.emoji == Sticker.LEFT_ZIGA.stickerEmoji) {
-                Sticker.RIGHT_ZIGA
-            } else {
-                Sticker.LEFT_ZIGA
-            }
-            it.sendSticker(context, stickerToSend, replyToUpdate = true)
+    override suspend fun process(context: ExecutorContext) {
+        val stickerToSend = if (context.message.sticker?.emoji == Sticker.LEFT_ZIGA.stickerEmoji) {
+            Sticker.RIGHT_ZIGA
+        } else {
+            Sticker.LEFT_ZIGA
         }
+        context.sender.sendSticker(context, stickerToSend, replyToUpdate = true)
     }
 }

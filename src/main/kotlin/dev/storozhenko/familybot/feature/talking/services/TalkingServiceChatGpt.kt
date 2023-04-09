@@ -107,7 +107,6 @@ class TalkingServiceChatGpt(
         style: GptStyle,
         context: ExecutorContext
     ): ChatMessage {
-
         val pidorMessage = getCurrentPidors(context)
         val universeValue = if (pidorMessage != null && style != GptStyle.ASSISTANT) {
             gptSettingsReader.getUniverseValue(style.universe) + pidorMessage

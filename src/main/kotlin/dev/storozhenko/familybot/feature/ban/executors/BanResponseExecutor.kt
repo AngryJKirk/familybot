@@ -6,21 +6,19 @@ import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.routers.models.Priority
 import dev.storozhenko.familybot.feature.ban.services.BanService
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class BanResponseExecutor(
     private val banService: BanService
 ) : Executor {
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val banMessage = banService.getChatBan(context)
             ?: banService.getUserBan(context)
             ?: "иди нахуй"
-        return {
-            if (context.command != null) {
-                it.send(context, banMessage, replyToUpdate = true)
-            }
+
+        if (context.command != null) {
+            context.sender.send(context, banMessage, replyToUpdate = true)
         }
     }
 

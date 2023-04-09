@@ -168,5 +168,5 @@ enum class Phrase {
     AUTO_PIDOR_LAST_TIME,
     CHAT_GTP_TITLE,
     CHAT_GTP_DESC,
-    CHAT_GTP_SUCCESS,
+    CHAT_GTP_SUCCESS
 }

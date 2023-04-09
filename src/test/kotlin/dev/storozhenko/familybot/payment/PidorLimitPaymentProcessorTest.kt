@@ -1,10 +1,10 @@
 package dev.storozhenko.familybot.payment
 
-import dev.storozhenko.familybot.infrastructure.payload
+import dev.storozhenko.familybot.feature.settings.models.PidorTolerance
 import dev.storozhenko.familybot.feature.shop.model.PreCheckOutResponse
 import dev.storozhenko.familybot.feature.shop.model.ShopItem
 import dev.storozhenko.familybot.feature.shop.services.processors.PidorLimitPaymentProcessor
-import dev.storozhenko.familybot.feature.settings.models.PidorTolerance
+import dev.storozhenko.familybot.infrastructure.payload
 import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
 

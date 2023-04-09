@@ -1,11 +1,10 @@
 package dev.storozhenko.familybot.feature.settings.repos
 
 import dev.storozhenko.familybot.common.extensions.key
-import dev.storozhenko.familybot.feature.settings.models.FunctionId
-import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
+import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.feature.settings.models.FuckOffOverride
-import io.micrometer.core.annotation.Timed
+import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import org.springframework.stereotype.Component
 
 @Component
@@ -20,7 +19,6 @@ class FunctionsConfigureRepository(
         FunctionId.TALK_BACK
     )
 
-    @Timed("repository.RedisFunctionsConfigureRepository.isEnabled")
     fun isEnabled(id: FunctionId, chat: Chat): Boolean {
         if (id in fuckOffFunctions &&
             easyKeyValueService.get(FuckOffOverride, chat.key()) == true
@@ -30,7 +28,6 @@ class FunctionsConfigureRepository(
         return isEnabledInternal(id, chat)
     }
 
-    @Timed("repository.RedisFunctionsConfigureRepository.switch")
     suspend fun switch(id: FunctionId, chat: Chat) {
         switchInternal(id, chat)
     }

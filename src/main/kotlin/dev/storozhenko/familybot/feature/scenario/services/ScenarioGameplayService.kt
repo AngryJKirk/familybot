@@ -1,10 +1,10 @@
 package dev.storozhenko.familybot.services.scenario
 
-import dev.storozhenko.familybot.getLogger
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.User
-import dev.storozhenko.familybot.feature.scenario.repos.ScenarioRepository
 import dev.storozhenko.familybot.core.telegram.FamilyBot
+import dev.storozhenko.familybot.feature.scenario.repos.ScenarioRepository
+import dev.storozhenko.familybot.getLogger
 import org.springframework.stereotype.Component
 
 @Component

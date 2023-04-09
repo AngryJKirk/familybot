@@ -9,7 +9,6 @@ import dev.storozhenko.familybot.feature.talking.services.TalkingService
 import dev.storozhenko.familybot.feature.talking.services.keyword.KeyWordProcessor
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import kotlin.time.Duration.Companion.minutes
 
 @Component
@@ -23,30 +22,28 @@ class PshenitsinKeyWordProcessor(
         return containsSymbolsY(text) && isTolerant(context.message.chatId).not()
     }
 
-    override fun process(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        return { sender ->
-            val text = talkingService
-                .getReplyToUser(context)
-                .toCharArray()
-                .map { ch ->
-                    when {
-                        ch.isLetter() && ch.isUpperCase() -> 'Ы'
-                        ch.isLetter() && ch.isLowerCase() -> 'ы'
-                        else -> ch
-                    }
+    override suspend fun process(context: ExecutorContext) {
+        val text = talkingService
+            .getReplyToUser(context)
+            .toCharArray()
+            .map { ch ->
+                when {
+                    ch.isLetter() && ch.isUpperCase() -> 'Ы'
+                    ch.isLetter() && ch.isLowerCase() -> 'ы'
+                    else -> ch
                 }
-                .toCharArray()
-                .let(::String)
+            }
+            .toCharArray()
+            .let(::String)
 
-            sender.send(
-                context,
-                text,
-                shouldTypeBeforeSend = true,
-                replyToUpdate = true
-            )
+        context.sender.send(
+            context,
+            text,
+            shouldTypeBeforeSend = true,
+            replyToUpdate = true
+        )
 
-            keyValueService.put(PshenitsinTolerance, context.chatKey, true, 1.minutes)
-        }
+        keyValueService.put(PshenitsinTolerance, context.chatKey, true, 1.minutes)
     }
 
     private fun isTolerant(chatId: Long): Boolean {

@@ -9,7 +9,6 @@ import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.getLogger
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import java.util.regex.Pattern
 
 @Component
@@ -20,7 +19,7 @@ class AnswerExecutor : CommandExecutor() {
         return Command.ANSWER
     }
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val text = context.message.text
 
         val message = text
@@ -31,11 +30,13 @@ class AnswerExecutor : CommandExecutor() {
             ?.random()
             ?.capitalized()
             ?.dropLastDelimiter()
-            ?: return {
-                log.info("Bad argument was passed, text of message is [{}]", text)
-                it.send(context, context.phrase(Phrase.BAD_COMMAND_USAGE), replyToUpdate = true)
-            }
-        return { it.send(context, message, replyToUpdate = true, shouldTypeBeforeSend = true) }
+
+        if (message == null) {
+            log.info("Bad argument was passed, text of message is [{}]", text)
+            context.sender.send(context, context.phrase(Phrase.BAD_COMMAND_USAGE), replyToUpdate = true)
+            return
+        }
+        context.sender.send(context, message, replyToUpdate = true, shouldTypeBeforeSend = true)
     }
 
     private fun isOptionsCountEnough(options: List<String>) = options.size >= 2

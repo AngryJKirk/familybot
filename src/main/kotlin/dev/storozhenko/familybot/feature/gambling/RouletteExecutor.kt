@@ -9,7 +9,6 @@ import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 const val ROULETTE_MESSAGE = "Выбери число от 1 до 6"
 
@@ -25,18 +24,16 @@ class RouletteExecutor : CommandExecutor(), Configurable {
         return Command.ROULETTE
     }
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val chatId = context.update.message.chatId.toString()
 
-        return {
-            it.execute(
-                SendMessage(chatId, context.phrase(Phrase.ROULETTE_MESSAGE))
-                    .apply {
-                        replyMarkup = ForceReplyKeyboard().apply { selective = true }
-                        replyToMessageId = context.update.message.messageId
-                    }
-            )
-        }
+        context.sender.execute(
+            SendMessage(chatId, context.phrase(Phrase.ROULETTE_MESSAGE))
+                .apply {
+                    replyMarkup = ForceReplyKeyboard().apply { selective = true }
+                    replyToMessageId = context.update.message.messageId
+                }
+        )
     }
 
     override fun isLoggable(): Boolean {

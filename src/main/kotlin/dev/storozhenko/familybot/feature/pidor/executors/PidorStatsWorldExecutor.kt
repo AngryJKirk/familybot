@@ -14,7 +14,6 @@ import dev.storozhenko.familybot.feature.pidor.models.Pidor
 import dev.storozhenko.familybot.feature.pidor.repos.PidorRepository
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class PidorStatsWorldExecutor(
@@ -29,7 +28,7 @@ class PidorStatsWorldExecutor(
         return Command.STATS_WORLD
     }
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val pidorsByChat = pidorRepository.getAllPidors(
             startDate = DateConstants.theBirthDayOfFamilyBot
         )
@@ -44,6 +43,6 @@ class PidorStatsWorldExecutor(
             .take(100)
 
         val title = "${context.phrase(Phrase.PIDOR_STAT_WORLD)}:\n".bold()
-        return { it.send(context, title + pidorsByChat.joinToString("\n"), enableHtml = true) }
+        context.sender.send(context, title + pidorsByChat.joinToString("\n"), enableHtml = true)
     }
 }

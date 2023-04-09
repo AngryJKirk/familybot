@@ -6,7 +6,6 @@ import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.tribute.repos.QuoteRepository
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class QuoteExecutor(private val quoteRepository: QuoteRepository) : CommandExecutor() {
@@ -14,7 +13,7 @@ class QuoteExecutor(private val quoteRepository: QuoteRepository) : CommandExecu
         return Command.QUOTE
     }
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        return { it.send(context, quoteRepository.getRandom()) }
+    override suspend fun execute(context: ExecutorContext) {
+        context.sender.send(context, quoteRepository.getRandom())
     }
 }

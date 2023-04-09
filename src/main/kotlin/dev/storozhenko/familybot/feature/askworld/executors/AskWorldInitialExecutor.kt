@@ -36,7 +36,6 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -58,7 +57,7 @@ class AskWorldInitialExecutor(
         return Command.ASK_WORLD
     }
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val currentChat = context.chat
 
         val chatKey = context.chatKey
@@ -68,23 +67,20 @@ class AskWorldInitialExecutor(
         val isNotFromDeveloper = !context.isFromDeveloper
         if (isNotFromDeveloper) {
             if (chatUsages != null && chatUsages > 0L) {
-                return {
-                    log.info("Limit was exceed for chat")
-                    it.send(context, context.phrase(Phrase.ASK_WORLD_LIMIT_BY_CHAT), replyToUpdate = true)
-                }
+                log.info("Limit was exceed for chat")
+                context.sender.send(context, context.phrase(Phrase.ASK_WORLD_LIMIT_BY_CHAT), replyToUpdate = true)
             }
 
             if (userUsages != null && userUsages > 1) {
-                return {
-                    log.info("Limit was exceed for user")
-                    it.send(context, context.phrase(Phrase.ASK_WORLD_LIMIT_BY_USER), replyToUpdate = true)
-                }
+                log.info("Limit was exceed for user")
+                context.sender.send(context, context.phrase(Phrase.ASK_WORLD_LIMIT_BY_USER), replyToUpdate = true)
+                return
             }
         }
 
         val askWorldData = getAskWorldData(context)
         if (askWorldData is ValidationError) {
-            return askWorldData.invalidQuestionAction
+            askWorldData.invalidQuestionAction.invoke(context.sender)
         }
 
         val successData = askWorldData as Success
@@ -96,32 +92,31 @@ class AskWorldInitialExecutor(
             Instant.now(),
             null
         )
-        return { sender ->
-            val questionId = coroutineScope { async { askWorldRepository.addQuestion(question) } }
-            sender.send(context, context.phrase(Phrase.DATA_CONFIRM))
-            if (!successData.isScam) {
-                getChatsToSendQuestion(context)
-                    .forEach { chatToSend ->
-                        runCatching {
-                            delay(100)
-                            val result = successData.action.invoke(sender, chatToSend, currentChat)
-                            markQuestionDelivered(question, questionId, result, chatToSend)
-                        }.onFailure { e -> markChatInactive(chatToSend, questionId, e) }
-                    }
+
+        val questionId = coroutineScope { async { askWorldRepository.addQuestion(question) } }
+        context.sender.send(context, context.phrase(Phrase.DATA_CONFIRM))
+        if (!successData.isScam) {
+            getChatsToSendQuestion(context)
+                .forEach { chatToSend ->
+                    runCatching {
+                        delay(100)
+                        val result = successData.action.invoke(context.sender, chatToSend, currentChat)
+                        markQuestionDelivered(question, questionId, result, chatToSend)
+                    }.onFailure { e -> markChatInactive(chatToSend, questionId, e) }
+                }
+        } else {
+            log.info("Some scam message was found and it won't be sent")
+        }
+        if (isNotFromDeveloper) {
+            if (chatUsages == null) {
+                easyKeyValueService.put(AskWorldChatUsages, chatKey, 1, untilNextDay())
             } else {
-                log.info("Some scam message was found and it won't be sent")
+                easyKeyValueService.increment(AskWorldChatUsages, chatKey)
             }
-            if (isNotFromDeveloper) {
-                if (chatUsages == null) {
-                    easyKeyValueService.put(AskWorldChatUsages, chatKey, 1, untilNextDay())
-                } else {
-                    easyKeyValueService.increment(AskWorldChatUsages, chatKey)
-                }
-                if (userUsages == null) {
-                    easyKeyValueService.put(AskWorldUserUsages, userEasyKey, 1, untilNextDay())
-                } else {
-                    easyKeyValueService.increment(AskWorldUserUsages, userEasyKey)
-                }
+            if (userUsages == null) {
+                easyKeyValueService.put(AskWorldUserUsages, userEasyKey, 1, untilNextDay())
+            } else {
+                easyKeyValueService.increment(AskWorldUserUsages, userEasyKey)
             }
         }
     }
@@ -161,7 +156,7 @@ class AskWorldInitialExecutor(
                     ?.removePrefix(" ")
             }
                 ?.takeIf(String::isNotEmpty) ?: return ValidationError {
-                it.send(
+                context.sender.send(
                     context,
                     context.phrase(Phrase.ASK_WORLD_HELP)
                 )
@@ -169,13 +164,13 @@ class AskWorldInitialExecutor(
 
             val isScam =
                 shouldBeCensored(message) ||
-                    shouldBeCensored(context.chat.name ?: "") ||
-                    isSpam(message) ||
-                    containsLongWords(message)
+                        shouldBeCensored(context.chat.name ?: "") ||
+                        isSpam(message) ||
+                        containsLongWords(message)
 
             if (message.length > 2000) {
                 return ValidationError {
-                    it.send(
+                    context.sender.send(
                         context,
                         context.phrase(Phrase.ASK_WORLD_QUESTION_TOO_LONG),
                         replyToUpdate = true
@@ -254,16 +249,16 @@ class AskWorldInitialExecutor(
 
     private fun shouldBeCensored(message: String): Boolean {
         return message.contains("http", ignoreCase = true) ||
-            message.contains("www", ignoreCase = true) ||
-            message.contains("jpg", ignoreCase = true) ||
-            message.contains("png", ignoreCase = true) ||
-            message.contains("jpeg", ignoreCase = true) ||
-            message.contains("bmp", ignoreCase = true) ||
-            message.contains("gif", ignoreCase = true) ||
-            message.contains("_bot", ignoreCase = true) ||
-            message.contains("t.me", ignoreCase = true) ||
-            message.contains("Bot", ignoreCase = false) ||
-            message.contains("@")
+                message.contains("www", ignoreCase = true) ||
+                message.contains("jpg", ignoreCase = true) ||
+                message.contains("png", ignoreCase = true) ||
+                message.contains("jpeg", ignoreCase = true) ||
+                message.contains("bmp", ignoreCase = true) ||
+                message.contains("gif", ignoreCase = true) ||
+                message.contains("_bot", ignoreCase = true) ||
+                message.contains("t.me", ignoreCase = true) ||
+                message.contains("Bot", ignoreCase = false) ||
+                message.contains("@")
     }
 
     private fun isSpam(message: String): Boolean {

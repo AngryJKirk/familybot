@@ -8,7 +8,6 @@ import dev.storozhenko.familybot.core.routers.models.Priority
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.getLogger
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Configurable {
@@ -21,8 +20,8 @@ class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Config
 
     override fun getFunctionId(context: ExecutorContext) = FunctionId.TALK_BACK
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        return processorsForMessage.remove(context.message.messageId)?.process(context) ?: {}
+    override suspend fun execute(context: ExecutorContext) {
+        processorsForMessage.remove(context.message.messageId)?.process(context)
     }
 
     override fun canExecute(context: ExecutorContext): Boolean {

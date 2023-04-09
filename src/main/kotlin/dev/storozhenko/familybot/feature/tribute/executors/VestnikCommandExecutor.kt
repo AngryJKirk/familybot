@@ -14,7 +14,6 @@ import dev.storozhenko.familybot.feature.talking.services.TranslateService
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class VestnikCommandExecutor(
@@ -23,24 +22,22 @@ class VestnikCommandExecutor(
     private val easyKeyValueService: EasyKeyValueService
 ) : CommandExecutor() {
     private val chat = Chat(id = -1001351771258L, name = null)
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
-        return { sender ->
-            val question = coroutineScope {
-                async {
-                    val isUkrainian = async { easyKeyValueService.get(UkrainianLanguage, context.chatKey, false) }
-                    val question =
-                        askWorldRepository.searchQuestion("вестник", chat).randomOrNull()?.message ?: "Выпусков нет :("
-                    if (isUkrainian.await()) {
-                        translateService.translate(question)
-                    } else {
-                        question
-                    }
+    override suspend fun execute(context: ExecutorContext) {
+        val question = coroutineScope {
+            async {
+                val isUkrainian = async { easyKeyValueService.get(UkrainianLanguage, context.chatKey, false) }
+                val question =
+                    askWorldRepository.searchQuestion("вестник", chat).randomOrNull()?.message ?: "Выпусков нет :("
+                if (isUkrainian.await()) {
+                    translateService.translate(question)
+                } else {
+                    question
                 }
             }
-
-            sender.send(context, context.phrase(Phrase.RANDOM_VESTNIK))
-            sender.sendDeferred(context, question, shouldTypeBeforeSend = true)
         }
+
+        context.sender.send(context, context.phrase(Phrase.RANDOM_VESTNIK))
+        context.sender.sendDeferred(context, question, shouldTypeBeforeSend = true)
     }
 
     override fun command() = Command.VESTNIK

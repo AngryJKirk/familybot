@@ -3,12 +3,15 @@ package dev.storozhenko.familybot.feature.scenario.repos
 import dev.storozhenko.familybot.common.extensions.getUuid
 import dev.storozhenko.familybot.common.extensions.toChat
 import dev.storozhenko.familybot.common.extensions.toUser
-import dev.storozhenko.familybot.getLogger
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.User
-import dev.storozhenko.familybot.services.scenario.*
 import dev.storozhenko.familybot.core.telegram.FamilyBot
-import io.micrometer.core.annotation.Timed
+import dev.storozhenko.familybot.getLogger
+import dev.storozhenko.familybot.services.scenario.Scenario
+import dev.storozhenko.familybot.services.scenario.ScenarioMove
+import dev.storozhenko.familybot.services.scenario.ScenarioPoll
+import dev.storozhenko.familybot.services.scenario.ScenarioState
+import dev.storozhenko.familybot.services.scenario.ScenarioWay
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
@@ -17,7 +20,7 @@ import org.springframework.stereotype.Component
 import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 @Component
 class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
@@ -65,7 +68,6 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
         )
     }
 
-    @Timed("repository.PostgresScenarioRepository.getScenarios")
     fun getScenarios(): List<Scenario> {
         return template.query(
             "SELECT * FROM scenario INNER JOIN scenario_move sm ON scenario.entry_move = sm.move_id",
@@ -73,7 +75,6 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
         )
     }
 
-    @Timed("repository.PostgresScenarioRepository.findMove")
     fun findMove(id: UUID): ScenarioMove? {
         return template
             .query(
@@ -84,7 +85,6 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
             .firstOrNull()
     }
 
-    @Timed("repository.PostgresScenarioRepository.getCurrentMoveOfChat")
     fun getCurrentMoveOfChat(chat: Chat): ScenarioMove? {
         return template.query(
             """
@@ -96,7 +96,6 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
         ) { rs, rowNum -> scenarioMoveRowMapper.mapRowNotNull(rs, rowNum) }.firstOrNull()
     }
 
-    @Timed("repository.PostgresScenarioRepository.getPreviousMove")
     fun getPreviousMove(move: ScenarioMove): ScenarioMove? {
         return template.query(
             """
@@ -110,7 +109,6 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
         ) { rs, rowNum -> scenarioMoveRowMapper.mapRowNotNull(rs, rowNum) }.firstOrNull()
     }
 
-    @Timed("repository.PostgresScenarioRepository.addState")
     fun addState(scenarioMove: ScenarioMove, chat: Chat) {
         template.update(
             "INSERT INTO scenario_states (state_date, chat_id, scenario_move_id) VALUES (:date,:chat_id,:move_id)",
@@ -122,7 +120,6 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
         )
     }
 
-    @Timed("repository.PostgresScenarioRepository.getState")
     fun getState(chat: Chat): ScenarioState? {
         return template.query(
             """
@@ -135,7 +132,6 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
         ).firstOrNull()
     }
 
-    @Timed("repository.PostgresScenarioRepository.addChoice")
     fun addChoice(chat: Chat, user: User, scenarioMove: ScenarioMove, chosenWay: ScenarioWay) {
         try {
             template.update(
@@ -152,7 +148,6 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
         }
     }
 
-    @Timed("repository.PostgresScenarioRepository.removeChoice")
     fun removeChoice(chat: Chat, user: User, scenarioMove: ScenarioMove) {
         template.update(
             """
@@ -170,7 +165,6 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
         )
     }
 
-    @Timed("repository.PostgresScenarioRepository.getResultsForMove")
     fun getResultsForMove(chat: Chat, scenarioState: ScenarioState): Map<ScenarioWay, List<User>> {
         return template.query(
             """
@@ -189,7 +183,6 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
             .groupBy({ (way, _) -> way }, { (_, user) -> user })
     }
 
-    @Timed("repository.PostgresScenarioRepository.savePoll")
     fun savePoll(scenarioPoll: ScenarioPoll) {
         template.update(
             "INSERT INTO scenario_poll (poll_id, chat_id, create_date, scenario_move_id, poll_message_id) VALUES (:poll_id,:chat_id,:create_date,:move_id, :poll_message_id)",
@@ -203,7 +196,6 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
         )
     }
 
-    @Timed("repository.PostgresScenarioRepository.getDataByPollId")
     fun getDataByPollId(id: String): ScenarioPoll? {
         return template.query(
             """SELECT * FROM scenario_poll 
@@ -218,7 +210,6 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
         ).firstOrNull()
     }
 
-    @Timed("repository.PostgresScenarioRepository.findMostRecentPoll")
     fun findMostRecentPoll(chat: Chat): ScenarioPoll? {
         return template.query(
             """SELECT * FROM scenario_poll sp
@@ -233,7 +224,6 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
             .firstOrNull()
     }
 
-    @Timed("repository.PostgresScenarioRepository.getAllStatesOfChat")
     fun getAllStatesOfChat(chat: Chat): List<ScenarioState> {
         return template.query(
             """

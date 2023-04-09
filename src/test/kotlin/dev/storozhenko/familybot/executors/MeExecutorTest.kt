@@ -20,7 +20,7 @@ class MeExecutorTest : CommandExecutorTest() {
 
     override fun executeTest() {
         val update = createSimpleCommandContext(meCommandExecutor.command())
-        runBlocking { meCommandExecutor.execute(update).invoke(sender) }
+        runBlocking { meCommandExecutor.execute(update) }
         verify(sender, Mockito.atLeastOnce()).execute(any<SendMessage>())
     }
 }

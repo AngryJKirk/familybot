@@ -15,7 +15,6 @@ import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.pidor.repos.PidorStrikeStorage
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class PidorStatsStrikesExecutor(
@@ -27,7 +26,7 @@ class PidorStatsStrikesExecutor(
 
     override fun command() = Command.STATS_STRIKES
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val chat = context.chat
         val strikes = pidorStrikeStorage.get(chat.key()).stats.filter { (_, stats) -> stats.maxStrike > 1 }
         val users = userRepository.getUsers(chat).associateBy(User::id)
@@ -50,15 +49,13 @@ class PidorStatsStrikesExecutor(
             )
         val title = "${context.phrase(Phrase.PIDOR_STRIKE_STAT_TITLE)}:\n".bold()
         if (stats.isNotEmpty()) {
-            return { it.send(context, title + stats.joinToString("\n"), enableHtml = true) }
+            context.sender.send(context, title + stats.joinToString("\n"), enableHtml = true)
         } else {
-            return {
-                it.send(
-                    context,
-                    title + context.phrase(Phrase.PIDOR_STRIKE_STAT_NONE),
-                    enableHtml = true
-                )
-            }
+            context.sender.send(
+                context,
+                title + context.phrase(Phrase.PIDOR_STRIKE_STAT_NONE),
+                enableHtml = true
+            )
         }
     }
 }

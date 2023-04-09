@@ -12,7 +12,6 @@ import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTPaidTill
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTTokenUsageByChat
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Instant
 
 @Component
@@ -22,7 +21,7 @@ class GPTStatsExecutor(
 ) : OnlyBotOwnerExecutor() {
     override fun getMessagePrefix() = "gpt"
 
-    override fun executeInternal(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun executeInternal(context: ExecutorContext) {
         val chats = commonRepository.getChatsAll().associateBy { it.id }
         val stats = easyKeyValueService.getAllByPartKey(ChatGPTTokenUsageByChat)
         val message = stats
@@ -34,11 +33,10 @@ class GPTStatsExecutor(
             }
         val total = formatValue(stats.values.sum())
         val subs = activeSubs(chats)
-        return {
-            it.send(context, message, enableHtml = true)
-            it.send(context, "Всего потрачено: $total", enableHtml = true)
-            it.send(context, subs, enableHtml = true)
-        }
+
+        context.sender.send(context, message, enableHtml = true)
+        context.sender.send(context, "Всего потрачено: $total", enableHtml = true)
+        context.sender.send(context, subs, enableHtml = true)
     }
 
     private fun activeSubs(chats: Map<Long, Chat>): String {
@@ -50,12 +48,14 @@ class GPTStatsExecutor(
             .filter { (_, timestamp) -> timestamp <= Instant.now().epochSecond }
         val activeSubsAmount = "Активных подписок: ${activeSubs.size.toString().bold()}"
         val inactiveSubsAmount = "Неактивных подписок: ${inactiveSubs.size.toString().bold()}"
-        return listOf(activeSubsAmount, inactiveSubsAmount).plus(activeSubs
-            .sortedBy { (_, timestamp) -> timestamp }
-            .map { (chatKey, timestamp) ->
-                Instant.ofEpochSecond(timestamp).prettyFormat(dateOnly = true).code() + "  ⌛️  " +
-                    (chats[chatKey.chatId]?.name ?: "#no_name").bold()
-            })
+        return listOf(activeSubsAmount, inactiveSubsAmount).plus(
+            activeSubs
+                .sortedBy { (_, timestamp) -> timestamp }
+                .map { (chatKey, timestamp) ->
+                    Instant.ofEpochSecond(timestamp).prettyFormat(dateOnly = true).code() + "  ⌛️  " +
+                            (chats[chatKey.chatId]?.name ?: "#no_name").bold()
+                }
+        )
             .joinToString(separator = "\n")
     }
 
@@ -70,5 +70,3 @@ class GPTStatsExecutor(
         return "$value ≈$${String.format("%.3f", value / 1000 * 0.002)}".padEnd(13, ' ').code()
     }
 }
-
-

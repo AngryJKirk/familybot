@@ -1,8 +1,8 @@
 package dev.storozhenko.familybot.executors
 
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
-import dev.storozhenko.familybot.feature.settings.models.TalkingDensity
 import dev.storozhenko.familybot.core.routers.models.Priority
+import dev.storozhenko.familybot.feature.settings.models.TalkingDensity
 import dev.storozhenko.familybot.feature.talking.executors.HuificatorExecutor
 import dev.storozhenko.familybot.infrastructure.createSimpleContext
 import dev.storozhenko.familybot.suits.ExecutorTest
@@ -68,9 +68,8 @@ class HuificatorExecutorTest : ExecutorTest() {
     fun executeTest(input: String, expected: String?) {
         val context = createSimpleContext(input)
         easyKeyValueService.put(TalkingDensity, context.chatKey, 0)
-        val sender = testSender.sender
         runBlocking {
-            huificatorExecutor.execute(context).invoke(sender)
+            huificatorExecutor.execute(context)
         }
         if (expected == null) {
             verifyNoInteractions(sender)

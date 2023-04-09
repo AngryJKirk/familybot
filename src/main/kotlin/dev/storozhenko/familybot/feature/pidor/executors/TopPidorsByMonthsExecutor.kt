@@ -19,7 +19,6 @@ import dev.storozhenko.familybot.feature.pidor.models.Pidor
 import dev.storozhenko.familybot.feature.pidor.repos.PidorRepository
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -42,7 +41,7 @@ class TopPidorsByMonthsExecutor(
         return Command.LEADERBOARD
     }
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         val result = pidorRepository
             .getPidorsByChat(context.chat)
             .filter { it.date.isBefore(startOfCurrentMonth()) }
@@ -53,14 +52,11 @@ class TopPidorsByMonthsExecutor(
             .reversed()
             .map(formatLeaderBoard(context))
         if (result.isEmpty()) {
-            return {
-                it.send(context, context.phrase(Phrase.LEADERBOARD_NONE))
-            }
+            context.sender.send(context, context.phrase(Phrase.LEADERBOARD_NONE))
+            return
         }
         val message = "${context.phrase(Phrase.LEADERBOARD_TITLE)}:\n".bold()
-        return {
-            it.send(context, message + "\n" + result.joinToString(delimiter), enableHtml = true)
-        }
+        context.sender.send(context, message + "\n" + result.joinToString(delimiter), enableHtml = true)
     }
 
     private fun formatLeaderBoard(context: ExecutorContext): (Map.Entry<LocalDate, PidorStat>) -> String = {

@@ -10,22 +10,19 @@ import dev.storozhenko.familybot.core.models.telegram.stickers.StickerPack
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.logging.repos.CommandHistoryRepository
 import kotlinx.coroutines.delay
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 abstract class SendRandomStickerExecutor(
     private val historyRepository: CommandHistoryRepository
 ) : CommandExecutor() {
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         if (isInvokedToday(context.update.toUser())) {
-            return {}
+            return
         }
 
-        return {
-            it.send(context, getMessage())
-            delay(1000)
-            it.sendRandomSticker(context, getStickerPack())
-        }
+        context.sender.send(context, getMessage())
+        delay(1000)
+        context.sender.sendRandomSticker(context, getStickerPack())
     }
 
     private fun isInvokedToday(user: User): Boolean {

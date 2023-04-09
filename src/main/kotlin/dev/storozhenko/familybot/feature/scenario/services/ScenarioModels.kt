@@ -3,7 +3,7 @@ package dev.storozhenko.familybot.services.scenario
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.User
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 data class ScenarioMove(
     val id: UUID,

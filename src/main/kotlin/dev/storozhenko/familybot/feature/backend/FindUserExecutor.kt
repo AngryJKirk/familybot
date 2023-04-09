@@ -8,7 +8,6 @@ import dev.storozhenko.familybot.core.models.telegram.User
 import dev.storozhenko.familybot.core.repos.UserRepository
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class FindUserExecutor(
@@ -17,29 +16,27 @@ class FindUserExecutor(
     private val delimiter = "\n===================\n"
     override fun getMessagePrefix() = "user|"
 
-    override fun executeInternal(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun executeInternal(context: ExecutorContext) {
         val tokens = context.update.getMessageTokens("|")
         val usersToChats = commonRepository
             .findUsersByName(tokens[1])
             .distinctBy(User::id)
             .associateWith { user -> commonRepository.getChatsByUser(user) }
-        return { sender ->
-            if (usersToChats.isEmpty()) {
-                sender.send(context, "No one found, master")
-            } else {
-                usersToChats.toList().chunked(5).forEach { chunk ->
-                    sender.send(context, format(chunk))
-                }
+        if (usersToChats.isEmpty()) {
+            context.sender.send(context, "No one found, master")
+        } else {
+            usersToChats.toList().chunked(5).forEach { chunk ->
+                context.sender.send(context, format(chunk))
             }
         }
     }
 
     private fun format(userToChats: List<Pair<User, List<Chat>>>): String {
         return "Search user result:\n" +
-            userToChats
-                .joinToString(separator = delimiter) { (user, chats) ->
-                    "User: ${formatUser(user)} in chats [${formatChats(chats)}]"
-                }
+                userToChats
+                    .joinToString(separator = delimiter) { (user, chats) ->
+                        "User: ${formatUser(user)} in chats [${formatChats(chats)}]"
+                    }
     }
 
     private fun formatUser(user: User): String {

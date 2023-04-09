@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.bots.AbsSender
 import java.io.InputStream
 import kotlin.time.Duration.Companion.minutes
 
@@ -35,64 +34,61 @@ class MarriageExecutor(
 
     override fun command() = Command.MARRY
 
-    override fun execute(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    override suspend fun execute(context: ExecutorContext) {
         if (!context.message.isReply) {
-            return { sender -> sender.send(context, context.phrase(Phrase.MARRY_RULES)) }
+            context.sender.send(context, context.phrase(Phrase.MARRY_RULES))
+            return
         }
         val chat = context.chat
         val proposalTarget = context.message.replyToMessage
         val proposalSource = context.message
 
         if (proposalTarget.from.id == proposalSource.from.id) {
-            return { sender ->
-                sender.execute(
-                    SendSticker(
-                        chat.idString,
-                        InputFile(selfSuckStream, "selfsuck")
-                    ).apply { replyToMessageId = context.message.messageId }
-                )
-            }
+            context.sender.execute(
+                SendSticker(
+                    chat.idString,
+                    InputFile(selfSuckStream, "selfsuck")
+                ).apply { replyToMessageId = context.message.messageId }
+            )
+            return
         }
         if (proposalTarget.from.isBot) {
-            return { sender ->
-                sender.send(
-                    context,
-                    context.phrase(Phrase.MARRY_PROPOSED_TO_BOT),
-                    replyToUpdate = true
-                )
-            }
+            context.sender.send(
+                context,
+                context.phrase(Phrase.MARRY_PROPOSED_TO_BOT),
+                replyToUpdate = true
+            )
+            return
         }
+
         if (isMarriedAlready(chat, proposalSource)) {
-            return { sender ->
-                sender.send(
-                    context,
-                    context.phrase(Phrase.MARRY_SOURCE_IS_MARRIED),
-                    replyToUpdate = true
-                )
-            }
+            context.sender.send(
+                context,
+                context.phrase(Phrase.MARRY_SOURCE_IS_MARRIED),
+                replyToUpdate = true
+            )
+            return
         }
 
         if (isMarriedAlready(chat, proposalTarget)) {
-            return { sender ->
-                sender.send(
-                    context,
-                    context.phrase(Phrase.MARRY_TARGET_IS_MARRIED),
-                    replyToUpdate = true
-                )
-            }
+            context.sender.send(
+                context,
+                context.phrase(Phrase.MARRY_TARGET_IS_MARRIED),
+                replyToUpdate = true
+            )
+            return
         }
         if (isProposedAlready(proposalSource, proposalTarget)) {
-            return { sender ->
-                sender.send(
-                    context,
-                    context.phrase(Phrase.MARRY_PROPOSED_AGAIN),
-                    replyToUpdate = true
-                )
-            }
+            context.sender.send(
+                context,
+                context.phrase(Phrase.MARRY_PROPOSED_AGAIN),
+                replyToUpdate = true
+            )
+            return
         }
 
         val proposal = keyValueService.get(ProposalTo, proposalSource.key())
-        return if (proposal != null && proposal == proposalTarget.from.id) {
+        if (proposal != null && proposal == proposalTarget.from.id) {
             marry(context)
         } else {
             propose(proposalSource, proposalTarget, context)
@@ -111,33 +107,31 @@ class MarriageExecutor(
         proposalSource: Message
     ) = marriagesRepository.getMarriage(chat.id, proposalSource.from.id) != null
 
-    private fun propose(
+    private suspend fun propose(
         proposalSource: Message,
         proposalTarget: Message,
         context: ExecutorContext
-    ): suspend (AbsSender) -> Unit {
+    ) {
         keyValueService.put(
             ProposalTo,
             key = proposalTarget.key(),
             value = proposalSource.from.id,
             duration = 10.minutes
         )
-        return { sender ->
-            sender.send(
-                context,
-                context.phrase(Phrase.MARRY_PROPOSED),
-                replyMessageId = proposalTarget.messageId
-            )
-        }
+        context.sender.send(
+            context,
+            context.phrase(Phrase.MARRY_PROPOSED),
+            replyMessageId = proposalTarget.messageId
+        )
     }
 
-    private fun marry(context: ExecutorContext): suspend (AbsSender) -> Unit {
+    private suspend fun marry(context: ExecutorContext) {
         val update = context.update
         val proposalTarget = context.message.replyToMessage.from.toUser(chat = context.chat)
         val proposalSource = context.user
         val marriage = Marriage(update.chatId(), proposalTarget, proposalSource)
         marriagesRepository.addMarriage(marriage)
         keyValueService.remove(ProposalTo, UserAndChatEasyKey(proposalTarget.id, update.toChat().id))
-        return { sender -> sender.send(context, context.phrase(Phrase.MARRY_CONGRATS)) }
+        context.sender.send(context, context.phrase(Phrase.MARRY_CONGRATS))
     }
 }
