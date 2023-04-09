@@ -23,4 +23,7 @@ ENV SPRING_PROFILES_ACTIVE production
 
 COPY --from=build /app/target/familybot.jar /usr/local/lib/familybot.jar
 
-ENTRYPOINT ["java","-Xmx256m","-jar","/usr/local/lib/familybot.jar"]
+
+ENV CMD_JMX="java -Xmx256m -Dcom.sun.management.jmxremote=true -Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.port=9099 -Dcom.sun.management.jmxremote.rmi.port=9098 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -jar /usr/local/lib/familybot.jar"
+ENV CMD_NO_JMX="java -Xmx256m -jar /usr/local/lib/familybot.jar"
+ENTRYPOINT ["bash", "-c", "if [[ $ENABLE_JMX == true ]]; then exec $CMD_JMX; else exec $CMD_NO_JMX; fi"]

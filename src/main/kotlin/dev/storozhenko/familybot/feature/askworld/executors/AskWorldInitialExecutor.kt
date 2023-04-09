@@ -69,6 +69,7 @@ class AskWorldInitialExecutor(
             if (chatUsages != null && chatUsages > 0L) {
                 log.info("Limit was exceed for chat")
                 context.sender.send(context, context.phrase(Phrase.ASK_WORLD_LIMIT_BY_CHAT), replyToUpdate = true)
+                return
             }
 
             if (userUsages != null && userUsages > 1) {
@@ -81,6 +82,7 @@ class AskWorldInitialExecutor(
         val askWorldData = getAskWorldData(context)
         if (askWorldData is ValidationError) {
             askWorldData.invalidQuestionAction.invoke(context.sender)
+            return
         }
 
         val successData = askWorldData as Success

@@ -91,6 +91,7 @@ class AskWorldReceiveReplyExecutor(
                     replyToMessageId = message.messageId
                 }
             )
+            return
         }
         val contentType = detectContentType(message)
         val askWorldReply = AskWorldReply(

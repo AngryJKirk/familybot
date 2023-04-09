@@ -69,9 +69,13 @@ services:
       - PAYMENT_TOKEN
       - YTDL_LOCATION
       - OPEN_AI_TOKEN
+      - ENABLE_JMX
     depends_on:
       - family-db
       - family-redis
+    ports:
+      - "127.0.0.1:9099:9099"
+      - "127.0.0.1:9098:9098"
 
 volumes:
   redis-data:
