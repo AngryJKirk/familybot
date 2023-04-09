@@ -5,7 +5,7 @@ import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.feature.shop.model.PreCheckOutResponse
 import dev.storozhenko.familybot.feature.shop.model.ShopItem
 import dev.storozhenko.familybot.feature.shop.services.processors.AutoPidorPaymentProcessor
-import dev.storozhenko.familybot.core.keyvalue.models.AutoPidorTimesLeft
+import dev.storozhenko.familybot.feature.settings.models.AutoPidorTimesLeft
 import org.junit.jupiter.api.Assertions
 import org.mockito.ArgumentCaptor
 import org.mockito.kotlin.mock

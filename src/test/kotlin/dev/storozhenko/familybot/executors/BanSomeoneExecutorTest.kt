@@ -6,7 +6,7 @@ import dev.storozhenko.familybot.common.extensions.toUser
 import dev.storozhenko.familybot.core.keyvalue.models.EasyKey
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.routers.models.Priority
-import dev.storozhenko.familybot.feature.ban.BanSomeoneExecutor
+import dev.storozhenko.familybot.feature.ban.executors.BanSomeoneExecutor
 import dev.storozhenko.familybot.feature.ban.services.BanService
 import dev.storozhenko.familybot.infrastructure.createSimpleContext
 import dev.storozhenko.familybot.infrastructure.createSimpleUpdate

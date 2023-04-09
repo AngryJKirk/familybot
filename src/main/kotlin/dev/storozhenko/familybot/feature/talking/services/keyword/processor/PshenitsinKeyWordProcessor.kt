@@ -5,7 +5,7 @@ import dev.storozhenko.familybot.feature.talking.services.keyword.KeyWordProcess
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
-import dev.storozhenko.familybot.core.keyvalue.models.PshenitsinTolerance
+import dev.storozhenko.familybot.feature.settings.models.PshenitsinTolerance
 import dev.storozhenko.familybot.feature.talking.services.TalkingService
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component

@@ -1,8 +1,8 @@
 package dev.storozhenko.familybot.feature.askworld.repos
 
 import dev.storozhenko.familybot.common.extensions.toAskWorldQuestion
-import dev.storozhenko.familybot.feature.askworld.AskWorldQuestion
-import dev.storozhenko.familybot.feature.askworld.AskWorldReply
+import dev.storozhenko.familybot.feature.askworld.models.AskWorldQuestion
+import dev.storozhenko.familybot.feature.askworld.models.AskWorldReply
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.User
 import dev.storozhenko.familybot.telegram.FamilyBot

@@ -20,10 +20,10 @@ import dev.storozhenko.familybot.feature.logging.repos.CommandHistoryRepository
 import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
 import dev.storozhenko.familybot.feature.settings.repos.FunctionsConfigureRepository
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
-import dev.storozhenko.familybot.core.keyvalue.models.CommandLimit
-import dev.storozhenko.familybot.core.keyvalue.models.FirstBotInteraction
-import dev.storozhenko.familybot.core.keyvalue.models.FirstTimeInChat
-import dev.storozhenko.familybot.core.keyvalue.models.MessageCounter
+import dev.storozhenko.familybot.feature.settings.models.CommandLimit
+import dev.storozhenko.familybot.feature.settings.models.FirstBotInteraction
+import dev.storozhenko.familybot.feature.settings.models.FirstTimeInChat
+import dev.storozhenko.familybot.feature.settings.models.MessageCounter
 import dev.storozhenko.familybot.feature.logging.RawUpdateLogger
 import dev.storozhenko.familybot.telegram.BotConfig
 import io.micrometer.core.instrument.MeterRegistry

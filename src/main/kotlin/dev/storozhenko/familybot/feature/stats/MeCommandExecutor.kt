@@ -14,7 +14,7 @@ import dev.storozhenko.familybot.feature.logging.repos.CommandHistoryRepository
 import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
 import dev.storozhenko.familybot.feature.logging.repos.RawChatLogRepository
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
-import dev.storozhenko.familybot.core.keyvalue.models.MessageCounter
+import dev.storozhenko.familybot.feature.settings.models.MessageCounter
 import dev.storozhenko.familybot.core.keyvalue.models.UserAndChatEasyKey
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope

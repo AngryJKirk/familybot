@@ -4,7 +4,7 @@ import dev.storozhenko.familybot.common.extensions.randomInt
 import dev.storozhenko.familybot.core.executors.ContiniousConversationExecutor
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.models.telegram.Command
-import dev.storozhenko.familybot.core.models.telegram.Pidor
+import dev.storozhenko.familybot.feature.pidor.models.Pidor
 import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
 import dev.storozhenko.familybot.feature.pidor.services.PidorCompetitionService
 import dev.storozhenko.familybot.telegram.BotConfig

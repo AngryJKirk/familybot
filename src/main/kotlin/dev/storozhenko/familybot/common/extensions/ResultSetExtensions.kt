@@ -3,10 +3,10 @@ package dev.storozhenko.familybot.common.extensions
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.models.telegram.CommandByUser
-import dev.storozhenko.familybot.core.models.telegram.Pidor
+import dev.storozhenko.familybot.feature.pidor.models.Pidor
 import dev.storozhenko.familybot.core.models.telegram.User
 import dev.storozhenko.familybot.feature.marriage.model.Marriage
-import dev.storozhenko.familybot.feature.askworld.AskWorldQuestion
+import dev.storozhenko.familybot.feature.askworld.models.AskWorldQuestion
 import dev.storozhenko.familybot.telegram.FamilyBot
 import java.sql.ResultSet
 import java.util.*

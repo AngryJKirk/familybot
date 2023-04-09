@@ -4,7 +4,7 @@ import dev.storozhenko.familybot.common.extensions.getMessageTokens
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.common.extensions.toEmoji
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
-import dev.storozhenko.familybot.core.keyvalue.models.BotOwnerPidorSkip
+import dev.storozhenko.familybot.feature.settings.models.BotOwnerPidorSkip
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender

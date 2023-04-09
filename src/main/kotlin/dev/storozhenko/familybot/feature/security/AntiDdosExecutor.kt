@@ -7,7 +7,7 @@ import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.core.routers.models.Priority
-import dev.storozhenko.familybot.core.keyvalue.models.CommandLimit
+import dev.storozhenko.familybot.feature.settings.models.CommandLimit
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery

@@ -4,7 +4,7 @@ import dev.storozhenko.familybot.infrastructure.payload
 import dev.storozhenko.familybot.feature.shop.model.PreCheckOutResponse
 import dev.storozhenko.familybot.feature.shop.model.ShopItem
 import dev.storozhenko.familybot.feature.shop.services.processors.BetLimitPaymentProcessor
-import dev.storozhenko.familybot.core.keyvalue.models.BetTolerance
+import dev.storozhenko.familybot.feature.settings.models.BetTolerance
 import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
 

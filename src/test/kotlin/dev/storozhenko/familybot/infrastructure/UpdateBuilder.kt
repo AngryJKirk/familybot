@@ -2,7 +2,7 @@ package dev.storozhenko.familybot.infrastructure
 
 import dev.storozhenko.familybot.common.extensions.context
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
-import dev.storozhenko.familybot.core.keyvalue.models.UkrainianLanguage
+import dev.storozhenko.familybot.feature.settings.models.UkrainianLanguage
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.models.telegram.stickers.Sticker
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext

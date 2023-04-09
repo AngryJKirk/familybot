@@ -6,7 +6,7 @@ import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.feature.settings.repos.FunctionsConfigureRepository
-import dev.storozhenko.familybot.core.keyvalue.models.AskWorldDensity
+import dev.storozhenko.familybot.feature.settings.models.AskWorldDensity
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender

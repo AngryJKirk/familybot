@@ -1,8 +1,8 @@
 package dev.storozhenko.familybot.feature.talking.services
 
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
-import dev.storozhenko.familybot.core.keyvalue.models.ChatGPTFreeMessagesLeft
-import dev.storozhenko.familybot.core.keyvalue.models.ChatGPTPaidTill
+import dev.storozhenko.familybot.feature.settings.models.ChatGPTFreeMessagesLeft
+import dev.storozhenko.familybot.feature.settings.models.ChatGPTPaidTill
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.telegram.BotConfig
 import org.springframework.stereotype.Component

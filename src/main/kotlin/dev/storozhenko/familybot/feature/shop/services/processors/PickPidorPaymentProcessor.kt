@@ -7,7 +7,7 @@ import dev.storozhenko.familybot.feature.shop.model.ShopPayload
 import dev.storozhenko.familybot.feature.shop.model.SuccessPaymentResponse
 import dev.storozhenko.familybot.feature.shop.services.PaymentProcessor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
-import dev.storozhenko.familybot.core.keyvalue.models.PickPidorAbilityCount
+import dev.storozhenko.familybot.feature.settings.models.PickPidorAbilityCount
 import dev.storozhenko.familybot.core.keyvalue.models.UserEasyKey
 import org.springframework.stereotype.Component
 

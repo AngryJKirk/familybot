@@ -7,7 +7,7 @@ import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.core.models.telegram.Command
-import dev.storozhenko.familybot.core.keyvalue.models.BetTolerance
+import dev.storozhenko.familybot.feature.settings.models.BetTolerance
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.keyvalue.models.UserAndChatEasyKey
 import org.springframework.stereotype.Component

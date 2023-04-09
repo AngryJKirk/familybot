@@ -5,7 +5,7 @@ import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
-import dev.storozhenko.familybot.core.keyvalue.models.TikTokDownload
+import dev.storozhenko.familybot.feature.settings.models.TikTokDownload
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 

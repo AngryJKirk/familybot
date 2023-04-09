@@ -2,7 +2,7 @@ package dev.storozhenko.familybot.feature.pidor.repos
 
 import dev.storozhenko.familybot.common.extensions.*
 import dev.storozhenko.familybot.core.models.telegram.Chat
-import dev.storozhenko.familybot.core.models.telegram.Pidor
+import dev.storozhenko.familybot.feature.pidor.models.Pidor
 import dev.storozhenko.familybot.core.models.telegram.User
 import io.micrometer.core.annotation.Timed
 import org.springframework.jdbc.core.JdbcTemplate

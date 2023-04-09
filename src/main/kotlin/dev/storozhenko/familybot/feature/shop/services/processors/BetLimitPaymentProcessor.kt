@@ -7,7 +7,7 @@ import dev.storozhenko.familybot.feature.shop.model.ShopItem
 import dev.storozhenko.familybot.feature.shop.model.ShopPayload
 import dev.storozhenko.familybot.feature.shop.model.SuccessPaymentResponse
 import dev.storozhenko.familybot.feature.shop.services.PaymentProcessor
-import dev.storozhenko.familybot.core.keyvalue.models.BetTolerance
+import dev.storozhenko.familybot.feature.settings.models.BetTolerance
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import org.springframework.stereotype.Component
 

@@ -1,9 +1,9 @@
 package dev.storozhenko.familybot.payment
 
 import dev.storozhenko.familybot.common.extensions.toUser
-import dev.storozhenko.familybot.core.keyvalue.models.PidorTolerance
+import dev.storozhenko.familybot.feature.settings.models.PidorTolerance
 import dev.storozhenko.familybot.core.models.telegram.Chat
-import dev.storozhenko.familybot.core.models.telegram.Pidor
+import dev.storozhenko.familybot.feature.pidor.models.Pidor
 import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
 import dev.storozhenko.familybot.feature.shop.model.PreCheckOutResponse
 import dev.storozhenko.familybot.feature.shop.model.ShopItem

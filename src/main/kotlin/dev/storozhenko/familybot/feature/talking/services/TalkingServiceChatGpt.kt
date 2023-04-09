@@ -12,8 +12,8 @@ import dev.storozhenko.familybot.common.extensions.untilNextMonth
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
-import dev.storozhenko.familybot.core.keyvalue.models.ChatGPTStyle
-import dev.storozhenko.familybot.core.keyvalue.models.ChatGPTTokenUsageByChat
+import dev.storozhenko.familybot.feature.settings.models.ChatGPTStyle
+import dev.storozhenko.familybot.feature.settings.models.ChatGPTTokenUsageByChat
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.telegram.BotConfig
 import dev.storozhenko.familybot.telegram.FamilyBot

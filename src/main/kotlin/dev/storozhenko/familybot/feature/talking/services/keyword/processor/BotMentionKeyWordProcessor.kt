@@ -5,8 +5,8 @@ import dev.storozhenko.familybot.common.extensions.sendDeferred
 import dev.storozhenko.familybot.feature.talking.services.keyword.KeyWordProcessor
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
-import dev.storozhenko.familybot.core.keyvalue.models.FuckOffOverride
-import dev.storozhenko.familybot.core.keyvalue.models.FuckOffTolerance
+import dev.storozhenko.familybot.feature.settings.models.FuckOffOverride
+import dev.storozhenko.familybot.feature.settings.models.FuckOffTolerance
 import dev.storozhenko.familybot.feature.talking.services.TalkingService
 import dev.storozhenko.familybot.telegram.BotConfig
 import kotlinx.coroutines.async

@@ -1,13 +1,13 @@
 package dev.storozhenko.familybot.feature.pidor.services
 
 import dev.storozhenko.familybot.common.extensions.sendContextFree
-import dev.storozhenko.familybot.feature.pidor.PidorExecutor
+import dev.storozhenko.familybot.feature.pidor.executors.PidorExecutor
 import dev.storozhenko.familybot.getLogger
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.feature.settings.repos.FunctionsConfigureRepository
-import dev.storozhenko.familybot.core.keyvalue.models.AutoPidorTimesLeft
+import dev.storozhenko.familybot.feature.settings.models.AutoPidorTimesLeft
 import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.feature.talking.services.Dictionary

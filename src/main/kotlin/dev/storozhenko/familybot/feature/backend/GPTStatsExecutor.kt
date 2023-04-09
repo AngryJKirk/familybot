@@ -8,8 +8,8 @@ import dev.storozhenko.familybot.core.executors.OnlyBotOwnerExecutor
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.feature.pidor.repos.CommonRepository
-import dev.storozhenko.familybot.core.keyvalue.models.ChatGPTPaidTill
-import dev.storozhenko.familybot.core.keyvalue.models.ChatGPTTokenUsageByChat
+import dev.storozhenko.familybot.feature.settings.models.ChatGPTPaidTill
+import dev.storozhenko.familybot.feature.settings.models.ChatGPTTokenUsageByChat
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender

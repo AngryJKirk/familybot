@@ -1,9 +1,9 @@
 package dev.storozhenko.familybot.executors
 
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
-import dev.storozhenko.familybot.core.keyvalue.models.TalkingDensity
+import dev.storozhenko.familybot.feature.settings.models.TalkingDensity
 import dev.storozhenko.familybot.core.routers.models.Priority
-import dev.storozhenko.familybot.feature.talking.HuificatorExecutor
+import dev.storozhenko.familybot.feature.talking.executors.HuificatorExecutor
 import dev.storozhenko.familybot.infrastructure.createSimpleContext
 import dev.storozhenko.familybot.suits.ExecutorTest
 import kotlinx.coroutines.runBlocking

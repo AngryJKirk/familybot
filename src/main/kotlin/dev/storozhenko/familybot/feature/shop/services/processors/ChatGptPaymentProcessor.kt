@@ -8,7 +8,7 @@ import dev.storozhenko.familybot.feature.shop.model.ShopPayload
 import dev.storozhenko.familybot.feature.shop.model.SuccessPaymentResponse
 import dev.storozhenko.familybot.feature.shop.services.PaymentProcessor
 import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
-import dev.storozhenko.familybot.core.keyvalue.models.ChatGPTPaidTill
+import dev.storozhenko.familybot.feature.settings.models.ChatGPTPaidTill
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
