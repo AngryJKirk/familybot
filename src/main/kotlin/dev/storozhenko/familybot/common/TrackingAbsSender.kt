@@ -29,12 +29,6 @@ class TrackingAbsSender(
     val tracking: MutableList<Message> = ArrayList()
 ) : AbsSender() {
 
-    override fun <T : Serializable?, Method : BotApiMethod<T>?, Callback : SentCallback<T>?> executeAsync(
-        method: Method,
-        callback: Callback
-    ) {
-        absSender.executeAsync(method, callback)
-    }
 
     override fun <T : Serializable?, Method : BotApiMethod<T>?> executeAsync(method: Method): CompletableFuture<T> {
         return absSender.executeAsync(method)

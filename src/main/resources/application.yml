@@ -18,11 +18,3 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
-management:
-  metrics:
-    enable:
-      all: false
-  graphite:
-    metrics:
-      export:
-        enabled: false
