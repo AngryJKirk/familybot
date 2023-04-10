@@ -89,10 +89,6 @@ DEFAULT = ["Статистика по командам"]
 UKRAINIAN = ["Статистика команд"]
 
 
-[COMMAND]
-DEFAULT = ["Команда"]
-UKRAINIAN = ["Команда"]
-
 [PLURALIZED_COUNT_ONE]
 DEFAULT = ["раз"]
 UKRAINIAN = ["раз"]
