@@ -3,6 +3,7 @@ package dev.storozhenko.familybot.feature.gambling
 import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.randomInt
 import dev.storozhenko.familybot.core.executors.ContiniousConversationExecutor
+import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.pidor.models.Pidor
@@ -28,7 +29,7 @@ class RouletteContiniousExecutor(
     private val log = LoggerFactory.getLogger(RouletteContiniousExecutor::class.java)
 
     override fun getDialogMessages(context: ExecutorContext): Set<String> {
-        return setOf(ROULETTE_MESSAGE)
+        return context.allPhrases(Phrase.ROULETTE_MESSAGE)
     }
 
     override fun command(): Command {

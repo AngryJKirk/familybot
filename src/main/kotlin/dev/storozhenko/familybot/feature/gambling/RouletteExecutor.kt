@@ -10,8 +10,6 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard
 
-const val ROULETTE_MESSAGE = "Выбери число от 1 до 6"
-
 @Component
 @Deprecated(message = "Replaced with BetExecutor")
 class RouletteExecutor : CommandExecutor(), Configurable {
