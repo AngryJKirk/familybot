@@ -3,7 +3,7 @@ package dev.storozhenko.familybot.executors
 import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.routers.models.Priority
-import dev.storozhenko.familybot.feature.talking.services.keyword.KeyWordExecutor
+import dev.storozhenko.familybot.feature.talking.executors.KeyWordExecutor
 import dev.storozhenko.familybot.infrastructure.createSimpleContext
 import dev.storozhenko.familybot.infrastructure.createSimpleMessage
 import dev.storozhenko.familybot.infrastructure.createSimpleUser

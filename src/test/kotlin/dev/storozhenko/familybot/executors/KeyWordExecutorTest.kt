@@ -3,7 +3,7 @@ package dev.storozhenko.familybot.executors
 import dev.storozhenko.familybot.common.extensions.context
 import dev.storozhenko.familybot.core.models.telegram.stickers.Sticker
 import dev.storozhenko.familybot.core.routers.models.Priority
-import dev.storozhenko.familybot.feature.talking.services.keyword.KeyWordExecutor
+import dev.storozhenko.familybot.feature.talking.executors.KeyWordExecutor
 import dev.storozhenko.familybot.infrastructure.botConfig
 import dev.storozhenko.familybot.infrastructure.createSimpleContext
 import dev.storozhenko.familybot.infrastructure.dictionary

@@ -45,6 +45,9 @@ class BotMentionKeyWordProcessor(
             return
         }
         val shouldBeQuestion = isBotMention(context.message) || isBotNameMention(context.message)
+        if (isMediaResponse(context.message)) {
+            return
+        }
         coroutineScope {
             val reply = async {
                 talkingService.getReplyToUser(
@@ -60,6 +63,12 @@ class BotMentionKeyWordProcessor(
                 enableHtml = true
             )
         }
+    }
+
+    private fun isMediaResponse(message: Message): Boolean {
+        val replyToMessage = message.replyToMessage ?: return false
+        return replyToMessage.hasVideo() || replyToMessage.hasDocument()
+            || replyToMessage.hasPhoto()
     }
 
     private fun isBotMention(message: Message): Boolean {

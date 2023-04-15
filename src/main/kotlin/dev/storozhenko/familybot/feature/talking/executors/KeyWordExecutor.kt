@@ -1,4 +1,4 @@
-package dev.storozhenko.familybot.feature.talking.services.keyword
+package dev.storozhenko.familybot.feature.talking.executors
 
 import dev.storozhenko.familybot.common.extensions.randomInt
 import dev.storozhenko.familybot.core.executors.Configurable
@@ -6,6 +6,7 @@ import dev.storozhenko.familybot.core.executors.Executor
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.routers.models.Priority
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
+import dev.storozhenko.familybot.feature.talking.services.keyword.KeyWordProcessor
 import dev.storozhenko.familybot.getLogger
 import org.springframework.stereotype.Component
 
