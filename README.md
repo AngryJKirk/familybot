@@ -24,31 +24,31 @@ Amount of everyday messages passed through the bot:
 
 ### Requirments
 
-1. make
+1. [just](https://github.com/casey/just)
 2. docker
-3. docker-compose
+3. docker compose
 
 ### Deploy test
 
 1. Fill environment variables in `scripts/.env`.
 
-2. enter `scripts/` and run `make deploy-test`
+2. run `just deploy`
 
-To re-deploy only the app run `make redeploy-test`.
+To re-deploy only the app run `just redeploy`.
 
-### Deploy prod
+### Deploy production
 
 1. Create `production.env` in `/scripts` folder just like `scripts/.env` but with production params
 
-2. enter `scripts/` and run `make deploy-prod`
+2. run `just env=production deploy`
 
-To re-deploy only the app run `make redeploy-prod`.
+To re-deploy only the app run `just env=production redeploy`.
 
 ### Troubleshooting:
 
 1. Old versions of docker-compose do not support `--env-file` which is required for production.
 
-3. If you have issues installing `make`, just copy commands from `scripts/Makefile`
+2. If you have issues installing `just`, just RTFM 🕊️ or copy the commands from [justfile](justfile)`
 
 # Disclaimer
 
@@ -60,4 +60,4 @@ towards anyone.
 This project is written using JetBrains All Products Pack, provided
 by [JetBrains](https://www.jetbrains.com/?from=familybot).
 
-Thanks [z3d1k](https://github.com/z3d1k) for cool ktlint Maven plugin.
+Thanks [z3d1k](https://github.com/z3d1k) for a cool ktlint Maven plugin.
