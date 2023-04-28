@@ -1,6 +1,8 @@
 package dev.storozhenko.familybot.feature.tiktok.executors
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import dev.storozhenko.familybot.BotConfig
+import dev.storozhenko.familybot.common.extensions.parseJson
 import dev.storozhenko.familybot.core.executors.Executor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -8,12 +10,15 @@ import dev.storozhenko.familybot.core.routers.models.Priority
 import dev.storozhenko.familybot.feature.settings.models.TikTokDownload
 import dev.storozhenko.familybot.feature.tiktok.services.IgCookieService
 import dev.storozhenko.familybot.getLogger
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import java.io.File
-import java.util.UUID
+import java.time.Duration
+import java.util.*
 
 @Component
 class TikTokDownloadExecutor(
@@ -22,6 +27,12 @@ class TikTokDownloadExecutor(
     private val cookieService: IgCookieService
 ) : Executor {
     private val log = getLogger()
+    private val okHttpClient = OkHttpClient().newBuilder()
+        .connectTimeout(Duration.ofMinutes(1))
+        .readTimeout(Duration.ofMinutes(1))
+        .callTimeout(Duration.ofMinutes(1))
+        .retryOnConnectionFailure(true)
+        .build()
 
     override suspend fun execute(context: ExecutorContext) {
         val urls = getTikTokUrls(context)
@@ -60,11 +71,11 @@ class TikTokDownloadExecutor(
     private fun download(url: String): File {
         val filename = "/tmp/${UUID.randomUUID()}.mp4"
         val cookiePath = cookieService.getPath()
-        val process = if (isIG(url) && cookiePath != null) {
-            log.info("Running yt-dlp with cookies...")
-            ProcessBuilder(botConfig.ytdlLocation, url, "-o", filename, "--cookies", cookiePath).start()
+        val ig = isIG(url)
+        log.info("Running yt-dlp...")
+        val process = if (ig) {
+            ProcessBuilder(botConfig.ytdlLocation, downloadIG(url), "-o", filename).start()
         } else {
-            log.info("Running yt-dlp...")
             ProcessBuilder(botConfig.ytdlLocation, url, "-o", filename).start()
         }
         process.inputStream.reader(Charsets.UTF_8).use {
@@ -72,7 +83,12 @@ class TikTokDownloadExecutor(
         }
         process.waitFor()
         log.info("Finished running yt-dlp")
-        return File(filename)
+        val file = File(filename)
+        if (file.exists().not() && ig && cookiePath != null) {
+            log.info("Falling back to running yt-dlp with cookies...")
+            ProcessBuilder(botConfig.ytdlLocation, url, "-o", filename, "--cookies", cookiePath).start().waitFor()
+        }
+        return file
     }
 
     private fun containsUrl(text: String): Boolean {
@@ -82,4 +98,32 @@ class TikTokDownloadExecutor(
     private fun isTikTok(text: String) = text.contains("tiktok", ignoreCase = true)
 
     private fun isIG(text: String) = text.contains("instagram.com/reel", ignoreCase = true)
+
+    private fun downloadIG(url: String): String? {
+        log.info("Using 3rd party service to obtain IG url")
+        val request = Request.Builder()
+            .url("https://api.instavideosave.com/allinone")
+            .header("Referer", "https://instavideosave.net/")
+            .header("Origin", "https://instavideosave.net/")
+            .header("url", url)
+            .build()
+        return okHttpClient
+            .newCall(request)
+            .execute()
+            .use { response ->
+                val json = response.body?.string()
+                log.info("3d party service response: $json")
+                json?.parseJson<IGVideoResponse>()
+            }?.video
+            ?.firstOrNull()
+            ?.video ?: return null
+
+    }
+
 }
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+class IGVideoResponse(val video: List<IGVideo>)
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+class IGVideo(val video: String)
