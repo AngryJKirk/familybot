@@ -26,13 +26,11 @@ class TalkingServiceChatGpt(
     private val easyKeyValueService: EasyKeyValueService,
     private val gptSettingsReader: GptSettingsReader,
     private val pidorRepository: PidorRepository,
-    botConfig: BotConfig
+    private val botConfig: BotConfig
 ) : TalkingService {
     companion object {
         private val codeMarkupPattern = Regex("`{1,3}([^`]+)`{1,3}")
     }
-
-    private val openAI = OpenAiService(botConfig.openAiToken, Duration.ofMinutes(2))
 
     private val caches = GptStyle
         .values()
@@ -68,7 +66,7 @@ class TalkingServiceChatGpt(
         }
         chatMessages.add(0, systemMessage)
         val request = createRequest(chatMessages)
-        val response = openAI.createChatCompletion(request)
+        val response = getOpenAIService().createChatCompletion(request)
         saveMetric(context, response)
         chatMessages.removeFirst()
         val message = response.choices.first().message
@@ -159,5 +157,14 @@ class TalkingServiceChatGpt(
             val currentPidors = pidorsByChat.joinToString(", ") { it.user.getGeneralName(mention = true) }
             "\nСписок пидоров дня: $currentPidors."
         }
+    }
+
+    private var openAI: OpenAiService? = null
+
+    private fun getOpenAIService(): OpenAiService {
+        if (openAI == null) {
+            openAI = OpenAiService(botConfig.openAiToken, Duration.ofMinutes(2))
+        }
+        return openAI as OpenAiService
     }
 }

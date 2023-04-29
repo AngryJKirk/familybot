@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.5</version>
+        <version>3.0.6</version>
     </parent>
 
     <properties>
@@ -19,8 +19,9 @@
         <testcontainers.version>1.18.0</testcontainers.version>
         <mockito-kotlin.version>4.1.0</mockito-kotlin.version>
         <tomlj.version>1.1.0</tomlj.version>
-        <spring.version>3.0.5</spring.version>
+        <spring.version>3.0.6</spring.version>
         <kotlinx-coroutines.version>1.6.4</kotlinx-coroutines.version>
+        <openai-client.version>0.12.0</openai-client.version>
     </properties>
 
     <dependencies>
@@ -95,17 +96,17 @@
         <dependency>
             <groupId>com.theokanning.openai-gpt3-java</groupId>
             <artifactId>api</artifactId>
-            <version>0.11.0</version>
+            <version>${openai-client.version}</version>
         </dependency>
         <dependency>
             <groupId>com.theokanning.openai-gpt3-java</groupId>
             <artifactId>client</artifactId>
-            <version>0.11.0</version>
+            <version>${openai-client.version}</version>
         </dependency>
         <dependency>
             <groupId>com.theokanning.openai-gpt3-java</groupId>
             <artifactId>service</artifactId>
-            <version>0.11.0</version>
+            <version>${openai-client.version}</version>
         </dependency>
 
         <!--Test-->
@@ -139,7 +140,7 @@
             <plugin>
                 <groupId>com.github.z3d1k</groupId>
                 <artifactId>ktlint-maven-plugin</artifactId>
-                <version>0.9.0</version>
+                <version>0.10.0</version>
                 <executions>
                     <execution>
                         <id>ktlint-lint</id>
