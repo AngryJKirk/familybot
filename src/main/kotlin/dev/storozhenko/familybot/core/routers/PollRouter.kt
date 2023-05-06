@@ -3,8 +3,8 @@ package dev.storozhenko.familybot.core.routers
 import dev.storozhenko.familybot.common.extensions.toUser
 import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.getLogger
-import dev.storozhenko.familybot.services.scenario.ScenarioGameplayService
-import dev.storozhenko.familybot.services.scenario.ScenarioPollManagingService
+import dev.storozhenko.familybot.feature.scenario.services.ScenarioGameplayService
+import dev.storozhenko.familybot.feature.scenario.services.ScenarioPollManagingService
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import java.time.Instant

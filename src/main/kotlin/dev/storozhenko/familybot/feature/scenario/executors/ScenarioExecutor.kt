@@ -4,9 +4,9 @@ import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
-import dev.storozhenko.familybot.services.scenario.ScenarioGameplayService
-import dev.storozhenko.familybot.services.scenario.ScenarioService
-import dev.storozhenko.familybot.services.scenario.ScenarioSessionManagementService
+import dev.storozhenko.familybot.feature.scenario.services.ScenarioGameplayService
+import dev.storozhenko.familybot.feature.scenario.services.ScenarioService
+import dev.storozhenko.familybot.feature.scenario.services.ScenarioSessionManagementService
 import kotlinx.coroutines.delay
 import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.seconds

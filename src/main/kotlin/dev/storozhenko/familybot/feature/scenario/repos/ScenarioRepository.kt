@@ -6,12 +6,8 @@ import dev.storozhenko.familybot.common.extensions.toUser
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.User
 import dev.storozhenko.familybot.core.telegram.FamilyBot
+import dev.storozhenko.familybot.feature.scenario.services.*
 import dev.storozhenko.familybot.getLogger
-import dev.storozhenko.familybot.services.scenario.Scenario
-import dev.storozhenko.familybot.services.scenario.ScenarioMove
-import dev.storozhenko.familybot.services.scenario.ScenarioPoll
-import dev.storozhenko.familybot.services.scenario.ScenarioState
-import dev.storozhenko.familybot.services.scenario.ScenarioWay
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
@@ -20,7 +16,7 @@ import org.springframework.stereotype.Component
 import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 @Component
 class ScenarioRepository(jdbcTemplate: JdbcTemplate) {

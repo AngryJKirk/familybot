@@ -1,4 +1,4 @@
-package dev.storozhenko.familybot.services.scenario
+package dev.storozhenko.familybot.feature.scenario.services
 
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.italic

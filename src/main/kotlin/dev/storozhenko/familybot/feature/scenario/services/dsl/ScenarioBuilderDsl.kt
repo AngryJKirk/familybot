@@ -1,6 +1,6 @@
-package dev.storozhenko.familybot.services.scenario.dsl
+package dev.storozhenko.familybot.feature.scenario.services.dsl
 
-import java.util.UUID
+import java.util.*
 
 class Scenario {
     val id: UUID = UUID.randomUUID()

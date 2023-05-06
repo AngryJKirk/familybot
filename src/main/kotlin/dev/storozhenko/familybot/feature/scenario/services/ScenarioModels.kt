@@ -1,9 +1,9 @@
-package dev.storozhenko.familybot.services.scenario
+package dev.storozhenko.familybot.feature.scenario.services
 
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.User
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 data class ScenarioMove(
     val id: UUID,

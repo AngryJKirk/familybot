@@ -7,8 +7,8 @@ import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.telegram.FamilyBot
-import dev.storozhenko.familybot.services.scenario.ScenarioService
-import dev.storozhenko.familybot.services.scenario.ScenarioSessionManagementService
+import dev.storozhenko.familybot.feature.scenario.services.ScenarioService
+import dev.storozhenko.familybot.feature.scenario.services.ScenarioSessionManagementService
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 

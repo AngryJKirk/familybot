@@ -1,9 +1,5 @@
 package dev.storozhenko.familybot.feature.scenario.services.dsl
 
-import dev.storozhenko.familybot.services.scenario.dsl.Scenario
-import dev.storozhenko.familybot.services.scenario.dsl.ScenarioSqlGenerator
-import dev.storozhenko.familybot.services.scenario.dsl.Way
-
 @Suppress("unused")
 fun notmain() {
     val imagineWays =
