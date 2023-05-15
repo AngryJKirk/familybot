@@ -31,7 +31,7 @@ class TalkingServicePicker(
         val amountOfFreeMessages = easyKeyValueService.get(ChatGPTFreeMessagesLeft, context.chatKey)
 
         return if (amountOfFreeMessages == null) {
-            easyKeyValueService.put(ChatGPTFreeMessagesLeft, context.chatKey, 30, duration = 30.days)
+            easyKeyValueService.put(ChatGPTFreeMessagesLeft, context.chatKey, 10, duration = 30.days)
             chatGpt.getReplyToUser(context, shouldBeQuestion)
         } else {
             if (amountOfFreeMessages > 0) {
