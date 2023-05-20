@@ -12,13 +12,17 @@ import dev.storozhenko.familybot.feature.tiktok.services.IgCookieService
 import dev.storozhenko.familybot.getLogger
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.apache.commons.codec.binary.Hex
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import java.io.File
+import java.nio.charset.StandardCharsets
 import java.time.Duration
 import java.util.*
+import javax.crypto.Cipher
+import javax.crypto.spec.SecretKeySpec
 
 @Component
 class TikTokDownloadExecutor(
@@ -102,10 +106,10 @@ class TikTokDownloadExecutor(
     private fun downloadIG(url: String): String? {
         log.info("Using 3rd party service to obtain IG url")
         val request = Request.Builder()
-            .url("https://api.instavideosave.com/allinone")
+            .url("https://backend.instavideosave.com/allinone")
             .header("Referer", "https://instavideosave.net/")
             .header("Origin", "https://instavideosave.net/")
-            .header("url", url)
+            .header("url", encodeUrl(url))
             .build()
         return okHttpClient
             .newCall(request)
@@ -118,6 +122,26 @@ class TikTokDownloadExecutor(
             ?.firstOrNull()
             ?.video ?: return null
 
+    }
+
+
+    fun encodeUrl(text: String): String {
+        val keyBytes = "qwertyuioplkjhgf".toByteArray(StandardCharsets.UTF_8)
+        val textBytes = text.toByteArray(StandardCharsets.UTF_8)
+
+        val paddingSize = 16 - (textBytes.size % 16)
+        val paddedBytes = ByteArray(textBytes.size + paddingSize)
+        System.arraycopy(textBytes, 0, paddedBytes, 0, textBytes.size)
+        for (i in textBytes.size until paddedBytes.size) {
+            paddedBytes[i] = paddingSize.toByte()
+        }
+        val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
+        val keySpec = SecretKeySpec(keyBytes, "AES")
+        cipher.init(Cipher.ENCRYPT_MODE, keySpec)
+        val encryptedBytes = cipher.doFinal(paddedBytes)
+
+
+        return Hex.encodeHexString(encryptedBytes)
     }
 
 }
