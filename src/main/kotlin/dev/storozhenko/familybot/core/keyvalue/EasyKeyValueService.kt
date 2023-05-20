@@ -6,7 +6,6 @@ import dev.storozhenko.familybot.core.keyvalue.models.EasyKeyType
 import dev.storozhenko.familybot.core.keyvalue.models.PlainKey
 import dev.storozhenko.familybot.core.keyvalue.models.UserAndChatEasyKey
 import dev.storozhenko.familybot.core.keyvalue.models.UserEasyKey
-import dev.storozhenko.familybot.core.telegram.FamilyBot
 import org.springframework.data.redis.core.ScanOptions.scanOptions
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Component
@@ -17,32 +16,33 @@ class EasyKeyValueService(
     private val redisTemplate: StringRedisTemplate
 ) {
 
-    fun <T : Any, K : EasyKey> put(
-        easyKeyType: EasyKeyType<T, K>,
-        key: K,
-        value: T,
+    fun <INPUT : Any, KEY : EasyKey> put(
+        easyKeyType: EasyKeyType<INPUT, KEY>,
+        key: KEY,
+        value: INPUT,
         duration: kotlin.time.Duration? = null
     ) {
         val keyValue = getKeyValue(easyKeyType, key)
+        val stringValue = easyKeyType.getMapper().mapToString(value)
         if (duration == null) {
-            redisTemplate.opsForValue().set(keyValue, value.toString())
+            redisTemplate.opsForValue().set(keyValue, stringValue)
         } else {
-            redisTemplate.opsForValue().set(keyValue, value.toString(), duration.toJavaDuration())
+            redisTemplate.opsForValue().set(keyValue, stringValue, duration.toJavaDuration())
         }
     }
 
-    fun <T : Any, K : EasyKey> get(easyKeyType: EasyKeyType<T, K>, key: K, defaultValue: T): T {
+    fun <INPUT : Any, KEY : EasyKey> get(easyKeyType: EasyKeyType<INPUT, KEY>, key: KEY, defaultValue: INPUT): INPUT {
         return get(easyKeyType, key) ?: defaultValue
     }
 
-    fun <T : Any, K : EasyKey> get(easyKeyType: EasyKeyType<T, K>, key: K): T? {
+    fun <INPUT : Any, KEY : EasyKey> get(easyKeyType: EasyKeyType<INPUT, KEY>, key: KEY): INPUT? {
         val rawValue = redisTemplate.opsForValue().get(getKeyValue(easyKeyType, key))
             ?: return null
 
-        return cast(easyKeyType, rawValue)
+        return map(easyKeyType, rawValue)
     }
 
-    fun <T : Any, K : EasyKey> getAndRemove(easyKeyType: EasyKeyType<T, K>, key: K): T? {
+    fun <INPUT : Any, KEY : EasyKey> getAndRemove(easyKeyType: EasyKeyType<INPUT, KEY>, key: KEY): INPUT? {
         val value = get(easyKeyType, key)
         if (value != null) {
             remove(easyKeyType, key)
@@ -50,34 +50,34 @@ class EasyKeyValueService(
         return value
     }
 
-    fun <K : EasyKey> decrement(easyKeyType: EasyKeyType<Long, K>, key: K): Long {
+    fun <KEY : EasyKey> decrement(easyKeyType: EasyKeyType<Long, KEY>, key: KEY): Long {
         return redisTemplate.opsForValue().decrement(getKeyValue(easyKeyType, key)) ?: 0
     }
 
-    fun <K : EasyKey> increment(easyKeyType: EasyKeyType<Long, K>, key: K): Long {
+    fun <KEY : EasyKey> increment(easyKeyType: EasyKeyType<Long, KEY>, key: KEY): Long {
         return redisTemplate.opsForValue().increment(getKeyValue(easyKeyType, key)) ?: 0
     }
 
-    fun <T : Any, K : EasyKey> remove(easyKeyType: EasyKeyType<T, K>, key: K) {
+    fun <INPUT : Any, KEY : EasyKey> remove(easyKeyType: EasyKeyType<INPUT, KEY>, key: KEY) {
         redisTemplate.delete(getKeyValue(easyKeyType, key))
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any, K : EasyKey> getAllByPartKey(easyKeyType: EasyKeyType<T, K>): Map<K, T> {
-        val keys = mutableMapOf<K, T>()
+    fun <INPUT : Any, KEY : EasyKey> getAllByPartKey(easyKeyType: EasyKeyType<INPUT, KEY>): Map<KEY, INPUT> {
+        val keys = mutableMapOf<KEY, INPUT>()
         val scanOptions = scanOptions().match(easyKeyType.getName() + "*").build()
         redisTemplate.scan(scanOptions).use { cursor ->
             cursor.forEach { key ->
                 val rawValue = redisTemplate.opsForValue().get(key) ?: return@forEach
-                val easyKey = parseEasyKey(key) as K
-                val easyValue = cast(easyKeyType, rawValue)
+                val easyKey = parseEasyKey(key) as KEY
+                val easyValue = map(easyKeyType, rawValue)
                 keys[easyKey] = easyValue
             }
         }
         return keys
     }
 
-    private fun <T : Any, K : EasyKey> getKeyValue(easyKeyType: EasyKeyType<T, K>, key: K): String {
+    private fun <INPUT : Any, KEY : EasyKey> getKeyValue(easyKeyType: EasyKeyType<INPUT, KEY>, key: KEY): String {
         return "${easyKeyType.getName()}:${key.value()}"
     }
 
@@ -100,14 +100,7 @@ class EasyKeyValueService(
         return UserAndChatEasyKey(chatId.toLong(), userId.toLong())
     }
 
-    @Suppress("UNCHECKED_CAST")
-    private fun <T : Any, K : EasyKey> cast(easyKeyType: EasyKeyType<T, K>, rawValue: String): T {
-        val result = when (easyKeyType.getType()) {
-            Boolean::class -> rawValue.toBoolean()
-            Long::class -> rawValue.toLong()
-            String::class -> rawValue
-            else -> throw FamilyBot.InternalException("Parsing for type ${easyKeyType.getType()} is not implemented")
-        }
-        return result as T
+    private fun <INPUT : Any, KEY : EasyKey> map(easyKeyType: EasyKeyType<INPUT, KEY>, rawValue: String): INPUT {
+        return easyKeyType.getMapper().mapFromString(rawValue)
     }
 }

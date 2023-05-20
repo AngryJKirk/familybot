@@ -7,18 +7,20 @@ import dev.storozhenko.familybot.common.extensions.key
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.executors.Configurable
+import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.models.telegram.User
 import dev.storozhenko.familybot.core.repos.UserRepository
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
-import dev.storozhenko.familybot.feature.pidor.repos.PidorStrikeStorage
+import dev.storozhenko.familybot.feature.pidor.models.PidorStrikes
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
+import dev.storozhenko.familybot.feature.settings.models.PidorStrikeStats
 import org.springframework.stereotype.Component
 
 @Component
 class PidorStatsStrikesExecutor(
-    private val pidorStrikeStorage: PidorStrikeStorage,
+    private val easyKeyValueService: EasyKeyValueService,
     private val userRepository: UserRepository
 ) : CommandExecutor(), Configurable {
 
@@ -28,7 +30,7 @@ class PidorStatsStrikesExecutor(
 
     override suspend fun execute(context: ExecutorContext) {
         val chat = context.chat
-        val strikes = pidorStrikeStorage.get(chat.key()).stats.filter { (_, stats) -> stats.maxStrike > 1 }
+        val strikes = easyKeyValueService.get(PidorStrikeStats, chat.key(), PidorStrikes()).stats.filter { (_, stats) -> stats.maxStrike > 1 }
         val users = userRepository.getUsers(chat).associateBy(User::id)
         val stats = strikes
             .map {

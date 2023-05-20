@@ -1,21 +1,68 @@
 package dev.storozhenko.familybot.core.keyvalue.models
 
-import kotlin.reflect.KClass
+import java.time.Instant
 
-interface EasyKeyType<T : Any, K : EasyKey> {
-
+interface EasyKeyType<INPUT : Any, KEY : EasyKey> {
     fun getName(): String = this::class.java.simpleName
-    fun getType(): KClass<T>
+    fun getMapper(): EasyKeyTypeMapper<INPUT>
 }
 
-interface BooleanKeyType<K : EasyKey> : EasyKeyType<Boolean, K> {
-    override fun getType() = Boolean::class
+interface EasyKeyTypeMapper<INPUT> {
+    fun mapToString(value: INPUT): String
+    fun mapFromString(value: String): INPUT
 }
 
-interface LongKeyType<K : EasyKey> : EasyKeyType<Long, K> {
-    override fun getType() = Long::class
+class BooleanMapper : EasyKeyTypeMapper<Boolean> {
+    override fun mapToString(value: Boolean) = value.toString()
+    override fun mapFromString(value: String) = value.toBoolean()
 }
 
-interface StringKeyType<K : EasyKey> : EasyKeyType<String, K> {
-    override fun getType() = String::class
+class StringMapper : EasyKeyTypeMapper<String> {
+    override fun mapToString(value: String) = value
+    override fun mapFromString(value: String) = value
+}
+
+class LongMapper : EasyKeyTypeMapper<Long> {
+    override fun mapToString(value: Long) = value.toString()
+    override fun mapFromString(value: String) = value.toLong()
+}
+
+class InstantMapper : EasyKeyTypeMapper<Instant> {
+    override fun mapToString(value: Instant) = value.epochSecond.toString()
+
+    override fun mapFromString(value: String): Instant = Instant.ofEpochSecond(value.toLong())
+
+}
+
+
+interface BooleanKeyType<KEY : EasyKey> : EasyKeyType<Boolean, KEY> {
+    companion object {
+        val booleanMapper: BooleanMapper = BooleanMapper()
+    }
+
+    override fun getMapper() = booleanMapper
+}
+
+interface LongKeyType<KEY : EasyKey> : EasyKeyType<Long, KEY> {
+    companion object {
+        val mapper: LongMapper = LongMapper()
+    }
+
+    override fun getMapper() = mapper
+}
+
+interface StringKeyType<KEY : EasyKey> : EasyKeyType<String, KEY> {
+    companion object {
+        val mapper: StringMapper = StringMapper()
+    }
+
+    override fun getMapper() = mapper
+}
+
+interface InstantKeyType<KEY : EasyKey> : EasyKeyType<Instant, KEY> {
+    companion object {
+        val mapper: InstantMapper = InstantMapper()
+    }
+
+    override fun getMapper() = mapper
 }

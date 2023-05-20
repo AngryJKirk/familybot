@@ -7,6 +7,7 @@ import dev.storozhenko.familybot.feature.settings.models.ChatGPTFreeMessagesLeft
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTPaidTill
 import org.springframework.stereotype.Component
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import kotlin.time.Duration.Companion.days
 
 @Component("Picker")
@@ -23,10 +24,11 @@ class TalkingServicePicker(
             return old.getReplyToUser(context, shouldBeQuestion)
         }
 
-        val paidTill = easyKeyValueService.get(ChatGPTPaidTill, context.chatKey, Instant.now().epochSecond - 100)
+        val paidTill =
+            easyKeyValueService.get(ChatGPTPaidTill, context.chatKey, Instant.now().minus(100, ChronoUnit.SECONDS))
         notifierService.notifyIfSubscriptionIsEnding(context)
 
-        if (Instant.ofEpochSecond(paidTill).isAfter(Instant.now())) {
+        if (paidTill.isAfter(Instant.now())) {
             return chatGpt.getReplyToUser(context, shouldBeQuestion)
         }
 

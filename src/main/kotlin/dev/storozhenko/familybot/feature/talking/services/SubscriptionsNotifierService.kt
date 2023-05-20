@@ -14,7 +14,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import java.time.Instant
 import kotlin.time.Duration.Companion.minutes
 
 @Component
@@ -27,14 +26,13 @@ class SubscriptionsNotifierService(private val easyKeyValueService: EasyKeyValue
     @Scheduled(cron = "0 0 0 * * *")
     fun setUpNotification() {
         easyKeyValueService.getAllByPartKey(ChatGPTPaidTill)
-            .map { (key, value) -> key to Instant.ofEpochSecond(value) }
             .filter { (_, date) -> date.isToday() }
-            .forEach { (key, date) -> easyKeyValueService.put(ChatGPTNotificationNeeded, key, date.epochSecond) }
+            .forEach { (key, date) -> easyKeyValueService.put(ChatGPTNotificationNeeded, key, date) }
     }
 
     fun notifyIfSubscriptionIsEnding(context: ExecutorContext) {
         val expirationDate =
-            easyKeyValueService.getAndRemove(ChatGPTNotificationNeeded, context.chatKey)?.let(Instant::ofEpochSecond)
+            easyKeyValueService.getAndRemove(ChatGPTNotificationNeeded, context.chatKey)
                 ?: return
 
         scope.launch {

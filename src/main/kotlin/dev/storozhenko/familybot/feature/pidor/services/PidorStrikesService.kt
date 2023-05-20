@@ -3,14 +3,15 @@ package dev.storozhenko.familybot.feature.pidor.services
 import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.sendContextFree
+import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.User
 import dev.storozhenko.familybot.core.telegram.FamilyBot
-import dev.storozhenko.familybot.feature.pidor.repos.PidorStrikeStat
-import dev.storozhenko.familybot.feature.pidor.repos.PidorStrikeStorage
-import dev.storozhenko.familybot.feature.pidor.repos.PidorStrikes
+import dev.storozhenko.familybot.feature.pidor.models.PidorStrikeStat
+import dev.storozhenko.familybot.feature.pidor.models.PidorStrikes
+import dev.storozhenko.familybot.feature.settings.models.PidorStrikeStats
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -18,15 +19,15 @@ import java.lang.Integer.max
 
 @Component
 class PidorStrikesService(
-    private val pidorStrikeStorage: PidorStrikeStorage,
+    private val easyKeyValueService: EasyKeyValueService,
     private val dictionary: Dictionary,
     private val botConfig: BotConfig
 ) {
     fun calculateStrike(chat: Chat, chatEasyKey: ChatEasyKey, pidor: User): suspend (AbsSender) -> Unit {
-        val stats = pidorStrikeStorage.get(chatEasyKey)
+        val stats = easyKeyValueService.get(PidorStrikeStats, chatEasyKey, PidorStrikes())
         val newStats = calculateStrike(stats, pidor)
 
-        pidorStrikeStorage.save(chatEasyKey, newStats)
+        easyKeyValueService.put(PidorStrikeStats, chatEasyKey, newStats)
 
         val newPidorStrike = newStats.stats[pidor.id]
             ?: throw FamilyBot.InternalException("Some huge internal logic problem, please investigate")

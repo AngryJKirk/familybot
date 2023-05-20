@@ -43,16 +43,16 @@ class GPTStatsExecutor(
         val allSubs = easyKeyValueService.getAllByPartKey(ChatGPTPaidTill)
             .toList()
         val activeSubs = allSubs
-            .filter { (_, timestamp) -> timestamp > Instant.now().epochSecond }
+            .filter { (_, time) -> time > Instant.now() }
         val inactiveSubs = allSubs
-            .filter { (_, timestamp) -> timestamp <= Instant.now().epochSecond }
+            .filter { (_, time) -> time <= Instant.now() }
         val activeSubsAmount = "Активных подписок: ${activeSubs.size.toString().bold()}"
         val inactiveSubsAmount = "Неактивных подписок: ${inactiveSubs.size.toString().bold()}"
         return listOf(activeSubsAmount, inactiveSubsAmount).plus(
             activeSubs
-                .sortedBy { (_, timestamp) -> timestamp }
-                .map { (chatKey, timestamp) ->
-                    Instant.ofEpochSecond(timestamp).prettyFormat(dateOnly = true).code() + "  ⌛️  " +
+                .sortedBy { (_, time) -> time }
+                .map { (chatKey, time) ->
+                    time.prettyFormat(dateOnly = true).code() + "  ⌛️  " +
                             (chats[chatKey.chatId]?.name ?: "#no_name").bold()
                 }
         )
