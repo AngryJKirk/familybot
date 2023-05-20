@@ -23,7 +23,7 @@ class EasyKeyValueService(
         duration: kotlin.time.Duration? = null
     ) {
         val keyValue = getKeyValue(easyKeyType, key)
-        val stringValue = easyKeyType.getMapper().mapToString(value)
+        val stringValue = easyKeyType.mapToString(value)
         if (duration == null) {
             redisTemplate.opsForValue().set(keyValue, stringValue)
         } else {
@@ -39,7 +39,7 @@ class EasyKeyValueService(
         val rawValue = redisTemplate.opsForValue().get(getKeyValue(easyKeyType, key))
             ?: return null
 
-        return map(easyKeyType, rawValue)
+        return easyKeyType.mapFromString(rawValue)
     }
 
     fun <INPUT : Any, KEY : EasyKey> getAndRemove(easyKeyType: EasyKeyType<INPUT, KEY>, key: KEY): INPUT? {
@@ -70,7 +70,7 @@ class EasyKeyValueService(
             cursor.forEach { key ->
                 val rawValue = redisTemplate.opsForValue().get(key) ?: return@forEach
                 val easyKey = parseEasyKey(key) as KEY
-                val easyValue = map(easyKeyType, rawValue)
+                val easyValue = easyKeyType.mapFromString(rawValue)
                 keys[easyKey] = easyValue
             }
         }
@@ -100,7 +100,4 @@ class EasyKeyValueService(
         return UserAndChatEasyKey(chatId.toLong(), userId.toLong())
     }
 
-    private fun <INPUT : Any, KEY : EasyKey> map(easyKeyType: EasyKeyType<INPUT, KEY>, rawValue: String): INPUT {
-        return easyKeyType.getMapper().mapFromString(rawValue)
-    }
 }

@@ -6,7 +6,6 @@ import dev.storozhenko.familybot.core.keyvalue.models.BooleanKeyType
 import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
 import dev.storozhenko.familybot.core.keyvalue.models.EasyKey
 import dev.storozhenko.familybot.core.keyvalue.models.EasyKeyType
-import dev.storozhenko.familybot.core.keyvalue.models.EasyKeyTypeMapper
 import dev.storozhenko.familybot.core.keyvalue.models.InstantKeyType
 import dev.storozhenko.familybot.core.keyvalue.models.LongKeyType
 import dev.storozhenko.familybot.core.keyvalue.models.PlainKey
@@ -45,21 +44,14 @@ object ChatGPTNotificationNeeded : InstantKeyType<ChatEasyKey>
 object IGCookie : StringKeyType<PlainKey>
 
 object PidorStrikeStats : EasyKeyType<PidorStrikes, ChatEasyKey> {
-    class StrikesMapper : EasyKeyTypeMapper<PidorStrikes> {
-        override fun mapToString(value: PidorStrikes) = value.toJson()
+    override fun mapToString(value: PidorStrikes) = value.toJson()
 
-        override fun mapFromString(value: String): PidorStrikes {
-            return if (value.isBlank()) {
-                PidorStrikes()
-            } else {
-                value.parseJson()
-            }
+    override fun mapFromString(value: String): PidorStrikes {
+        return if (value.isBlank()) {
+            PidorStrikes()
+        } else {
+            value.parseJson()
         }
-
-    }
-
-    override fun getMapper(): EasyKeyTypeMapper<PidorStrikes> {
-        return StrikesMapper()
     }
 }
 
