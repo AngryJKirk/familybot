@@ -32,18 +32,23 @@ class SubscriptionsNotifierService(private val easyKeyValueService: EasyKeyValue
             .forEach { (key, date) -> easyKeyValueService.put(ChatGPTNotificationNeeded, key, date.epochSecond) }
     }
 
-    suspend fun notifyIfSubscriptionIsEnding(context: ExecutorContext) {
-
+    fun notifyIfSubscriptionIsEnding(context: ExecutorContext) {
         val expirationDate =
             easyKeyValueService.getAndRemove(ChatGPTNotificationNeeded, context.chatKey)?.let(Instant::ofEpochSecond)
                 ?: return
-        val message = context.phrase(Phrase.CHAT_GTP_SUBSCRIPTION_RUN_OUT)
-            .replace("$", expirationDate.prettyFormat(dateOnly = true))
+
         scope.launch {
+            val message = context.phrase(Phrase.CHAT_GTP_SUBSCRIPTION_RUN_OUT)
+                .replace("$", expirationDate.prettyFormat(dateOnly = true))
             delay(1.minutes)
             context.sender.send(context, message)
         }
-
     }
 
+    fun notifyThatFreeMessagesRunOut(context: ExecutorContext) {
+        scope.launch {
+            delay(1.minutes)
+            context.sender.send(context, context.phrase(Phrase.CHAT_GTP_FREE_MESSAGES_RUN_OUT))
+        }
+    }
 }

@@ -1,19 +1,13 @@
 package dev.storozhenko.familybot.feature.talking.services
 
 import dev.storozhenko.familybot.BotConfig
-import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
-import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTFreeMessagesLeft
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTPaidTill
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import java.time.Instant
 import kotlin.time.Duration.Companion.days
-import kotlin.time.Duration.Companion.minutes
 
 @Component("Picker")
 class TalkingServicePicker(
@@ -44,7 +38,7 @@ class TalkingServicePicker(
         } else {
             if (amountOfFreeMessages > 0) {
                 if (amountOfFreeMessages == 1L) {
-                    notifyThatMessagesRunOut(context)
+                    notifierService.notifyThatFreeMessagesRunOut(context)
                 }
                 easyKeyValueService.decrement(ChatGPTFreeMessagesLeft, context.chatKey)
                 chatGpt.getReplyToUser(context, shouldBeQuestion)
@@ -54,12 +48,5 @@ class TalkingServicePicker(
         }
     }
 
-    private suspend fun notifyThatMessagesRunOut(context: ExecutorContext) {
-        coroutineScope {
-            launch {
-                delay(1.minutes)
-                context.sender.send(context, context.phrase(Phrase.CHAT_GTP_FREE_MESSAGES_RUN_OUT))
-            }
-        }
-    }
+
 }
