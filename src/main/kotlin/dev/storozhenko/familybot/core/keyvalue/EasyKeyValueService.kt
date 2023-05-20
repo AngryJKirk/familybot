@@ -42,6 +42,14 @@ class EasyKeyValueService(
         return cast(easyKeyType, rawValue)
     }
 
+    fun <T : Any, K : EasyKey> getAndRemove(easyKeyType: EasyKeyType<T, K>, key: K): T? {
+        val value = get(easyKeyType, key)
+        if (value != null) {
+            remove(easyKeyType, key)
+        }
+        return value
+    }
+
     fun <K : EasyKey> decrement(easyKeyType: EasyKeyType<Long, K>, key: K): Long {
         return redisTemplate.opsForValue().decrement(getKeyValue(easyKeyType, key)) ?: 0
     }

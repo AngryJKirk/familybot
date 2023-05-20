@@ -36,4 +36,5 @@ object ChatGPTStyle : StringKeyType<ChatEasyKey>
 object ChatGPTPaidTill : LongKeyType<ChatEasyKey>
 object ChatGPTFreeMessagesLeft : LongKeyType<ChatEasyKey>
 object ChatGPTTokenUsageByChat : LongKeyType<ChatEasyKey>
+object ChatGPTNotificationNeeded : LongKeyType<ChatEasyKey>
 object IGCookie : StringKeyType<PlainKey>

@@ -23,7 +23,8 @@ object DateConstants {
 
 fun Instant.isToday(): Boolean {
     val startOfDay = Instant.now().startOfDay()
-    return startOfDay.isBefore(this) || startOfDay == this
+    val startOfNextDay = Instant.now().plus(1, ChronoUnit.DAYS)
+    return (startOfDay.isBefore(this) && startOfNextDay.isAfter(this)) || startOfDay == this
 }
 
 fun Instant.startOfDay(): Instant {
