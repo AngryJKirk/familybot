@@ -18,9 +18,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import java.io.File
-import java.nio.charset.StandardCharsets
 import java.time.Duration
-import java.util.*
+import java.util.UUID
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
@@ -126,8 +125,8 @@ class TikTokDownloadExecutor(
 
 
     fun encodeUrl(text: String): String {
-        val keyBytes = "qwertyuioplkjhgf".toByteArray(StandardCharsets.UTF_8)
-        val textBytes = text.toByteArray(StandardCharsets.UTF_8)
+        val keyBytes = "qwertyuioplkjhgf".toByteArray()
+        val textBytes = text.toByteArray()
 
         val paddingSize = 16 - (textBytes.size % 16)
         val paddedBytes = ByteArray(textBytes.size + paddingSize)
@@ -135,13 +134,11 @@ class TikTokDownloadExecutor(
         for (i in textBytes.size until paddedBytes.size) {
             paddedBytes[i] = paddingSize.toByte()
         }
-        val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
-        val keySpec = SecretKeySpec(keyBytes, "AES")
-        cipher.init(Cipher.ENCRYPT_MODE, keySpec)
-        val encryptedBytes = cipher.doFinal(paddedBytes)
+        return Cipher.getInstance("AES/ECB/PKCS5Padding")
+            .apply { init(Cipher.ENCRYPT_MODE, SecretKeySpec(keyBytes, "AES")) }
+            .doFinal(paddedBytes)
+            .let(Hex::encodeHexString)
 
-
-        return Hex.encodeHexString(encryptedBytes)
     }
 
 }
