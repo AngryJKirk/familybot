@@ -43,11 +43,10 @@ class EasyKeyValueService(
     }
 
     fun <INPUT : Any, KEY : EasyKey> getAndRemove(easyKeyType: EasyKeyType<INPUT, KEY>, key: KEY): INPUT? {
-        val value = get(easyKeyType, key)
-        if (value != null) {
-            remove(easyKeyType, key)
-        }
-        return value
+        val rawValue = redisTemplate.opsForValue().getAndDelete(getKeyValue(easyKeyType, key))
+            ?: return null
+
+        return easyKeyType.mapFromString(rawValue)
     }
 
     fun <KEY : EasyKey> decrement(easyKeyType: EasyKeyType<Long, KEY>, key: KEY): Long {
