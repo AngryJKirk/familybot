@@ -15,7 +15,7 @@ class RawChatLogRepository(val template: JdbcTemplate) {
             "SELECT COUNT(*) FROM raw_chat_log WHERE chat_id = ? AND user_id = ?",
             Int::class.java,
             chat.id,
-            user.id
+            user.id,
         )
     }
 
@@ -27,7 +27,7 @@ class RawChatLogRepository(val template: JdbcTemplate) {
             message,
             rawUpdate,
             Timestamp.from(date),
-            fileId
+            fileId,
         )
     }
 }

@@ -55,8 +55,8 @@ class PaymentRouterTest : FamilybotApplicationTest() {
     fun invalidPreCheckout() {
         whenever(paymentService.processPreCheckoutCheck(any())).thenReturn(
             PreCheckOutResponse.Error(
-                Phrase.values().random()
-            )
+                Phrase.values().random(),
+            ),
         )
         val update = createUpdateWithPreCheckoutQuery()
         runBlocking { router.proceedPreCheckoutQuery(update).invoke(testSender) }
@@ -85,8 +85,8 @@ class PaymentRouterTest : FamilybotApplicationTest() {
     fun successPayment() {
         whenever(paymentService.processSuccessfulPayment(any())).thenReturn(
             SuccessPaymentResponse(
-                Phrase.values().random()
-            )
+                Phrase.values().random(),
+            ),
         )
         val update = createUpdateWithSuccessPayment()
         runBlocking { router.proceedSuccessfulPayment(update).invoke(testSender) }
@@ -111,7 +111,7 @@ class PaymentRouterTest : FamilybotApplicationTest() {
                     randomInt(),
                     createPayloadJson(),
                     randomString(),
-                    null
+                    null,
                 )
             }
     }
@@ -126,7 +126,7 @@ class PaymentRouterTest : FamilybotApplicationTest() {
                     randomString(),
                     null,
                     randomString(),
-                    randomString()
+                    randomString(),
                 )
             }
     }

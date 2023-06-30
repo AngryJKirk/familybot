@@ -14,7 +14,7 @@ import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 
 @Component
 class AntiDdosExecutor(
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
 ) : Executor, Configurable {
     override fun getFunctionId(context: ExecutorContext): FunctionId {
         return FunctionId.ANTIDDOS
@@ -44,21 +44,21 @@ class AntiDdosExecutor(
 
     private suspend fun messageCase(
         context: ExecutorContext,
-        message: String
+        message: String,
     ) {
         context.sender.send(context, message)
     }
 
     private fun callbackQueryCase(
         context: ExecutorContext,
-        message: String
+        message: String,
     ) {
         context.sender.execute(
             AnswerCallbackQuery(context.update.callbackQuery.id)
                 .apply {
                     showAlert = true
                     text = message
-                }
+                },
 
         )
     }

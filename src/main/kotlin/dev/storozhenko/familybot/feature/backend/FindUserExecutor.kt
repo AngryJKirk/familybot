@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class FindUserExecutor(
-    private val commonRepository: UserRepository
+    private val commonRepository: UserRepository,
 ) : OnlyBotOwnerExecutor() {
     private val delimiter = "\n===================\n"
     override fun getMessagePrefix() = "user|"
@@ -33,17 +33,17 @@ class FindUserExecutor(
 
     private fun format(userToChats: List<Pair<User, List<Chat>>>): String {
         return "Search user result:\n" +
-                userToChats
-                    .joinToString(separator = delimiter) { (user, chats) ->
-                        "User: ${formatUser(user)} in chats [${formatChats(chats)}]"
-                    }
+            userToChats
+                .joinToString(separator = delimiter) { (user, chats) ->
+                    "User: ${formatUser(user)} in chats [${formatChats(chats)}]"
+                }
     }
 
     private fun formatUser(user: User): String {
         val parts = listOfNotNull(
             "id=${user.id}",
             user.nickname?.let { nickname -> "username=$nickname" },
-            user.name?.let { name -> "name=$name" }
+            user.name?.let { name -> "name=$name" },
         )
 
         return "[${parts.joinToString(separator = ", ")}]"

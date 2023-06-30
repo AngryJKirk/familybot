@@ -41,7 +41,7 @@ suspend fun AbsSender.sendDeferred(
     replyToUpdate: Boolean = false,
     customization: SendMessage.() -> Unit = { },
     shouldTypeBeforeSend: Boolean = false,
-    typeDelay: Pair<Int, Int> = 1000 to 2000
+    typeDelay: Pair<Int, Int> = 1000 to 2000,
 ): Message {
     return sendInternal(
         context.chat.idString,
@@ -54,7 +54,7 @@ suspend fun AbsSender.sendDeferred(
         replyToUpdate,
         customization,
         shouldTypeBeforeSend,
-        typeDelay
+        typeDelay,
     )
 }
 
@@ -66,7 +66,7 @@ suspend fun AbsSender.send(
     replyToUpdate: Boolean = false,
     customization: SendMessage.() -> Unit = { },
     shouldTypeBeforeSend: Boolean = false,
-    typeDelay: Pair<Int, Int> = 1000 to 2000
+    typeDelay: Pair<Int, Int> = 1000 to 2000,
 ): Message {
     return sendInternal(
         context.chat.idString,
@@ -79,7 +79,7 @@ suspend fun AbsSender.send(
         replyToUpdate,
         customization,
         shouldTypeBeforeSend,
-        typeDelay
+        typeDelay,
     )
 }
 
@@ -92,7 +92,7 @@ suspend fun AbsSender.sendContextFree(
     replyToUpdate: Boolean = false,
     customization: SendMessage.() -> Unit = { },
     shouldTypeBeforeSend: Boolean = false,
-    typeDelay: Pair<Int, Int> = 1000 to 2000
+    typeDelay: Pair<Int, Int> = 1000 to 2000,
 ) {
     sendInternal(
         chatId,
@@ -105,7 +105,7 @@ suspend fun AbsSender.sendContextFree(
         replyToUpdate,
         customization,
         shouldTypeBeforeSend,
-        typeDelay
+        typeDelay,
     )
 }
 
@@ -120,18 +120,18 @@ private suspend fun AbsSender.sendInternal(
     replyToUpdate: Boolean = false,
     customization: SendMessage.() -> Unit = { },
     shouldTypeBeforeSend: Boolean = false,
-    typeDelay: Pair<Int, Int> = 1000 to 2000
+    typeDelay: Pair<Int, Int> = 1000 to 2000,
 ): Message {
     SenderLogger.log.info(
         "Sending message, update=${update?.toJson() ?: "[N/A]"}, " +
-                "replyMessageId=$replyMessageId," +
-                "enableHtml=$enableHtml," +
-                "replyToUpdate=$replyToUpdate," +
-                "shouldTypeBeforeSend=$shouldTypeBeforeSend," +
-                "typeDelay=$typeDelay"
+            "replyMessageId=$replyMessageId," +
+            "enableHtml=$enableHtml," +
+            "replyToUpdate=$replyToUpdate," +
+            "shouldTypeBeforeSend=$shouldTypeBeforeSend," +
+            "typeDelay=$typeDelay",
     )
     if (shouldTypeBeforeSend) {
-        this.execute(SendChatAction(chatId, "typing", null))
+        execute(SendChatAction(chatId, "typing", null))
         if (testEnvironment.not()) {
             delay(randomInt(typeDelay.first, typeDelay.second).toLong())
         }
@@ -154,14 +154,14 @@ private suspend fun AbsSender.sendInternal(
                 }
         }.map { message ->
             SenderLogger.log.info("Sending message: ${message.toJson()}")
-            this.execute(message)
+            execute(message)
         }.first()
 }
 
 suspend fun AbsSender.sendSticker(
     context: ExecutorContext,
     sticker: Sticker,
-    replyToUpdate: Boolean = false
+    replyToUpdate: Boolean = false,
 ): Message {
     return sendStickerInternal(this, context, replyToUpdate, sticker.pack) {
         find { it.emoji == sticker.stickerEmoji }
@@ -171,7 +171,7 @@ suspend fun AbsSender.sendSticker(
 suspend fun AbsSender.sendRandomSticker(
     context: ExecutorContext,
     stickerPack: StickerPack,
-    replyToUpdate: Boolean = false
+    replyToUpdate: Boolean = false,
 ): Message {
     return sendStickerInternal(this, context, replyToUpdate, stickerPack) {
         random()
@@ -196,7 +196,7 @@ private suspend fun sendStickerInternal(
     context: ExecutorContext,
     replyToUpdate: Boolean = false,
     stickerPack: StickerPack,
-    stickerSelector: List<TelegramSticker>.() -> TelegramSticker?
+    stickerSelector: List<TelegramSticker>.() -> TelegramSticker?,
 ): Message {
     val stickerId = coroutineScope {
         async {

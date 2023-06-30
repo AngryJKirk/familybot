@@ -18,7 +18,7 @@ class ChatLogRepository(private val template: JdbcTemplate) {
             "SELECT message FROM chat_log WHERE user_id = ? AND chat_id = ?",
             String::class.java,
             userId,
-            chat.id
+            chat.id,
         )
     }
 
@@ -34,7 +34,7 @@ class ChatLogRepository(private val template: JdbcTemplate) {
             "INSERT INTO chat_log (chat_id, user_id, message) VALUES (?, ?, ?)",
             user.chat.id,
             user.id,
-            message
+            message,
         )
     }
 
@@ -51,14 +51,14 @@ class ChatLogRepository(private val template: JdbcTemplate) {
         return namedJdbcTemplate.queryForList(
             "SELECT message FROM chat_log WHERE id IN (:ids)",
             paramMap,
-            String::class.java
+            String::class.java,
         )
     }
 
     private fun getMaxCommonMessageId(): Long {
         return template.queryForList(
             "SELECT MAX(id) FROM chat_log",
-            Long::class.java
+            Long::class.java,
         ).firstOrNull() ?: 0
     }
 }

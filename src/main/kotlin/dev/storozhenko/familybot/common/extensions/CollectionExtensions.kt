@@ -5,7 +5,7 @@ import dev.storozhenko.familybot.core.models.telegram.User
 class PluralizedWordsProvider(
     val one: () -> String = { "раз" },
     val few: () -> String = { "раза" },
-    val many: () -> String = { "раз" }
+    val many: () -> String = { "раз" },
 )
 
 @Suppress("ConvertCallChainIntoSequence")

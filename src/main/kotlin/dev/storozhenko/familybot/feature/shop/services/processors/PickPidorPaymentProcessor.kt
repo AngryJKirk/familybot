@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class PickPidorPaymentProcessor(
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
 ) : PaymentProcessor {
     override fun itemType() = ShopItem.PICK_PIDOR
 

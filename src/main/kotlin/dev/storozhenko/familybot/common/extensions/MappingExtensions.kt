@@ -89,7 +89,7 @@ fun Update.context(botConfig: BotConfig, dictionary: Dictionary, sender: AbsSend
         chat.key(),
         botConfig.testEnvironment,
         sender,
-        dictionary
+        dictionary,
     )
 }
 

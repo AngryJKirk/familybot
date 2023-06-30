@@ -14,7 +14,7 @@ import org.telegram.telegrambots.meta.api.methods.ForwardMessage
 
 @Component
 class PatchNoteExecutor(
-    private val commonRepository: UserRepository
+    private val commonRepository: UserRepository,
 ) : OnlyBotOwnerExecutor() {
 
     private val patchNotePrefix = "patch_note"
@@ -39,7 +39,7 @@ class PatchNoteExecutor(
 
     private suspend fun tryToSendMessage(
         chat: Chat,
-        context: ExecutorContext
+        context: ExecutorContext,
     ) {
         coroutineScope {
             launch {
@@ -49,8 +49,8 @@ class PatchNoteExecutor(
                         ForwardMessage(
                             chat.idString,
                             context.user.id.toString(),
-                            context.message.replyToMessage.messageId
-                        )
+                            context.message.replyToMessage.messageId,
+                        ),
                     )
                     log.info("Sent patchnote to chatId={}", chat.idString)
                 }.onFailure { throwable ->

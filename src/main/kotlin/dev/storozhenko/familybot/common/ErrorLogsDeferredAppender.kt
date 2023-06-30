@@ -86,7 +86,7 @@ class ErrorLogsDeferredAppender : Appender<ILoggingEvent> {
                 val message = event.throwableProxy.message
                 val stackTrace = event.throwableProxy.stackTraceElementProxyArray.joinToString(
                     separator = "\n",
-                    transform = StackTraceElementProxy::getSTEAsString
+                    transform = StackTraceElementProxy::getSTEAsString,
                 )
                 "\nException: $className : $message \nStack trace:\n$stackTrace"
             } else {
@@ -96,11 +96,11 @@ class ErrorLogsDeferredAppender : Appender<ILoggingEvent> {
             val date = Instant.ofEpochMilli(event.timeStamp).prettyFormat()
             errors.add(
                 date +
-                        "\n" +
-                        event.formattedMessage +
-                        exceptionMessage +
-                        "\n" +
-                        "MDC: ${event.mdcPropertyMap}"
+                    "\n" +
+                    event.formattedMessage +
+                    exceptionMessage +
+                    "\n" +
+                    "MDC: ${event.mdcPropertyMap}",
             )
         }
     }

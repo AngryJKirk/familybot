@@ -11,7 +11,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class GetChatListExecutor(
-    private val commonRepository: UserRepository
+    private val commonRepository: UserRepository,
 ) : OnlyBotOwnerExecutor() {
 
     override fun getMessagePrefix() = "chats"
@@ -27,7 +27,7 @@ class GetChatListExecutor(
 
     private fun calculate(
         sender: AbsSender,
-        chat: Chat
+        chat: Chat,
     ): Int {
         return runCatching { sender.execute(GetChatMemberCount(chat.idString)) }
             .getOrElse { 0 }

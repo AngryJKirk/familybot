@@ -46,7 +46,7 @@ class AskWorldInitialExecutor(
     private val configureRepository: FunctionsConfigureRepository,
     private val botConfig: BotConfig,
     private val dictionary: Dictionary,
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
 ) : CommandExecutor(), Configurable {
     private val log = getLogger()
     override fun getFunctionId(context: ExecutorContext): FunctionId {
@@ -92,7 +92,7 @@ class AskWorldInitialExecutor(
             context.user,
             currentChat,
             Instant.now(),
-            null
+            null,
         )
 
         val questionId = coroutineScope { async { askWorldRepository.addQuestion(question) } }
@@ -131,20 +131,20 @@ class AskWorldInitialExecutor(
             val poll = replyToMessage.poll
             return Success(
                 poll.question,
-                false
+                false,
             ) { sender, chatToSend, currentChat ->
                 sender.execute(
                     SendMessage(
                         chatToSend.idString,
-                        formatPollMessage(currentChat, chatToSend)
-                    ).also { it.enableHtml(true) }
+                        formatPollMessage(currentChat, chatToSend),
+                    ).also { it.enableHtml(true) },
                 )
                 sender.execute(
                     ForwardMessage(
                         chatToSend.idString,
                         currentChat.idString,
-                        replyToMessage.messageId
-                    )
+                        replyToMessage.messageId,
+                    ),
                 )
             }
         } else {
@@ -160,22 +160,22 @@ class AskWorldInitialExecutor(
                 ?.takeIf(String::isNotEmpty) ?: return ValidationError {
                 context.sender.send(
                     context,
-                    context.phrase(Phrase.ASK_WORLD_HELP)
+                    context.phrase(Phrase.ASK_WORLD_HELP),
                 )
             }
 
             val isScam =
                 shouldBeCensored(message) ||
-                        shouldBeCensored(context.chat.name ?: "") ||
-                        isSpam(message) ||
-                        containsLongWords(message)
+                    shouldBeCensored(context.chat.name ?: "") ||
+                    isSpam(message) ||
+                    containsLongWords(message)
 
             if (message.length > 2000) {
                 return ValidationError {
                     context.sender.send(
                         context,
                         context.phrase(Phrase.ASK_WORLD_QUESTION_TOO_LONG),
-                        replyToUpdate = true
+                        replyToUpdate = true,
                     )
                 }
             }
@@ -183,8 +183,8 @@ class AskWorldInitialExecutor(
                 sender.execute(
                     SendMessage(
                         chatToSend.idString,
-                        formatMessage(currentChat, message, chatToSend)
-                    ).also { it.enableHtml(true) }
+                        formatMessage(currentChat, message, chatToSend),
+                    ).also { it.enableHtml(true) },
                 )
             }
         }
@@ -193,7 +193,7 @@ class AskWorldInitialExecutor(
     private suspend fun markChatInactive(
         chat: Chat,
         questionId: Deferred<Long>,
-        e: Throwable
+        e: Throwable,
     ) {
         coroutineScope { launch { commonRepository.changeChatActiveStatus(chat, false) } }
         log.warn("Could not send question $questionId to $chat due to error: [${e.message}]")
@@ -203,11 +203,11 @@ class AskWorldInitialExecutor(
         question: AskWorldQuestion,
         questionId: Deferred<Long>,
         result: Message,
-        chat: Chat
+        chat: Chat,
     ) {
         val questionWithIds = question.copy(
             id = questionId.await(),
-            messageId = result.messageId + chat.id
+            messageId = result.messageId + chat.id,
         )
         askWorldRepository.addQuestionDeliver(questionWithIds, chat)
     }
@@ -226,7 +226,7 @@ class AskWorldInitialExecutor(
     }
 
     private fun getChatsToSendQuestion(
-        context: ExecutorContext
+        context: ExecutorContext,
     ): List<Chat> {
         val functionId = getFunctionId(context)
         val chatsWithFeatureEnabled = commonRepository.getChats()
@@ -251,23 +251,23 @@ class AskWorldInitialExecutor(
 
     private fun shouldBeCensored(message: String): Boolean {
         return message.contains("http", ignoreCase = true) ||
-                message.contains("www", ignoreCase = true) ||
-                message.contains("jpg", ignoreCase = true) ||
-                message.contains("png", ignoreCase = true) ||
-                message.contains("jpeg", ignoreCase = true) ||
-                message.contains("bmp", ignoreCase = true) ||
-                message.contains("gif", ignoreCase = true) ||
-                message.contains("_bot", ignoreCase = true) ||
-                message.contains("t.me", ignoreCase = true) ||
-                message.contains("Bot", ignoreCase = false) ||
-                message.contains("@")
+            message.contains("www", ignoreCase = true) ||
+            message.contains("jpg", ignoreCase = true) ||
+            message.contains("png", ignoreCase = true) ||
+            message.contains("jpeg", ignoreCase = true) ||
+            message.contains("bmp", ignoreCase = true) ||
+            message.contains("gif", ignoreCase = true) ||
+            message.contains("_bot", ignoreCase = true) ||
+            message.contains("t.me", ignoreCase = true) ||
+            message.contains("Bot", ignoreCase = false) ||
+            message.contains("@")
     }
 
     private fun isSpam(message: String): Boolean {
         return askWorldRepository
             .findQuestionByText(
                 message,
-                date = Instant.now().minus(30, ChronoUnit.DAYS)
+                date = Instant.now().minus(30, ChronoUnit.DAYS),
             ).isNotEmpty()
     }
 
@@ -278,7 +278,7 @@ class AskWorldInitialExecutor(
     private fun getDensity(chat: Chat): AskWorldDensityValue {
         val settingValue = easyKeyValueService.get(
             AskWorldDensity,
-            chat.key()
+            chat.key(),
         ) ?: return AskWorldDensityValue.LESS
         return AskWorldDensityValue
             .values()

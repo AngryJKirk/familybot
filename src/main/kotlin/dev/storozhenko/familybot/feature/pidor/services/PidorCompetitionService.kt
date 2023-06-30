@@ -23,7 +23,7 @@ import kotlin.time.Duration.Companion.seconds
 class PidorCompetitionService(
     private val dictionary: Dictionary,
     private val botConfig: BotConfig,
-    private val pidorRepository: PidorRepository
+    private val pidorRepository: PidorRepository,
 ) {
 
     fun pidorCompetition(chat: Chat, chatEasyKey: ChatEasyKey): suspend (AbsSender) -> Unit {
@@ -38,10 +38,10 @@ class PidorCompetitionService(
                     it.sendContextFree(
                         chat.idString,
                         dictionary.get(Phrase.PIDOR_COMPETITION, chatEasyKey).bold() + "\n" + formatListOfCompetitors(
-                            competitors
+                            competitors,
                         ),
                         botConfig,
-                        enableHtml = true
+                        enableHtml = true,
                     )
                     val oneMorePidor = competitors.random()
                     pidorRepository.addPidor(Pidor(oneMorePidor, Instant.now()))
@@ -59,7 +59,7 @@ class PidorCompetitionService(
     private fun getPidorsOfThisMonth(chat: Chat): List<Pidor> {
         return pidorRepository.getPidorsByChat(
             chat,
-            startDate = startOfCurrentMonth()
+            startDate = startOfCurrentMonth(),
         )
     }
 

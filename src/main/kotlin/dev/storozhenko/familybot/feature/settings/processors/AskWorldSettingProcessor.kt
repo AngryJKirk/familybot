@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 @Component
 class AskWorldSettingProcessor(
     private val easyKeyValueService: EasyKeyValueService,
-    private val functionsConfigureRepository: FunctionsConfigureRepository
+    private val functionsConfigureRepository: FunctionsConfigureRepository,
 ) : SettingProcessor {
 
     override fun canProcess(context: ExecutorContext): Boolean {
@@ -26,14 +26,14 @@ class AskWorldSettingProcessor(
         if (density == null) {
             context.sender.send(
                 context,
-                context.phrase(Phrase.ADVANCED_SETTINGS_ASK_WORLD_BAD_USAGE)
+                context.phrase(Phrase.ADVANCED_SETTINGS_ASK_WORLD_BAD_USAGE),
             )
             return
         }
         functionsConfigureRepository.setStatus(
             FunctionId.ASK_WORLD,
             context.chat,
-            isEnabled = density != AskWorldDensityValue.NONE
+            isEnabled = density != AskWorldDensityValue.NONE,
         )
         easyKeyValueService.put(AskWorldDensity, context.chatKey, density.text)
         context.sender.send(context, context.phrase(Phrase.ADVANCED_SETTINGS_OK))
@@ -43,5 +43,5 @@ class AskWorldSettingProcessor(
 enum class AskWorldDensityValue(val text: String) {
     ALL("все"),
     LESS("поменьше"),
-    NONE("отключить")
+    NONE("отключить"),
 }

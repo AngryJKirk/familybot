@@ -54,4 +54,3 @@ object PidorStrikeStats : EasyKeyType<PidorStrikes, ChatEasyKey> {
         }
     }
 }
-

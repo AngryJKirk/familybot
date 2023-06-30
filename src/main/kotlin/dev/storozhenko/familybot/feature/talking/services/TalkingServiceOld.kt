@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 class TalkingServiceOld(
     private val chatLogRepository: ChatLogRepository,
     private val translateService: TranslateService,
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
 ) : TalkingService {
 
     companion object {

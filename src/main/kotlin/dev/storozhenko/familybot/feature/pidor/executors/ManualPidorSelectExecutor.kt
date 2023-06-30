@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class ManualPidorSelectExecutor(
-    private val pidorAutoSelectService: PidorAutoSelectService
+    private val pidorAutoSelectService: PidorAutoSelectService,
 ) : OnlyBotOwnerExecutor() {
     override fun getMessagePrefix() = "pidor_manual"
 

@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component
 @Component
 class TalkingExecutor(
     @Qualifier("Picker") private val talkingService: TalkingService,
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
 ) : Executor, Configurable {
 
     override fun getFunctionId(context: ExecutorContext): FunctionId {
@@ -60,7 +60,7 @@ class TalkingExecutor(
                 replyToUpdate = true,
                 shouldTypeBeforeSend = true,
                 typeDelay = delay,
-                enableHtml = true
+                enableHtml = true,
             )
             if (rageModEnabled) {
                 decrementRageModeMessagesAmount(context)

@@ -26,7 +26,7 @@ abstract class FamilybotApplicationTest {
 
         private fun createRedis() {
             val redisContainer: KGenericContainer = KGenericContainer(
-                CompletableFuture.supplyAsync { "redis:latest" }
+                CompletableFuture.supplyAsync { "redis:latest" },
             ).withExposedPorts(6379)
             redisContainer.start()
             System.setProperty("spring.data.redis.port", redisContainer.firstMappedPort.toString())
@@ -37,12 +37,12 @@ abstract class FamilybotApplicationTest {
                 ImageFromDockerfile()
                     .withFileFromPath("Dockerfile", Paths.get("src/test/resources/Dockerfile"))
                     .withFileFromPath("db.sql", Paths.get("scripts/db.sql"))
-                    .withFileFromPath("db_test_assets.sql", Paths.get("src/test/resources/db_test_assets.sql"))
+                    .withFileFromPath("db_test_assets.sql", Paths.get("src/test/resources/db_test_assets.sql")),
             ).withExposedPorts(5432)
             postgresContainer.start()
             System.setProperty(
                 "spring.datasource.url",
-                "jdbc:postgresql://localhost:${postgresContainer.firstMappedPort}/postgres"
+                "jdbc:postgresql://localhost:${postgresContainer.firstMappedPort}/postgres",
             )
         }
     }

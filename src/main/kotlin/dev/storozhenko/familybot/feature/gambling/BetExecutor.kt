@@ -15,7 +15,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboa
 
 @Component
 class BetExecutor(
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
 ) : CommandExecutor(), Configurable {
 
     override fun getFunctionId(context: ExecutorContext) = FunctionId.PIDOR
@@ -27,7 +27,7 @@ class BetExecutor(
             context.sender.send(
                 context,
                 context.phrase(Phrase.BET_ALREADY_WAS),
-                shouldTypeBeforeSend = true
+                shouldTypeBeforeSend = true,
             )
             return
         }
@@ -42,7 +42,7 @@ class BetExecutor(
                     .forceReply(true)
                     .selective(true)
                     .build()
-            }
+            },
         )
     }
 

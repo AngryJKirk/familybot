@@ -25,7 +25,7 @@ class MeCommandExecutor(
     private val pidorRepository: PidorRepository,
     private val commandHistoryRepository: CommandHistoryRepository,
     private val rawChatLogRepository: RawChatLogRepository,
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
 ) : CommandExecutor() {
 
     override fun command(): Command {
@@ -42,7 +42,7 @@ class MeCommandExecutor(
             setOf(
                 pidorCount.await(),
                 commandCount.await(),
-                messageCount.await()
+                messageCount.await(),
             ).joinToString("\n")
         }
         context.sender.send(context, message, replyToUpdate = true)
@@ -59,8 +59,8 @@ class MeCommandExecutor(
             PluralizedWordsProvider(
                 one = { context.phrase(Phrase.PLURALIZED_MESSAGE_ONE) },
                 few = { context.phrase(Phrase.PLURALIZED_MESSAGE_FEW) },
-                many = { context.phrase(Phrase.PLURALIZED_MESSAGE_MANY) }
-            )
+                many = { context.phrase(Phrase.PLURALIZED_MESSAGE_MANY) },
+            ),
         )
         return context.phrase(Phrase.YOU_TALKED) + " $messageCounter $word."
     }
@@ -73,8 +73,8 @@ class MeCommandExecutor(
             PluralizedWordsProvider(
                 one = { context.phrase(Phrase.PLURALIZED_COUNT_ONE) },
                 few = { context.phrase(Phrase.PLURALIZED_COUNT_FEW) },
-                many = { context.phrase(Phrase.PLURALIZED_COUNT_MANY) }
-            )
+                many = { context.phrase(Phrase.PLURALIZED_COUNT_MANY) },
+            ),
         )
         return context.phrase(Phrase.YOU_USED_COMMANDS) + " $commandCount $word."
     }
@@ -89,8 +89,8 @@ class MeCommandExecutor(
             PluralizedWordsProvider(
                 one = { context.phrase(Phrase.PLURALIZED_COUNT_ONE) },
                 few = { context.phrase(Phrase.PLURALIZED_COUNT_FEW) },
-                many = { context.phrase(Phrase.PLURALIZED_COUNT_MANY) }
-            )
+                many = { context.phrase(Phrase.PLURALIZED_COUNT_MANY) },
+            ),
         )
         return pidorCount
             .takeIf { count -> count > 0 }

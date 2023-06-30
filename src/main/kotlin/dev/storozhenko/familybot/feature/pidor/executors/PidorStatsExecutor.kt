@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class PidorStatsExecutor(
-    private val pidorRepository: PidorRepository
+    private val pidorRepository: PidorRepository,
 ) : CommandExecutor(), Configurable {
 
     override fun getFunctionId(context: ExecutorContext): FunctionId {
@@ -31,8 +31,8 @@ class PidorStatsExecutor(
                 PluralizedWordsProvider(
                     one = { context.phrase(Phrase.PLURALIZED_COUNT_ONE) },
                     few = { context.phrase(Phrase.PLURALIZED_COUNT_FEW) },
-                    many = { context.phrase(Phrase.PLURALIZED_COUNT_MANY) }
-                )
+                    many = { context.phrase(Phrase.PLURALIZED_COUNT_MANY) },
+                ),
             )
             .take(100)
         val title = "${context.phrase(Phrase.PIDOR_STAT_ALL_TIME)}:\n".bold()

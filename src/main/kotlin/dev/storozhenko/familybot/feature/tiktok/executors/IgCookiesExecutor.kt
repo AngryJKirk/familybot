@@ -16,7 +16,7 @@ import org.telegram.telegrambots.meta.api.methods.GetFile
 class IgCookiesExecutor(
     private val easyKeyValueService: EasyKeyValueService,
     private val igCookieService: IgCookieService,
-    private val downloader: TelegramFileDownloader
+    private val downloader: TelegramFileDownloader,
 ) :
     OnlyBotOwnerExecutor() {
     companion object {

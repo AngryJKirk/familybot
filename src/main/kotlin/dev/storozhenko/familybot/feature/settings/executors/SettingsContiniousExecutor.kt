@@ -18,7 +18,7 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageRe
 @Component
 class SettingsContiniousExecutor(
     private val configureRepository: FunctionsConfigureRepository,
-    botConfig: BotConfig
+    botConfig: BotConfig,
 ) : ContiniousConversationExecutor(botConfig) {
     private val log = getLogger()
     override fun command(): Command {
@@ -40,7 +40,7 @@ class SettingsContiniousExecutor(
                     .apply {
                         showAlert = true
                         text = context.phrase(Phrase.ACCESS_DENIED)
-                    }
+                    },
 
             )
         } else {
@@ -58,14 +58,14 @@ class SettingsContiniousExecutor(
                             chatId = callbackQuery.message.chatId.toString()
                             messageId = callbackQuery.message.messageId
                             replyMarkup = FunctionId.toKeyBoard(isEnabled)
-                        }
+                        },
                     )
                 }
                 context.sender.execute(
                     SendMessage(
                         chat.idString,
-                        "${function.desc} → ${isEnabled.invoke(function).toEmoji()}"
-                    )
+                        "${function.desc} → ${isEnabled.invoke(function).toEmoji()}",
+                    ),
                 )
             }
         }

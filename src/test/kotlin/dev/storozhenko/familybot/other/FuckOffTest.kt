@@ -40,8 +40,8 @@ class FuckOffTest : FamilybotApplicationTest() {
             "пес, завали, бля, ебало, епта",
             "пес, завали, бля, ебало епта",
             "завали, бля, ебало епта",
-            "завали    ебало"
-        ]
+            "завали    ебало",
+        ],
     )
     fun `should be able to process valid message`(phrase: String) {
         val botName = botConfig.botName

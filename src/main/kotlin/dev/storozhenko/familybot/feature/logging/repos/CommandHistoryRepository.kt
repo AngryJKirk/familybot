@@ -21,7 +21,7 @@ class CommandHistoryRepository(val template: JdbcTemplate) {
             "SELECT * FROM history INNER JOIN users u ON history.user_id = u.id AND history.chat_id = ? AND history.command_date >= ?",
             { rs, _ -> rs.toCommandByUser(null) },
             chat.id,
-            Timestamp.from(from)
+            Timestamp.from(from),
         )
     }
 
@@ -31,14 +31,14 @@ class CommandHistoryRepository(val template: JdbcTemplate) {
             commandByUser.command.id,
             commandByUser.user.id,
             commandByUser.user.chat.id,
-            Timestamp.from(commandByUser.date)
+            Timestamp.from(commandByUser.date),
         )
     }
 
     fun get(
         user: User,
         from: Instant = Instant.now().minus(5, ChronoUnit.MINUTES),
-        to: Instant = Instant.now()
+        to: Instant = Instant.now(),
     ): List<CommandByUser> {
         return template.query(
             "SELECT * FROM history WHERE user_id = ? AND chat_id = ? AND command_date BETWEEN ? AND ?",
@@ -46,7 +46,7 @@ class CommandHistoryRepository(val template: JdbcTemplate) {
             user.id,
             user.chat.id,
             Timestamp.from(from),
-            Timestamp.from(to)
+            Timestamp.from(to),
         ) ?: emptyList()
     }
 }

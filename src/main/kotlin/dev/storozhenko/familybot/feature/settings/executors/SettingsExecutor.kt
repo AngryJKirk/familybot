@@ -13,7 +13,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 
 @Component
 class SettingsExecutor(
-    private val configureRepository: FunctionsConfigureRepository
+    private val configureRepository: FunctionsConfigureRepository,
 ) : CommandExecutor() {
     override fun command(): Command {
         return Command.SETTINGS
@@ -24,7 +24,7 @@ class SettingsExecutor(
             context,
             context.phrase(Phrase.WHICH_SETTING_SHOULD_CHANGE),
             replyToUpdate = true,
-            customization = customization(context.chat)
+            customization = customization(context.chat),
         )
     }
 

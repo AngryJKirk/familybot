@@ -26,7 +26,7 @@ class PaymentRouter(
     private val paymentService: PaymentService,
     private val commonRepository: UserRepository,
     private val dictionary: Dictionary,
-    private val botConfig: BotConfig
+    private val botConfig: BotConfig,
 ) {
     private val log = getLogger()
 
@@ -56,8 +56,8 @@ class PaymentRouter(
                                 AnswerPreCheckoutQuery(
                                     update.preCheckoutQuery.id,
                                     false,
-                                    message
-                                )
+                                    message,
+                                ),
                             )
                             sender.execute(SendMessage(chatId, message))
                         }
@@ -85,7 +85,7 @@ class PaymentRouter(
         sender: AbsSender,
         update: Update,
         successPaymentResponse: SuccessPaymentResponse,
-        shopPayload: ShopPayload
+        shopPayload: ShopPayload,
     ) {
         val developerId = botConfig.developerId
         val user = update.toUser()
@@ -106,14 +106,14 @@ class PaymentRouter(
         sender.execute(
             SendMessage(developerId, message).apply {
                 enableHtml(true)
-            }
+            },
         )
     }
 
     private fun onFailure(
         sender: AbsSender,
         update: Update,
-        shopPayload: ShopPayload
+        shopPayload: ShopPayload,
     ) {
         val developerId = botConfig.developerId
         val text = dictionary.get(Phrase.SHOP_ERROR, update.toChat().key()).replace("$1", "@" + botConfig.developer)

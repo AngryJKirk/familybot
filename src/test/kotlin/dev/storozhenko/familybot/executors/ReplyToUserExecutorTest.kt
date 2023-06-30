@@ -15,7 +15,9 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import java.io.Serializable
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -44,10 +46,11 @@ class ReplyToUserExecutorTest : ExecutorTest() {
             replyToUserExecutor.canExecute(update)
             replyToUserExecutor.execute(update)
         }
-        argumentCaptor<SendMessage> {
+        argumentCaptor<BotApiMethod<Serializable>> {
             verify(sender, times(2)).execute(capture())
-            assertNotNull("Should be reply") { secondValue.replyToMessageId }
-            assertTrue("Reply should not be empty") { secondValue.text.isNotEmpty() }
+            val sentMessage = secondValue as SendMessage
+            assertNotNull("Should be reply") { sentMessage.replyToMessageId }
+            assertTrue("Reply should not be empty") { sentMessage.text.isNotEmpty() }
         }
     }
 

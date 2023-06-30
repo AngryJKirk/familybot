@@ -40,7 +40,7 @@ import java.time.Instant
 class AskWorldReceiveReplyExecutor(
     private val askWorldRepository: AskWorldRepository,
     private val botConfig: BotConfig,
-    private val dictionary: Dictionary
+    private val dictionary: Dictionary,
 ) : Executor, Configurable {
     private val log = LoggerFactory.getLogger(AskWorldReceiveReplyExecutor::class.java)
     override fun getFunctionId(context: ExecutorContext): FunctionId {
@@ -86,10 +86,10 @@ class AskWorldReceiveReplyExecutor(
             context.sender.execute(
                 SendMessage(
                     chat.idString,
-                    context.phrase(Phrase.ASK_WORLD_ANSWER_COULD_BE_ONLY_ONE)
+                    context.phrase(Phrase.ASK_WORLD_ANSWER_COULD_BE_ONLY_ONE),
                 ).apply {
                     replyToMessageId = message.messageId
-                }
+                },
             )
             return
         }
@@ -101,7 +101,7 @@ class AskWorldReceiveReplyExecutor(
             reply,
             user,
             chat,
-            Instant.now()
+            Instant.now(),
         )
 
         runCatching {
@@ -117,7 +117,7 @@ class AskWorldReceiveReplyExecutor(
                     answerTitle,
                     context,
                     questionTitle,
-                    reply
+                    reply,
                 )
             } else {
                 sendOnlyQuestion(
@@ -125,7 +125,7 @@ class AskWorldReceiveReplyExecutor(
                     chatIdToReply,
                     answerTitle,
                     context,
-                    questionTitle
+                    questionTitle,
                 )
                 dispatchMedia(context.sender, contentType, chatIdToReply, message)
             }
@@ -140,7 +140,7 @@ class AskWorldReceiveReplyExecutor(
         sender: AbsSender,
         contentType: MessageContentType,
         chatIdToReply: String,
-        message: Message
+        message: Message,
     ) {
         when (contentType) {
             MessageContentType.PHOTO ->
@@ -172,11 +172,11 @@ class AskWorldReceiveReplyExecutor(
 
     private fun sendVideo(
         chatIdToReply: String,
-        message: Message
+        message: Message,
     ): SendVideo {
         return SendVideo(
             chatIdToReply,
-            InputFile(message.video.fileId)
+            InputFile(message.video.fileId),
         ).apply {
             if (message.hasText()) {
                 caption = message.text
@@ -186,7 +186,7 @@ class AskWorldReceiveReplyExecutor(
 
     private fun sendContact(
         chatIdToReply: String,
-        message: Message
+        message: Message,
     ): SendContact {
         return SendContact(chatIdToReply, message.contact.phoneNumber, message.contact.firstName).apply {
             lastName = message.contact.lastName
@@ -195,39 +195,39 @@ class AskWorldReceiveReplyExecutor(
 
     private fun sendSticker(
         chatIdToReply: String,
-        message: Message
+        message: Message,
     ): SendSticker {
         return SendSticker(chatIdToReply, InputFile(message.sticker.fileId))
     }
 
     private fun sendLocation(
         chatIdToReply: String,
-        message: Message
+        message: Message,
     ): SendLocation {
         return SendLocation(
             chatIdToReply,
             message.location.latitude,
-            message.location.longitude
+            message.location.longitude,
         )
     }
 
     private fun sendVideoNote(
         chatIdToReply: String,
-        message: Message
+        message: Message,
     ): SendVideoNote {
         return SendVideoNote(chatIdToReply, InputFile(message.videoNote.fileId))
     }
 
     private fun sendVoice(
         chatIdToReply: String,
-        message: Message
+        message: Message,
     ): SendVoice {
         return SendVoice(chatIdToReply, InputFile(message.voice.fileId))
     }
 
     private fun sendDocument(
         chatIdToReply: String,
-        message: Message
+        message: Message,
     ): SendDocument {
         return SendDocument(chatIdToReply, InputFile(message.document.fileId)).apply {
             if (message.hasText()) {
@@ -238,18 +238,18 @@ class AskWorldReceiveReplyExecutor(
 
     private fun sendAnimation(
         chatIdToReply: String,
-        message: Message
+        message: Message,
     ): SendAnimation {
         return SendAnimation(chatIdToReply, InputFile(message.animation.fileId))
     }
 
     private fun sendAudio(
         chatIdToReply: String,
-        message: Message
+        message: Message,
     ): SendAudio {
         return SendAudio(
             chatIdToReply,
-            InputFile(message.audio.fileId)
+            InputFile(message.audio.fileId),
         ).apply {
             if (message.hasText()) {
                 caption = message.text
@@ -259,7 +259,7 @@ class AskWorldReceiveReplyExecutor(
 
     private fun sendPhoto(
         chatIdToReply: String,
-        message: Message
+        message: Message,
     ): SendPhoto {
         return SendPhoto(chatIdToReply, InputFile(message.photo.first().fileId))
             .apply {
@@ -274,16 +274,16 @@ class AskWorldReceiveReplyExecutor(
         chatIdToReply: String,
         answerTitle: String,
         context: ExecutorContext,
-        questionTitle: String
+        questionTitle: String,
     ) {
         it.execute(
             SendMessage(
                 chatIdToReply,
                 "$answerTitle ${context.chat.name.boldNullable()} " +
-                        "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\":"
+                    "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\":",
             ).apply {
                 enableHtml(true)
-            }
+            },
         )
     }
 
@@ -293,16 +293,16 @@ class AskWorldReceiveReplyExecutor(
         answerTitle: String,
         context: ExecutorContext,
         questionTitle: String,
-        reply: String
+        reply: String,
     ) {
         it.execute(
             SendMessage(
                 chatIdToReply,
                 "$answerTitle ${context.chat.name.boldNullable()} " +
-                        "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}"
+                    "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}",
             ).apply {
                 enableHtml(true)
-            }
+            },
         )
     }
 

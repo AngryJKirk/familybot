@@ -26,7 +26,7 @@ class UserEnterExitExecutor(private val botConfig: BotConfig) :
             context,
             context.phrase(phrase),
             replyToUpdate = true,
-            shouldTypeBeforeSend = true
+            shouldTypeBeforeSend = true,
         )
     }
 

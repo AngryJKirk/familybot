@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class DivorcePaymentProcessor(
-    private val marriagesRepository: MarriagesRepository
+    private val marriagesRepository: MarriagesRepository,
 ) : PaymentProcessor {
     override fun itemType() = ShopItem.DIVORCE
 

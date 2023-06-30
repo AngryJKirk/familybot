@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class ScenarioGameplayService(
-    private val scenarioRepository: ScenarioRepository
+    private val scenarioRepository: ScenarioRepository,
 ) {
     private val log = getLogger()
     fun startGame(scenario: Scenario, chat: Chat) {

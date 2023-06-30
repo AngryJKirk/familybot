@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component
 class VestnikCommandExecutor(
     private val askWorldRepository: AskWorldRepository,
     private val translateService: TranslateService,
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
 ) : CommandExecutor() {
     private val chat = Chat(id = -1001351771258L, name = null)
     override suspend fun execute(context: ExecutorContext) {

@@ -10,7 +10,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 
 @Component
 class CustomMessageExecutor(
-    private val commonRepository: UserRepository
+    private val commonRepository: UserRepository,
 ) :
     OnlyBotOwnerExecutor() {
     override suspend fun executeInternal(context: ExecutorContext) {

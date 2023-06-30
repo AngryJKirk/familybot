@@ -9,26 +9,26 @@ data class ScenarioMove(
     val id: UUID,
     val description: String,
     val ways: List<ScenarioWay>,
-    val isEnd: Boolean
+    val isEnd: Boolean,
 )
 
 data class ScenarioWay(
     val wayId: UUID,
     val description: String,
     val answerNumber: Int,
-    val nextMoveId: UUID
+    val nextMoveId: UUID,
 )
 
 data class Scenario(
     val id: UUID,
     val name: String,
     val description: String,
-    val entryPoint: ScenarioMove
+    val entryPoint: ScenarioMove,
 )
 
 data class ScenarioMoveVoteResult(
     val scenarioMove: ScenarioMove,
-    val results: Map<ScenarioWay, List<User>>
+    val results: Map<ScenarioWay, List<User>>,
 )
 
 data class ScenarioPoll(
@@ -36,10 +36,10 @@ data class ScenarioPoll(
     val chat: Chat,
     val createDate: Instant,
     val scenarioMove: ScenarioMove,
-    val messageId: Int
+    val messageId: Int,
 )
 
 data class ScenarioState(
     val move: ScenarioMove,
-    val date: Instant
+    val date: Instant,
 )

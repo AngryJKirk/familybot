@@ -15,7 +15,7 @@ import java.time.temporal.ChronoUnit
 @Component
 class BanAskWorldExecutor(
     private val askWorldRepository: AskWorldRepository,
-    private val banService: BanService
+    private val banService: BanService,
 ) : CommandExecutor() {
     private val log = getLogger()
     override fun command() = Command.BAN
@@ -33,9 +33,10 @@ class BanAskWorldExecutor(
         when (questions.size) {
             0 -> context.sender.send(context, "Can't find anyone, sorry, my master")
             1 -> ban(context, questions.first())
-            else -> questions
-                .distinctBy { question -> question.user.id }
-                .forEach { question -> ban(context, question) }
+            else ->
+                questions
+                    .distinctBy { question -> question.user.id }
+                    .forEach { question -> ban(context, question) }
         }
     }
 

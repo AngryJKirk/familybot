@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class TalkingDensitySettingProcessor(
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
 ) : SettingProcessor {
 
     private val commands = setOf("разговорчики", "балачки")
@@ -26,7 +26,7 @@ class TalkingDensitySettingProcessor(
             context.sender.send(
                 context,
                 context.phrase(Phrase.ADVANCED_SETTINGS_FAILED_TALKING_DENSITY_NOT_NUMBER)
-                    .replace("#value", value)
+                    .replace("#value", value),
             )
             return
         }
@@ -34,7 +34,7 @@ class TalkingDensitySettingProcessor(
         if (amountOfDensity < 0) {
             context.sender.send(
                 context,
-                context.phrase(Phrase.ADVANCED_SETTINGS_FAILED_TALKING_DENSITY_NEGATIVE)
+                context.phrase(Phrase.ADVANCED_SETTINGS_FAILED_TALKING_DENSITY_NEGATIVE),
             )
         }
 

@@ -15,7 +15,7 @@ import kotlin.time.Duration.Companion.days
 
 @Component
 class BanService(
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
 ) {
 
     fun getUserBan(context: ExecutorContext): String? {
@@ -37,7 +37,7 @@ class BanService(
     fun findBanByKey(easyKey: EasyKey): String? {
         return easyKeyValueService.get(
             Ban,
-            easyKey
+            easyKey,
         )
     }
 
@@ -55,7 +55,7 @@ class BanService(
             Ban,
             easyKey,
             "Бан нахуй по причине \"$description\" до ${until.prettyFormat()}",
-            duration = duration
+            duration = duration,
         )
     }
 }

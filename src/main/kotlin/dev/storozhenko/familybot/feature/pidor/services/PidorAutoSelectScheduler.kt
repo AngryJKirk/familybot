@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 @Component
 class PidorAutoSelectScheduler(
     private val pidorAutoSelectService: PidorAutoSelectService,
-    private val familyBot: FamilyBot
+    private val familyBot: FamilyBot,
 ) {
     val log = getLogger()
 

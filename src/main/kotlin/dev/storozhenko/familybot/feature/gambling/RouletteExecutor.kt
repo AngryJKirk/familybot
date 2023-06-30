@@ -30,7 +30,7 @@ class RouletteExecutor : CommandExecutor(), Configurable {
                 .apply {
                     replyMarkup = ForceReplyKeyboard().apply { selective = true }
                     replyToMessageId = context.update.message.messageId
-                }
+                },
         )
     }
 

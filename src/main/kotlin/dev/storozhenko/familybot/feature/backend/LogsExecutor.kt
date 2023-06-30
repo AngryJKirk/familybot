@@ -30,8 +30,8 @@ class LogsExecutor : OnlyBotOwnerExecutor() {
             context.sender.execute(
                 SendDocument(
                     context.chat.idString,
-                    InputFile(errors, "error_logs.txt")
-                )
+                    InputFile(errors, "error_logs.txt"),
+                ),
             )
         }
     }

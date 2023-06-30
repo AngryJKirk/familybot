@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class AdvancedSettingsExecutor(
-    private val processors: List<SettingProcessor>
+    private val processors: List<SettingProcessor>,
 ) : CommandExecutor() {
     override fun command() = Command.ADVANCED_SETTINGS
 
@@ -25,14 +25,14 @@ class AdvancedSettingsExecutor(
             context.sender.send(
                 context,
                 context.phrase(Phrase.ADVANCED_SETTINGS),
-                enableHtml = true
+                enableHtml = true,
             )
             return
         }
         if (!context.sender.isFromAdmin(context)) {
             sendErrorMessage(
                 context,
-                context.phrase(Phrase.ADVANCED_SETTINGS_ADMIN_ONLY)
+                context.phrase(Phrase.ADVANCED_SETTINGS_ADMIN_ONLY),
             )
         } else {
             runCatching {
@@ -50,7 +50,7 @@ class AdvancedSettingsExecutor(
 
     private suspend fun sendErrorMessage(
         context: ExecutorContext,
-        message: String = context.phrase(Phrase.ADVANCED_SETTINGS_ERROR)
+        message: String = context.phrase(Phrase.ADVANCED_SETTINGS_ERROR),
     ) {
         context.sender.send(context, message)
     }

@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class PidorStatsWorldExecutor(
-    private val pidorRepository: PidorRepository
+    private val pidorRepository: PidorRepository,
 ) : CommandExecutor(), Configurable {
 
     override fun getFunctionId(context: ExecutorContext): FunctionId {
@@ -30,15 +30,15 @@ class PidorStatsWorldExecutor(
 
     override suspend fun execute(context: ExecutorContext) {
         val pidorsByChat = pidorRepository.getAllPidors(
-            startDate = DateConstants.theBirthDayOfFamilyBot
+            startDate = DateConstants.theBirthDayOfFamilyBot,
         )
             .map(Pidor::user)
             .formatTopList(
                 PluralizedWordsProvider(
                     one = { context.phrase(Phrase.PLURALIZED_COUNT_ONE) },
                     few = { context.phrase(Phrase.PLURALIZED_COUNT_FEW) },
-                    many = { context.phrase(Phrase.PLURALIZED_COUNT_MANY) }
-                )
+                    many = { context.phrase(Phrase.PLURALIZED_COUNT_MANY) },
+                ),
             )
             .take(100)
 

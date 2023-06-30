@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class CommandStatExecutor(
-    private val repositoryCommand: CommandHistoryRepository
+    private val repositoryCommand: CommandHistoryRepository,
 ) : CommandExecutor() {
 
     override fun command(): Command {
@@ -32,7 +32,7 @@ class CommandStatExecutor(
         context.sender.send(
             context,
             "${context.phrase(Phrase.STATS_BY_COMMAND)}:\n".bold() + topList,
-            enableHtml = true
+            enableHtml = true,
         )
     }
 }

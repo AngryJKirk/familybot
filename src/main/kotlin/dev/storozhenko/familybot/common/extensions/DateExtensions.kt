@@ -17,7 +17,7 @@ object DateConstants {
         Month.DECEMBER,
         18,
         17,
-        36
+        36,
     ).toInstant(ZoneOffset.UTC)
 }
 
@@ -39,16 +39,16 @@ fun Duration.toHourMinuteString(): String {
         PluralizedWordsProvider(
             one = { "час" },
             few = { "часа" },
-            many = { "часов" }
-        )
+            many = { "часов" },
+        ),
     )
     val minutePluralized = pluralize(
         minute,
         PluralizedWordsProvider(
             one = { "минута" },
             few = { "минуты" },
-            many = { "минут" }
-        )
+            many = { "минут" },
+        ),
     )
 
     return "$hour $hourPluralized и $minute $minutePluralized"

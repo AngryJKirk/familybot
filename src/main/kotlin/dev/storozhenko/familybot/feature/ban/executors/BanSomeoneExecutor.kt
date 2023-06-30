@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 @Component
 class BanSomeoneExecutor(
     private val banService: BanService,
-    private val commonRepository: UserRepository
+    private val commonRepository: UserRepository,
 ) : OnlyBotOwnerExecutor() {
 
     private val banPrefix = "ban|"

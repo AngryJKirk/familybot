@@ -3,7 +3,8 @@ package dev.storozhenko.familybot.core.models.dictionary
 enum class Pluralization {
     ONE,
     FEW,
-    MANY;
+    MANY,
+    ;
 
     companion object PluralizationCalc {
         fun getPlur(position: Int) = getPlur(position.toLong())

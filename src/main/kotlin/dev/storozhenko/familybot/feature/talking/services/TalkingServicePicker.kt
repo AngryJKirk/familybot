@@ -16,7 +16,7 @@ class TalkingServicePicker(
     private val old: TalkingServiceOld,
     private val easyKeyValueService: EasyKeyValueService,
     private val notifierService: SubscriptionsNotifierService,
-    private val botConfig: BotConfig
+    private val botConfig: BotConfig,
 ) : TalkingService {
 
     override suspend fun getReplyToUser(context: ExecutorContext, shouldBeQuestion: Boolean): String {
@@ -49,6 +49,4 @@ class TalkingServicePicker(
             }
         }
     }
-
-
 }

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class AskWorldLimitPaymentProcessor(
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
 ) : PaymentProcessor {
     private val log = getLogger()
     override fun itemType() = ShopItem.DROP_ASK_WORLD_LIMIT

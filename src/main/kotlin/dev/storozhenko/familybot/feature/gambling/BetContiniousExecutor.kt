@@ -29,7 +29,7 @@ class BetContiniousExecutor(
     private val pidorRepository: PidorRepository,
     private val pidorCompetitionService: PidorCompetitionService,
     private val easyKeyValueService: EasyKeyValueService,
-    private val botConfig: BotConfig
+    private val botConfig: BotConfig,
 ) : ContiniousConversationExecutor(botConfig) {
     private val diceNumbers = listOf(1, 2, 3, 4, 5, 6)
 
@@ -42,8 +42,8 @@ class BetContiniousExecutor(
     override fun canExecute(context: ExecutorContext): Boolean {
         val message = context.message
         return message.isReply &&
-                message.replyToMessage.from.userName == botConfig.botName &&
-                (message.replyToMessage.text ?: "") in getDialogMessages(context)
+            message.replyToMessage.from.userName == botConfig.botName &&
+            (message.replyToMessage.text ?: "") in getDialogMessages(context)
     }
 
     override suspend fun execute(context: ExecutorContext) {
@@ -60,12 +60,12 @@ class BetContiniousExecutor(
             context.sender.send(
                 context,
                 context.phrase(Phrase.BET_BREAKING_THE_RULES_FIRST),
-                shouldTypeBeforeSend = true
+                shouldTypeBeforeSend = true,
             )
             context.sender.send(
                 context,
                 context.phrase(Phrase.BET_BREAKING_THE_RULES_SECOND),
-                shouldTypeBeforeSend = true
+                shouldTypeBeforeSend = true,
             )
             return
         }
@@ -73,7 +73,7 @@ class BetContiniousExecutor(
         context.sender.send(
             context,
             "${context.phrase(Phrase.BET_WINNABLE_NUMBERS_ANNOUNCEMENT)} ${formatWinnableNumbers(winnableNumbers)}",
-            shouldTypeBeforeSend = true
+            shouldTypeBeforeSend = true,
         )
         context.sender.send(context, context.phrase(Phrase.BET_ZATRAVOCHKA), shouldTypeBeforeSend = true)
         val diceMessage = context.sender.execute(SendDice(chatId.toString()))
@@ -104,8 +104,8 @@ class BetContiniousExecutor(
                         .toLocalDate()
                         .atStartOfDay()
                         .plusDays(i.toLong())
-                        .toInstant(ZoneOffset.UTC)
-                )
+                        .toInstant(ZoneOffset.UTC),
+                ),
             )
             i--
         }

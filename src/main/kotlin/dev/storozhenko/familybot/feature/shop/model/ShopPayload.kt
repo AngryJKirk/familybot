@@ -8,7 +8,7 @@ import dev.storozhenko.familybot.core.keyvalue.models.UserEasyKey
 data class ShopPayload(
     @JsonProperty("chatId") val chatId: Long,
     @JsonProperty("userId") val userId: Long,
-    @JsonProperty("shopItem") val shopItem: ShopItem
+    @JsonProperty("shopItem") val shopItem: ShopItem,
 ) {
 
     fun chatKey(): ChatEasyKey {

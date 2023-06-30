@@ -15,19 +15,19 @@ fun ResultSet.toUser(): User = User(
     this.getLong("id"),
     Chat(this.getLong("chat_id"), ""),
     this.getString("name"),
-    this.getString("username")
+    this.getString("username"),
 )
 
 fun ResultSet.getUuid(columnLabel: String): UUID = UUID.fromString(getString(columnLabel))
 
 fun ResultSet.toChat(): Chat = Chat(
     this.getLong("id"),
-    this.getString("name")
+    this.getString("name"),
 )
 
 fun ResultSet.toPidor(): Pidor = Pidor(
     this.toUser(),
-    this.getTimestamp("pidor_date").toInstant()
+    this.getTimestamp("pidor_date").toInstant(),
 )
 
 fun ResultSet.toCommandByUser(user: User?): CommandByUser {
@@ -39,7 +39,7 @@ fun ResultSet.toCommandByUser(user: User?): CommandByUser {
     return CommandByUser(
         userInternal,
         command,
-        this.getTimestamp("command_date").toInstant()
+        this.getTimestamp("command_date").toInstant(),
     )
 }
 
@@ -52,11 +52,11 @@ fun ResultSet.toAskWorldQuestion(): AskWorldQuestion {
             this.getLong("user_id"),
             chat,
             this.getString("common_name"),
-            this.getString("username")
+            this.getString("username"),
         ),
         chat,
         this.getTimestamp("date").toInstant(),
-        null
+        null,
     )
 }
 
@@ -69,15 +69,15 @@ fun ResultSet.toMarriage(): Marriage {
             this.getLong("user_id_1"),
             chat,
             this.getString("user_name_1"),
-            this.getString("user_username_1")
+            this.getString("user_username_1"),
         ),
         User(
             this.getLong("user_id_2"),
             chat,
             this.getString("user_name_2"),
-            this.getString("user_username_2")
+            this.getString("user_username_2"),
         ),
-        this.getTimestamp("marriage_start_date").toInstant()
+        this.getTimestamp("marriage_start_date").toInstant(),
     )
 }
 

@@ -34,7 +34,7 @@ class AnswerExecutorTest : CommandExecutorTest() {
                 Arguments.of(listOf("Первое", "второе")),
                 Arguments.of(listOf("Первое", "второе", "третье")),
                 Arguments.of(listOf("первое", "Второе", "третье")),
-                Arguments.of(listOf("первое", "второе", "Третье"))
+                Arguments.of(listOf("первое", "второе", "Третье")),
             )
         }
     }

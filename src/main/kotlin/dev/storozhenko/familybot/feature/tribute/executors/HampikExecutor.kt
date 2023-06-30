@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class HampikExecutor(
-    historyRepository: CommandHistoryRepository
+    historyRepository: CommandHistoryRepository,
 ) : SendRandomStickerExecutor(historyRepository) {
 
     override fun getMessage() = "Какой ты сегодня Андрей?"

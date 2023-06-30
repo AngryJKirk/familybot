@@ -26,7 +26,7 @@ import java.time.ZoneId
 
 @Component
 class TopPidorsByMonthsExecutor(
-    private val pidorRepository: PidorRepository
+    private val pidorRepository: PidorRepository,
 ) : CommandExecutor(), Configurable {
 
     override fun getFunctionId(context: ExecutorContext): FunctionId {
@@ -66,7 +66,7 @@ class TopPidorsByMonthsExecutor(
         val position = it.value.position
         val leaderboardPhrase = getLeaderboardPhrase(
             Pluralization.getPlur(it.value.position),
-            context
+            context,
         )
         "$month, $year:\n".italic() + "$userName, $position $leaderboardPhrase"
     }

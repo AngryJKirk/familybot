@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component
 @Component
 class PidorStatsStrikesExecutor(
     private val easyKeyValueService: EasyKeyValueService,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) : CommandExecutor(), Configurable {
 
     override fun getFunctionId(context: ExecutorContext) = FunctionId.PIDOR
@@ -46,8 +46,8 @@ class PidorStatsStrikesExecutor(
                 PluralizedWordsProvider(
                     one = { context.phrase(Phrase.PIDOR_STRIKE_STAT_PLURALIZED_ONE) },
                     few = { context.phrase(Phrase.PIDOR_STRIKE_STAT_PLURALIZED_FEW) },
-                    many = { context.phrase(Phrase.PIDOR_STRIKE_STAT_PLURALIZED_MANY) }
-                )
+                    many = { context.phrase(Phrase.PIDOR_STRIKE_STAT_PLURALIZED_MANY) },
+                ),
             )
         val title = "${context.phrase(Phrase.PIDOR_STRIKE_STAT_TITLE)}:\n".bold()
         if (stats.isNotEmpty()) {
@@ -56,7 +56,7 @@ class PidorStatsStrikesExecutor(
             context.sender.send(
                 context,
                 title + context.phrase(Phrase.PIDOR_STRIKE_STAT_NONE),
-                enableHtml = true
+                enableHtml = true,
             )
         }
     }

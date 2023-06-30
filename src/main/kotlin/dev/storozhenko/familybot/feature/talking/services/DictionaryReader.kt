@@ -51,7 +51,7 @@ class DictionaryReader {
 
     private fun tableToList(
         table: TomlTable,
-        theme: PhraseTheme
+        theme: PhraseTheme,
     ): List<String> {
         return table
             .getArray(theme.name)
@@ -69,7 +69,7 @@ class DictionaryReader {
         if (missingDefaultPhrases.isNotEmpty()) {
             throw FamilyBot.InternalException(
                 "Some dictionary defaults missing. " +
-                        "Check $missingDefaultPhrases"
+                    "Check $missingDefaultPhrases",
             )
         }
     }

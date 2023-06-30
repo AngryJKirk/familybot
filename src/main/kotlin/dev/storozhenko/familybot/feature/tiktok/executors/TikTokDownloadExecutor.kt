@@ -27,7 +27,7 @@ import javax.crypto.spec.SecretKeySpec
 class TikTokDownloadExecutor(
     private val easyKeyValueService: EasyKeyValueService,
     private val botConfig: BotConfig,
-    private val cookieService: IgCookieService
+    private val cookieService: IgCookieService,
 ) : Executor {
     private val log = getLogger()
     private val okHttpClient = OkHttpClient().newBuilder()
@@ -55,8 +55,8 @@ class TikTokDownloadExecutor(
 
     override fun canExecute(context: ExecutorContext): Boolean {
         return botConfig.ytdlLocation != null &&
-                getTikTokUrls(context).isNotEmpty() &&
-                easyKeyValueService.get(TikTokDownload, context.chatKey, false)
+            getTikTokUrls(context).isNotEmpty() &&
+            easyKeyValueService.get(TikTokDownload, context.chatKey, false)
     }
 
     override fun priority(context: ExecutorContext) = Priority.VERY_LOW
@@ -120,9 +120,7 @@ class TikTokDownloadExecutor(
             }?.video
             ?.firstOrNull()
             ?.video ?: return null
-
     }
-
 
     fun encodeUrl(text: String): String {
         val keyBytes = "qwertyuioplkjhgf".toByteArray()
@@ -138,9 +136,7 @@ class TikTokDownloadExecutor(
             .apply { init(Cipher.ENCRYPT_MODE, SecretKeySpec(keyBytes, "AES")) }
             .doFinal(paddedBytes)
             .let(Hex::encodeHexString)
-
     }
-
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)

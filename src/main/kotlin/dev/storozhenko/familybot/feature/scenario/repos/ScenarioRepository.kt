@@ -6,7 +6,11 @@ import dev.storozhenko.familybot.common.extensions.toUser
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.User
 import dev.storozhenko.familybot.core.telegram.FamilyBot
-import dev.storozhenko.familybot.feature.scenario.services.*
+import dev.storozhenko.familybot.feature.scenario.services.Scenario
+import dev.storozhenko.familybot.feature.scenario.services.ScenarioMove
+import dev.storozhenko.familybot.feature.scenario.services.ScenarioPoll
+import dev.storozhenko.familybot.feature.scenario.services.ScenarioState
+import dev.storozhenko.familybot.feature.scenario.services.ScenarioWay
 import dev.storozhenko.familybot.getLogger
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.jdbc.core.JdbcTemplate
@@ -16,7 +20,7 @@ import org.springframework.stereotype.Component
 import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 @Component
 class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
@@ -25,7 +29,7 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
     private val scenarioStateRowMapper = RowMapper { rs, rowNum ->
         ScenarioState(
             scenarioMoveRowMapper.mapRowNotNull(rs, rowNum),
-            rs.getTimestamp("state_date").toInstant()
+            rs.getTimestamp("state_date").toInstant(),
         )
     }
 
@@ -35,7 +39,7 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
             rs.toChat(),
             rs.getTimestamp("create_date").toInstant(),
             scenarioMoveRowMapper.mapRowNotNull(rs, rowNum),
-            rs.getInt("poll_message_id")
+            rs.getInt("poll_message_id"),
         )
     }
     private val scenarioWayRowMapper = RowMapper { rs, _ ->
@@ -43,7 +47,7 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
             rs.getUuid("scenario_way_id"),
             rs.getString("scenario_way_description"),
             rs.getInt("answer_number"),
-            rs.getUuid("next_move_id")
+            rs.getUuid("next_move_id"),
         )
     }
     private val scenarioMoveRowMapper = RowMapper { rs, _ ->
@@ -52,7 +56,7 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
             moveId,
             rs.getString("scenario_move_description"),
             findScenarioWays(moveId),
-            rs.getBoolean("is_the_end")
+            rs.getBoolean("is_the_end"),
         )
     }
     private val scenarioRowMapper = RowMapper { rs, rowNum ->
@@ -60,14 +64,14 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
             rs.getUuid("scenario_id"),
             rs.getString("scenario_name"),
             rs.getString("scenario_description"),
-            scenarioMoveRowMapper.mapRowNotNull(rs, rowNum)
+            scenarioMoveRowMapper.mapRowNotNull(rs, rowNum),
         )
     }
 
     fun getScenarios(): List<Scenario> {
         return template.query(
             "SELECT * FROM scenario INNER JOIN scenario_move sm ON scenario.entry_move = sm.move_id",
-            scenarioRowMapper
+            scenarioRowMapper,
         )
     }
 
@@ -76,7 +80,7 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
             .query(
                 "SELECT * FROM scenario_move WHERE move_id = :id",
                 mapOf("id" to id),
-                scenarioMoveRowMapper
+                scenarioMoveRowMapper,
             )
             .firstOrNull()
     }
@@ -88,7 +92,7 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
              INNER JOIN scenario_states ss ON scenario_move.move_id = ss.scenario_move_id
              WHERE ss.chat_id = :chat_id ORDER BY state_date DESC LIMIT 1
         """,
-            mapOf("chat_id" to chat.id)
+            mapOf("chat_id" to chat.id),
         ) { rs, rowNum -> scenarioMoveRowMapper.mapRowNotNull(rs, rowNum) }.firstOrNull()
     }
 
@@ -101,7 +105,7 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
              (SELECT scenario_way.way_id FROM scenario_way WHERE next_move_id = :move_id)
             
         """,
-            mapOf("move_id" to move.id)
+            mapOf("move_id" to move.id),
         ) { rs, rowNum -> scenarioMoveRowMapper.mapRowNotNull(rs, rowNum) }.firstOrNull()
     }
 
@@ -111,8 +115,8 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
             mapOf(
                 "date" to Timestamp.from(Instant.now()),
                 "chat_id" to chat.id,
-                "move_id" to scenarioMove.id
-            )
+                "move_id" to scenarioMove.id,
+            ),
         )
     }
 
@@ -124,7 +128,7 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
             WHERE chat_id = :id ORDER BY state_date DESC LIMIT 1
         """,
             mapOf("id" to chat.id),
-            scenarioStateRowMapper
+            scenarioStateRowMapper,
         ).firstOrNull()
     }
 
@@ -135,8 +139,8 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
                 mapOf(
                     "user_id" to user.id,
                     "chat_id" to chat.id,
-                    "scenario_way_id" to chosenWay.wayId
-                )
+                    "scenario_way_id" to chosenWay.wayId,
+                ),
             )
         } catch (e: DataIntegrityViolationException) {
             log.warn("DataIntegrityViolationException on voting, probably the vote was forwarded", e)
@@ -156,8 +160,8 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
             mapOf(
                 "chat_id" to chat.id,
                 "user_id" to user.id,
-                "ids" to scenarioMove.ways.map(ScenarioWay::wayId)
-            )
+                "ids" to scenarioMove.ways.map(ScenarioWay::wayId),
+            ),
         )
     }
 
@@ -173,8 +177,8 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
             mapOf(
                 "chat_id" to chat.id,
                 "ids" to scenarioState.move.ways.map(ScenarioWay::wayId),
-                "state_date" to Timestamp.from(scenarioState.date)
-            )
+                "state_date" to Timestamp.from(scenarioState.date),
+            ),
         ) { rs, rowNum -> scenarioWayRowMapper.mapRowNotNull(rs, rowNum) to rs.toUser() }
             .groupBy({ (way, _) -> way }, { (_, user) -> user })
     }
@@ -187,8 +191,8 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
                 "chat_id" to scenarioPoll.chat.id,
                 "create_date" to Timestamp.from(scenarioPoll.createDate),
                 "move_id" to scenarioPoll.scenarioMove.id,
-                "poll_message_id" to scenarioPoll.messageId
-            )
+                "poll_message_id" to scenarioPoll.messageId,
+            ),
         )
     }
 
@@ -200,9 +204,9 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
             WHERE poll_id = :poll_id
         """,
             mapOf(
-                "poll_id" to id
+                "poll_id" to id,
             ),
-            scenarioPollRowMapper
+            scenarioPollRowMapper,
         ).firstOrNull()
     }
 
@@ -213,9 +217,9 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
             INNER JOIN scenario_move sm ON sp.scenario_move_id = sm.move_id
             WHERE sp.chat_id = :chat_id ORDER BY create_date DESC LIMIT 1""",
             mapOf(
-                "chat_id" to chat.id
+                "chat_id" to chat.id,
             ),
-            scenarioPollRowMapper
+            scenarioPollRowMapper,
         )
             .firstOrNull()
     }
@@ -228,7 +232,7 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
             WHERE chat_id = :chat_id
         """,
             mapOf("chat_id" to chat.id),
-            scenarioStateRowMapper
+            scenarioStateRowMapper,
         )
     }
 
@@ -241,7 +245,7 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
             WHERE sm.move_id = :move_id
         """,
             mapOf("move_id" to moveId),
-            scenarioWayRowMapper
+            scenarioWayRowMapper,
         )
     }
 

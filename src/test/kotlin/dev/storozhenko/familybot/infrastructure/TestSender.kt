@@ -52,7 +52,7 @@ class TestSender {
                     user.firstName = "Test user"
                     user.lastName = "#$userId"
                 }
-            }
+            },
         )
     }
 

@@ -21,7 +21,7 @@ import java.time.temporal.ChronoUnit
 @Component
 class ResetPidorPaymentProcessor(
     private val easyKeyValueService: EasyKeyValueService,
-    private val pidorRepository: PidorRepository
+    private val pidorRepository: PidorRepository,
 ) : PaymentProcessor {
     private val log = getLogger()
     override fun itemType() = ShopItem.DROP_PIDOR
@@ -45,7 +45,7 @@ class ResetPidorPaymentProcessor(
         val amountOfRemovedPidors = pidorRepository.removePidorRecords(
             chat,
             from = now.startOfDay(),
-            until = now.plus(1, ChronoUnit.DAYS).startOfDay()
+            until = now.plus(1, ChronoUnit.DAYS).startOfDay(),
         )
         easyKeyValueService.remove(PidorTolerance, chat.key())
         log.info("Removed $amountOfRemovedPidors pidors for $shopPayload")

@@ -26,5 +26,4 @@ interface StringKeyType<KEY : EasyKey> : EasyKeyType<String, KEY> {
 interface InstantKeyType<KEY : EasyKey> : EasyKeyType<Instant, KEY> {
     override fun mapToString(value: Instant) = value.epochSecond.toString()
     override fun mapFromString(value: String): Instant = Instant.ofEpochSecond(value.toLong())
-
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class ChatStyleSettingProcessor(
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
 ) : SettingProcessor {
 
     override fun canProcess(context: ExecutorContext): Boolean {

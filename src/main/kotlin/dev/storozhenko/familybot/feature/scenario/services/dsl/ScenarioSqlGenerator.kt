@@ -12,7 +12,7 @@ class ScenarioSqlGenerator {
         return listOf(
             getForMove(move),
             getForWay(move),
-            getForWayToMove(move)
+            getForWayToMove(move),
         )
             .flatten()
             .distinct()

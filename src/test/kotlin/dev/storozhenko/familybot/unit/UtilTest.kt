@@ -35,7 +35,7 @@ class UtilTest {
                 Arguments.of(2, Pluralization.FEW),
                 Arguments.of(5, Pluralization.MANY),
                 Arguments.of(11, Pluralization.MANY),
-                Arguments.of(21, Pluralization.ONE)
+                Arguments.of(21, Pluralization.ONE),
             )
         }
 
@@ -53,7 +53,7 @@ class UtilTest {
                 Arguments.of(Month.SEPTEMBER, "сентябрь"),
                 Arguments.of(Month.OCTOBER, "октябрь"),
                 Arguments.of(Month.NOVEMBER, "ноябрь"),
-                Arguments.of(Month.DECEMBER, "декабрь")
+                Arguments.of(Month.DECEMBER, "декабрь"),
             )
         }
     }
@@ -123,13 +123,13 @@ class UtilTest {
             user2,
             user3,
             user3,
-            user3
+            user3,
         ).formatTopList()
         Assertions.assertEquals(3, topList.size)
     }
 
     @Test
-    fun todayDayTest(){
+    fun todayDayTest() {
         Assertions.assertTrue(Instant.now().isToday())
         Assertions.assertFalse(Instant.now().plus(25, ChronoUnit.HOURS).isToday())
         Assertions.assertFalse(Instant.now().minus(25, ChronoUnit.HOURS).isToday())

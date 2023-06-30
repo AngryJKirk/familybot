@@ -47,7 +47,7 @@ class PidorExecutor(
     private val pidorStrikesService: PidorStrikesService,
     private val easyKeyValueService: EasyKeyValueService,
     private val botConfig: BotConfig,
-    private val dictionary: Dictionary
+    private val dictionary: Dictionary,
 ) : CommandExecutor(), Configurable {
     override fun getFunctionId(context: ExecutorContext): FunctionId {
         return FunctionId.PIDOR
@@ -68,7 +68,7 @@ class PidorExecutor(
     fun selectPidor(
         chat: Chat,
         key: ChatEasyKey,
-        silent: Boolean = false
+        silent: Boolean = false,
     ): Pair<(suspend (AbsSender) -> Unit), Boolean> {
         val users = userRepository.getUsers(chat, activeOnly = true)
 
@@ -96,7 +96,7 @@ class PidorExecutor(
             listOf(
                 Phrase.PIDOR_SEARCH_START,
                 Phrase.PIDOR_SEARCH_MIDDLE,
-                Phrase.PIDOR_SEARCH_FINISHER
+                Phrase.PIDOR_SEARCH_FINISHER,
             )
                 .map { phrase -> dictionary.get(phrase, key) }
                 .map(String::bold)
@@ -107,7 +107,7 @@ class PidorExecutor(
                         botConfig,
                         enableHtml = true,
                         shouldTypeBeforeSend = true,
-                        typeDelay = 1500 to 1501
+                        typeDelay = 1500 to 1501,
                     )
                 }
             val pidor = nextPidor.await()
@@ -117,7 +117,7 @@ class PidorExecutor(
                 botConfig,
                 enableHtml = true,
                 shouldTypeBeforeSend = true,
-                typeDelay = 1500 to 1501
+                typeDelay = 1500 to 1501,
             )
             if (pidorToleranceValue == null) {
                 easyKeyValueService.put(PidorTolerance, key, 1, untilNextDay())
@@ -132,7 +132,7 @@ class PidorExecutor(
     private suspend fun getNextPidorAsync(
         users: List<User>,
         sender: AbsSender,
-        chat: Chat
+        chat: Chat,
     ): Deferred<User> {
         return coroutineScope {
             async {
@@ -165,7 +165,7 @@ class PidorExecutor(
 
     private fun checkIfUserStillThere(
         user: User,
-        sender: AbsSender
+        sender: AbsSender,
     ) {
         val userFromChat = getUserFromChat(user, sender)
         if (userFromChat == null) {
@@ -192,14 +192,14 @@ class PidorExecutor(
                 SendMessage(
                     chat.idString,
                     dictionary.get(Phrase.PIROR_DISCOVERED_ONE, key) + " " +
-                            formatName(pidorsByChat.first(), key)
+                        formatName(pidorsByChat.first(), key),
                 ).apply { enableHtml(true) }
             }
 
             else -> SendMessage(
                 chat.idString,
                 dictionary.get(Phrase.PIROR_DISCOVERED_MANY, key) + " " +
-                        pidorsByChat.joinToString { formatName(it, key) }
+                    pidorsByChat.joinToString { formatName(it, key) },
             ).apply { enableHtml(true) }
         }
     }
@@ -224,7 +224,7 @@ class PidorExecutor(
 
     private fun isLimitOfPidorsExceeded(
         usersInChat: List<User>,
-        pidorToleranceValue: Long
+        pidorToleranceValue: Long,
     ): Boolean {
         val limit = if (usersInChat.size >= 50) 2 else 1
         log.info("Limit of pidors is $limit, tolerance is $pidorToleranceValue")
@@ -249,7 +249,7 @@ class PidorExecutor(
                 context,
                 context.phrase(Phrase.PICK_PIDOR_PAYMENT_REQUIRED),
                 shouldTypeBeforeSend = true,
-                replyToUpdate = true
+                replyToUpdate = true,
             )
             return
         }
@@ -261,14 +261,14 @@ class PidorExecutor(
                     context,
                     context.phrase(Phrase.PICK_PIDOR_CURRENT_BOT),
                     shouldTypeBeforeSend = true,
-                    replyToUpdate = true
+                    replyToUpdate = true,
                 )
             } else {
                 context.sender.send(
                     context,
                     context.phrase(Phrase.PICK_PIDOR_ANY_BOT),
                     shouldTypeBeforeSend = true,
-                    replyToUpdate = true
+                    replyToUpdate = true,
                 )
             }
             return
@@ -282,11 +282,11 @@ class PidorExecutor(
             context,
             context.phrase(Phrase.PICK_PIDOR_PICKED).replace("{}", pickedUser.getGeneralName()),
             shouldTypeBeforeSend = true,
-            replyMessageId = replyMessage.messageId
+            replyMessageId = replyMessage.messageId,
         )
         val newAbilityCount = easyKeyValueService.get(
             PickPidorAbilityCount,
-            context.userKey
+            context.userKey,
         )
         if (newAbilityCount == 0L) {
             context.sender.send(
@@ -294,14 +294,14 @@ class PidorExecutor(
                 context.phrase(Phrase.PICK_PIDOR_ABILITY_COUNT_LEFT_NONE),
                 shouldTypeBeforeSend = true,
                 replyToUpdate = true,
-                enableHtml = true
+                enableHtml = true,
             )
         } else {
             context.sender.send(
                 context,
                 context.phrase(Phrase.PICK_PIDOR_ABILITY_COUNT_LEFT).replace("{}", newAbilityCount.toString()),
                 shouldTypeBeforeSend = true,
-                replyToUpdate = true
+                replyToUpdate = true,
             )
         }
     }

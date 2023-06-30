@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class PrivateMessageHelpExecutor(
-    private val helpExecutor: HelpCommandExecutor
+    private val helpExecutor: HelpCommandExecutor,
 ) : PrivateMessageExecutor {
     override suspend fun execute(context: ExecutorContext) {
         if (helpExecutor.canExecute(context)) {
@@ -18,7 +18,7 @@ class PrivateMessageHelpExecutor(
             context.sender.send(
                 context,
                 context.phrase(Phrase.PRIVATE_MESSAGE_HELP),
-                shouldTypeBeforeSend = true
+                shouldTypeBeforeSend = true,
             )
         }
     }

@@ -11,7 +11,7 @@ class SleepKeyWordProcessor : KeyWordProcessor {
     override fun canProcess(context: ExecutorContext): Boolean {
         val text = context.message.text ?: return false
         return text.contains("спать", ignoreCase = true) ||
-                text.contains("сплю", ignoreCase = true)
+            text.contains("сплю", ignoreCase = true)
     }
 
     override suspend fun process(context: ExecutorContext) {

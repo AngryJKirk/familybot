@@ -21,7 +21,7 @@ import java.lang.Integer.max
 class PidorStrikesService(
     private val easyKeyValueService: EasyKeyValueService,
     private val dictionary: Dictionary,
-    private val botConfig: BotConfig
+    private val botConfig: BotConfig,
 ) {
     fun calculateStrike(chat: Chat, chatEasyKey: ChatEasyKey, pidor: User): suspend (AbsSender) -> Unit {
         val stats = easyKeyValueService.get(PidorStrikeStats, chatEasyKey, PidorStrikes())
@@ -40,7 +40,7 @@ class PidorStrikesService(
 
     private fun calculateStrike(
         stats: PidorStrikes,
-        pidor: User
+        pidor: User,
     ): PidorStrikes {
         val currentValue = stats.stats[pidor.id] ?: PidorStrikeStat(0, 0)
         val nextStrikeValue = currentValue.currentStrike + 1
@@ -53,17 +53,17 @@ class PidorStrikesService(
                 .plus(
                     pidor.id to PidorStrikeStat(
                         nextStrikeValue,
-                        max(nextStrikeValue, currentValue.maxStrike)
-                    )
+                        max(nextStrikeValue, currentValue.maxStrike),
+                    ),
                 )
-                .toMap()
+                .toMap(),
         )
     }
 
     private fun congratulate(
         chat: Chat,
         chatEasyKey: ChatEasyKey,
-        strike: PidorStrikeStat
+        strike: PidorStrikeStat,
     ): suspend (AbsSender) -> Unit {
         val phrase = when (strike.currentStrike) {
             2 -> Phrase.PIDOR_STRIKE_2
@@ -83,7 +83,7 @@ class PidorStrikesService(
                 dictionary.get(phrase, chatEasyKey).bold(),
                 botConfig,
                 shouldTypeBeforeSend = true,
-                enableHtml = true
+                enableHtml = true,
             )
         }
     }

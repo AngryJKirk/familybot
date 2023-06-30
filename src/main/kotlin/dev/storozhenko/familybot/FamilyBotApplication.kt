@@ -19,7 +19,7 @@ import org.telegram.telegrambots.facilities.filedownloader.TelegramFileDownloade
 @EnableScheduling
 @EnableConfigurationProperties(BotConfigInjector::class)
 class FamilyBotApplication(
-    private val env: ConfigurableEnvironment
+    private val env: ConfigurableEnvironment,
 ) {
     private val logger = getLogger()
 
@@ -44,21 +44,21 @@ class FamilyBotApplication(
             botNameAliases,
             optional(
                 botConfigInjector::yandexKey,
-                "Yandex API key is not found, language API won't work"
+                "Yandex API key is not found, language API won't work",
             ),
             optional(
                 botConfigInjector::paymentToken,
-                "Payment token is not found, payment API won't work"
+                "Payment token is not found, payment API won't work",
             ),
             env.activeProfiles.contains(BotStarter.TESTING_PROFILE_NAME),
             optional(
                 botConfigInjector::ytdlLocation,
-                "yt-dlp is missing, downloading function won't work"
+                "yt-dlp is missing, downloading function won't work",
             ),
             optional(
                 botConfigInjector::openAiToken,
-                "OpenAI token is missing, API won't work"
-            )
+                "OpenAI token is missing, API won't work",
+            ),
         )
     }
 
@@ -88,7 +88,7 @@ data class BotConfig(
     val paymentToken: String?,
     val testEnvironment: Boolean,
     val ytdlLocation: String?,
-    val openAiToken: String?
+    val openAiToken: String?,
 )
 
 @ConfigurationProperties("settings", ignoreInvalidFields = false)
@@ -101,7 +101,7 @@ data class BotConfigInjector @ConstructorBinding constructor(
     val yandexKey: String?,
     val paymentToken: String?,
     val ytdlLocation: String?,
-    val openAiToken: String?
+    val openAiToken: String?,
 )
 
 @Suppress("unused")

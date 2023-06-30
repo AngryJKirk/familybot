@@ -22,7 +22,7 @@ class PidorAutoSelectService(
     private val pidorExecutor: PidorExecutor,
     private val dictionary: Dictionary,
     private val configureRepository: FunctionsConfigureRepository,
-    private val botConfig: BotConfig
+    private val botConfig: BotConfig,
 ) {
     private val log = getLogger()
 
@@ -36,7 +36,7 @@ class PidorAutoSelectService(
     private fun runForChat(
         absSender: AbsSender,
         chatKey: ChatEasyKey,
-        timesLeft: Long
+        timesLeft: Long,
     ) {
         val chat = Chat(chatKey.chatId, name = null)
         log.info("Running auto pidor select for chat $chat")
@@ -50,7 +50,7 @@ class PidorAutoSelectService(
                         absSender.sendContextFree(
                             chat.idString,
                             dictionary.get(Phrase.AUTO_PIDOR_LAST_TIME, chatKey),
-                            botConfig
+                            botConfig,
                         )
                         easyKeyValueService.remove(AutoPidorTimesLeft, chatKey)
                     }

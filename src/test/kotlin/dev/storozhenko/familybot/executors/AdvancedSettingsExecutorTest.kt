@@ -30,10 +30,10 @@ class AdvancedSettingsExecutorTest : CommandExecutorTest() {
                 Arguments.of(
                     "${Command.ADVANCED_SETTINGS} разговорчики $randomDensityValue",
                     TalkingDensity,
-                    randomDensityValue
+                    randomDensityValue,
                 ),
                 Arguments.of("${Command.ADVANCED_SETTINGS} хохол вкл", UkrainianLanguage, true),
-                Arguments.of("${Command.ADVANCED_SETTINGS} хохол выкл", UkrainianLanguage, false)
+                Arguments.of("${Command.ADVANCED_SETTINGS} хохол выкл", UkrainianLanguage, false),
             )
         }
     }
@@ -55,7 +55,7 @@ class AdvancedSettingsExecutorTest : CommandExecutorTest() {
     fun <T : Any> executeTest(
         command: String,
         easyKeyType: EasyKeyType<T, ChatEasyKey>,
-        expectedSettingValue: T
+        expectedSettingValue: T,
     ) {
         val context = createSimpleContext(command)
         runBlocking { advancedSettingsExecutor.execute(context) }

@@ -33,7 +33,7 @@ class AskWorldRepository(private val template: JdbcTemplate) {
             FROM ask_world_questions_delivery WHERE message_id = ? AND chat_id = ?)""",
             { rs, _ -> rs.toAskWorldQuestion() },
             messageId,
-            chatId
+            chatId,
         ).firstOrNull()
     }
 
@@ -54,7 +54,7 @@ class AskWorldRepository(private val template: JdbcTemplate) {
                 WHERE date >= ? AND question = ?""",
             { rs, _ -> rs.toAskWorldQuestion() },
             Timestamp.from(date),
-            message
+            message,
         )
     }
 
@@ -75,7 +75,7 @@ class AskWorldRepository(private val template: JdbcTemplate) {
                 WHERE chat_id = ? AND LOWER(question) LIKE ?""",
             { rs, _ -> rs.toAskWorldQuestion() },
             chat.id,
-            "%${message.lowercase()}%"
+            "%${message.lowercase()}%",
         )
     }
 
@@ -84,7 +84,7 @@ class AskWorldRepository(private val template: JdbcTemplate) {
             "INSERT INTO ask_world_questions_delivery (id, chat_id, message_id) VALUES (?, ?, ?)",
             question.id,
             chat.id,
-            question.messageId
+            question.messageId,
         )
     }
 
@@ -95,12 +95,12 @@ class AskWorldRepository(private val template: JdbcTemplate) {
             question.message,
             question.chat.id,
             question.user.id,
-            Timestamp.from(question.date)
+            Timestamp.from(question.date),
         ) ?: throw FamilyBot.InternalException("Something has gone wrong, investigate please")
     }
 
     fun getQuestionsFromDate(
-        date: Instant
+        date: Instant,
     ): List<AskWorldQuestion> {
         return template.query(
             """SELECT
@@ -117,7 +117,7 @@ class AskWorldRepository(private val template: JdbcTemplate) {
                             INNER JOIN users u ON ask_world_questions.user_id = u.id
                 WHERE date >= ?""",
             { rs, _ -> rs.toAskWorldQuestion() },
-            Timestamp.from(date)
+            Timestamp.from(date),
         )
     }
 
@@ -129,20 +129,20 @@ class AskWorldRepository(private val template: JdbcTemplate) {
             reply.message,
             reply.chat.id,
             reply.user.id,
-            Timestamp.from(reply.date)
+            Timestamp.from(reply.date),
         ) ?: throw FamilyBot.InternalException("Something has gone wrong, investigate please")
     }
 
     fun isReplied(
         askWorldQuestion: AskWorldQuestion,
         chat: Chat,
-        user: User
+        user: User,
     ): Boolean {
         return template.queryForList(
             "SELECT 1 FROM ask_world_replies WHERE question_id = ? AND chat_id = ? AND user_id =?",
             askWorldQuestion.id,
             chat.id,
-            user.id
+            user.id,
         )
             .isNotEmpty()
     }

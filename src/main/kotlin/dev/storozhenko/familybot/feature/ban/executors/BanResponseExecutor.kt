@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class BanResponseExecutor(
-    private val banService: BanService
+    private val banService: BanService,
 ) : Executor {
 
     override suspend fun execute(context: ExecutorContext) {

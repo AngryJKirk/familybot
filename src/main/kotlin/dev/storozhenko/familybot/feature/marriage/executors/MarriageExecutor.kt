@@ -26,7 +26,7 @@ import kotlin.time.Duration.Companion.minutes
 @Component
 class MarriageExecutor(
     private val marriagesRepository: MarriagesRepository,
-    private val keyValueService: EasyKeyValueService
+    private val keyValueService: EasyKeyValueService,
 ) : CommandExecutor() {
     private val selfSuckStream: InputStream = this::class.java.classLoader
         .getResourceAsStream("static/selfsuck.webp")
@@ -47,8 +47,8 @@ class MarriageExecutor(
             context.sender.execute(
                 SendSticker(
                     chat.idString,
-                    InputFile(selfSuckStream, "selfsuck")
-                ).apply { replyToMessageId = context.message.messageId }
+                    InputFile(selfSuckStream, "selfsuck"),
+                ).apply { replyToMessageId = context.message.messageId },
             )
             return
         }
@@ -56,7 +56,7 @@ class MarriageExecutor(
             context.sender.send(
                 context,
                 context.phrase(Phrase.MARRY_PROPOSED_TO_BOT),
-                replyToUpdate = true
+                replyToUpdate = true,
             )
             return
         }
@@ -65,7 +65,7 @@ class MarriageExecutor(
             context.sender.send(
                 context,
                 context.phrase(Phrase.MARRY_SOURCE_IS_MARRIED),
-                replyToUpdate = true
+                replyToUpdate = true,
             )
             return
         }
@@ -74,7 +74,7 @@ class MarriageExecutor(
             context.sender.send(
                 context,
                 context.phrase(Phrase.MARRY_TARGET_IS_MARRIED),
-                replyToUpdate = true
+                replyToUpdate = true,
             )
             return
         }
@@ -82,7 +82,7 @@ class MarriageExecutor(
             context.sender.send(
                 context,
                 context.phrase(Phrase.MARRY_PROPOSED_AGAIN),
-                replyToUpdate = true
+                replyToUpdate = true,
             )
             return
         }
@@ -97,31 +97,31 @@ class MarriageExecutor(
 
     private fun isProposedAlready(
         proposalSource: Message,
-        proposalTarget: Message
+        proposalTarget: Message,
     ): Boolean {
         return keyValueService.get(ProposalTo, proposalTarget.key()) == proposalSource.from.id
     }
 
     private fun isMarriedAlready(
         chat: Chat,
-        proposalSource: Message
+        proposalSource: Message,
     ) = marriagesRepository.getMarriage(chat.id, proposalSource.from.id) != null
 
     private suspend fun propose(
         proposalSource: Message,
         proposalTarget: Message,
-        context: ExecutorContext
+        context: ExecutorContext,
     ) {
         keyValueService.put(
             ProposalTo,
             key = proposalTarget.key(),
             value = proposalSource.from.id,
-            duration = 10.minutes
+            duration = 10.minutes,
         )
         context.sender.send(
             context,
             context.phrase(Phrase.MARRY_PROPOSED),
-            replyMessageId = proposalTarget.messageId
+            replyMessageId = proposalTarget.messageId,
         )
     }
 

@@ -25,7 +25,7 @@ class TimeExecutor : CommandExecutor() {
             "Время в Москве:           " to "Europe/Moscow",
             "Время в Ульяновске:       " to "Europe/Samara",
             "Время в Ташкенте:         " to "Asia/Tashkent",
-            "Время в Аргентине:        " to "America/Argentina/Buenos_Aires"
+            "Время в Аргентине:        " to "America/Argentina/Buenos_Aires",
         )
             .map { (prefix, zone) -> prefix.code() to ZoneId.of(zone) }
             .toMap()

@@ -17,7 +17,7 @@ import java.time.Instant
 @Component
 class GPTStatsExecutor(
     private val commonRepository: UserRepository,
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
 ) : OnlyBotOwnerExecutor() {
     override fun getMessagePrefix() = "gpt"
 
@@ -53,8 +53,8 @@ class GPTStatsExecutor(
                 .sortedBy { (_, time) -> time }
                 .map { (chatKey, time) ->
                     time.prettyFormat(dateOnly = true).code() + "  ⌛️  " +
-                            (chats[chatKey.chatId]?.name ?: "#no_name").bold()
-                }
+                        (chats[chatKey.chatId]?.name ?: "#no_name").bold()
+                },
         )
             .joinToString(separator = "\n")
     }

@@ -11,5 +11,5 @@ enum class MessageContentType(val id: Int) {
     TEXT(8),
     STICKER(9),
     CONTACT(10),
-    VIDEO(11)
+    VIDEO(11),
 }

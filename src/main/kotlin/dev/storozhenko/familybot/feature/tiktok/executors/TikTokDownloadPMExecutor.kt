@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 @Component
 class TikTokDownloadPMExecutor(
     private val tikTokDownloadExecutor: TikTokDownloadExecutor,
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
 ) : PrivateMessageExecutor {
     override suspend fun execute(context: ExecutorContext) = tikTokDownloadExecutor.execute(context)
 

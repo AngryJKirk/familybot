@@ -36,9 +36,9 @@ class TranslateService(private val botConfig: BotConfig) {
         val entity = HttpEntity(
             mapOf(
                 "texts" to listOf(message),
-                "targetLanguageCode" to "uk"
+                "targetLanguageCode" to "uk",
             ),
-            headers
+            headers,
         )
         val response = restTemplate
             .exchange(yandexUrl, HttpMethod.POST, entity, YandexTranslateResponse::class.java)
@@ -49,10 +49,10 @@ class TranslateService(private val botConfig: BotConfig) {
 }
 
 data class YandexTranslateResponse(
-    @JsonProperty("translations") val translations: List<YandexTranslation>
+    @JsonProperty("translations") val translations: List<YandexTranslation>,
 )
 
 data class YandexTranslation(
     @JsonProperty("text") val text: String,
-    @JsonProperty("detectedLanguageCode") val detectedLanguageCode: String
+    @JsonProperty("detectedLanguageCode") val detectedLanguageCode: String,
 )

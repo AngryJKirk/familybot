@@ -16,7 +16,7 @@ import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 class ScenarioContiniousExecutor(
     private val scenarioSessionManagementService: ScenarioSessionManagementService,
     private val scenarioService: ScenarioService,
-    botConfig: BotConfig
+    botConfig: BotConfig,
 ) :
     ContiniousConversationExecutor(botConfig) {
     override fun getDialogMessages(context: ExecutorContext) = context.allPhrases(Phrase.SCENARIO_CHOOSE)
@@ -32,7 +32,7 @@ class ScenarioContiniousExecutor(
                     .apply {
                         showAlert = true
                         text = context.phrase(Phrase.ACCESS_DENIED)
-                    }
+                    },
             )
         } else {
             val scenarioToStart = scenarioService.getScenarios()

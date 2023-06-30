@@ -36,7 +36,7 @@ val botConfig = BotConfig(
     paymentToken = null,
     testEnvironment = true,
     ytdlLocation = null,
-    openAiToken = null
+    openAiToken = null,
 )
 
 fun ExecutorTest.createSimpleContext(text: String? = null, custom: Update.() -> Unit = {}): ExecutorContext {
@@ -48,7 +48,7 @@ fun Update.createContext(sender: AbsSender) = this.context(botConfig, dictionary
 fun ExecutorTest.createSimpleCommandContext(
     command: Command,
     prefix: String? = null,
-    postfix: String? = null
+    postfix: String? = null,
 ): ExecutorContext {
     return createSimpleCommand(command, prefix, postfix).context(botConfig, dictionary, this.sender)
 }
@@ -67,7 +67,7 @@ fun createSimpleCommand(command: Command, prefix: String? = null, postfix: Strin
         val element = MessageEntity(
             "bot_command",
             prefix?.length ?: 0,
-            command.command.length + (postfix?.length ?: 0)
+            command.command.length + (postfix?.length ?: 0),
         )
             .apply { text = command.command }
         this.message.entities = mutableListOf()

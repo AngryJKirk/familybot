@@ -28,7 +28,7 @@ class FamilyBot(
     val router: Router,
     val pollRouter: PollRouter,
     val paymentRouter: PaymentRouter,
-    val easyKeyValueService: EasyKeyValueService
+    val easyKeyValueService: EasyKeyValueService,
 ) : TelegramLongPollingBot(config.botToken) {
 
     private val log = LoggerFactory.getLogger(FamilyBot::class.java)
@@ -84,7 +84,7 @@ class FamilyBot(
                             easyKeyValueService.put(
                                 function,
                                 ChatEasyKey(update.toChat().id),
-                                false
+                                false,
                             )
                         }
                 }

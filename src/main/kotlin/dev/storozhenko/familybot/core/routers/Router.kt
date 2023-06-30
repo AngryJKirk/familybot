@@ -52,7 +52,7 @@ class Router(
     private val rawUpdateLogger: RawUpdateLogger,
     private val botConfig: BotConfig,
     private val dictionary: Dictionary,
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
 ) {
 
     private val logger = getLogger()
@@ -105,7 +105,7 @@ class Router(
 
     private fun registerUpdate(
         message: Message,
-        update: Update
+        update: Update,
     ) {
         register(message)
         loggingScope.launch(loggingExceptionHandler) {
@@ -169,8 +169,8 @@ class Router(
                 CommandByUser(
                     context.user,
                     executor.command(),
-                    Instant.now()
-                )
+                    Instant.now(),
+                ),
             )
         }
     }
@@ -195,7 +195,7 @@ class Router(
 
     private fun selectExecutor(
         context: ExecutorContext,
-        forSingleUser: Boolean = false
+        forSingleUser: Boolean = false,
     ): Executor? {
         val executorsToProcess = if (forSingleUser) {
             executors.filterIsInstance<PrivateMessageExecutor>()

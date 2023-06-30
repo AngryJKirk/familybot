@@ -23,7 +23,7 @@ import kotlin.time.Duration.Companion.seconds
 class RouletteContiniousExecutor(
     private val botConfig: BotConfig,
     private val pidorRepository: PidorRepository,
-    private val pidorCompetitionService: PidorCompetitionService
+    private val pidorCompetitionService: PidorCompetitionService,
 ) : ContiniousConversationExecutor(botConfig) {
 
     private val log = LoggerFactory.getLogger(RouletteContiniousExecutor::class.java)
@@ -39,8 +39,8 @@ class RouletteContiniousExecutor(
     override fun canExecute(context: ExecutorContext): Boolean {
         val message = context.message
         return message.isReply &&
-                message.replyToMessage.from.userName == botConfig.botName &&
-                (message.replyToMessage.text ?: "") in getDialogMessages(context)
+            message.replyToMessage.from.userName == botConfig.botName &&
+            (message.replyToMessage.text ?: "") in getDialogMessages(context)
     }
 
     override suspend fun execute(context: ExecutorContext) {
@@ -55,8 +55,8 @@ class RouletteContiniousExecutor(
                     pidorRepository.addPidor(
                         Pidor(
                             user,
-                            Instant.now()
-                        )
+                            Instant.now(),
+                        ),
                     )
                 }
             }
@@ -79,8 +79,8 @@ class RouletteContiniousExecutor(
                         pidorRepository.addPidor(
                             Pidor(
                                 user,
-                                Instant.now()
-                            )
+                                Instant.now(),
+                            ),
                         )
                     }
                 }
@@ -89,8 +89,8 @@ class RouletteContiniousExecutor(
             context.sender.execute(
                 SendMessage(
                     chatId,
-                    "Сорян, но ты проиграл. Твое пидорское очко уходит в зрительный зал трижды. Правильный ответ был $rouletteNumber."
-                )
+                    "Сорян, но ты проиграл. Твое пидорское очко уходит в зрительный зал трижды. Правильный ответ был $rouletteNumber.",
+                ),
             )
         }
         delay(2.seconds)

@@ -34,7 +34,7 @@ fun notmain() {
                         """Обманули пидорка на два кулака""".trimMargin()
                     end()
                 }
-            }
+            },
         )
     val scenario = Scenario()
         .init {

@@ -29,14 +29,14 @@ enum class ShopItem(val title: Phrase, val description: Phrase, val price: Int) 
                                 callbackData = shopItem.name
                             }
                     }
-                    .chunked(1)
+                    .chunked(1),
 
             )
         }
 
         private fun formatLine(
             context: ExecutorContext,
-            shopItem: ShopItem
+            shopItem: ShopItem,
         ): String {
             val isPremium = context.update.from().isPremium ?: false
             val additionalCost = if (isPremium) 10 else 0

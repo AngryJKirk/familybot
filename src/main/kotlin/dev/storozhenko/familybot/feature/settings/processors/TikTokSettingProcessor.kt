@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class TikTokSettingProcessor(
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
 ) : SettingProcessor {
     override fun canProcess(context: ExecutorContext): Boolean {
         return context.update.getMessageTokens()[1] == "тикток"

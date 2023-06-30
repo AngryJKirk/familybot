@@ -15,7 +15,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 @Component
 class AutoPidorPaymentProcessor(
     private val keyValueService: EasyKeyValueService,
-    private val dictionary: Dictionary
+    private val dictionary: Dictionary,
 ) : PaymentProcessor {
     override fun itemType() = ShopItem.AUTO_PIDOR
 

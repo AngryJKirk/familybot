@@ -12,7 +12,7 @@ import dev.storozhenko.familybot.feature.logging.repos.CommandHistoryRepository
 import kotlinx.coroutines.delay
 
 abstract class SendRandomStickerExecutor(
-    private val historyRepository: CommandHistoryRepository
+    private val historyRepository: CommandHistoryRepository,
 ) : CommandExecutor() {
 
     override suspend fun execute(context: ExecutorContext) {
@@ -28,7 +28,7 @@ abstract class SendRandomStickerExecutor(
     private fun isInvokedToday(user: User): Boolean {
         val commandsFromUserToday = historyRepository.get(
             user,
-            from = startOfDay()
+            from = startOfDay(),
         ).map(CommandByUser::command)
         return commandsFromUserToday.any { it == command() }
     }

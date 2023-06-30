@@ -19,7 +19,7 @@ import java.time.LocalDate
 
 @Component
 class PidorStatsMonthExecutor(
-    private val pidorRepository: PidorRepository
+    private val pidorRepository: PidorRepository,
 ) : CommandExecutor(), Configurable {
 
     override fun getFunctionId(context: ExecutorContext): FunctionId {
@@ -35,15 +35,15 @@ class PidorStatsMonthExecutor(
 
         val pidorsByChat = pidorRepository.getPidorsByChat(
             context.chat,
-            startDate = startOfCurrentMonth()
+            startDate = startOfCurrentMonth(),
         )
             .map(Pidor::user)
             .formatTopList(
                 PluralizedWordsProvider(
                     one = { context.phrase(Phrase.PLURALIZED_COUNT_ONE) },
                     few = { context.phrase(Phrase.PLURALIZED_COUNT_FEW) },
-                    many = { context.phrase(Phrase.PLURALIZED_COUNT_MANY) }
-                )
+                    many = { context.phrase(Phrase.PLURALIZED_COUNT_MANY) },
+                ),
             )
         val title = "${context.phrase(Phrase.PIDOR_STAT_MONTH)} ${now.month.toRussian()}:\n".bold()
         context.sender.send(context, title + pidorsByChat.joinToString("\n"), enableHtml = true)

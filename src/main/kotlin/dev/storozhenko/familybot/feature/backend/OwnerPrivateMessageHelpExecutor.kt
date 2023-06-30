@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class OwnerPrivateMessageHelpExecutor(
-    onlyBotOwnerExecutors: List<OnlyBotOwnerExecutor>
+    onlyBotOwnerExecutors: List<OnlyBotOwnerExecutor>,
 ) : OnlyBotOwnerExecutor() {
     override fun getMessagePrefix() = "help"
     private val helpMessage = onlyBotOwnerExecutors

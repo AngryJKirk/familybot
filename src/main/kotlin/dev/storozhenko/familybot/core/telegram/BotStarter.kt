@@ -47,14 +47,14 @@ class BotStarter {
                 .builder()
                 .commands(commands)
                 .scope(BotCommandScopeAllGroupChats())
-                .build()
+                .build(),
         )
         bot.execute(
             SetMyCommands
                 .builder()
                 .command(helpCommand)
                 .scope(BotCommandScopeAllPrivateChats())
-                .build()
+                .build(),
         )
     }
 

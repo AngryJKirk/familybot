@@ -32,5 +32,5 @@ class TopHistoryExecutor : CommandExecutor() {
 }
 
 data class Mamoeb(
-    @JsonProperty("Templates") val curses: List<String>
+    @JsonProperty("Templates") val curses: List<String>,
 )

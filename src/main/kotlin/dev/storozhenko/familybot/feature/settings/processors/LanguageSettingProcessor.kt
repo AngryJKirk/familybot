@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class LanguageSettingProcessor(
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
 ) : SettingProcessor {
 
     override fun canProcess(context: ExecutorContext): Boolean {
@@ -22,7 +22,7 @@ class LanguageSettingProcessor(
         if (value != "вкл" && value != "выкл") {
             context.sender.send(
                 context,
-                context.phrase(Phrase.ADVANCED_SETTINGS_FAILED_UKRAINIAN_CHANGE)
+                context.phrase(Phrase.ADVANCED_SETTINGS_FAILED_UKRAINIAN_CHANGE),
             )
             return
         }

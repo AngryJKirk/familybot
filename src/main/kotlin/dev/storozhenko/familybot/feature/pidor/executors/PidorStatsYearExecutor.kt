@@ -18,7 +18,7 @@ import java.time.LocalDate
 
 @Component
 class PidorStatsYearExecutor(
-    private val pidorRepository: PidorRepository
+    private val pidorRepository: PidorRepository,
 ) : CommandExecutor(), Configurable {
     override fun getFunctionId(context: ExecutorContext): FunctionId {
         return FunctionId.PIDOR
@@ -32,15 +32,15 @@ class PidorStatsYearExecutor(
         val now = LocalDate.now()
         val pidorsByChat = pidorRepository.getPidorsByChat(
             context.chat,
-            startDate = startOfTheYear()
+            startDate = startOfTheYear(),
         )
             .map(Pidor::user)
             .formatTopList(
                 PluralizedWordsProvider(
                     one = { context.phrase(Phrase.PLURALIZED_COUNT_ONE) },
                     few = { context.phrase(Phrase.PLURALIZED_COUNT_FEW) },
-                    many = { context.phrase(Phrase.PLURALIZED_COUNT_MANY) }
-                )
+                    many = { context.phrase(Phrase.PLURALIZED_COUNT_MANY) },
+                ),
             )
         val title = "${context.phrase(Phrase.PIDOR_STAT_YEAR)} ${now.year}:\n".bold()
         context.sender.send(context, title + pidorsByChat.joinToString("\n"), enableHtml = true)

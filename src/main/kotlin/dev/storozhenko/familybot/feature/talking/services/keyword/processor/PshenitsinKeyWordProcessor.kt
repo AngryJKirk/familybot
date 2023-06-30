@@ -14,7 +14,7 @@ import kotlin.time.Duration.Companion.minutes
 @Component
 class PshenitsinKeyWordProcessor(
     @Qualifier("Old") private val talkingService: TalkingService,
-    private val keyValueService: EasyKeyValueService
+    private val keyValueService: EasyKeyValueService,
 ) : KeyWordProcessor {
 
     override fun canProcess(context: ExecutorContext): Boolean {
@@ -40,7 +40,7 @@ class PshenitsinKeyWordProcessor(
             context,
             text,
             shouldTypeBeforeSend = true,
-            replyToUpdate = true
+            replyToUpdate = true,
         )
 
         keyValueService.put(PshenitsinTolerance, context.chatKey, true, 1.minutes)

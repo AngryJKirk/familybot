@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class PidorLimitPaymentProcessor(
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
 ) : PaymentProcessor {
     private val log = getLogger()
     override fun itemType() = ShopItem.DROP_PIDOR_LIMIT

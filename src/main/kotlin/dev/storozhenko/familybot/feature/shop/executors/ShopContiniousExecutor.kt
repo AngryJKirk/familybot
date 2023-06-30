@@ -17,7 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.payments.LabeledPrice
 
 @Component
 class ShopContiniousExecutor(
-    private val botConfig: BotConfig
+    private val botConfig: BotConfig,
 ) : ContiniousConversationExecutor(botConfig) {
 
     override fun getDialogMessages(context: ExecutorContext): Set<String> {
@@ -49,11 +49,11 @@ class ShopContiniousExecutor(
                 providerToken,
                 "help",
                 "RUB",
-                listOf(LabeledPrice(context.phrase(Phrase.SHOP_PAY_LABEL), shopItem.price + additionalTax))
+                listOf(LabeledPrice(context.phrase(Phrase.SHOP_PAY_LABEL), shopItem.price + additionalTax)),
             ).apply {
                 maxTipAmount = 100.rubles()
                 suggestedTipAmounts = listOf(10.rubles(), 20.rubles(), 50.rubles(), 100.rubles())
-            }
+            },
         )
     }
 
@@ -61,7 +61,7 @@ class ShopContiniousExecutor(
         return ShopPayload(
             context.chat.id,
             context.user.id,
-            shopItem
+            shopItem,
         ).toJson()
     }
 }

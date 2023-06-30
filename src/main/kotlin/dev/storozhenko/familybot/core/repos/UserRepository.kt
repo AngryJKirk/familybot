@@ -15,12 +15,12 @@ class UserRepository(private val template: JdbcTemplate) {
             "INSERT INTO users (id, name, username) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET name = excluded.name, username = excluded.username ",
             user.id,
             user.name,
-            user.nickname
+            user.nickname,
         )
         template.update(
             "INSERT INTO users2chats (chat_id, user_id) VALUES (?, ?) ON CONFLICT(chat_id, user_id) DO UPDATE SET active = TRUE ",
             user.chat.id,
-            user.id
+            user.id,
         )
     }
 
@@ -37,7 +37,7 @@ class UserRepository(private val template: JdbcTemplate) {
             "INSERT INTO chats (id, name) VALUES (?, ?) ON CONFLICT(id) DO UPDATE SET name = excluded.name, active = TRUE",
             chat.id,
             chat.name
-                ?: ""
+                ?: "",
         )
     }
 
@@ -58,7 +58,7 @@ class UserRepository(private val template: JdbcTemplate) {
             "UPDATE users2chats SET active = ? WHERE chat_id = ? AND user_id = ?",
             status,
             user.chat.id,
-            user.id
+            user.id,
         )
     }
 
@@ -71,7 +71,7 @@ class UserRepository(private val template: JdbcTemplate) {
             "SELECT * FROM users INNER JOIN users2chats u2c ON users.id = u2c.user_id WHERE LOWER(name) LIKE LOWER(?) OR LOWER(username) LIKE LOWER(?)",
             { rs, _ -> rs.toUser() },
             "%$namePart%",
-            "%$namePart%"
+            "%$namePart%",
         )
     }
 
@@ -79,7 +79,7 @@ class UserRepository(private val template: JdbcTemplate) {
         return template.query(
             "SELECT * FROM chats INNER JOIN users2chats u2c ON chats.id = u2c.chat_id WHERE u2c.user_id = ? ",
             { rs, _ -> rs.toChat() },
-            user.id
+            user.id,
         )
     }
 }

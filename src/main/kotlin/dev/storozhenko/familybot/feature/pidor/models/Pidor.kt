@@ -7,11 +7,10 @@ import java.time.Instant
 data class Pidor(val user: User, val date: Instant)
 
 data class PidorStrikes(
-    @JsonProperty("stats") val stats: Map<Long, PidorStrikeStat> = mutableMapOf()
+    @JsonProperty("stats") val stats: Map<Long, PidorStrikeStat> = mutableMapOf(),
 )
-
 
 data class PidorStrikeStat(
     @JsonProperty("currentStrike") val currentStrike: Int,
-    @JsonProperty("maxStrike") val maxStrike: Int
+    @JsonProperty("maxStrike") val maxStrike: Int,
 )

@@ -15,7 +15,7 @@ import kotlin.time.Duration.Companion.seconds
 class ScenarioExecutor(
     private val scenarioSessionManagementService: ScenarioSessionManagementService,
     private val scenarioService: ScenarioService,
-    private val scenarioGameplayService: ScenarioGameplayService
+    private val scenarioGameplayService: ScenarioGameplayService,
 ) : CommandExecutor() {
     override fun command() = Command.SCENARIO
 
@@ -59,14 +59,14 @@ class ScenarioExecutor(
     }
 
     private suspend fun tellTheStory(
-        context: ExecutorContext
+        context: ExecutorContext,
     ) {
         val story = scenarioService.getAllStoryOfCurrentGame(context.chat)
         context.sender.send(context, story, enableHtml = true)
     }
 
     private suspend fun moveState(
-        context: ExecutorContext
+        context: ExecutorContext,
     ) {
         val nextMove = scenarioGameplayService.nextState(context.chat)
         if (nextMove == null) {

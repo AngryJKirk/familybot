@@ -30,7 +30,7 @@ class QuoteByTagExecutor(private val quoteRepository: QuoteRepository) : Command
             context,
             QUOTE_MESSAGE,
             replyToUpdate = true,
-            customization = { replyMarkup = InlineKeyboardMarkup(rows) }
+            customization = { replyMarkup = InlineKeyboardMarkup(rows) },
         )
     }
 }

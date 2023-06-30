@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class ScenarioPollManagingService(
-    private val scenarioRepository: ScenarioRepository
+    private val scenarioRepository: ScenarioRepository,
 ) {
 
     private val log = getLogger()

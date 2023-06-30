@@ -21,7 +21,7 @@ import kotlin.time.Duration.Companion.minutes
 class BotMentionKeyWordProcessor(
     private val botConfig: BotConfig,
     @Qualifier("Picker") private val talkingService: TalkingService,
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
 ) : KeyWordProcessor {
 
     private val defaultFuckOffDuration = 15.minutes
@@ -31,7 +31,7 @@ class BotMentionKeyWordProcessor(
         Regex(".*завали.{0,10}ебало.*", RegexOption.IGNORE_CASE),
         Regex(".*ебало.{0,10}завали.*", RegexOption.IGNORE_CASE),
         Regex(".*стули.{0,10}пельку.*", RegexOption.IGNORE_CASE),
-        Regex(".*пельку.{0,10}стули.*", RegexOption.IGNORE_CASE)
+        Regex(".*пельку.{0,10}стули.*", RegexOption.IGNORE_CASE),
     )
 
     override fun canProcess(context: ExecutorContext): Boolean {
@@ -52,7 +52,7 @@ class BotMentionKeyWordProcessor(
             val reply = async {
                 talkingService.getReplyToUser(
                     context,
-                    randomBoolean() && shouldBeQuestion
+                    randomBoolean() && shouldBeQuestion,
                 )
             }
             context.sender.sendDeferred(
@@ -60,15 +60,15 @@ class BotMentionKeyWordProcessor(
                 reply,
                 replyToUpdate = true,
                 shouldTypeBeforeSend = true,
-                enableHtml = true
+                enableHtml = true,
             )
         }
     }
 
     private fun isMediaResponse(message: Message): Boolean {
         val replyToMessage = message.replyToMessage ?: return false
-        return replyToMessage.hasVideo() || replyToMessage.hasDocument()
-            || replyToMessage.hasPhoto()
+        return replyToMessage.hasVideo() || replyToMessage.hasDocument() ||
+            replyToMessage.hasPhoto()
     }
 
     private fun isBotMention(message: Message): Boolean {

@@ -10,5 +10,5 @@ data class AskWorldReply(
     val message: String,
     val user: User,
     val chat: Chat,
-    val date: Instant
+    val date: Instant,
 )

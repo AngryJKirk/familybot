@@ -16,7 +16,7 @@ import java.time.Instant
 
 @Component
 class MarryListExecutor(
-    private val marriagesRepository: MarriagesRepository
+    private val marriagesRepository: MarriagesRepository,
 ) : CommandExecutor() {
 
     private val loveEmojis = listOf(
@@ -57,7 +57,7 @@ class MarryListExecutor(
         "👩‍❤️‍👩",
         "🏩",
         "💒",
-        "♥️"
+        "♥️",
     )
 
     override fun command() = Command.MARRY_LIST
@@ -91,7 +91,7 @@ class MarryListExecutor(
         val pluralization = PluralizedWordsProvider(
             one = { context.phrase(Phrase.PLURALIZED_DAY_ONE) },
             few = { context.phrase(Phrase.PLURALIZED_DAY_FEW) },
-            many = { context.phrase(Phrase.PLURALIZED_DAY_MANY) }
+            many = { context.phrase(Phrase.PLURALIZED_DAY_MANY) },
         )
         val emojiId = (marriage.firstUser.id + marriage.secondUser.id) % loveEmojis.size
         return pluralize(amountOfDays.toInt(), pluralization) + " " + (loveEmojis.getOrNull(emojiId.toInt()) ?: "")

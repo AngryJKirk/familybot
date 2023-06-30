@@ -26,9 +26,8 @@ import java.util.concurrent.CompletableFuture
 @Suppress("UNCHECKED_CAST")
 class TrackingAbsSender(
     private val absSender: AbsSender,
-    val tracking: MutableList<Message> = ArrayList()
+    val tracking: MutableList<Message> = ArrayList(),
 ) : AbsSender() {
-
 
     override fun <T : Serializable?, Method : BotApiMethod<T>?> executeAsync(method: Method): CompletableFuture<T> {
         return absSender.executeAsync(method)
@@ -180,7 +179,7 @@ class TrackingAbsSender(
 
     public override fun <T : Serializable?, Method : BotApiMethod<T>?, Callback : SentCallback<T>?> sendApiMethodAsync(
         method: Method,
-        callback: Callback
+        callback: Callback,
     ) {
         callProtectedMethod(absSender, "sendApiMethodAsync", method, callback)
     }

@@ -12,7 +12,7 @@ import java.time.Month
 @Component
 class Dictionary(
     private val keyValueService: EasyKeyValueService,
-    private val dictionaryReader: DictionaryReader
+    private val dictionaryReader: DictionaryReader,
 ) {
     fun getAll(phrase: Phrase): Set<String> {
         return dictionaryReader.getAllPhrases(phrase).toSet()

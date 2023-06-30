@@ -26,7 +26,7 @@ class TalkingServiceChatGpt(
     private val easyKeyValueService: EasyKeyValueService,
     private val gptSettingsReader: GptSettingsReader,
     private val pidorRepository: PidorRepository,
-    private val botConfig: BotConfig
+    private val botConfig: BotConfig,
 ) : TalkingService {
     companion object {
         private val codeMarkupPattern = Regex("`{1,3}([^`]+)`{1,3}")
@@ -60,8 +60,8 @@ class TalkingServiceChatGpt(
             chatMessages.add(
                 ChatMessage(
                     "user",
-                    listOf(text, gptSettingsReader.getStyleValue(style), getMessageSizeLimiter()).joinToString("\n")
-                )
+                    listOf(text, gptSettingsReader.getStyleValue(style), getMessageSizeLimiter()).joinToString("\n"),
+                ),
             )
         }
         chatMessages.add(0, systemMessage)
@@ -87,7 +87,7 @@ class TalkingServiceChatGpt(
 
     private fun getPastMessages(
         style: GptStyle,
-        context: ExecutorContext
+        context: ExecutorContext,
     ): MutableList<ChatMessage> {
         val chatId = context.chat.idString
         val cache = caches[style] ?: throw FamilyBot.InternalException("Internal logic error, check logs")
@@ -103,7 +103,7 @@ class TalkingServiceChatGpt(
 
     private fun getSystemMessage(
         style: GptStyle,
-        context: ExecutorContext
+        context: ExecutorContext,
     ): ChatMessage {
         val pidorMessage = getCurrentPidors(context)
         val universeValue = if (pidorMessage != null && style != GptStyle.ASSISTANT) {
@@ -132,7 +132,7 @@ class TalkingServiceChatGpt(
             ChatGPTTokenUsageByChat,
             context.chatKey,
             currentValue + response.usage.totalTokens,
-            untilNextMonth()
+            untilNextMonth(),
         )
     }
 

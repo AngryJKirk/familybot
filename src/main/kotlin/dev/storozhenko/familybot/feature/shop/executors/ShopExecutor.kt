@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 
 @Component
 class ShopExecutor(
-    botConfig: BotConfig
+    botConfig: BotConfig,
 ) : CommandExecutor() {
     private val isEnabled = botConfig.paymentToken != null
 
@@ -28,7 +28,7 @@ class ShopExecutor(
             context,
             context.phrase(Phrase.SHOP_KEYBOARD),
             replyToUpdate = true,
-            customization = customization(context)
+            customization = customization(context),
         )
     }
 

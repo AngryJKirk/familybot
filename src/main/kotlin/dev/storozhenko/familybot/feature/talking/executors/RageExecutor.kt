@@ -18,7 +18,7 @@ import kotlin.time.Duration.Companion.minutes
 
 @Component
 class RageExecutor(
-    private val easyKeyValueService: EasyKeyValueService
+    private val easyKeyValueService: EasyKeyValueService,
 ) : CommandExecutor(), Configurable {
 
     private val log = getLogger()
@@ -55,7 +55,7 @@ class RageExecutor(
             context.sender.send(
                 context,
                 context.phrase(Phrase.RAGE_DONT_CARE_ABOUT_YOU),
-                shouldTypeBeforeSend = true
+                shouldTypeBeforeSend = true,
             )
             return
         }
@@ -75,7 +75,7 @@ class RageExecutor(
     private fun isRageForced(context: ExecutorContext): Boolean {
         return context.message.text.contains(
             "FORCED" +
-                    context.user.id.toString().takeLast(4)
+                context.user.id.toString().takeLast(4),
         )
     }
 }

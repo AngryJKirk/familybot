@@ -22,7 +22,7 @@ class HelpCommandExecutor : CommandExecutor() {
             customization = {
                 disableWebPagePreview = true
                 disableNotification = true
-            }
+            },
         )
     }
 }

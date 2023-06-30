@@ -30,7 +30,7 @@ class MarriagesRepository(private val jdbcTemplate: JdbcTemplate) {
             Timestamp.from(marriage.startDate),
             marriage.chatId,
             marriage.firstUser.id,
-            marriage.secondUser.id
+            marriage.secondUser.id,
         )
     }
 
@@ -54,7 +54,7 @@ class MarriagesRepository(private val jdbcTemplate: JdbcTemplate) {
             WHERE chat_id = ? AND marriage_end_date IS NULL
             """.trimIndent(),
             { rs, _ -> rs.toMarriage() },
-            chatId
+            chatId,
         )
     }
 
@@ -69,7 +69,7 @@ class MarriagesRepository(private val jdbcTemplate: JdbcTemplate) {
             Timestamp.from(Instant.now()),
             chatId,
             userId,
-            userId
+            userId,
         )
     }
 }

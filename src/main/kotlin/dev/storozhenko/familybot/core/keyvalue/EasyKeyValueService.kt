@@ -13,14 +13,14 @@ import kotlin.time.toJavaDuration
 
 @Component
 class EasyKeyValueService(
-    private val redisTemplate: StringRedisTemplate
+    private val redisTemplate: StringRedisTemplate,
 ) {
 
     fun <INPUT : Any, KEY : EasyKey> put(
         easyKeyType: EasyKeyType<INPUT, KEY>,
         key: KEY,
         value: INPUT,
-        duration: kotlin.time.Duration? = null
+        duration: kotlin.time.Duration? = null,
     ) {
         val keyValue = getKeyValue(easyKeyType, key)
         val stringValue = easyKeyType.mapToString(value)
@@ -98,5 +98,4 @@ class EasyKeyValueService(
         }
         return UserAndChatEasyKey(chatId.toLong(), userId.toLong())
     }
-
 }

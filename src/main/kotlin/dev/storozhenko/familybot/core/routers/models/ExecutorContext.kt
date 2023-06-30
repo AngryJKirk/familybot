@@ -24,7 +24,7 @@ data class ExecutorContext(
     val chatKey: ChatEasyKey,
     val testEnvironment: Boolean,
     val sender: AbsSender,
-    private val dictionary: Dictionary
+    private val dictionary: Dictionary,
 ) {
     fun phrase(phrase: Phrase) = dictionary.get(phrase, chatKey)
     fun allPhrases(phrase: Phrase) = dictionary.getAll(phrase)

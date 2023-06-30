@@ -9,9 +9,9 @@ sealed interface AskWorldQuestionData
 class Success(
     val questionTitle: String,
     val isScam: Boolean,
-    val action: suspend (AbsSender, Chat, Chat) -> Message
+    val action: suspend (AbsSender, Chat, Chat) -> Message,
 ) : AskWorldQuestionData
 
 class ValidationError(
-    val invalidQuestionAction: suspend (AbsSender) -> Unit
+    val invalidQuestionAction: suspend (AbsSender) -> Unit,
 ) : AskWorldQuestionData

@@ -40,7 +40,7 @@ class BanSomeoneExecutorTest : ExecutorTest() {
                 Arguments.of(BanTestModel(userToBan.nickname, userToBan.key())),
                 Arguments.of(BanTestModel(userToBan.id.toString(), userToBan.key())),
                 Arguments.of(BanTestModel(chatToBan.id.toString(), chatToBan.key())),
-                Arguments.of(BanTestModel(chatToBan.name, chatToBan.key()))
+                Arguments.of(BanTestModel(chatToBan.name, chatToBan.key())),
             )
         }
     }
@@ -127,6 +127,6 @@ class BanSomeoneExecutorTest : ExecutorTest() {
 
     data class BanTestModel(
         val key: String?,
-        val easyKey: EasyKey
+        val easyKey: EasyKey,
     )
 }

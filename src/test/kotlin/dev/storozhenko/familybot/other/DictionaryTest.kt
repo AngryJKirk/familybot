@@ -20,7 +20,7 @@ class DictionaryTest : FamilybotApplicationTest() {
             .forEach { (phrase, isNotEmpty) ->
                 Assertions.assertTrue(
                     isNotEmpty,
-                    "Phrase $phrase does not have even default value"
+                    "Phrase $phrase does not have even default value",
                 )
             }
     }
