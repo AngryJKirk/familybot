@@ -95,10 +95,12 @@ class TikTokDownloadExecutor(
     }
 
     private fun containsUrl(text: String): Boolean {
-        return isIG(text) || isTikTok(text)
+        return isIG(text) || isTikTok(text) || isVk(text)
     }
 
     private fun isTikTok(text: String) = text.contains("tiktok", ignoreCase = true)
+
+    private fun isVk(text: String) = text.contains("vk.com/clip", ignoreCase = true)
 
     private fun isIG(text: String) = text.contains("instagram.com/reel", ignoreCase = true)
 
