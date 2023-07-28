@@ -134,9 +134,9 @@ That executors implement `CommandExecutor` interface. They are made to execute d
 
 ##### 1.4.1.1 Answer executor
 
-Command | Interfaces | FunctionId
---- | --- | ---
-`/asnwer` | Command| -
+ Command   | Interfaces | FunctionId 
+-----------|------------|------------
+ `/asnwer` | Command    | -          
 
 Its behaviour is quite simple, it accepts message like:
 
@@ -148,18 +148,18 @@ The bot splits the message by `или` and replies with a randomly chosen option
 
 ##### 1.4.1.2 Me executor
 
-Command | Interfaces | FunctionId
---- | --- | ---
-`/me` | Command| -
+ Command | Interfaces | FunctionId 
+---------|------------|------------
+ `/me`   | Command    | -          
 
 It counts all the stats about a user, such as the number of messages in the current chat, or the number of commands
 which were given to the bot from the user.
 
 ##### 1.4.1.2 Pidor executor
 
-Command | Interfaces | FunctionId
---- | --- | ---
-`/pidor` | Command, Configurable | PIDOR
+ Command  | Interfaces            | FunctionId 
+----------|-----------------------|------------
+ `/pidor` | Command, Configurable | PIDOR      
 
 The most well-known functionality of the bot is a pidor choosing.
 

@@ -1,13 +1,7 @@
 package dev.storozhenko.familybot.feature.pidor.executors
 
 import dev.storozhenko.familybot.BotConfig
-import dev.storozhenko.familybot.common.extensions.bold
-import dev.storozhenko.familybot.common.extensions.isToday
-import dev.storozhenko.familybot.common.extensions.send
-import dev.storozhenko.familybot.common.extensions.sendContextFree
-import dev.storozhenko.familybot.common.extensions.toUser
-import dev.storozhenko.familybot.common.extensions.untilNextDay
-import dev.storozhenko.familybot.common.extensions.user
+import dev.storozhenko.familybot.common.extensions.*
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.executors.Configurable
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
@@ -192,14 +186,14 @@ class PidorExecutor(
                 SendMessage(
                     chat.idString,
                     dictionary.get(Phrase.PIROR_DISCOVERED_ONE, key) + " " +
-                        formatName(pidorsByChat.first(), key),
+                            formatName(pidorsByChat.first(), key),
                 ).apply { enableHtml(true) }
             }
 
             else -> SendMessage(
                 chat.idString,
                 dictionary.get(Phrase.PIROR_DISCOVERED_MANY, key) + " " +
-                    pidorsByChat.joinToString { formatName(it, key) },
+                        pidorsByChat.joinToString { formatName(it, key) },
             ).apply { enableHtml(true) }
         }
     }

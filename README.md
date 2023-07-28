@@ -59,5 +59,3 @@ towards anyone.
 
 This project is written using JetBrains All Products Pack, provided
 by [JetBrains](https://www.jetbrains.com/?from=familybot).
-
-Thanks [z3d1k](https://github.com/z3d1k) for a cool ktlint Maven plugin.

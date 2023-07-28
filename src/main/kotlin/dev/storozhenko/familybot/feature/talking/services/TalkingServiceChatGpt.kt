@@ -19,7 +19,7 @@ import dev.storozhenko.familybot.feature.settings.models.ChatGPTTokenUsageByChat
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import org.springframework.stereotype.Component
 import java.time.Duration
-import java.util.*
+import java.util.LinkedList
 
 @Component("GPT")
 class TalkingServiceChatGpt(
@@ -32,8 +32,7 @@ class TalkingServiceChatGpt(
         private val codeMarkupPattern = Regex("`{1,3}([^`]+)`{1,3}")
     }
 
-    private val caches = GptStyle
-        .values()
+    private val caches = GptStyle.entries
         .associateWith { _ ->
             Caffeine.newBuilder()
                 .expireAfterWrite(Duration.ofMinutes(10))

@@ -50,7 +50,7 @@ enum class GptStyle(val value: String, val universe: GptUniverse = GptUniverse.D
     ASSISTANT("ассистент", GptUniverse.ASSISTANT);
 
     companion object {
-        private val lookUpMap = GptStyle.values().associateBy(GptStyle::value)
+        private val lookUpMap = entries.associateBy(GptStyle::value)
         fun lookUp(value: String) = lookUpMap[value]
     }
 }

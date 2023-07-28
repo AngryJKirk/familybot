@@ -22,7 +22,7 @@ class AskWorldSettingProcessor(
 
     override suspend fun process(context: ExecutorContext) {
         val arg = context.update.getMessageTokens()[2]
-        val density = AskWorldDensityValue.values().find { mode -> mode.text == arg }
+        val density = AskWorldDensityValue.entries.find { mode -> mode.text == arg }
         if (density == null) {
             context.sender.send(
                 context,

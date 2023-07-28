@@ -124,11 +124,11 @@ private suspend fun AbsSender.sendInternal(
 ): Message {
     SenderLogger.log.info(
         "Sending message, update=${update?.toJson() ?: "[N/A]"}, " +
-            "replyMessageId=$replyMessageId," +
-            "enableHtml=$enableHtml," +
-            "replyToUpdate=$replyToUpdate," +
-            "shouldTypeBeforeSend=$shouldTypeBeforeSend," +
-            "typeDelay=$typeDelay",
+                "replyMessageId=$replyMessageId," +
+                "enableHtml=$enableHtml," +
+                "replyToUpdate=$replyToUpdate," +
+                "shouldTypeBeforeSend=$shouldTypeBeforeSend," +
+                "typeDelay=$typeDelay",
     )
     if (shouldTypeBeforeSend) {
         execute(SendChatAction(chatId, "typing", null))

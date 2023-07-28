@@ -17,7 +17,7 @@ class TalkingServiceOld(
 ) : TalkingService {
 
     companion object {
-        private const val minimalDatabaseSizeThreshold = 300
+        private const val DB_SIZE_THRESHOLD = 300
     }
 
     override suspend fun getReplyToUser(context: ExecutorContext, shouldBeQuestion: Boolean): String {
@@ -45,7 +45,7 @@ class TalkingServiceOld(
     private fun getMessagesForUser(user: User): List<String> {
         return chatLogRepository
             .get(user)
-            .takeIf { messages -> messages.size > minimalDatabaseSizeThreshold }
+            .takeIf { messages -> messages.size > DB_SIZE_THRESHOLD }
             ?: chatLogRepository.getRandomMessagesFromCommonPool()
     }
 }

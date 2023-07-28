@@ -30,7 +30,11 @@ class PidorStatsStrikesExecutor(
 
     override suspend fun execute(context: ExecutorContext) {
         val chat = context.chat
-        val strikes = easyKeyValueService.get(PidorStrikeStats, chat.key(), PidorStrikes()).stats.filter { (_, stats) -> stats.maxStrike > 1 }
+        val strikes = easyKeyValueService.get(
+            PidorStrikeStats,
+            chat.key(),
+            PidorStrikes()
+        ).stats.filter { (_, stats) -> stats.maxStrike > 1 }
         val users = userRepository.getUsers(chat).associateBy(User::id)
         val stats = strikes
             .map {

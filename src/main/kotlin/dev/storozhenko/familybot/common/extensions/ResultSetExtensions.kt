@@ -32,8 +32,7 @@ fun ResultSet.toPidor(): Pidor = Pidor(
 
 fun ResultSet.toCommandByUser(user: User?): CommandByUser {
     val userInternal = user ?: this.toUser()
-    val command = Command
-        .values()
+    val command = Command.entries
         .find { it.id == this.getInt("command_id") }
         ?: throw FamilyBot.InternalException("Command id should exist")
     return CommandByUser(

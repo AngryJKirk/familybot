@@ -22,7 +22,7 @@ enum class ShopItem(val title: Phrase, val description: Phrase, val price: Int) 
     companion object {
         fun toKeyBoard(context: ExecutorContext): InlineKeyboardMarkup {
             return InlineKeyboardMarkup(
-                values()
+                entries
                     .map { shopItem ->
                         InlineKeyboardButton(formatLine(context, shopItem))
                             .apply {
@@ -31,7 +31,7 @@ enum class ShopItem(val title: Phrase, val description: Phrase, val price: Int) 
                     }
                     .chunked(1),
 
-            )
+                )
         }
 
         private fun formatLine(

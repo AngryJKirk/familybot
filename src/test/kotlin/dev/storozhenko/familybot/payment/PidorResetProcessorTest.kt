@@ -31,6 +31,7 @@ class PidorResetProcessorTest : PaymentProcessorTest() {
 
         Assertions.assertTrue(processor.preCheckOut(payload) is PreCheckOutResponse.Success)
         easyKeyValueService.remove(PidorTolerance, key)
+        pidorRepository.removePidorRecord(user)
     }
 
     override fun processSuccessTest() {
@@ -43,5 +44,6 @@ class PidorResetProcessorTest : PaymentProcessorTest() {
         Assertions.assertNull(easyKeyValueService.get(PidorTolerance, key))
         val pidors = pidorRepository.getPidorsByChat(user.chat)
         Assertions.assertEquals(0, pidors.size)
+        pidorRepository.removePidorRecord(user)
     }
 }

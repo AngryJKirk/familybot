@@ -57,8 +57,7 @@ class TestSender {
     }
 
     private fun createStickers(): StickerSet {
-        val stickers = Sticker
-            .values()
+        val stickers = Sticker.entries
             .map { sticker ->
                 TelegramSticker().apply {
                     emoji = sticker.stickerEmoji

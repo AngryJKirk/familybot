@@ -14,8 +14,7 @@ class DictionaryTest : FamilybotApplicationTest() {
 
     @Test
     fun `all phrases should have at least default values`() {
-        Phrase
-            .values()
+        Phrase.entries
             .map { phrase -> phrase to dictionaryReader.getAllPhrases(phrase).isNotEmpty() }
             .forEach { (phrase, isNotEmpty) ->
                 Assertions.assertTrue(

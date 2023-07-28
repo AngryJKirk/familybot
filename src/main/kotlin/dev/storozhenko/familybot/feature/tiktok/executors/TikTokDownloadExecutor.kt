@@ -55,8 +55,8 @@ class TikTokDownloadExecutor(
 
     override fun canExecute(context: ExecutorContext): Boolean {
         return botConfig.ytdlLocation != null &&
-            getTikTokUrls(context).isNotEmpty() &&
-            easyKeyValueService.get(TikTokDownload, context.chatKey, false)
+                getTikTokUrls(context).isNotEmpty() &&
+                easyKeyValueService.get(TikTokDownload, context.chatKey, false)
     }
 
     override fun priority(context: ExecutorContext) = Priority.VERY_LOW

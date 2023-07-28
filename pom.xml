@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.1</version>
+        <version>3.1.2</version>
     </parent>
 
     <properties>
@@ -19,9 +19,10 @@
         <testcontainers.version>1.18.3</testcontainers.version>
         <mockito-kotlin.version>5.0.0</mockito-kotlin.version>
         <tomlj.version>1.1.0</tomlj.version>
-        <spring.version>3.1.1</spring.version>
+        <spring.version>3.1.2</spring.version>
         <kotlinx-coroutines.version>1.7.2</kotlinx-coroutines.version>
         <openai-client.version>0.14.0</openai-client.version>
+        <kotlin.code.style>official</kotlin.code.style>
     </properties>
 
     <dependencies>
@@ -137,20 +138,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>com.github.z3d1k</groupId>
-                <artifactId>ktlint-maven-plugin</artifactId>
-                <version>0.10.0</version>
-                <executions>
-                    <execution>
-                        <id>ktlint-lint</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>lint</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>

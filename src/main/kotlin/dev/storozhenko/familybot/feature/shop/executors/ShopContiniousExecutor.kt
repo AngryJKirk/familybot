@@ -31,7 +31,7 @@ class ShopContiniousExecutor(
         val chat = context.chat
 
         val callbackQuery = context.update.callbackQuery
-        val shopItem = ShopItem.values().find { item -> callbackQuery.data == item.name }
+        val shopItem = ShopItem.entries.find { item -> callbackQuery.data == item.name }
             ?: return
 
         val additionalTax = if (context.update.from().isPremium == true) {

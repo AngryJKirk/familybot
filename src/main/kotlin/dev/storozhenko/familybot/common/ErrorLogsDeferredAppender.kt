@@ -96,11 +96,11 @@ class ErrorLogsDeferredAppender : Appender<ILoggingEvent> {
             val date = Instant.ofEpochMilli(event.timeStamp).prettyFormat()
             errors.add(
                 date +
-                    "\n" +
-                    event.formattedMessage +
-                    exceptionMessage +
-                    "\n" +
-                    "MDC: ${event.mdcPropertyMap}",
+                        "\n" +
+                        event.formattedMessage +
+                        exceptionMessage +
+                        "\n" +
+                        "MDC: ${event.mdcPropertyMap}",
             )
         }
     }

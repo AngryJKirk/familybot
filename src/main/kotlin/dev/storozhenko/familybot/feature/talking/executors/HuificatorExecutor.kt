@@ -57,7 +57,7 @@ class HuificatorExecutor(private val easyKeyValueService: EasyKeyValueService) :
             return null
         }
 
-        val postfix = String(wordLowerCase.toCharArray().dropWhile { !vowels.contains(it) }.toCharArray())
+        val postfix = String(wordLowerCase.toCharArray().dropWhile { !VOWELS.contains(it) }.toCharArray())
         return if (postfix.isEmpty()) {
             "хуе" + wordLowerCase.drop(2)
         } else if (rules.containsKey(postfix[0])) {
@@ -83,7 +83,7 @@ class HuificatorExecutor(private val easyKeyValueService: EasyKeyValueService) :
     }
 
     companion object {
-        private const val vowels = "ёэоеаяуюыи"
+        private const val VOWELS = "ёэоеаяуюыи"
         private val rules = mapOf('о' to "ё", 'а' to "я", 'у' to "ю", 'ы' to "и", 'э' to "е")
         private val nonLetters = Pattern.compile(".*[^a-я]+.*")
         private val onlyDashes = Pattern.compile("^-*$")

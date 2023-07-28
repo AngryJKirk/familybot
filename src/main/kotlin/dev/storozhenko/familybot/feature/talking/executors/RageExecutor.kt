@@ -75,7 +75,7 @@ class RageExecutor(
     private fun isRageForced(context: ExecutorContext): Boolean {
         return context.message.text.contains(
             "FORCED" +
-                context.user.id.toString().takeLast(4),
+                    context.user.id.toString().takeLast(4),
         )
     }
 }

@@ -60,6 +60,6 @@ class AntiDdosExecutor(
                     text = message
                 },
 
-        )
+            )
     }
 }

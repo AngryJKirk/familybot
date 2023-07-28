@@ -14,7 +14,7 @@ class DictionaryReader {
     init {
         val toml = readTomlFromStatic("dictionary.toml")
 
-        dictionary = Phrase.values()
+        dictionary = Phrase.entries
             .map { phrase ->
                 phrase to (toml.getTable(phrase.name) ?: throw FamilyBot.InternalException("Phrase $phrase is missing"))
             }
@@ -44,8 +44,7 @@ class DictionaryReader {
     }
 
     private fun parsePhrasesByTheme(table: TomlTable): Map<PhraseTheme, List<String>> {
-        return PhraseTheme
-            .values()
+        return PhraseTheme.entries
             .associateWith { theme -> tableToList(table, theme) }
     }
 
@@ -69,7 +68,7 @@ class DictionaryReader {
         if (missingDefaultPhrases.isNotEmpty()) {
             throw FamilyBot.InternalException(
                 "Some dictionary defaults missing. " +
-                    "Check $missingDefaultPhrases",
+                        "Check $missingDefaultPhrases",
             )
         }
     }

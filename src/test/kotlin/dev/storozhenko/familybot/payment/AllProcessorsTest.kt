@@ -15,7 +15,7 @@ class AllProcessorsTest : FamilybotApplicationTest() {
     @Test
     fun isAllPresentTest() {
         val map = processors.associateBy(PaymentProcessor::itemType)
-        ShopItem.values().forEach { item ->
+        ShopItem.entries.forEach { item ->
             Assertions.assertTrue(map.contains(item), "Item $item is missing")
         }
     }

@@ -42,10 +42,9 @@ class SettingsContiniousExecutor(
                         text = context.phrase(Phrase.ACCESS_DENIED)
                     },
 
-            )
+                )
         } else {
-            val function = FunctionId
-                .values()
+            val function = FunctionId.entries
                 .find { id -> id.desc == callbackQuery.data }
 
             if (function != null) {

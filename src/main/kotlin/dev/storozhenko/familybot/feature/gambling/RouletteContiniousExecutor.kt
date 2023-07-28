@@ -39,8 +39,8 @@ class RouletteContiniousExecutor(
     override fun canExecute(context: ExecutorContext): Boolean {
         val message = context.message
         return message.isReply &&
-            message.replyToMessage.from.userName == botConfig.botName &&
-            (message.replyToMessage.text ?: "") in getDialogMessages(context)
+                message.replyToMessage.from.userName == botConfig.botName &&
+                (message.replyToMessage.text ?: "") in getDialogMessages(context)
     }
 
     override suspend fun execute(context: ExecutorContext) {

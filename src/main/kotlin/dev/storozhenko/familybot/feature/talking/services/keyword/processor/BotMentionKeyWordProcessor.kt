@@ -68,7 +68,7 @@ class BotMentionKeyWordProcessor(
     private fun isMediaResponse(message: Message): Boolean {
         val replyToMessage = message.replyToMessage ?: return false
         return replyToMessage.hasVideo() || replyToMessage.hasDocument() ||
-            replyToMessage.hasPhoto()
+                replyToMessage.hasPhoto()
     }
 
     private fun isBotMention(message: Message): Boolean {

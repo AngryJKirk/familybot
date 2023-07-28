@@ -280,7 +280,7 @@ class AskWorldReceiveReplyExecutor(
             SendMessage(
                 chatIdToReply,
                 "$answerTitle ${context.chat.name.boldNullable()} " +
-                    "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\":",
+                        "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\":",
             ).apply {
                 enableHtml(true)
             },
@@ -299,7 +299,7 @@ class AskWorldReceiveReplyExecutor(
             SendMessage(
                 chatIdToReply,
                 "$answerTitle ${context.chat.name.boldNullable()} " +
-                    "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}",
+                        "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}",
             ).apply {
                 enableHtml(true)
             },

@@ -2,7 +2,7 @@ package dev.storozhenko.familybot.infrastructure
 
 import dev.storozhenko.familybot.feature.shop.model.ShopItem
 import dev.storozhenko.familybot.feature.shop.model.ShopPayload
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
 fun randomString() = UUID.randomUUID().toString()

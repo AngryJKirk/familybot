@@ -166,9 +166,9 @@ class AskWorldInitialExecutor(
 
             val isScam =
                 shouldBeCensored(message) ||
-                    shouldBeCensored(context.chat.name ?: "") ||
-                    isSpam(message) ||
-                    containsLongWords(message)
+                        shouldBeCensored(context.chat.name ?: "") ||
+                        isSpam(message) ||
+                        containsLongWords(message)
 
             if (message.length > 2000) {
                 return ValidationError {
@@ -251,16 +251,16 @@ class AskWorldInitialExecutor(
 
     private fun shouldBeCensored(message: String): Boolean {
         return message.contains("http", ignoreCase = true) ||
-            message.contains("www", ignoreCase = true) ||
-            message.contains("jpg", ignoreCase = true) ||
-            message.contains("png", ignoreCase = true) ||
-            message.contains("jpeg", ignoreCase = true) ||
-            message.contains("bmp", ignoreCase = true) ||
-            message.contains("gif", ignoreCase = true) ||
-            message.contains("_bot", ignoreCase = true) ||
-            message.contains("t.me", ignoreCase = true) ||
-            message.contains("Bot", ignoreCase = false) ||
-            message.contains("@")
+                message.contains("www", ignoreCase = true) ||
+                message.contains("jpg", ignoreCase = true) ||
+                message.contains("png", ignoreCase = true) ||
+                message.contains("jpeg", ignoreCase = true) ||
+                message.contains("bmp", ignoreCase = true) ||
+                message.contains("gif", ignoreCase = true) ||
+                message.contains("_bot", ignoreCase = true) ||
+                message.contains("t.me", ignoreCase = true) ||
+                message.contains("Bot", ignoreCase = false) ||
+                message.contains("@")
     }
 
     private fun isSpam(message: String): Boolean {
@@ -280,8 +280,7 @@ class AskWorldInitialExecutor(
             AskWorldDensity,
             chat.key(),
         ) ?: return AskWorldDensityValue.LESS
-        return AskWorldDensityValue
-            .values()
+        return AskWorldDensityValue.entries
             .find { value -> value.text == settingValue } ?: AskWorldDensityValue.LESS
     }
 }

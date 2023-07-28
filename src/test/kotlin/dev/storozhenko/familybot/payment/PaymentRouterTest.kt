@@ -8,23 +8,13 @@ import dev.storozhenko.familybot.feature.shop.model.PreCheckOutResponse
 import dev.storozhenko.familybot.feature.shop.model.ShopItem
 import dev.storozhenko.familybot.feature.shop.model.SuccessPaymentResponse
 import dev.storozhenko.familybot.feature.shop.services.PaymentService
-import dev.storozhenko.familybot.infrastructure.TestSender
-import dev.storozhenko.familybot.infrastructure.createSimpleUpdate
-import dev.storozhenko.familybot.infrastructure.payload
-import dev.storozhenko.familybot.infrastructure.randomInt
-import dev.storozhenko.familybot.infrastructure.randomString
+import dev.storozhenko.familybot.infrastructure.*
 import dev.storozhenko.familybot.suits.FamilybotApplicationTest
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
-import org.mockito.kotlin.any
-import org.mockito.kotlin.atLeastOnce
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.firstValue
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery
@@ -55,7 +45,7 @@ class PaymentRouterTest : FamilybotApplicationTest() {
     fun invalidPreCheckout() {
         whenever(paymentService.processPreCheckoutCheck(any())).thenReturn(
             PreCheckOutResponse.Error(
-                Phrase.values().random(),
+                Phrase.entries.toTypedArray().random(),
             ),
         )
         val update = createUpdateWithPreCheckoutQuery()
@@ -85,7 +75,7 @@ class PaymentRouterTest : FamilybotApplicationTest() {
     fun successPayment() {
         whenever(paymentService.processSuccessfulPayment(any())).thenReturn(
             SuccessPaymentResponse(
-                Phrase.values().random(),
+                Phrase.entries.toTypedArray().random(),
             ),
         )
         val update = createUpdateWithSuccessPayment()
@@ -132,5 +122,5 @@ class PaymentRouterTest : FamilybotApplicationTest() {
     }
 
     private fun createPayloadJson() =
-        payload(ShopItem.values().random()).toJson()
+        payload(ShopItem.entries.toTypedArray().random()).toJson()
 }

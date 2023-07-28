@@ -32,6 +32,6 @@ enum class Command(val command: String, val id: Int) {
     TIME("/time", 29);
 
     companion object {
-        val LOOKUP = values().associateBy(Command::command)
+        val LOOKUP = entries.associateBy(Command::command)
     }
 }
