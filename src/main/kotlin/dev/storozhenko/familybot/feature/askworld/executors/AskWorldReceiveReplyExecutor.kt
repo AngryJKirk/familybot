@@ -96,6 +96,7 @@ class AskWorldReceiveReplyExecutor(
                     context.chatKey,
                     ignoreList.plus(question.chat.idString to Instant.now().plus(30, ChronoUnit.DAYS))
                 )
+                log.info("Char $chat decided to ignore chat ${question.chat.idString}")
                 context.sender.send(context, context.phrase(Phrase.ASK_WORLD_IGNORE_DONE), replyToUpdate = true)
 
             } else {
