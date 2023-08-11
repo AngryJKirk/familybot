@@ -2,10 +2,12 @@ package dev.storozhenko.familybot.feature.askworld.executors
 
 import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.boldNullable
+import dev.storozhenko.familybot.common.extensions.isFromAdmin
 import dev.storozhenko.familybot.common.extensions.italic
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.Configurable
 import dev.storozhenko.familybot.core.executors.Executor
+import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.MessageContentType
@@ -14,6 +16,7 @@ import dev.storozhenko.familybot.core.routers.models.Priority
 import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.feature.askworld.models.AskWorldReply
 import dev.storozhenko.familybot.feature.askworld.repos.AskWorldRepository
+import dev.storozhenko.familybot.feature.settings.models.AskWorldIgnore
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
 import kotlinx.coroutines.coroutineScope
@@ -35,12 +38,14 @@ import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.bots.AbsSender
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 @Component
 class AskWorldReceiveReplyExecutor(
     private val askWorldRepository: AskWorldRepository,
     private val botConfig: BotConfig,
     private val dictionary: Dictionary,
+    private val easyKeyValueService: EasyKeyValueService
 ) : Executor, Configurable {
     private val log = LoggerFactory.getLogger(AskWorldReceiveReplyExecutor::class.java)
     override fun getFunctionId(context: ExecutorContext): FunctionId {
@@ -82,6 +87,21 @@ class AskWorldReceiveReplyExecutor(
         val messageId = message.replyToMessage.messageId
         val question =
             askWorldRepository.findQuestionByMessageId(messageId + chatId, chatId) ?: return
+        if (reply == "/ignore") {
+            if (context.sender.isFromAdmin(context)) {
+                val ignoreList =
+                    easyKeyValueService.get(AskWorldIgnore, context.chatKey, emptyMap())
+                easyKeyValueService.put(
+                    AskWorldIgnore,
+                    context.chatKey,
+                    ignoreList.plus(question.chat.idString to Instant.now().plus(30, ChronoUnit.DAYS))
+                )
+                context.sender.send(context, context.phrase(Phrase.ASK_WORLD_IGNORE_DONE), replyToUpdate = true)
+
+            } else {
+                context.sender.send(context, context.phrase(Phrase.ASK_WORLD_IGNORE_ADMIN_ONLY), replyToUpdate = true)
+            }
+        }
         if (askWorldRepository.isReplied(question, chat, user)) {
             context.sender.execute(
                 SendMessage(

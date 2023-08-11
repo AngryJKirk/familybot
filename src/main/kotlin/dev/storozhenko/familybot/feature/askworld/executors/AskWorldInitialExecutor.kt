@@ -9,6 +9,7 @@ import dev.storozhenko.familybot.common.extensions.untilNextDay
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.executors.Configurable
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
+import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.Command
@@ -21,6 +22,7 @@ import dev.storozhenko.familybot.feature.askworld.models.ValidationError
 import dev.storozhenko.familybot.feature.askworld.repos.AskWorldRepository
 import dev.storozhenko.familybot.feature.settings.models.AskWorldChatUsages
 import dev.storozhenko.familybot.feature.settings.models.AskWorldDensity
+import dev.storozhenko.familybot.feature.settings.models.AskWorldIgnore
 import dev.storozhenko.familybot.feature.settings.models.AskWorldUserUsages
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.feature.settings.processors.AskWorldDensityValue
@@ -102,8 +104,15 @@ class AskWorldInitialExecutor(
                 .forEach { chatToSend ->
                     runCatching {
                         delay(100)
-                        val result = successData.action.invoke(context.sender, chatToSend, currentChat)
-                        markQuestionDelivered(question, questionId, result, chatToSend)
+                        val ignoreListDeferred = easyKeyValueService.get(AskWorldIgnore, ChatEasyKey(chatToSend.id), emptyMap())
+                        val isIgnored = ignoreListDeferred[chatToSend.idString]?.isAfter(Instant.now().minus(30, ChronoUnit.DAYS)) == true
+                        if (isIgnored) {
+                            log.info("Chat $chatToSend marked sender ${context.chat} as ignored")
+                            markQuestionIgnored(question, questionId, chatToSend)
+                        } else {
+                            val result = successData.action.invoke(context.sender, chatToSend, currentChat)
+                            markQuestionDelivered(question, questionId, result, chatToSend)
+                        }
                     }.onFailure { e -> markChatInactive(chatToSend, questionId, e) }
                 }
         } else {
@@ -208,6 +217,18 @@ class AskWorldInitialExecutor(
         val questionWithIds = question.copy(
             id = questionId.await(),
             messageId = result.messageId + chat.id,
+        )
+        askWorldRepository.addQuestionDeliver(questionWithIds, chat)
+    }
+
+    private suspend fun markQuestionIgnored(
+        question: AskWorldQuestion,
+        questionId: Deferred<Long>,
+        chat: Chat,
+    ) {
+        val questionWithIds = question.copy(
+            id = questionId.await(),
+            messageId = -1,
         )
         askWorldRepository.addQuestionDeliver(questionWithIds, chat)
     }

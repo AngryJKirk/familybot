@@ -13,6 +13,7 @@ import dev.storozhenko.familybot.core.keyvalue.models.StringKeyType
 import dev.storozhenko.familybot.core.keyvalue.models.UserAndChatEasyKey
 import dev.storozhenko.familybot.core.keyvalue.models.UserEasyKey
 import dev.storozhenko.familybot.feature.pidor.models.PidorStrikes
+import java.time.Instant
 
 object FuckOffTolerance : BooleanKeyType<UserAndChatEasyKey>
 object RageMode : LongKeyType<ChatEasyKey>
@@ -42,7 +43,6 @@ object ChatGPTFreeMessagesLeft : LongKeyType<ChatEasyKey>
 object ChatGPTTokenUsageByChat : LongKeyType<ChatEasyKey>
 object ChatGPTNotificationNeeded : InstantKeyType<ChatEasyKey>
 object IGCookie : StringKeyType<PlainKey>
-
 object PidorStrikeStats : EasyKeyType<PidorStrikes, ChatEasyKey> {
     override fun mapToString(value: PidorStrikes) = value.toJson()
 
@@ -53,4 +53,20 @@ object PidorStrikeStats : EasyKeyType<PidorStrikes, ChatEasyKey> {
             value.parseJson()
         }
     }
+}
+
+object AskWorldIgnore : EasyKeyType<Map<String, Instant>, ChatEasyKey> {
+    override fun mapToString(value: Map<String, Instant>): String {
+        return value
+            .map { it.key to it.value.epochSecond }
+            .toMap()
+            .toJson()
+    }
+
+    override fun mapFromString(value: String): Map<String, Instant> {
+        return value.parseJson<Map<String, Long>>()
+            .map { it.key to Instant.ofEpochSecond(it.value) }
+            .toMap()
+    }
+
 }
