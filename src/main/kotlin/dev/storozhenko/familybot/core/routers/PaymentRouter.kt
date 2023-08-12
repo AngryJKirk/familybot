@@ -4,6 +4,7 @@ import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.from
 import dev.storozhenko.familybot.common.extensions.key
 import dev.storozhenko.familybot.common.extensions.parseJson
+import dev.storozhenko.familybot.common.extensions.rubles
 import dev.storozhenko.familybot.common.extensions.toChat
 import dev.storozhenko.familybot.common.extensions.toUser
 import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
@@ -101,8 +102,13 @@ class PaymentRouter(
             .getChatsByUser(user)
             .find { shopPayload.chatId == it.id }
             ?.name ?: "[???]"
+        val additionalTax = if (update.from().isPremium == true) {
+            10.rubles()
+        } else {
+            0
+        }
         val message =
-            "<b>+${shopPayload.shopItem.price / 100}₽</b> от ${user.getGeneralName()} из чата <b>$chat</b> за <b>${shopPayload.shopItem}</b>"
+            "<b>+${(shopPayload.shopItem.price / 100) + additionalTax}₽</b> от ${user.getGeneralName()} из чата <b>$chat</b> за <b>${shopPayload.shopItem}</b>"
         sender.execute(
             SendMessage(developerId, message).apply {
                 enableHtml(true)
