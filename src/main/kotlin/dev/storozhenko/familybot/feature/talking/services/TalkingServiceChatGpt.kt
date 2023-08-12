@@ -153,7 +153,7 @@ class TalkingServiceChatGpt(
         return if (pidorsByChat.isEmpty()) {
             null
         } else {
-            val currentPidors = pidorsByChat.joinToString(", ") { it.user.getGeneralName(mention = true) }
+            val currentPidors = pidorsByChat.joinToString(", ") { it.user.getGeneralName(mention = false) }
             "\nСписок пидоров дня: $currentPidors."
         }
     }

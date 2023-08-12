@@ -7,7 +7,7 @@ data class User(val id: Long, val chat: Chat, val name: String?, val nickname: S
             if (nickname != null) {
                 "@$nickname"
             } else {
-                "<a href=\"F$id\">$name</a>"
+                "<a href=\"tg://user?id=$id\">$name</a>"
             }
         } else {
             name ?: "хуй знает кто"

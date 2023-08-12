@@ -94,7 +94,7 @@ class PaymentRouter(
             .replace("$0", user.getGeneralName())
             .replace("$1", "@" + botConfig.developer)
         val chatId = shopPayload.chatId.toString()
-        sender.execute(SendMessage(chatId, text))
+        sender.execute(SendMessage(chatId, text).apply { enableHtml(true) })
         sender.execute(SendMessage(chatId, dictionary.get(successPaymentResponse.phrase, chatKey)))
         successPaymentResponse.customCall(sender)
         val chat = commonRepository

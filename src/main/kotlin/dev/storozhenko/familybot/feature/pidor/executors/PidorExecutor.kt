@@ -277,6 +277,7 @@ class PidorExecutor(
             context.phrase(Phrase.PICK_PIDOR_PICKED).replace("{}", pickedUser.getGeneralName()),
             shouldTypeBeforeSend = true,
             replyMessageId = replyMessage.messageId,
+            enableHtml = true
         )
         val newAbilityCount = easyKeyValueService.get(
             PickPidorAbilityCount,
