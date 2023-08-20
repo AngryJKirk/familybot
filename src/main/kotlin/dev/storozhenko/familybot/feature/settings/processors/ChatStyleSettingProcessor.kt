@@ -14,7 +14,8 @@ class ChatStyleSettingProcessor(
 ) : SettingProcessor {
 
     override fun canProcess(context: ExecutorContext): Boolean {
-        return context.update.getMessageTokens()[1] == "стиль"
+        val messageTokens = context.update.getMessageTokens()
+        return messageTokens.size >= 3 && messageTokens[1] == "стиль"
     }
 
     override suspend fun process(context: ExecutorContext) {
