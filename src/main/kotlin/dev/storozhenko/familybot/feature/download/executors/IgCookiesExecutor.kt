@@ -1,12 +1,12 @@
-package dev.storozhenko.familybot.feature.tiktok.executors
+package dev.storozhenko.familybot.feature.download.executors
 
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.OnlyBotOwnerExecutor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.keyvalue.models.PlainKey
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
+import dev.storozhenko.familybot.feature.download.services.IgCookieService
 import dev.storozhenko.familybot.feature.settings.models.IGCookie
-import dev.storozhenko.familybot.feature.tiktok.services.IgCookieService
 import dev.storozhenko.familybot.getLogger
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.facilities.filedownloader.TelegramFileDownloader

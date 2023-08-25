@@ -1,4 +1,4 @@
-package dev.storozhenko.familybot.feature.tiktok.executors
+package dev.storozhenko.familybot.feature.download.executors
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import dev.storozhenko.familybot.BotConfig
@@ -7,8 +7,9 @@ import dev.storozhenko.familybot.core.executors.Executor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.routers.models.Priority
+import dev.storozhenko.familybot.feature.download.services.IgCookieService
+import dev.storozhenko.familybot.feature.download.services.YtDlpWrapper
 import dev.storozhenko.familybot.feature.settings.models.TikTokDownload
-import dev.storozhenko.familybot.feature.tiktok.services.IgCookieService
 import dev.storozhenko.familybot.getLogger
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -19,7 +20,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendVideo
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import java.io.File
 import java.time.Duration
-import java.util.UUID
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
@@ -28,6 +28,7 @@ class TikTokDownloadExecutor(
     private val easyKeyValueService: EasyKeyValueService,
     private val botConfig: BotConfig,
     private val cookieService: IgCookieService,
+    private val ytDlpWrapper: YtDlpWrapper
 ) : Executor {
     private val log = getLogger()
     private val okHttpClient = OkHttpClient().newBuilder()
@@ -72,24 +73,13 @@ class TikTokDownloadExecutor(
     }
 
     private fun download(url: String): File {
-        val filename = "/tmp/${UUID.randomUUID()}.mp4"
         val cookiePath = cookieService.getPath()
         val ig = isIG(url)
-        log.info("Running yt-dlp...")
-        val process = if (ig) {
-            ProcessBuilder(botConfig.ytdlLocation, downloadIG(url), "-o", filename).start()
-        } else {
-            ProcessBuilder(botConfig.ytdlLocation, url, "-o", filename).start()
-        }
-        process.inputStream.reader(Charsets.UTF_8).use {
-            log.info(it.readText())
-        }
-        process.waitFor()
-        log.info("Finished running yt-dlp")
-        val file = File(filename)
+        val urlToDownload = if (ig) downloadIG(url) else url
+        val file = ytDlpWrapper.downloadVideo(urlToDownload)
         if (file.exists().not() && ig && cookiePath != null) {
             log.info("Falling back to running yt-dlp with cookies...")
-            ProcessBuilder(botConfig.ytdlLocation, url, "-o", filename, "--cookies", cookiePath).start().waitFor()
+            return ytDlpWrapper.downloadVideo(url, "--cookies", cookiePath)
         }
         return file
     }
@@ -104,7 +94,7 @@ class TikTokDownloadExecutor(
 
     private fun isIG(text: String) = text.contains("instagram.com/reel", ignoreCase = true)
 
-    private fun downloadIG(url: String): String? {
+    private fun downloadIG(url: String): String {
         log.info("Using 3rd party service to obtain IG url")
         val request = Request.Builder()
             .url("https://backend.instavideosave.com/allinone")
@@ -121,7 +111,7 @@ class TikTokDownloadExecutor(
                 json?.parseJson<IGVideoResponse>()
             }?.video
             ?.firstOrNull()
-            ?.video ?: return null
+            ?.video ?: return url
     }
 
     fun encodeUrl(text: String): String {

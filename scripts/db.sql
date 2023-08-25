@@ -305,5 +305,6 @@ VALUES (1, '/stats_month'),
        (26, '/marry'),
        (27, '/marry_list'),
        (28, '/vestnik'),
-       (29, '/time')
+       (29, '/time'),
+       (30, '/audio')
 ;

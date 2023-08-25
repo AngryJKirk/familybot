@@ -1,4 +1,4 @@
-package dev.storozhenko.familybot.feature.tiktok.executors
+package dev.storozhenko.familybot.feature.download.executors
 
 import dev.storozhenko.familybot.core.executors.PrivateMessageExecutor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService

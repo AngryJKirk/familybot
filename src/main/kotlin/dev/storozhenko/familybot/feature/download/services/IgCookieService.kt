@@ -1,8 +1,8 @@
-package dev.storozhenko.familybot.feature.tiktok.services
+package dev.storozhenko.familybot.feature.download.services
 
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
+import dev.storozhenko.familybot.feature.download.executors.IgCookiesExecutor
 import dev.storozhenko.familybot.feature.settings.models.IGCookie
-import dev.storozhenko.familybot.feature.tiktok.executors.IgCookiesExecutor
 import dev.storozhenko.familybot.getLogger
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.event.EventListener
