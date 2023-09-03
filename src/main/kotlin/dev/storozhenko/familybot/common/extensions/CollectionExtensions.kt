@@ -20,7 +20,7 @@ fun List<User>.formatTopList(pluralizedWordsProvider: PluralizedWordsProvider = 
         .toList()
 }
 
-fun format(index: Int, stats: Pair<String?, Int>, pluralizedWordsProvider: PluralizedWordsProvider): String {
+private fun format(index: Int, stats: Pair<String?, Int>, pluralizedWordsProvider: PluralizedWordsProvider): String {
     val (name, numberOfTimes) = stats
     val i = "${index + 1}.".bold()
     val plurWord = pluralize(numberOfTimes, pluralizedWordsProvider)
