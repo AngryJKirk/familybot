@@ -11,7 +11,14 @@ import java.time.temporal.ChronoUnit
 import kotlin.time.toKotlinDuration
 
 object DateConstants {
-    val VITYA_MORTGAGE_DATE = Instant.ofEpochSecond(1678706466L)
+    val vityaMortgageDate: Instant = LocalDateTime.of(
+        2023,
+        Month.MARCH,
+        13,
+        11,
+        21,
+        6
+    ).toInstant(ZoneOffset.UTC)
     val theBirthDayOfFamilyBot: Instant = LocalDateTime.of(
         2017,
         Month.DECEMBER,
@@ -19,6 +26,13 @@ object DateConstants {
         17,
         36,
     ).toInstant(ZoneOffset.UTC)
+
+    val yearPlurProvider = PluralizedWordsProvider({ "год" }, { "года" }, { "лет" })
+    val monthPlurProvider = PluralizedWordsProvider({ "месяц" }, { "месяца" }, { "месяцев" })
+    val dayPlurProvider = PluralizedWordsProvider({ "день" }, { "дня" }, { "дней" })
+    val hourPlurProvider = PluralizedWordsProvider({ "час" }, { "часа" }, { "часов" })
+    val minutePlurProvider = PluralizedWordsProvider({ "минута" }, { "минуты" }, { "минут" })
+
 }
 
 fun Instant.isToday(): Boolean {
@@ -36,20 +50,9 @@ fun Duration.toHourMinuteString(): String {
     val minute = (toMinutes() % 60).toInt()
     val hourPluralized = pluralize(
         hour,
-        PluralizedWordsProvider(
-            one = { "час" },
-            few = { "часа" },
-            many = { "часов" },
-        ),
+        DateConstants.hourPlurProvider,
     )
-    val minutePluralized = pluralize(
-        minute,
-        PluralizedWordsProvider(
-            one = { "минута" },
-            few = { "минуты" },
-            many = { "минут" },
-        ),
-    )
+    val minutePluralized = pluralize(minute, DateConstants.minutePlurProvider)
 
     return "$hour $hourPluralized и $minute $minutePluralized"
 }

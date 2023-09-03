@@ -1,7 +1,6 @@
 package dev.storozhenko.familybot.feature.tribute.executors
 
 import dev.storozhenko.familybot.common.extensions.DateConstants
-import dev.storozhenko.familybot.common.extensions.PluralizedWordsProvider
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.code
 import dev.storozhenko.familybot.common.extensions.pluralize
@@ -33,6 +32,7 @@ class TimeExecutor : CommandExecutor() {
             .map { (prefix, zone) -> prefix.code() to ZoneId.of(zone) }
             .toMap()
 
+
         fun getMortgageDate(start: Instant, end: Instant): String {
             val startLocalDate = start.atZone(ZoneId.systemDefault()).toLocalDate()
             val endLocalDate = end.atZone(ZoneId.systemDefault()).toLocalDate()
@@ -42,23 +42,16 @@ class TimeExecutor : CommandExecutor() {
             val hours = duration.toHoursPart()
             val minutes = duration.toMinutesPart()
 
+            val parts = mutableListOf<String>()
             val years = period.years
             val months = period.months
             val days = period.days
 
-            val yearProvider = PluralizedWordsProvider({ "год" }, { "года" }, { "лет" })
-            val monthProvider = PluralizedWordsProvider({ "месяц" }, { "месяца" }, { "месяцев" })
-            val dayProvider = PluralizedWordsProvider({ "день" }, { "дня" }, { "дней" })
-            val hourProvider = PluralizedWordsProvider({ "час" }, { "часа" }, { "часов" })
-            val minuteProvider = PluralizedWordsProvider({ "минута" }, { "минуты" }, { "минут" })
-
-
-            val parts = mutableListOf<String>()
-            if (years > 0) parts.add("$years ${pluralize(years.toLong(), yearProvider)}")
-            if (months > 0) parts.add("$months ${pluralize(months.toLong(), monthProvider)}")
-            if (days > 0) parts.add("$days ${pluralize(days.toLong(), dayProvider)}")
-            if (hours > 0) parts.add("$hours ${pluralize(hours, hourProvider)}")
-            if (minutes > 0) parts.add("$minutes ${pluralize(minutes, minuteProvider)}")
+            if (years > 0) parts.add("$years ${pluralize(years, DateConstants.yearPlurProvider)}")
+            if (months > 0) parts.add("$months ${pluralize(months, DateConstants.monthPlurProvider)}")
+            if (days > 0) parts.add("$days ${pluralize(days, DateConstants.dayPlurProvider)}")
+            if (hours > 0) parts.add("$hours ${pluralize(hours, DateConstants.hourPlurProvider)}")
+            if (minutes > 0) parts.add("$minutes ${pluralize(minutes, DateConstants.minutePlurProvider)}")
 
             return "Время в Ипотечной Кабале: ".code() + parts.joinToString(", ").bold()
         }
@@ -73,7 +66,7 @@ class TimeExecutor : CommandExecutor() {
             .joinToString(separator = "\n") { (prefix, time) -> prefix + time.format(timeFormatter).bold() }
         context.sender.send(
             context,
-            "$result\n${getMortgageDate(DateConstants.VITYA_MORTGAGE_DATE, now)}",
+            "$result\n${getMortgageDate(DateConstants.vityaMortgageDate, now)}",
             replyToUpdate = true,
             enableHtml = true
         )
