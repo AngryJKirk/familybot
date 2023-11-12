@@ -233,7 +233,10 @@ class PidorExecutor(
                 .takeIf { member -> member.status != "left" && member.status != "kicked" }
                 ?.user()
                 ?.toUser(user.chat)
-        }.getOrNull()
+        }.getOrElse { exception ->
+            log.warn("Could not retrieve a user from TG", exception)
+            return null
+        }
     }
 
     private suspend fun pickPidor(context: ExecutorContext) {
