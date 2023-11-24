@@ -161,13 +161,16 @@ class PidorExecutor(
         user: User,
         sender: AbsSender,
     ) {
-        val userFromChat = getUserFromChat(user, sender)
-        if (userFromChat == null) {
-            log.warn("Some user {} has left without notification", user)
-            userRepository.changeUserActiveStatusNew(user, false)
-        } else {
-            userRepository.addUser(userFromChat)
+        val (userFromChat, tgApiCallSuccessful) = getUserFromChat(user, sender)
+        if (tgApiCallSuccessful) {
+            if (userFromChat == null) {
+                log.warn("Some user {} has left without notification", user)
+                userRepository.changeUserActiveStatusNew(user, false)
+            } else {
+                userRepository.addUser(userFromChat)
+            }
         }
+
     }
 
     override fun command(): Command {
@@ -225,17 +228,17 @@ class PidorExecutor(
         return pidorToleranceValue >= limit
     }
 
-    private fun getUserFromChat(user: User, absSender: AbsSender): User? {
+    private fun getUserFromChat(user: User, absSender: AbsSender): Pair<User?, Boolean> {
         val getChatMemberCall = GetChatMember(user.chat.idString, user.id)
         return runCatching {
             absSender.execute(getChatMemberCall)
                 .apply { log.info("Chat member status: $this ") }
                 .takeIf { member -> member.status != "left" && member.status != "kicked" }
                 ?.user()
-                ?.toUser(user.chat)
+                ?.toUser(user.chat) to true
         }.getOrElse { exception ->
             log.warn("Could not retrieve a user from TG", exception)
-            return null
+            return null to false
         }
     }
 
