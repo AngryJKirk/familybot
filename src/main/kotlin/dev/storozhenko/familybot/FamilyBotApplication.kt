@@ -42,23 +42,11 @@ class FamilyBotApplication(
             required(botConfigInjector.developer, "developer"),
             required(botConfigInjector.developerId, "developerId"),
             botNameAliases,
-            optional(
-                botConfigInjector::yandexKey,
-                "Yandex API key is not found, language API won't work",
-            ),
-            optional(
-                botConfigInjector::paymentToken,
-                "Payment token is not found, payment API won't work",
-            ),
+            optional("Yandex API key is not found, language API won't work") { botConfigInjector.yandexKey },
+            optional("Payment token is not found, payment API won't work") { botConfigInjector.paymentToken },
             env.activeProfiles.contains(BotStarter.TESTING_PROFILE_NAME),
-            optional(
-                botConfigInjector::ytdlLocation,
-                "yt-dlp is missing, downloading function won't work",
-            ),
-            optional(
-                botConfigInjector::openAiToken,
-                "OpenAI token is missing, API won't work",
-            ),
+            optional("yt-dlp is missing, downloading function won't work") { botConfigInjector.ytdlLocation },
+            optional("OpenAI token is missing, API won't work") { botConfigInjector.openAiToken },
         )
     }
 
@@ -69,12 +57,9 @@ class FamilyBotApplication(
         return value
     }
 
-    private fun optional(value: () -> String?, log: String): String? {
-        return value()?.takeIf(String::isNotBlank).also {
-            if (it == null) {
-                logger.warn(log)
-            }
-        }
+    private fun optional(log: String, value: () -> String?): String? {
+        return value()?.takeIf(String::isNotBlank)
+            .also { if (it == null) logger.warn(log) }
     }
 }
 
