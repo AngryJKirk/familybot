@@ -22,33 +22,19 @@ Amount of everyday messages passed through the bot:
 
 # Build & deploy
 
-### Requirments
+### Requirements
 
-1. [just](https://github.com/casey/just)
-2. docker
-3. docker compose
+1. docker
+2. docker compose
 
-### Deploy test
+### Deploy
 
 1. Fill environment variables in `scripts/.env`.
 
-2. run `just deploy`
+2. run `cd scripts && ./deploy.sh` and chose options you need
 
-To re-deploy only the app run `just redeploy`.
 
-### Deploy production
-
-1. Create `production.env` in `/scripts` folder just like `scripts/.env` but with production params
-
-2. run `just env=production deploy`
-
-To re-deploy only the app run `just env=production redeploy`.
-
-### Troubleshooting:
-
-1. Old versions of docker-compose do not support `--env-file` which is required for production.
-
-2. If you have issues installing `just`, just RTFM 🕊️ or copy the commands from [justfile](justfile)`
+Run `./deploy.sh --help` if you need help.
 
 # Disclaimer
 
