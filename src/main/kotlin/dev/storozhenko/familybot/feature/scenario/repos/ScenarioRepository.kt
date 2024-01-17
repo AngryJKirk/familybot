@@ -11,7 +11,7 @@ import dev.storozhenko.familybot.feature.scenario.services.ScenarioMove
 import dev.storozhenko.familybot.feature.scenario.services.ScenarioPoll
 import dev.storozhenko.familybot.feature.scenario.services.ScenarioState
 import dev.storozhenko.familybot.feature.scenario.services.ScenarioWay
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
@@ -25,7 +25,7 @@ import java.util.UUID
 @Component
 class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
     private val template = NamedParameterJdbcTemplate(jdbcTemplate)
-    private val log = getLogger()
+    private val log = KotlinLogging.logger {  }
     private val scenarioStateRowMapper = RowMapper { rs, rowNum ->
         ScenarioState(
             scenarioMoveRowMapper.mapRowNotNull(rs, rowNum),
@@ -143,7 +143,7 @@ class ScenarioRepository(jdbcTemplate: JdbcTemplate) {
                 ),
             )
         } catch (e: DataIntegrityViolationException) {
-            log.warn("DataIntegrityViolationException on voting, probably the vote was forwarded", e)
+            log.warn(e) { "DataIntegrityViolationException on voting, probably the vote was forwarded" }
             throw FamilyBot.InternalException("User is probably unknown")
         }
     }

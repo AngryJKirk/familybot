@@ -3,7 +3,7 @@ package dev.storozhenko.familybot.feature.talking.services
 import com.fasterxml.jackson.annotation.JsonProperty
 import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.core.telegram.FamilyBot
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -12,19 +12,19 @@ import org.springframework.web.client.RestTemplate
 
 @Component
 class TranslateService(private val botConfig: BotConfig) {
-    private val log = getLogger()
+    private val log = KotlinLogging.logger {  }
     private val restTemplate = RestTemplate()
     private val yandexUrl = "https://translate.api.cloud.yandex.net/translate/v2/translate"
 
     fun translate(message: String): String {
         if (botConfig.yandexKey.isNullOrBlank()) {
-            log.warn("Yandex Translate API Key is not set, falling back to default language")
+            log.warn { "Yandex Translate API Key is not set, falling back to default language" }
             return message
         }
         return runCatching {
             callApi(message)
         }.getOrElse {
-            log.error("Yandex API failed", it)
+            log.error(it) { "Yandex API failed" }
             message
         }
     }

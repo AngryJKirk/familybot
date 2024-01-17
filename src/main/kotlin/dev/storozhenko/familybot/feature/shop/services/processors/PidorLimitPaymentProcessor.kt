@@ -8,19 +8,19 @@ import dev.storozhenko.familybot.feature.shop.model.ShopItem
 import dev.storozhenko.familybot.feature.shop.model.ShopPayload
 import dev.storozhenko.familybot.feature.shop.model.SuccessPaymentResponse
 import dev.storozhenko.familybot.feature.shop.services.PaymentProcessor
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 
 @Component
 class PidorLimitPaymentProcessor(
     private val easyKeyValueService: EasyKeyValueService,
 ) : PaymentProcessor {
-    private val log = getLogger()
+    private val log = KotlinLogging.logger { }
     override fun itemType() = ShopItem.DROP_PIDOR_LIMIT
 
     override fun preCheckOut(shopPayload: ShopPayload): PreCheckOutResponse {
         val pidorTolerance = easyKeyValueService.get(PidorTolerance, shopPayload.chatKey())
-        log.info("Doing pre checkout, shopPayload=$shopPayload, result is $pidorTolerance")
+        log.info { "Doing pre checkout, shopPayload=$shopPayload, result is $pidorTolerance" }
 
         return if (pidorTolerance == null || pidorTolerance == 0L) {
             PreCheckOutResponse.Error(Phrase.DROP_PIDOR_LIMIT_INVALID)
@@ -31,7 +31,7 @@ class PidorLimitPaymentProcessor(
 
     override fun processSuccess(shopPayload: ShopPayload): SuccessPaymentResponse {
         easyKeyValueService.remove(PidorTolerance, shopPayload.chatKey())
-        log.info("Removed pidor limit for $shopPayload")
+        log.info { "Removed pidor limit for $shopPayload" }
         return SuccessPaymentResponse(Phrase.DROP_PIDOR_LIMIT_DONE)
     }
 }

@@ -12,7 +12,7 @@ import dev.storozhenko.familybot.feature.settings.models.FirstTimeInChat
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.feature.settings.models.RageMode
 import dev.storozhenko.familybot.feature.settings.models.RageTolerance
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.minutes
 
@@ -21,7 +21,7 @@ class RageExecutor(
     private val easyKeyValueService: EasyKeyValueService,
 ) : CommandExecutor(), Configurable {
 
-    private val log = getLogger()
+    private val log = KotlinLogging.logger {  }
 
     companion object {
         const val AMOUNT_OF_RAGE_MESSAGES = 20L
@@ -38,20 +38,20 @@ class RageExecutor(
     override suspend fun execute(context: ExecutorContext) {
         val key = context.chatKey
         if (isRageForced(context)) {
-            log.warn("Someone forced ${command()}")
+            log.warn { "Someone forced ${command()}" }
             easyKeyValueService.put(RageMode, key, AMOUNT_OF_RAGE_MESSAGES, 10.minutes)
             context.sender.send(context, context.phrase(Phrase.RAGE_INITIAL), shouldTypeBeforeSend = true)
             return
         }
 
         if (isFirstLaunch(context)) {
-            log.info("First launch of ${command()} was detected, avoiding that")
+            log.info { "First launch of ${command()} was detected, avoiding that" }
             context.sender.send(context, context.phrase(Phrase.TECHNICAL_ISSUE), shouldTypeBeforeSend = true)
             return
         }
 
         if (isCooldown(context)) {
-            log.info("There is a cooldown of ${command()}")
+            log.info { "There is a cooldown of ${command()}" }
             context.sender.send(
                 context,
                 context.phrase(Phrase.RAGE_DONT_CARE_ABOUT_YOU),

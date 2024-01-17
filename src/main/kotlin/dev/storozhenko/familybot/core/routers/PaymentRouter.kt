@@ -14,7 +14,7 @@ import dev.storozhenko.familybot.feature.shop.model.ShopPayload
 import dev.storozhenko.familybot.feature.shop.model.SuccessPaymentResponse
 import dev.storozhenko.familybot.feature.shop.services.PaymentService
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -28,7 +28,7 @@ class PaymentRouter(
     private val dictionary: Dictionary,
     private val botConfig: BotConfig,
 ) {
-    private val log = getLogger()
+    private val log = KotlinLogging.logger {  }
 
     fun proceedPreCheckoutQuery(update: Update): suspend (AbsSender) -> Unit {
         val shopPayload = getPayload(update.preCheckoutQuery.invoicePayload)
@@ -38,7 +38,7 @@ class PaymentRouter(
         return { sender ->
             runCatching { paymentService.processPreCheckoutCheck(shopPayload) }
                 .onFailure { e ->
-                    log.error("Can not check pre checkout query", e)
+                    log.error(e) { "Can not check pre checkout query" }
                     val message = dictionary.get(Phrase.SHOP_PRE_CHECKOUT_FAIL, settingsKey)
                     sender.execute(AnswerPreCheckoutQuery(update.preCheckoutQuery.id, false, message))
                     sender.execute(SendMessage(chatId, message))
@@ -47,7 +47,7 @@ class PaymentRouter(
                     when (response) {
                         is PreCheckOutResponse.Success -> {
                             sender.execute(AnswerPreCheckoutQuery(update.preCheckoutQuery.id, true))
-                            log.info("Pre checkout query is valid")
+                            log.info { "Pre checkout query is valid" }
                         }
 
                         is PreCheckOutResponse.Error -> {
@@ -71,11 +71,11 @@ class PaymentRouter(
         return { sender ->
             runCatching { paymentService.processSuccessfulPayment(shopPayload) }
                 .onFailure { e ->
-                    log.error("Can not process payment", e)
+                    log.error(e) { "Can not process payment" }
                     onFailure(sender, update, shopPayload)
                 }
                 .onSuccess { result ->
-                    log.info("Wow, payment!")
+                    log.info { "Wow, payment!" }
                     onSuccess(sender, update, result, shopPayload)
                 }
         }

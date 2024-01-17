@@ -11,7 +11,7 @@ import dev.storozhenko.familybot.feature.settings.models.AutoPidorTimesLeft
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.feature.settings.repos.FunctionsConfigureRepository
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -24,10 +24,10 @@ class PidorAutoSelectService(
     private val configureRepository: FunctionsConfigureRepository,
     private val botConfig: BotConfig,
 ) {
-    private val log = getLogger()
+    private val log = KotlinLogging.logger { }
 
     fun autoSelect(absSender: AbsSender) {
-        log.info("Running auto pidor select...")
+        log.info { "Running auto pidor select..." }
         easyKeyValueService.getAllByPartKey(AutoPidorTimesLeft)
             .filterValues { timesLeft -> timesLeft > 0 }
             .forEach { (chatKey, timesLeft) -> runForChat(absSender, chatKey, timesLeft) }
@@ -39,7 +39,7 @@ class PidorAutoSelectService(
         timesLeft: Long,
     ) {
         val chat = Chat(chatKey.chatId, name = null)
-        log.info("Running auto pidor select for chat $chat")
+        log.info { "Running auto pidor select for chat $chat" }
         if (configureRepository.isEnabled(FunctionId.PIDOR, chat)) {
             val (call, wasSelected) = pidorExecutor.selectPidor(chat, chatKey, silent = true)
             if (wasSelected) {
@@ -56,10 +56,10 @@ class PidorAutoSelectService(
                     }
                 }
             } else {
-                log.info("Pidor was not selected for chat $chat")
+                log.info { "Pidor was not selected for chat $chat" }
             }
         } else {
-            log.info("Pidor is disabled for chat $chat")
+            log.info { "Pidor is disabled for chat $chat" }
         }
     }
 }

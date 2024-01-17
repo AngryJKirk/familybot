@@ -8,7 +8,7 @@ import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.settings.processors.SettingProcessor
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 
 @Component
@@ -17,7 +17,7 @@ class AdvancedSettingsExecutor(
 ) : CommandExecutor() {
     override fun command() = Command.ADVANCED_SETTINGS
 
-    private val log = getLogger()
+    private val log = KotlinLogging.logger {  }
 
     override suspend fun execute(context: ExecutorContext) {
         val messageTokens = context.update.getMessageTokens()
@@ -42,7 +42,7 @@ class AdvancedSettingsExecutor(
                     ?.process(context)
                     ?: sendErrorMessage(context)
             }.getOrElse { throwable ->
-                log.error("Advanced settings failed", throwable)
+                log.error(throwable) { "Advanced settings failed" }
                 sendErrorMessage(context)
             }
         }

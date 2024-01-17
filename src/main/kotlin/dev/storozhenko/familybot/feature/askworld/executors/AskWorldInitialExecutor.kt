@@ -28,7 +28,7 @@ import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.feature.settings.processors.AskWorldDensityValue
 import dev.storozhenko.familybot.feature.settings.repos.FunctionsConfigureRepository
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -50,7 +50,7 @@ class AskWorldInitialExecutor(
     private val dictionary: Dictionary,
     private val easyKeyValueService: EasyKeyValueService,
 ) : CommandExecutor(), Configurable {
-    private val log = getLogger()
+    private val log = KotlinLogging.logger { }
     override fun getFunctionId(context: ExecutorContext): FunctionId {
         return FunctionId.ASK_WORLD
     }
@@ -69,13 +69,13 @@ class AskWorldInitialExecutor(
         val isNotFromDeveloper = !context.isFromDeveloper
         if (isNotFromDeveloper) {
             if (chatUsages != null && chatUsages > 0L) {
-                log.info("Limit was exceed for chat")
+                log.info { "Limit was exceed for chat" }
                 context.sender.send(context, context.phrase(Phrase.ASK_WORLD_LIMIT_BY_CHAT), replyToUpdate = true)
                 return
             }
 
             if (userUsages != null && userUsages > 1) {
-                log.info("Limit was exceed for user")
+                log.info { "Limit was exceed for user" }
                 context.sender.send(context, context.phrase(Phrase.ASK_WORLD_LIMIT_BY_USER), replyToUpdate = true)
                 return
             }
@@ -104,10 +104,13 @@ class AskWorldInitialExecutor(
                 .forEach { chatToSend ->
                     runCatching {
                         delay(100)
-                        val ignoreListDeferred = easyKeyValueService.get(AskWorldIgnore, ChatEasyKey(chatToSend.id), emptyMap())
-                        val isIgnored = ignoreListDeferred[chatToSend.idString]?.isAfter(Instant.now().minus(30, ChronoUnit.DAYS)) == true
+                        val ignoreListDeferred =
+                            easyKeyValueService.get(AskWorldIgnore, ChatEasyKey(chatToSend.id), emptyMap())
+                        val isIgnored = ignoreListDeferred[chatToSend.idString]?.isAfter(
+                            Instant.now().minus(30, ChronoUnit.DAYS)
+                        ) == true
                         if (isIgnored) {
-                            log.info("Chat $chatToSend marked sender ${context.chat} as ignored")
+                            log.info { "Chat $chatToSend marked sender ${context.chat} as ignored" }
                             markQuestionIgnored(question, questionId, chatToSend)
                         } else {
                             val result = successData.action.invoke(context.sender, chatToSend, currentChat)
@@ -116,7 +119,7 @@ class AskWorldInitialExecutor(
                     }.onFailure { e -> markChatInactive(chatToSend, questionId, e) }
                 }
         } else {
-            log.info("Some scam message was found and it won't be sent")
+            log.info { "Some scam message was found and it won't be sent" }
         }
         if (isNotFromDeveloper) {
             if (chatUsages == null) {
@@ -205,7 +208,7 @@ class AskWorldInitialExecutor(
         e: Throwable,
     ) {
         coroutineScope { launch { commonRepository.changeChatActiveStatus(chat, false) } }
-        log.warn("Could not send question $questionId to $chat due to error: [${e.message}]")
+        log.warn { "Could not send question $questionId to $chat due to error: [${e.message}]" }
     }
 
     private suspend fun markQuestionDelivered(
@@ -254,7 +257,7 @@ class AskWorldInitialExecutor(
             .filterNot { chat -> chat == context.chat }
             .filter { chat -> configureRepository.isEnabled(functionId, chat) }
             .shuffled()
-        log.info("Number of chats with feature enabled: ${chatsWithFeatureEnabled.size}")
+        log.info { "Number of chats with feature enabled: ${chatsWithFeatureEnabled.size}" }
 
         if (context.isFromDeveloper) {
             return chatsWithFeatureEnabled
@@ -264,8 +267,8 @@ class AskWorldInitialExecutor(
             .filter { chat -> getDensity(chat) == AskWorldDensityValue.ALL }
         val acceptLessChats = chatsWithFeatureEnabled
             .filter { chat -> getDensity(chat) == AskWorldDensityValue.LESS }
-        log.info("Number of chats with ${AskWorldDensityValue.ALL} density: ${acceptAllChats.size}")
-        log.info("Number of chats with ${AskWorldDensityValue.LESS} density: ${acceptLessChats.size}")
+        log.info { "Number of chats with ${AskWorldDensityValue.ALL} density: ${acceptAllChats.size}" }
+        log.info { "Number of chats with ${AskWorldDensityValue.LESS} density: ${acceptLessChats.size}" }
 
         return acceptAllChats + acceptLessChats.take(acceptLessChats.size / 4)
     }

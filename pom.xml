@@ -23,6 +23,7 @@
         <kotlinx-coroutines.version>1.7.3</kotlinx-coroutines.version>
         <openai-client.version>0.16.0</openai-client.version>
         <kotlin.code.style>official</kotlin.code.style>
+        <kotlin-logging-jvm.version>5.1.0</kotlin-logging-jvm.version>
     </properties>
 
     <dependencies>
@@ -110,6 +111,11 @@
             <version>${openai-client.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.github.oshai</groupId>
+            <artifactId>kotlin-logging-jvm</artifactId>
+            <version>${kotlin-logging-jvm.version}</version>
+        </dependency>
         <!--Test-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

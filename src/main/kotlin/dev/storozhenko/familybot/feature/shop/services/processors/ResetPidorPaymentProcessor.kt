@@ -13,7 +13,7 @@ import dev.storozhenko.familybot.feature.shop.model.ShopItem
 import dev.storozhenko.familybot.feature.shop.model.ShopPayload
 import dev.storozhenko.familybot.feature.shop.model.SuccessPaymentResponse
 import dev.storozhenko.familybot.feature.shop.services.PaymentProcessor
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -23,7 +23,7 @@ class ResetPidorPaymentProcessor(
     private val easyKeyValueService: EasyKeyValueService,
     private val pidorRepository: PidorRepository,
 ) : PaymentProcessor {
-    private val log = getLogger()
+    private val log = KotlinLogging.logger { }
     override fun itemType() = ShopItem.DROP_PIDOR
 
     override fun preCheckOut(shopPayload: ShopPayload): PreCheckOutResponse {
@@ -31,7 +31,7 @@ class ResetPidorPaymentProcessor(
         val isNonePidorToday = pidorRepository
             .getPidorsByChat(chat)
             .none { pidor -> pidor.date.isToday() }
-        log.info("Doing pre checkout, shopPayload=$shopPayload, isNonePidorsToday is $isNonePidorToday")
+        log.info { "Doing pre checkout, shopPayload=$shopPayload, isNonePidorsToday is $isNonePidorToday" }
         return if (isNonePidorToday) {
             PreCheckOutResponse.Error(Phrase.DROP_PIDOR_INVALID)
         } else {
@@ -48,7 +48,7 @@ class ResetPidorPaymentProcessor(
             until = now.plus(1, ChronoUnit.DAYS).startOfDay(),
         )
         easyKeyValueService.remove(PidorTolerance, chat.key())
-        log.info("Removed $amountOfRemovedPidors pidors for $shopPayload")
+        log.info { "Removed $amountOfRemovedPidors pidors for $shopPayload" }
         return SuccessPaymentResponse(Phrase.DROP_PIDOR_DONE)
     }
 }

@@ -7,7 +7,7 @@ import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.askworld.models.AskWorldQuestion
 import dev.storozhenko.familybot.feature.askworld.repos.AskWorldRepository
 import dev.storozhenko.familybot.feature.ban.services.BanService
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -17,7 +17,7 @@ class BanAskWorldExecutor(
     private val askWorldRepository: AskWorldRepository,
     private val banService: BanService,
 ) : CommandExecutor() {
-    private val log = getLogger()
+    private val log = KotlinLogging.logger {  }
     override fun command() = Command.BAN
 
     override suspend fun execute(context: ExecutorContext) {
@@ -29,7 +29,7 @@ class BanAskWorldExecutor(
             .filter {
                 replyToMessage.text.contains(it.message, ignoreCase = true)
             }
-        log.info("Trying to ban, questions found: {}", questions)
+        log.info { "Trying to ban, questions found: $questions" }
         when (questions.size) {
             0 -> context.sender.send(context, "Can't find anyone, sorry, my master")
             1 -> ban(context, questions.first())

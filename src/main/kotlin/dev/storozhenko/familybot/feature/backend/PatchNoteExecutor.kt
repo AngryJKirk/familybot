@@ -5,7 +5,7 @@ import dev.storozhenko.familybot.core.executors.OnlyBotOwnerExecutor
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.repos.UserRepository
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -18,7 +18,7 @@ class PatchNoteExecutor(
 ) : OnlyBotOwnerExecutor() {
 
     private val patchNotePrefix = "patch_note"
-    private val log = getLogger()
+    private val log = KotlinLogging.logger {  }
 
     override suspend fun executeInternal(context: ExecutorContext) {
         if (context.message.isReply.not()) {
@@ -27,7 +27,7 @@ class PatchNoteExecutor(
         }
 
         val chats = commonRepository.getChats()
-        log.info("Sending in {} chats", chats.size)
+        log.info { "Sending in ${chats.size} chats" }
         chats.forEach { tryToSendMessage(it, context) }
     }
 
@@ -52,9 +52,9 @@ class PatchNoteExecutor(
                             context.message.replyToMessage.messageId,
                         ),
                     )
-                    log.info("Sent patchnote to chatId={}", chat.idString)
+                    log.info { "Sent patchnote to chatId=${chat.idString}" }
                 }.onFailure { throwable ->
-                    log.warn("Can not send message by patchnote executor", throwable)
+                    log.warn(throwable) { "Can not send message by patchnote executor" }
                     markChatAsInactive(chat)
                 }
             }

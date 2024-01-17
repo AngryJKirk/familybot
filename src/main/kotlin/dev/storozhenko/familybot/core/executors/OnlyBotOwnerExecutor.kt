@@ -3,7 +3,7 @@ package dev.storozhenko.familybot.core.executors
 import dev.storozhenko.familybot.common.TrackingAbsSender
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.routers.models.Priority
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -15,6 +15,8 @@ abstract class OnlyBotOwnerExecutor : PrivateMessageExecutor {
     companion object {
         private val deleteMessageScope = CoroutineScope(Dispatchers.Default)
     }
+
+    private val log = KotlinLogging.logger {}
 
     override fun canExecute(context: ExecutorContext): Boolean {
         val message = context.message
@@ -40,7 +42,7 @@ abstract class OnlyBotOwnerExecutor : PrivateMessageExecutor {
             runCatching {
                 delay(3.minutes)
                 idsToDelete.forEach { context.sender.execute(it) }
-            }.onFailure { e -> getLogger().error("Failed to delete message", e) }
+            }.onFailure { e -> log.error(e) { "Failed to delete message" } }
         }
     }
 }

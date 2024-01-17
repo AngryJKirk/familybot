@@ -7,7 +7,7 @@ import dev.storozhenko.familybot.common.extensions.toHourMinuteString
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.telegram.FamilyBot
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.delay
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
@@ -27,7 +27,7 @@ class ScenarioSessionManagementService(
     private val scenarioGameplayService: ScenarioGameplayService,
     private val scenarioPollManagingService: ScenarioPollManagingService,
 ) {
-    private val log = getLogger()
+    private val log = KotlinLogging.logger {  }
 
     suspend fun startGame(context: ExecutorContext, scenario: Scenario) {
         val chat = context.chat
@@ -116,7 +116,7 @@ class ScenarioSessionManagementService(
                 )
             }
                 .onFailure { throwable ->
-                    log.error("Sending poll reply fucked up", throwable)
+                    log.error(throwable) { "Sending poll reply fucked up" }
                     context.sender.send(
                         context,
                         context.phrase(Phrase.SCENARIO_POLL_EXISTS_FALLBACK).replace("\$timeLeft", timeLeft),

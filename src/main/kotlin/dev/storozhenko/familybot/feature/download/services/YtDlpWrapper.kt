@@ -2,7 +2,7 @@ package dev.storozhenko.familybot.feature.download.services
 
 import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.core.telegram.FamilyBot
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -14,7 +14,7 @@ import kotlin.time.Duration.Companion.minutes
 
 @Component
 class YtDlpWrapper(private val botConfig: BotConfig) {
-    private val log = getLogger()
+    private val log = KotlinLogging.logger { }
     private val fileDeleteScope = CoroutineScope(Dispatchers.Default)
 
     fun downloadVideo(url: String, vararg params: String): File {
@@ -26,14 +26,14 @@ class YtDlpWrapper(private val botConfig: BotConfig) {
     }
 
     private fun download(filename: String, url: String, vararg params: String): File {
-        log.info("Running yt-dlp...")
+        log.info { "Running yt-dlp..." }
         val folderName = UUID.randomUUID().toString()
         val folder = File("/tmp", folderName).apply { mkdir() }
         val process =
             ProcessBuilder(botConfig.ytdlLocation, url, "-o", "${folder.absolutePath}/$filename", *params).start()
-        process.inputStream.reader(Charsets.UTF_8).use { log.info(it.readText()) }
+        process.inputStream.reader(Charsets.UTF_8).use { log.info { it.readText() } }
         process.waitFor()
-        log.info("Finished running yt-dlp")
+        log.info { "Finished running yt-dlp" }
         val downloadedFile =
             folder.listFiles()?.firstOrNull() ?: throw FamilyBot.InternalException("yt-dlp failed to extract data")
         downloadedFile.deleteOnExit()
@@ -41,9 +41,9 @@ class YtDlpWrapper(private val botConfig: BotConfig) {
             runCatching {
                 delay(5.minutes)
                 downloadedFile.delete()
-                log.info("${downloadedFile.absolutePath} is deleted")
+                log.info { "${downloadedFile.absolutePath} is deleted" }
             }.onFailure {
-                log.error("Could not delete ${downloadedFile.absolutePath}", it)
+                log.error(it) { "Could not delete ${downloadedFile.absolutePath}" }
             }
         }
         return downloadedFile

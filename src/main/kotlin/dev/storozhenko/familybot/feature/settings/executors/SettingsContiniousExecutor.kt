@@ -9,7 +9,7 @@ import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.feature.settings.repos.FunctionsConfigureRepository
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -20,7 +20,7 @@ class SettingsContiniousExecutor(
     private val configureRepository: FunctionsConfigureRepository,
     botConfig: BotConfig,
 ) : ContiniousConversationExecutor(botConfig) {
-    private val log = getLogger()
+    private val log = KotlinLogging.logger {  }
     override fun command(): Command {
         return Command.SETTINGS
     }
@@ -34,7 +34,7 @@ class SettingsContiniousExecutor(
         val callbackQuery = context.update.callbackQuery
 
         if (!context.sender.isFromAdmin(context)) {
-            log.info("Access to settings denied")
+            log.info { "Access to settings denied" }
             context.sender.execute(
                 AnswerCallbackQuery(callbackQuery.id)
                     .apply {

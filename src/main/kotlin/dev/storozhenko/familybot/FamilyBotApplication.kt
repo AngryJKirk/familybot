@@ -2,8 +2,7 @@ package dev.storozhenko.familybot
 
 import dev.storozhenko.familybot.core.telegram.BotStarter
 import dev.storozhenko.familybot.core.telegram.FamilyBot
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.WebApplicationType
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -21,7 +20,7 @@ import org.telegram.telegrambots.facilities.filedownloader.TelegramFileDownloade
 class FamilyBotApplication(
     private val env: ConfigurableEnvironment,
 ) {
-    private val logger = getLogger()
+    private val logger = KotlinLogging.logger {  }
 
     @Bean
     fun telegramDownloader(botConfig: BotConfig): TelegramFileDownloader {
@@ -31,7 +30,7 @@ class FamilyBotApplication(
     @Bean
     fun injectBotConfig(botConfigInjector: BotConfigInjector): BotConfig {
         val botNameAliases = if (botConfigInjector.botNameAliases.isNullOrEmpty()) {
-            logger.warn("No bot aliases provided, using botName")
+            logger.warn { "No bot aliases provided, using botName" }
             listOf(botConfigInjector.botName)
         } else {
             botConfigInjector.botNameAliases.split(",")
@@ -59,7 +58,7 @@ class FamilyBotApplication(
 
     private fun optional(log: String, value: () -> String?): String? {
         return value()?.takeIf(String::isNotBlank)
-            .also { if (it == null) logger.warn(log) }
+            .also { if (it == null) logger.warn { log } }
     }
 }
 
@@ -89,8 +88,6 @@ data class BotConfigInjector @ConstructorBinding constructor(
     val openAiToken: String?,
 )
 
-@Suppress("unused")
-inline fun <reified T> T.getLogger(): Logger = LoggerFactory.getLogger(T::class.java)
 
 fun main() {
     val app = SpringApplication(FamilyBotApplication::class.java)

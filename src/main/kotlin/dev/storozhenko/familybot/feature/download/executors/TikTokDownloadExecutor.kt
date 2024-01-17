@@ -10,7 +10,7 @@ import dev.storozhenko.familybot.core.routers.models.Priority
 import dev.storozhenko.familybot.feature.download.services.IgCookieService
 import dev.storozhenko.familybot.feature.download.services.YtDlpWrapper
 import dev.storozhenko.familybot.feature.settings.models.TikTokDownload
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.apache.commons.codec.binary.Hex
@@ -30,7 +30,7 @@ class TikTokDownloadExecutor(
     private val cookieService: IgCookieService,
     private val ytDlpWrapper: YtDlpWrapper
 ) : Executor {
-    private val log = getLogger()
+    private val log = KotlinLogging.logger { }
     private val okHttpClient = OkHttpClient().newBuilder()
         .connectTimeout(Duration.ofMinutes(1))
         .readTimeout(Duration.ofMinutes(1))
@@ -78,7 +78,7 @@ class TikTokDownloadExecutor(
         val urlToDownload = if (ig) downloadIG(url) else url
         val file = ytDlpWrapper.downloadVideo(urlToDownload)
         if (file.exists().not() && ig && cookiePath != null) {
-            log.info("Falling back to running yt-dlp with cookies...")
+            log.info { "Falling back to running yt-dlp with cookies..." }
             return ytDlpWrapper.downloadVideo(url, "--cookies", cookiePath)
         }
         return file
@@ -95,7 +95,7 @@ class TikTokDownloadExecutor(
     private fun isIG(text: String) = text.contains("instagram.com/reel", ignoreCase = true)
 
     private fun downloadIG(url: String): String {
-        log.info("Using 3rd party service to obtain IG url")
+        log.info { "Using 3rd party service to obtain IG url" }
         val request = Request.Builder()
             .url("https://backend.instavideosave.com/allinone")
             .header("Referer", "https://instavideosave.net/")
@@ -107,7 +107,7 @@ class TikTokDownloadExecutor(
             .execute()
             .use { response ->
                 val json = response.body?.string()
-                log.info("3d party service response: $json")
+                log.info { "3d party service response: $json" }
                 json?.parseJson<IGVideoResponse>()
             }?.video
             ?.firstOrNull()

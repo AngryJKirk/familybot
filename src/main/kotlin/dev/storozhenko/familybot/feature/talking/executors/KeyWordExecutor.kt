@@ -7,13 +7,13 @@ import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.routers.models.Priority
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.feature.talking.services.keyword.KeyWordProcessor
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 
 @Component
 class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Configurable {
 
-    private val log = getLogger()
+    private val log = KotlinLogging.logger {  }
 
     private val processorsForMessage = HashMap<Int, KeyWordProcessor>()
 
@@ -34,7 +34,7 @@ class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Config
             .find { it.canProcess(context) }
             ?.takeIf { isPassingRandomCheck(it, context) }
         return if (keyWordProcessor != null) {
-            log.info("Key word processor is found: ${keyWordProcessor::class.simpleName}")
+            log.info { "Key word processor is found: ${keyWordProcessor::class.simpleName}" }
             processorsForMessage[message.messageId] = keyWordProcessor
             true
         } else {

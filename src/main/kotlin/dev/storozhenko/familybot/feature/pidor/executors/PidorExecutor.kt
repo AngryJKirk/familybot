@@ -21,7 +21,7 @@ import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import dev.storozhenko.familybot.feature.settings.models.PickPidorAbilityCount
 import dev.storozhenko.familybot.feature.settings.models.PidorTolerance
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -47,14 +47,14 @@ class PidorExecutor(
         return FunctionId.PIDOR
     }
 
-    private val log = getLogger()
+    private val log = KotlinLogging.logger { }
 
     override suspend fun execute(context: ExecutorContext) {
         val chat = context.chat
         if (context.message.isReply) {
             return pickPidor(context)
         }
-        log.info("Getting pidors from chat $chat")
+        log.info { "Getting pidors from chat $chat" }
         val key = context.chatKey
         selectPidor(chat, key).first.invoke(context.sender)
     }
@@ -68,7 +68,7 @@ class PidorExecutor(
 
         val pidorToleranceValue = easyKeyValueService.get(PidorTolerance, key)
         if (isLimitOfPidorsExceeded(users, pidorToleranceValue ?: 0)) {
-            log.info("Pidors are already found")
+            log.info { "Pidors are already found" }
             if (!silent) {
                 val message = getMessageForPidors(chat, key)
                 if (message != null) {
@@ -79,7 +79,7 @@ class PidorExecutor(
             }
         }
         return Pair({ sender ->
-            log.info("Pidor is not found, initiating search procedure")
+            log.info { "Pidor is not found, initiating search procedure" }
             val nextPidor = if (easyKeyValueService.get(BotOwnerPidorSkip, key, false)) {
                 val filteredUsers = users.filter { botConfig.developerId != it.id.toString() }
                 getNextPidorAsync(filteredUsers, sender, chat)
@@ -135,22 +135,22 @@ class PidorExecutor(
                         .map { user -> launch { checkIfUserStillThere(user, sender) } }
                         .forEach { job -> job.join() }
                     val actualizedUsers = userRepository.getUsers(chat, activeOnly = true)
-                    log.info("Users to roll: {}", actualizedUsers)
+                    log.info { "Users to roll: $actualizedUsers" }
                     val nextPidor = actualizedUsers.randomOrNull() ?: getFallbackPidor(chat)
 
-                    log.info("Pidor is rolled to $nextPidor")
+                    log.info { "Pidor is rolled to $nextPidor" }
                     val newPidor = Pidor(nextPidor, Instant.now())
                     pidorRepository.addPidor(newPidor)
                     nextPidor
                 }
-                    .onFailure { e -> log.error("Something bad is happened on rolling, investigate", e) }
+                    .onFailure { e -> log.error(e) { "Something bad is happened on rolling, investigate" } }
                     .getOrNull() ?: getFallbackPidor(chat)
             }
         }
     }
 
     private fun getFallbackPidor(chat: Chat): User {
-        log.error("Can't find pidor due to empty user list for $chat, switching to fallback pidor")
+        log.error { "Can't find pidor due to empty user list for $chat, switching to fallback pidor" }
         return pidorRepository
             .getPidorsByChat(chat, startDate = Instant.now().minus(10, ChronoUnit.DAYS))
             .random()
@@ -164,7 +164,7 @@ class PidorExecutor(
         val (userFromChat, tgApiCallSuccessful) = getUserFromChat(user, sender)
         if (tgApiCallSuccessful) {
             if (userFromChat == null) {
-                log.warn("Some user {} has left without notification", user)
+                log.warn { "User $user has left without notification" }
                 userRepository.changeUserActiveStatusNew(user, false)
             } else {
                 userRepository.addUser(userFromChat)
@@ -224,7 +224,7 @@ class PidorExecutor(
         pidorToleranceValue: Long,
     ): Boolean {
         val limit = if (usersInChat.size >= 50) 2 else 1
-        log.info("Limit of pidors is $limit, tolerance is $pidorToleranceValue")
+        log.info { "Limit of pidors is $limit, tolerance is $pidorToleranceValue" }
         return pidorToleranceValue >= limit
     }
 
@@ -232,12 +232,12 @@ class PidorExecutor(
         val getChatMemberCall = GetChatMember(user.chat.idString, user.id)
         return runCatching {
             absSender.execute(getChatMemberCall)
-                .apply { log.info("Chat member status: $this ") }
+                .apply { log.info { "Chat member status: $this " } }
                 .takeIf { member -> member.status != "left" && member.status != "kicked" }
                 ?.user()
                 ?.toUser(user.chat) to true
         }.getOrElse { exception ->
-            log.warn("Could not retrieve a user from TG", exception)
+            log.warn(exception) { "Could not retrieve a user from TG" }
             return null to false
         }
     }

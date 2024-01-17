@@ -6,7 +6,7 @@ import dev.storozhenko.familybot.core.keyvalue.models.EasyKeyType
 import dev.storozhenko.familybot.core.keyvalue.models.PlainKey
 import dev.storozhenko.familybot.core.keyvalue.models.UserAndChatEasyKey
 import dev.storozhenko.familybot.core.keyvalue.models.UserEasyKey
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.data.redis.core.ScanOptions.scanOptions
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Component
@@ -17,7 +17,7 @@ class EasyKeyValueService(
     private val redisTemplate: StringRedisTemplate,
 ) {
 
-    private val log = getLogger()
+    private val log = KotlinLogging.logger { }
 
     fun <INPUT : Any, KEY : EasyKey> put(
         easyKeyType: EasyKeyType<INPUT, KEY>,
@@ -29,10 +29,10 @@ class EasyKeyValueService(
         val stringValue = easyKeyType.mapToString(value)
         if (duration == null) {
             redisTemplate.opsForValue().set(rawKey, stringValue)
-            log.info("Set $rawKey => $stringValue")
+            log.info { "Set $rawKey => $stringValue" }
         } else {
             redisTemplate.opsForValue().set(rawKey, stringValue, duration.toJavaDuration())
-            log.info("Set $rawKey => $stringValue with duration $duration")
+            log.info { "Set $rawKey => $stringValue with duration $duration" }
         }
     }
 
@@ -41,9 +41,9 @@ class EasyKeyValueService(
 
         val value = getInternal(easyKeyType, rawKey)
         if (value != null) {
-            log.info("Got $rawKey => $value")
+            log.info { "Got $rawKey => $value" }
         } else {
-            log.info("Got null for $rawKey, default => $defaultValue")
+            log.info { "Got null for $rawKey, default => $defaultValue" }
         }
         return value ?: defaultValue
     }
@@ -51,7 +51,7 @@ class EasyKeyValueService(
     fun <INPUT : Any, KEY : EasyKey> get(easyKeyType: EasyKeyType<INPUT, KEY>, key: KEY): INPUT? {
         val rawKey = getKeyRaw(easyKeyType, key)
         val value = getInternal(easyKeyType, rawKey)
-        log.info("Got $rawKey => $value")
+        log.info { "Got $rawKey => $value" }
         return value
     }
 
@@ -67,7 +67,7 @@ class EasyKeyValueService(
     fun <INPUT : Any, KEY : EasyKey> getAndRemove(easyKeyType: EasyKeyType<INPUT, KEY>, key: KEY): INPUT? {
         val rawKey = getKeyRaw(easyKeyType, key)
         val rawValue = redisTemplate.opsForValue().getAndDelete(rawKey)
-        log.info("Got $rawKey => $rawValue, deleted after")
+        log.info { "Got $rawKey => $rawValue, deleted after" }
         if (rawValue == null) {
             return null
         }
@@ -78,10 +78,10 @@ class EasyKeyValueService(
         val rawKey = getKeyRaw(easyKeyType, key)
         val decrementResult = redisTemplate.opsForValue().decrement(rawKey)
         return if (decrementResult != null) {
-            log.info("Decremented $rawKey => $decrementResult")
+            log.info { "Decremented $rawKey => $decrementResult" }
             decrementResult
         } else {
-            log.info("Decremented $rawKey => null, returning 0")
+            log.info { "Decremented $rawKey => null, returning 0" }
             0
         }
     }
@@ -90,10 +90,10 @@ class EasyKeyValueService(
         val rawKey = getKeyRaw(easyKeyType, key)
         val incrementedResult = redisTemplate.opsForValue().increment(rawKey)
         return if (incrementedResult != null) {
-            log.info("Incremented $rawKey => $incrementedResult")
+            log.info { "Incremented $rawKey => $incrementedResult" }
             incrementedResult
         } else {
-            log.info("Incremented $rawKey => null, returning 0")
+            log.info { "Incremented $rawKey => null, returning 0" }
             0
         }
     }
@@ -101,10 +101,10 @@ class EasyKeyValueService(
     fun <INPUT : Any, KEY : EasyKey> remove(easyKeyType: EasyKeyType<INPUT, KEY>, key: KEY) {
         val rawKey = getKeyRaw(easyKeyType, key)
         val deleted = redisTemplate.delete(rawKey)
-        if(deleted) {
-            log.info("Deleted $rawKey")
+        if (deleted) {
+            log.info { "Deleted $rawKey" }
         } else {
-            log.info("Attempt to delete non-existing $rawKey")
+            log.info { "Attempt to delete non-existing $rawKey" }
         }
     }
 
@@ -120,7 +120,7 @@ class EasyKeyValueService(
                 keys[easyKey] = easyValue
             }
         }
-        log.info("Got all by partKey ${easyKeyType.getName()}* => $keys")
+        log.info { "Got all by partKey ${easyKeyType.getName()}* => $keys" }
         return keys
     }
 

@@ -27,7 +27,7 @@ import dev.storozhenko.familybot.feature.settings.models.FirstTimeInChat
 import dev.storozhenko.familybot.feature.settings.models.MessageCounter
 import dev.storozhenko.familybot.feature.settings.repos.FunctionsConfigureRepository
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,11 +55,11 @@ class Router(
     private val easyKeyValueService: EasyKeyValueService,
 ) {
 
-    private val logger = getLogger()
+    private val logger = KotlinLogging.logger { }
     private val chatLogRegex = Regex("[а-яА-Яё\\s,.!?]+")
     private val loggingScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
     private val loggingExceptionHandler = CoroutineExceptionHandler { _, exception ->
-        logger.error("Exception in logging job", exception)
+        logger.error(exception) { "Exception in logging job" }
     }
 
     suspend fun processUpdate(update: Update, sender: AbsSender) {
@@ -71,7 +71,7 @@ class Router(
 
         val isGroup = chat.isSuperGroupChat || chat.isGroupChat
         if (!isGroup) {
-            logger.warn("Someone is sending private messages: $update")
+            logger.warn { "Someone is sending private messages: $update" }
         } else {
             registerUpdate(message, update)
             if (update.hasEditedMessage()) {
@@ -86,7 +86,7 @@ class Router(
             selectExecutor(context, forSingleUser = true) ?: return
         }
 
-        logger.info("Executor to apply: ${executor.javaClass.simpleName}")
+        logger.info { "Executor to apply: ${executor.javaClass.simpleName}" }
 
         if (isExecutorDisabled(executor, context)) {
             when (executor) {
@@ -114,7 +114,7 @@ class Router(
     }
 
     private fun selectRandom(context: ExecutorContext): Executor {
-        logger.info("No executor found, trying to find random priority executors")
+        logger.info { "No executor found, trying to find random priority executors" }
 
         loggingScope.launch(loggingExceptionHandler) {
             logChatMessage(context)
@@ -123,7 +123,7 @@ class Router(
             .filter { it.priority(context) == Priority.RANDOM }
             .random()
 
-        logger.info("Random priority executor ${executor.javaClass.simpleName} was selected")
+        logger.info { "Random priority executor ${executor.javaClass.simpleName} was selected" }
         return executor
     }
 
@@ -150,7 +150,7 @@ class Router(
         val isExecutorDisabled = !configureRepository.isEnabled(functionId, context.chat)
 
         if (isExecutorDisabled) {
-            logger.info("Executor ${executor::class.simpleName} is disabled")
+            logger.info { "Executor ${executor::class.simpleName} is disabled" }
         }
         return isExecutorDisabled
     }
@@ -229,21 +229,21 @@ class Router(
         when {
             leftChatMember != null -> {
                 if (leftChatMember.isBot && leftChatMember.userName == botConfig.botName) {
-                    logger.info("Bot was removed from $chat")
+                    logger.info { "Bot was removed from $chat" }
                     repository.changeChatActiveStatus(chat, false)
                     repository.disableUsersInChat(chat)
                 } else {
-                    logger.info("User $leftChatMember has left")
+                    logger.info { "User $leftChatMember has left" }
                     repository.changeUserActiveStatusNew(leftChatMember.toUser(chat = chat), false)
                 }
             }
 
             newChatMembers?.isNotEmpty() == true -> {
                 if (newChatMembers.any { it.isBot && it.userName == botConfig.botName }) {
-                    logger.info("Bot was added to $chat")
+                    logger.info { "Bot was added to $chat" }
                     repository.changeChatActiveStatus(chat, true)
                 } else {
-                    logger.info("New users was added: $newChatMembers")
+                    logger.info { "New users was added: $newChatMembers" }
                     newChatMembers
                         .filterNot(User::getIsBot)
                         .forEach { repository.addUser(it.toUser(chat = chat)) }

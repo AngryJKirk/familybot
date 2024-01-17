@@ -7,7 +7,7 @@ import dev.storozhenko.familybot.core.keyvalue.models.PlainKey
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.download.services.IgCookieService
 import dev.storozhenko.familybot.feature.settings.models.IGCookie
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.facilities.filedownloader.TelegramFileDownloader
 import org.telegram.telegrambots.meta.api.methods.GetFile
@@ -22,6 +22,8 @@ class IgCookiesExecutor(
     companion object {
         val IG_COOKIE_KEY = PlainKey("IG_COOKIE_KEY")
     }
+
+    private val log = KotlinLogging.logger { }
 
     override fun getMessagePrefix() = "cookies.txt"
 
@@ -41,7 +43,7 @@ class IgCookiesExecutor(
             context.sender.send(context, "Ok")
         }.onFailure {
             context.sender.send(context, it.message ?: "wtf")
-            getLogger().error("Bad happened during cookie upload", it)
+                log.error(it) { "Bad happened during cookie upload" }
         }
     }
 }

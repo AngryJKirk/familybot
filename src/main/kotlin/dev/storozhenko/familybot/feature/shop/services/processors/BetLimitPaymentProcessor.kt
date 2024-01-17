@@ -8,19 +8,19 @@ import dev.storozhenko.familybot.feature.shop.model.ShopItem
 import dev.storozhenko.familybot.feature.shop.model.ShopPayload
 import dev.storozhenko.familybot.feature.shop.model.SuccessPaymentResponse
 import dev.storozhenko.familybot.feature.shop.services.PaymentProcessor
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 
 @Component
 class BetLimitPaymentProcessor(
     private val easyKeyValueService: EasyKeyValueService,
 ) : PaymentProcessor {
-    private val log = getLogger()
+    private val log = KotlinLogging.logger { }
     override fun itemType() = ShopItem.DROP_BET_LIMIT
 
     override fun preCheckOut(shopPayload: ShopPayload): PreCheckOutResponse {
         val betTolerance = easyKeyValueService.get(BetTolerance, shopPayload.userAndChatKey())
-        log.info("Doing pre checkout, shopPayload=$shopPayload, result is $betTolerance")
+        log.info { "Doing pre checkout, shopPayload=$shopPayload, result is $betTolerance" }
         return if (betTolerance == null || betTolerance == false) {
             PreCheckOutResponse.Error(Phrase.DROP_BET_LIMIT_INVALID)
         } else {
@@ -30,7 +30,7 @@ class BetLimitPaymentProcessor(
 
     override fun processSuccess(shopPayload: ShopPayload): SuccessPaymentResponse {
         easyKeyValueService.remove(BetTolerance, shopPayload.userAndChatKey())
-        log.info("Removed bet limit for $shopPayload")
+        log.info { "Removed bet limit for $shopPayload" }
         return SuccessPaymentResponse(Phrase.DROP_BET_LIMIT_DONE)
     }
 }

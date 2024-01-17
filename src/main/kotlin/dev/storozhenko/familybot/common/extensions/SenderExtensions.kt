@@ -5,7 +5,7 @@ import dev.storozhenko.familybot.core.models.telegram.stickers.Sticker
 import dev.storozhenko.familybot.core.models.telegram.stickers.StickerPack
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.telegram.FamilyBot
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -30,7 +30,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 
 object SenderLogger {
-    val log = getLogger()
+    val log = KotlinLogging.logger { }
 }
 
 suspend fun AbsSender.sendDeferred(
@@ -122,14 +122,14 @@ private suspend fun AbsSender.sendInternal(
     shouldTypeBeforeSend: Boolean = false,
     typeDelay: Pair<Int, Int> = 1000 to 2000,
 ): Message {
-    SenderLogger.log.info(
+    SenderLogger.log.info {
         "Sending message, update=${update?.toJson() ?: "[N/A]"}, " +
                 "replyMessageId=$replyMessageId," +
                 "enableHtml=$enableHtml," +
                 "replyToUpdate=$replyToUpdate," +
                 "shouldTypeBeforeSend=$shouldTypeBeforeSend," +
-                "typeDelay=$typeDelay",
-    )
+                "typeDelay=$typeDelay"
+    }
     if (shouldTypeBeforeSend) {
         execute(SendChatAction(chatId, "typing", null))
         if (testEnvironment.not()) {
@@ -137,7 +137,7 @@ private suspend fun AbsSender.sendInternal(
         }
     }
     val textToSend = text()
-    SenderLogger.log.info("Sending message, text=$textToSend")
+    SenderLogger.log.info { "Sending message, text=$textToSend" }
     return textToSend
         .chunked(3900)
         .map {
@@ -153,7 +153,7 @@ private suspend fun AbsSender.sendInternal(
                     customization()
                 }
         }.map { message ->
-            SenderLogger.log.info("Sending message: ${message.toJson()}")
+            SenderLogger.log.info { "Sending message: ${message.toJson()}" }
             execute(message)
         }.first()
 }

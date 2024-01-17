@@ -7,13 +7,13 @@ import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
-import dev.storozhenko.familybot.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 import java.util.regex.Pattern
 
 @Component
 class AnswerExecutor : CommandExecutor() {
-    private val log = getLogger()
+    private val log = KotlinLogging.logger {  }
     private val orPattern = Pattern.compile(" (или|або) ")
     override fun command(): Command {
         return Command.ANSWER
@@ -32,7 +32,7 @@ class AnswerExecutor : CommandExecutor() {
             ?.dropLastDelimiter()
 
         if (message == null) {
-            log.info("Bad argument was passed, text of message is [{}]", text)
+            log.info { "Bad argument was passed, text of message is [$text]" }
             context.sender.send(context, context.phrase(Phrase.BAD_COMMAND_USAGE), replyToUpdate = true)
             return
         }
