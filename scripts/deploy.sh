@@ -48,9 +48,9 @@ if [[ $CLI_MODE -eq 0 ]]; then
 
     select action in "Deploy All" "Redeploy Just Bot" "Update" "Exit"; do
         case $action in
-            "Deploy All") ACTION="docker compose --env-file $ENV_FILE up -d" ;;
-            "Redeploy Just Bot") ACTION="docker compose --env-file $ENV_FILE up -d --no-deps --build family" ;;
-            "Update") ACTION="docker compose pull && docker compose --env-file $ENV_FILE up -d" ;;
+            "Deploy All") ACTION="docker compose --env-file $ENV_FILE up -d"; break ;;
+            "Redeploy Just Bot") ACTION="docker compose --env-file $ENV_FILE up -d --no-deps --build family"; break ;;
+            "Update") ACTION="docker compose pull && docker compose --env-file $ENV_FILE up -d"; break ;;
             "Exit") exit ;;
             *) echo "Invalid option." ;;
         esac
