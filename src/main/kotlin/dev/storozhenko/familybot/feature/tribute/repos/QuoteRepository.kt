@@ -30,15 +30,9 @@ class QuoteRepository {
         return tag to quote
     }
 
-    fun getTags(): Set<String> {
-        return quotes.keys
-    }
+    fun getTags() = quotes.keys
 
-    fun getByTag(tag: String): String? {
-        return quotes[tag]?.random()
-    }
+    fun getByTag(tag: String) = quotes[tag]?.random()
 
-    fun getRandom(): String {
-        return flattenQuotes.random()
-    }
+    fun getRandom() = flattenQuotes.random()
 }

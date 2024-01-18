@@ -43,10 +43,6 @@ class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Config
     }
 
     private fun isPassingRandomCheck(processor: KeyWordProcessor, context: ExecutorContext): Boolean {
-        return if (processor.isRandom(context)) {
-            randomInt(0, 5) == 0
-        } else {
-            true
-        }
+        return if (processor.isRandom(context)) randomInt(0, 5) == 0 else true
     }
 }

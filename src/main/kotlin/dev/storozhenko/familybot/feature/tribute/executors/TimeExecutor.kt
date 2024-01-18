@@ -18,17 +18,15 @@ import java.time.format.DateTimeFormatter
 @Component
 class TimeExecutor : CommandExecutor() {
 
-    private val timeFormatter =
-        DateTimeFormatter.ofPattern("HH:mm")
+    private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
     companion object {
         private val times = mapOf(
             "Время в Лондоне:          " to "Europe/London",
             "Время в Москве:           " to "Europe/Moscow",
             "Время в Ульяновске:       " to "Europe/Samara",
-            "Время в Ташкенте:         " to "Asia/Tashkent",
+            "Время в Батуми:           " to "Asia/Tbilisi",
             "Время в Аргентине:        " to "America/Argentina/Buenos_Aires",
-            "Время в Тайланде:         " to "Asia/Bangkok",
         )
             .map { (prefix, zone) -> prefix.code() to ZoneId.of(zone) }
             .toMap()

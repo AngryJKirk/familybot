@@ -9,9 +9,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class QuoteExecutor(private val quoteRepository: QuoteRepository) : CommandExecutor() {
-    override fun command(): Command {
-        return Command.QUOTE
-    }
+    override fun command() = Command.QUOTE
 
     override suspend fun execute(context: ExecutorContext) {
         context.sender.send(context, quoteRepository.getRandom())

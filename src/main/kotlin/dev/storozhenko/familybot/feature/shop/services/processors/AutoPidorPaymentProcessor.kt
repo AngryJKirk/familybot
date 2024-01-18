@@ -19,7 +19,7 @@ class AutoPidorPaymentProcessor(
 ) : PaymentProcessor {
     override fun itemType() = ShopItem.AUTO_PIDOR
 
-    override fun preCheckOut(shopPayload: ShopPayload): PreCheckOutResponse = PreCheckOutResponse.Success()
+    override fun preCheckOut(shopPayload: ShopPayload) = PreCheckOutResponse.Success()
 
     override fun processSuccess(shopPayload: ShopPayload): SuccessPaymentResponse {
         val chatKey = shopPayload.chatKey()

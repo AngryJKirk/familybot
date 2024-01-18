@@ -8,7 +8,6 @@ enum class Priority(val priorityValue: Int) {
     VERY_LOW(-2),
     RANDOM(-1000);
 
-    infix fun higherThan(other: Priority): Boolean {
-        return this.priorityValue > other.priorityValue
-    }
+    infix fun higherThan(other: Priority) = this.priorityValue > other.priorityValue
+
 }

@@ -34,11 +34,7 @@ class ShopContiniousExecutor(
         val shopItem = ShopItem.entries.find { item -> callbackQuery.data == item.name }
             ?: return
 
-        val additionalTax = if (context.update.from().isPremium == true) {
-            10.rubles()
-        } else {
-            0
-        }
+        val additionalTax = if (context.update.from().isPremium == true) 10.rubles() else 0
         context.sender.execute(AnswerCallbackQuery(callbackQuery.id))
         context.sender.execute(
             SendInvoice(
@@ -58,10 +54,6 @@ class ShopContiniousExecutor(
     }
 
     private fun createPayload(context: ExecutorContext, shopItem: ShopItem): String {
-        return ShopPayload(
-            context.chat.id,
-            context.user.id,
-            shopItem,
-        ).toJson()
+        return ShopPayload(context.chat.id, context.user.id, shopItem).toJson()
     }
 }

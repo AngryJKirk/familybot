@@ -80,9 +80,7 @@ class TalkingServiceChatGpt(
         }
     }
 
-    private fun fixFormat(message: String): String {
-        return message.replace(codeMarkupPattern, "$1".code())
-    }
+    private fun fixFormat(message: String) = message.replace(codeMarkupPattern, "$1".code())
 
     private fun getPastMessages(
         style: GptStyle,

@@ -18,9 +18,7 @@ import java.time.temporal.ChronoUnit
 class ChatGptPaymentProcessor(private val easyKeyValueService: EasyKeyValueService) : PaymentProcessor {
     override fun itemType() = ShopItem.CHAT_GPT
 
-    override fun preCheckOut(shopPayload: ShopPayload): PreCheckOutResponse {
-        return PreCheckOutResponse.Success()
-    }
+    override fun preCheckOut(shopPayload: ShopPayload) = PreCheckOutResponse.Success()
 
     override fun processSuccess(shopPayload: ShopPayload): SuccessPaymentResponse {
         val key = ChatEasyKey(shopPayload.chatId)

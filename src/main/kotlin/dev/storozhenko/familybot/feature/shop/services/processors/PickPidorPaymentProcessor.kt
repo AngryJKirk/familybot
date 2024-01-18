@@ -17,7 +17,7 @@ class PickPidorPaymentProcessor(
 ) : PaymentProcessor {
     override fun itemType() = ShopItem.PICK_PIDOR
 
-    override fun preCheckOut(shopPayload: ShopPayload): PreCheckOutResponse = PreCheckOutResponse.Success()
+    override fun preCheckOut(shopPayload: ShopPayload) = PreCheckOutResponse.Success()
 
     override fun processSuccess(shopPayload: ShopPayload): SuccessPaymentResponse {
         val key = UserEasyKey(shopPayload.userId)

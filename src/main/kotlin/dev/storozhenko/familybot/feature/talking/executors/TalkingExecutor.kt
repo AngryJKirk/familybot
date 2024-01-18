@@ -24,19 +24,11 @@ class TalkingExecutor(
 ) : Executor, Configurable {
 
     override fun getFunctionId(context: ExecutorContext): FunctionId {
-        return if (isRageModeEnabled(context)) {
-            FunctionId.RAGE
-        } else {
-            FunctionId.CHATTING
-        }
+        return if (isRageModeEnabled(context)) FunctionId.RAGE else FunctionId.CHATTING
     }
 
     override fun priority(context: ExecutorContext): Priority {
-        return if (isRageModeEnabled(context)) {
-            Priority.HIGH
-        } else {
-            Priority.RANDOM
-        }
+        return if (isRageModeEnabled(context)) Priority.HIGH else Priority.RANDOM
     }
 
     override suspend fun execute(context: ExecutorContext) {
@@ -68,9 +60,7 @@ class TalkingExecutor(
         }
     }
 
-    override fun canExecute(context: ExecutorContext): Boolean {
-        return isRageModeEnabled(context)
-    }
+    override fun canExecute(context: ExecutorContext) = isRageModeEnabled(context)
 
     private fun isRageModeEnabled(context: ExecutorContext): Boolean {
         return easyKeyValueService.get(RageMode, context.chatKey, defaultValue = 0) > 0

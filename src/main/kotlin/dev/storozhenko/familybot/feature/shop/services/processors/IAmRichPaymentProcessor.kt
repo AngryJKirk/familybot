@@ -12,9 +12,7 @@ import org.springframework.stereotype.Component
 class IAmRichPaymentProcessor : PaymentProcessor {
     override fun itemType() = ShopItem.I_AM_RICH
 
-    override fun preCheckOut(shopPayload: ShopPayload): PreCheckOutResponse = PreCheckOutResponse.Success()
+    override fun preCheckOut(shopPayload: ShopPayload) = PreCheckOutResponse.Success()
 
-    override fun processSuccess(shopPayload: ShopPayload): SuccessPaymentResponse {
-        return SuccessPaymentResponse(Phrase.I_AM_RICH_DONE)
-    }
+    override fun processSuccess(shopPayload: ShopPayload) = SuccessPaymentResponse(Phrase.I_AM_RICH_DONE)
 }

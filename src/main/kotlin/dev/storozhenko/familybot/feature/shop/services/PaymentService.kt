@@ -1,9 +1,7 @@
 package dev.storozhenko.familybot.feature.shop.services
 
 import dev.storozhenko.familybot.core.telegram.FamilyBot
-import dev.storozhenko.familybot.feature.shop.model.PreCheckOutResponse
 import dev.storozhenko.familybot.feature.shop.model.ShopPayload
-import dev.storozhenko.familybot.feature.shop.model.SuccessPaymentResponse
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 
@@ -14,19 +12,15 @@ class PaymentService(
     private val log = KotlinLogging.logger { }
     private val processors = paymentProcessors.associateBy(PaymentProcessor::itemType)
 
-    fun processPreCheckoutCheck(shopPayload: ShopPayload): PreCheckOutResponse {
-        return getProcessor(shopPayload).preCheckOut(shopPayload)
-    }
+    fun processPreCheckoutCheck(shopPayload: ShopPayload) = getProcessor(shopPayload).preCheckOut(shopPayload)
 
-    fun processSuccessfulPayment(shopPayload: ShopPayload): SuccessPaymentResponse {
-        return getProcessor(shopPayload).processSuccess(shopPayload)
-    }
+
+    fun processSuccessfulPayment(shopPayload: ShopPayload) = getProcessor(shopPayload).processSuccess(shopPayload)
 
     private fun getProcessor(shopPayload: ShopPayload): PaymentProcessor {
-        val paymentProcessor = (
-                processors[shopPayload.shopItem]
+        val paymentProcessor = processors[shopPayload.shopItem]
                     ?: throw FamilyBot.InternalException("Can't find proper payment processor for ${shopPayload.shopItem}")
-                )
+
         log.info { "Payment processor for shopPayload=$shopPayload is ${paymentProcessor::class.java.simpleName}" }
         return paymentProcessor
     }

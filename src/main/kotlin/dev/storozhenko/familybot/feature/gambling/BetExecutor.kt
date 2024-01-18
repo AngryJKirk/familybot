@@ -48,6 +48,5 @@ class BetExecutor(
 
     override fun isLoggable() = false
 
-    private fun isBetAlreadyDone(key: UserAndChatEasyKey) =
-        easyKeyValueService.get(BetTolerance, key, false)
+    private fun isBetAlreadyDone(key: UserAndChatEasyKey) = easyKeyValueService.get(BetTolerance, key, false)
 }

@@ -15,13 +15,9 @@ class QuoteContiniousExecutor(
     botConfig: BotConfig,
 ) : ContiniousConversationExecutor(botConfig) {
 
-    override fun command(): Command {
-        return Command.QUOTE_BY_TAG
-    }
+    override fun command() = Command.QUOTE_BY_TAG
 
-    override fun getDialogMessages(context: ExecutorContext): Set<String> {
-        return setOf(QUOTE_MESSAGE)
-    }
+    override fun getDialogMessages(context: ExecutorContext) = setOf(QUOTE_MESSAGE)
 
     override suspend fun execute(context: ExecutorContext) {
         val callbackQuery = context.update.callbackQuery

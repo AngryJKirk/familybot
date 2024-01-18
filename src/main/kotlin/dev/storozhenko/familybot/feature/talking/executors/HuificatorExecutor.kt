@@ -19,9 +19,7 @@ class HuificatorExecutor(private val easyKeyValueService: EasyKeyValueService) :
         return FunctionId.HUIFICATE
     }
 
-    override fun priority(context: ExecutorContext): Priority {
-        return Priority.RANDOM
-    }
+    override fun priority(context: ExecutorContext) = Priority.RANDOM
 
     override suspend fun execute(context: ExecutorContext) {
         val text = context.message.text ?: return
@@ -32,9 +30,7 @@ class HuificatorExecutor(private val easyKeyValueService: EasyKeyValueService) :
         }
     }
 
-    override fun canExecute(context: ExecutorContext): Boolean {
-        return false
-    }
+    override fun canExecute(context: ExecutorContext) = false
 
     fun huify(word: String): String? {
         val wordLowerCase = getLastWord(word).lowercase()
@@ -78,9 +74,7 @@ class HuificatorExecutor(private val easyKeyValueService: EasyKeyValueService) :
         }
     }
 
-    private fun getTalkingDensity(context: ExecutorContext): Long {
-        return easyKeyValueService.get(TalkingDensity, context.chatKey, 7)
-    }
+    private fun getTalkingDensity(context: ExecutorContext) = easyKeyValueService.get(TalkingDensity, context.chatKey, 7)
 
     companion object {
         private const val VOWELS = "ёэоеаяуюыи"

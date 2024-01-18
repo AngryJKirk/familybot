@@ -10,9 +10,7 @@ import org.springframework.stereotype.Component
 @Component
 class HelpCommandExecutor : CommandExecutor() {
 
-    override fun command(): Command {
-        return Command.HELP
-    }
+    override fun command() = Command.HELP
 
     override suspend fun execute(context: ExecutorContext) {
         context.sender.send(

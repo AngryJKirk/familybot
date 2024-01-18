@@ -16,9 +16,7 @@ class CommandStatExecutor(
     private val repositoryCommand: CommandHistoryRepository,
 ) : CommandExecutor() {
 
-    override fun command(): Command {
-        return Command.COMMAND_STATS
-    }
+    override fun command() = Command.COMMAND_STATS
 
     override suspend fun execute(context: ExecutorContext) {
         val topList = repositoryCommand.get(context.user, from = DateConstants.theBirthDayOfFamilyBot)

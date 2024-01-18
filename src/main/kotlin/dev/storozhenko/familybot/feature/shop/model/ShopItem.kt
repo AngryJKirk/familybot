@@ -25,9 +25,7 @@ enum class ShopItem(val title: Phrase, val description: Phrase, val price: Int) 
                 entries
                     .map { shopItem ->
                         InlineKeyboardButton(formatLine(context, shopItem))
-                            .apply {
-                                callbackData = shopItem.name
-                            }
+                            .apply { callbackData = shopItem.name }
                     }
                     .chunked(1),
 
