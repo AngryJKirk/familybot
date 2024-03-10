@@ -3,6 +3,7 @@ package dev.storozhenko.familybot.core.routers
 import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.context
 import dev.storozhenko.familybot.common.extensions.key
+import dev.storozhenko.familybot.common.extensions.message
 import dev.storozhenko.familybot.common.extensions.prettyFormat
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.common.extensions.toChat
@@ -63,10 +64,7 @@ class Router(
     }
 
     suspend fun processUpdate(update: Update, sender: AbsSender) {
-        val message = update.message
-            ?: update.editedMessage
-            ?: update.callbackQuery.message
-
+        val message = update.message()
         val chat = message.chat
 
         val isGroup = chat.isSuperGroupChat || chat.isGroupChat

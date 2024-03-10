@@ -36,20 +36,11 @@ fun TelegramUser.toUser(chat: Chat? = null, telegramChat: TelegramChat? = null):
 }
 
 fun Update.toChat(): Chat {
-    return when {
-        hasMessage() -> Chat(message.chat.id, message.chat.title)
-        hasEditedMessage() -> Chat(editedMessage.chat.id, editedMessage.chat.title)
-        else -> Chat(callbackQuery.message.chat.id, callbackQuery.message.chat.title)
-    }
+    val message = message()
+    return Chat(message.chat.id, message.chat.title)
 }
 
-fun Update.chatId(): Long {
-    return when {
-        hasMessage() -> message.chat.id
-        hasEditedMessage() -> editedMessage.chat.id
-        else -> callbackQuery.message.chat.id
-    }
-}
+fun Update.chatId(): Long = message().chatId
 
 fun Update.chatIdString(): String {
     return chatId().toString()
@@ -72,8 +63,18 @@ fun Update.from(): TelegramUser {
     }
 }
 
+fun Update.message(): Message {
+    val callbackMessage = callbackQuery?.message
+    return when {
+        message != null -> message
+        editedMessage != null -> editedMessage
+        callbackMessage != null && callbackMessage is Message -> callbackMessage
+        else -> throw FamilyBot.InternalException("Message is not available for $this")
+    }
+}
+
 fun Update.context(botConfig: BotConfig, dictionary: Dictionary, sender: AbsSender): ExecutorContext {
-    val message = message ?: editedMessage ?: callbackQuery.message
+    val message = message()
     val isFromDeveloper = botConfig.developer == from().userName
     val chat = toChat()
     val user = toUser()

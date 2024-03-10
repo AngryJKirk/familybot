@@ -14,6 +14,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendVoice
 import org.telegram.telegrambots.meta.api.methods.stickers.AddStickerToSet
 import org.telegram.telegrambots.meta.api.methods.stickers.CreateNewStickerSet
 import org.telegram.telegrambots.meta.api.methods.stickers.SetStickerSetThumb
+import org.telegram.telegrambots.meta.api.methods.stickers.SetStickerSetThumbnail
 import org.telegram.telegrambots.meta.api.methods.stickers.UploadStickerFile
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia
 import org.telegram.telegrambots.meta.api.objects.File
@@ -99,6 +100,10 @@ class TrackingAbsSender(
         return absSender.execute(setStickerSetThumb)
     }
 
+    override fun execute(setStickerSetThumbnail: SetStickerSetThumbnail?): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override fun execute(createNewStickerSet: CreateNewStickerSet): Boolean {
         return absSender.execute(createNewStickerSet)
     }
@@ -157,8 +162,13 @@ class TrackingAbsSender(
         return absSender.executeAsync(addStickerToSet)
     }
 
-    override fun executeAsync(setStickerSetThumb: SetStickerSetThumb): CompletableFuture<Boolean> {
-        return absSender.executeAsync(setStickerSetThumb)
+    override fun executeAsync(setStickerSetThumb: SetStickerSetThumb?): CompletableFuture<Boolean> {
+        return executeAsync(setStickerSetThumb)
+    }
+
+
+    override fun executeAsync(setStickerSetThumbnail: SetStickerSetThumbnail?): CompletableFuture<Boolean> {
+       return absSender.executeAsync(setStickerSetThumbnail)
     }
 
     override fun executeAsync(createNewStickerSet: CreateNewStickerSet): CompletableFuture<Boolean> {
