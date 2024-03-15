@@ -17,6 +17,7 @@ class ErrorLogsDeferredAppender : Appender<ILoggingEvent> {
 
     companion object {
         val errors: MutableList<String> = mutableListOf()
+        val messagesToAnalyze: MutableList<String> = mutableListOf()
     }
 
     override fun start() {
@@ -80,6 +81,17 @@ class ErrorLogsDeferredAppender : Appender<ILoggingEvent> {
     override fun getName() = name
 
     override fun doAppend(event: ILoggingEvent?) {
+        if (event != null && event.level in listOf(Level.ERROR, Level.WARN)) {
+
+            val exceptionMessage = if (event.throwableProxy != null) {
+                val className = event.throwableProxy.className
+                val exceptionMessage = event.throwableProxy.message
+                "Exception: $className. Exception message: $exceptionMessage."
+            } else {
+                ""
+            }
+            messagesToAnalyze.add("$exceptionMessage Log level: ${event.level}. Log message: ${event.message}.\n")
+        }
         if (event != null && event.level == Level.ERROR) {
             val exceptionMessage = if (event.throwableProxy != null) {
                 val className = event.throwableProxy.className
@@ -94,6 +106,7 @@ class ErrorLogsDeferredAppender : Appender<ILoggingEvent> {
             }
 
             val date = Instant.ofEpochMilli(event.timeStamp).prettyFormat()
+
             errors.add(
                 date +
                         "\n" +

@@ -6,6 +6,7 @@ import com.theokanning.openai.completion.chat.ChatCompletionResult
 import com.theokanning.openai.completion.chat.ChatMessage
 import com.theokanning.openai.service.OpenAiService
 import dev.storozhenko.familybot.BotConfig
+import dev.storozhenko.familybot.common.extensions.SenderLogger.log
 import dev.storozhenko.familybot.common.extensions.code
 import dev.storozhenko.familybot.common.extensions.randomInt
 import dev.storozhenko.familybot.common.extensions.startOfDay
@@ -77,6 +78,18 @@ class TalkingServiceChatGpt(
             chatMessages.add(ChatMessage("user", text))
             chatMessages.add(message)
             message.content
+        }
+    }
+
+    fun internalMessage(message: String): String {
+        try {
+            if (botConfig.openAiToken == null) return "<ChatGPT is not available due to missing token>"
+            val request = createRequest(mutableListOf(ChatMessage("user", message)))
+            val response = getOpenAIService().createChatCompletion(request)
+            return response.choices.first().message.content
+        } catch (e: Exception) {
+            log.error(e) { "Internal message ChatGPT failure" }
+            return "Internal message ChatGPT failure"
         }
     }
 
