@@ -274,6 +274,17 @@ CREATE TABLE IF NOT EXISTS marriages
 
 );
 
+CREATE TABLE IF NOT EXISTS reactions
+(
+    chat_id      BIGINT    NOT NULL references chats,
+    from_user_id BIGINT    NOT NULL references users,
+    message_id   BIGINT    NOT NULL,
+    update_time  TIMESTAMP NOT NULL,
+    reactions    TEXT[]    NOT NULL
+);
+CREATE UNIQUE INDEX idx_reactions ON reactions (chat_id, from_user_id, message_id);
+CREATE INDEX idx_reactions_chat ON reactions (chat_id);
+
 
 ------------------- DATA ----------------------
 INSERT INTO commands (id, command)
@@ -306,5 +317,6 @@ VALUES (1, '/stats_month'),
        (27, '/marry_list'),
        (28, '/vestnik'),
        (29, '/time'),
-       (30, '/audio')
+       (30, '/audio'),
+       (31, '/reactions')
 ;

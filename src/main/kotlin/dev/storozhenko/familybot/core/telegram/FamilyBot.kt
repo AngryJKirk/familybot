@@ -8,6 +8,7 @@ import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
 import dev.storozhenko.familybot.core.routers.PaymentRouter
 import dev.storozhenko.familybot.core.routers.PollRouter
+import dev.storozhenko.familybot.core.routers.ReactionsRouter
 import dev.storozhenko.familybot.core.routers.Router
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import kotlinx.coroutines.CoroutineScope
@@ -17,6 +18,7 @@ import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.stereotype.Component
+import org.telegram.telegrambots.bots.DefaultBotOptions
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -28,8 +30,26 @@ class FamilyBot(
     val router: Router,
     val pollRouter: PollRouter,
     val paymentRouter: PaymentRouter,
+    val reactionsRouter: ReactionsRouter,
     val easyKeyValueService: EasyKeyValueService,
-) : TelegramLongPollingBot(config.botToken) {
+) : TelegramLongPollingBot(DefaultBotOptions().apply { allowedUpdates = botAllowedUpdates }, config.botToken) {
+
+    companion object {
+
+        private val botAllowedUpdates = listOf(
+            "message",
+            "edited_message",
+            "callback_query",
+            "shipping_query",
+            "pre_checkout_query",
+            "poll",
+            "poll_answer",
+            "my_chat_member",
+            "chat_member",
+            "message_reaction",
+            "message_reaction_count"
+        )
+    }
 
     private val log = LoggerFactory.getLogger(FamilyBot::class.java)
     private val routerScope = CoroutineScope(Dispatchers.Default)
@@ -53,6 +73,11 @@ class FamilyBot(
         }
 
         if (update.hasPoll()) {
+            return
+        }
+
+        if(update.messageReaction != null){
+            routerScope.launch { reactionsRouter.proceed(update.messageReaction) }
             return
         }
         if (update.hasMessage() || update.hasCallbackQuery() || update.hasEditedMessage()) {

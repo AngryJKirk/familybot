@@ -30,7 +30,8 @@ enum class Command(val command: String, val id: Int) {
     MARRY_LIST("/marry_list", 27),
     VESTNIK("/vestnik", 28),
     TIME("/time", 29),
-    AUDIO("/audio", 30);
+    AUDIO("/audio", 30),
+    REACTION_STATS("/reactions", 31);
 
     companion object {
         val LOOKUP = entries.associateBy(Command::command)

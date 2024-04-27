@@ -23,6 +23,7 @@ fun String?.boldNullable(): String? {
 fun String.bold(): String = "<b>$this</b>"
 fun String.italic(): String = "<i>$this</i>"
 fun String.code(): String = "<code>$this</code>"
+fun String.link(href: String): String = "<a href=\"$href\">$this</a>"
 
 fun pluralize(count: Int, pluralizedWordsProvider: PluralizedWordsProvider = PluralizedWordsProvider()) =
     pluralize(count.toLong(), pluralizedWordsProvider)

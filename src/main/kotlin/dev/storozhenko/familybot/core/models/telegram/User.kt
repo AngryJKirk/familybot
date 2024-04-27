@@ -1,5 +1,7 @@
 package dev.storozhenko.familybot.core.models.telegram
 
+import dev.storozhenko.familybot.common.extensions.link
+
 data class User(val id: Long, val chat: Chat, val name: String?, val nickname: String?) {
 
     fun getGeneralName(mention: Boolean = true): String {
@@ -7,7 +9,7 @@ data class User(val id: Long, val chat: Chat, val name: String?, val nickname: S
             if (nickname != null) {
                 "@$nickname"
             } else {
-                "<a href=\"tg://user?id=$id\">$name</a>"
+                name?.link("tg://user?id=$id") ?: "хуй знает кто"
             }
         } else {
             name ?: "хуй знает кто"
