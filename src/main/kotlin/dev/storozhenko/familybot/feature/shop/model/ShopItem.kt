@@ -16,7 +16,7 @@ enum class ShopItem(val title: Phrase, val description: Phrase, val price: Int) 
     DROP_ASK_WORLD_LIMIT(Phrase.DROP_ASK_WORLD_LIMIT_TITLE, Phrase.DROP_ASK_WORLD_LIMIT_DESC, 200.rubles()),
     PICK_PIDOR(Phrase.PICK_PIDOR_TITLE, Phrase.PICK_PIDOR_DESC, 210.rubles()),
     AUTO_PIDOR(Phrase.AUTO_PIDOR_TITLE, Phrase.AUTO_PIDOR_DESC, 250.rubles()),
-    CHAT_GPT(Phrase.CHAT_GTP_TITLE, Phrase.CHAT_GTP_DESC, 400.rubles()),
+    CHAT_GPT(Phrase.CHAT_GTP_TITLE, Phrase.CHAT_GTP_DESC, 300.rubles()),
     I_AM_RICH(Phrase.I_AM_RICH_TITLE, Phrase.I_AM_RICH_DESC, 1000.rubles());
 
     companion object {
