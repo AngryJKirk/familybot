@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 @Component
 class SlavaUkraineKeyWordProcessor : KeyWordProcessor {
 
-    override fun isRandom(context: ExecutorContext) = true
+    override fun isRandom() = true
 
     override fun canProcess(context: ExecutorContext): Boolean {
         val text = context.message.text ?: return false

@@ -32,7 +32,7 @@ class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Config
         }
         val keyWordProcessor = processors
             .find { it.canProcess(context) }
-            ?.takeIf { isPassingRandomCheck(it, context) }
+            ?.takeIf { isPassingRandomCheck(it) }
         return if (keyWordProcessor != null) {
             log.info { "Key word processor is found: ${keyWordProcessor::class.simpleName}" }
             processorsForMessage[message.messageId] = keyWordProcessor
@@ -42,7 +42,7 @@ class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Config
         }
     }
 
-    private fun isPassingRandomCheck(processor: KeyWordProcessor, context: ExecutorContext): Boolean {
-        return if (processor.isRandom(context)) randomInt(0, 5) == 0 else true
+    private fun isPassingRandomCheck(processor: KeyWordProcessor): Boolean {
+        return if (processor.isRandom()) randomInt(0, 5) == 0 else true
     }
 }

@@ -4,7 +4,7 @@ import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 
 interface KeyWordProcessor {
 
-    fun isRandom(context: ExecutorContext) = false
+    fun isRandom() = false
 
     fun canProcess(context: ExecutorContext): Boolean
 

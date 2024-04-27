@@ -21,7 +21,6 @@ import java.util.stream.Stream
 
 class AdvancedSettingsExecutorTest : CommandExecutorTest() {
 
-    @Suppress("unused")
     companion object {
         @JvmStatic
         fun valuesProvider(): Stream<Arguments> {

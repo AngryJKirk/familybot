@@ -28,7 +28,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import java.util.stream.Stream
 
 class BanSomeoneExecutorTest : ExecutorTest() {
-    @Suppress("unused")
     companion object {
         @JvmStatic
         fun valuesProvider(): Stream<Arguments> {

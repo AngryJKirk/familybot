@@ -30,6 +30,7 @@ enum class FunctionId(val id: Int, val desc: String, val easySetting: BooleanKey
             return InlineKeyboardMarkup(
                 (
                         entries
+                            .asSequence()
                             .map { it to isEnabled(it) }
                             .map { (function, value) -> function.desc to value }
                             .map { (description, value) -> description to value.toEmoji() }
@@ -39,6 +40,7 @@ enum class FunctionId(val id: Int, val desc: String, val easySetting: BooleanKey
                                 }
                             }
                             .chunked(1)
+                            .toList()
                         ),
             )
         }

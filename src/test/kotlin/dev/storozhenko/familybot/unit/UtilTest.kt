@@ -26,7 +26,6 @@ import java.util.stream.Stream
 
 class UtilTest {
 
-    @Suppress("unused")
     companion object {
         @JvmStatic
         fun plurTestValues(): Stream<Arguments> {

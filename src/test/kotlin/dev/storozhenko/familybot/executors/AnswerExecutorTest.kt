@@ -24,7 +24,6 @@ class AnswerExecutorTest : CommandExecutorTest() {
     @Autowired
     lateinit var answerExecutor: AnswerExecutor
 
-    @Suppress("unused")
     companion object {
         @JvmStatic
         fun answerValuesProvider(): Stream<Arguments> {

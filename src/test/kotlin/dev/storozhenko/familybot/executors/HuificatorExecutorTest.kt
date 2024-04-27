@@ -24,7 +24,6 @@ import java.util.stream.Stream
 
 class HuificatorExecutorTest : ExecutorTest() {
 
-    @Suppress("unused")
     companion object {
         @JvmStatic
         fun valuesProvider(): Stream<Arguments> {
