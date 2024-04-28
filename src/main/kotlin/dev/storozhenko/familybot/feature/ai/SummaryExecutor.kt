@@ -1,5 +1,6 @@
 package dev.storozhenko.familybot.feature.ai
 
+import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -19,6 +20,6 @@ class SummaryExecutor(
         val messages = rawChatLogRepository
             .getMessages(context.chat)
             .joinToString(separator = "\n") { (user, message) -> "${user.getGeneralName(false)} >>>> $message" }
-        talkingServiceChatGpt.internalMessage(messages, GptStyle.SUMMARY_ASSISTANT)
+        context.sender.send(context, talkingServiceChatGpt.internalMessage(messages, GptStyle.SUMMARY_ASSISTANT))
     }
 }
