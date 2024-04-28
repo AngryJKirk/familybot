@@ -11,11 +11,11 @@ import dev.storozhenko.familybot.core.routers.PollRouter
 import dev.storozhenko.familybot.core.routers.ReactionsRouter
 import dev.storozhenko.familybot.core.routers.Router
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.bots.DefaultBotOptions
@@ -51,7 +51,7 @@ class FamilyBot(
         )
     }
 
-    private val log = LoggerFactory.getLogger(FamilyBot::class.java)
+    private val log = KotlinLogging.logger {}
     private val routerScope = CoroutineScope(Dispatchers.Default)
     private val channels = HashMap<Long, Channel<Update>>()
 
@@ -76,8 +76,8 @@ class FamilyBot(
             return
         }
 
-        if(update.messageReaction != null){
-            routerScope.launch { reactionsRouter.proceed(update.messageReaction) }
+        if (update.messageReaction != null) {
+            routerScope.launch { proceedReaction(update) }
             return
         }
         if (update.hasMessage() || update.hasCallbackQuery() || update.hasEditedMessage()) {
@@ -102,7 +102,7 @@ class FamilyBot(
         } catch (e: TelegramApiRequestException) {
             val logMessage = "Telegram error: ${e.apiResponse}, ${e.errorCode}, update is ${update.toJson()}"
             if (e.errorCode in 400..499) {
-                log.warn(logMessage, e)
+                log.warn(e) { logMessage }
                 if (e.apiResponse.contains("CHAT_WRITE_FORBIDDEN")) {
                     listOf(FunctionId.Chatting, FunctionId.Huificate, FunctionId.TalkBack)
                         .forEach { function ->
@@ -114,12 +114,20 @@ class FamilyBot(
                         }
                 }
             } else {
-                log.error(logMessage, e)
+                log.error(e) { logMessage }
             }
         } catch (e: Exception) {
-            log.error("Unexpected error, update is ${update.toJson()}", e)
+            log.error(e) { "Unexpected error, update is ${update.toJson()}" }
         } finally {
             MDC.clear()
+        }
+    }
+
+    private fun proceedReaction(update: Update) {
+        runCatching {
+            reactionsRouter.proceed(update.messageReaction)
+        }.onFailure {
+            log.error(it) { "reactionRouter.proceed failed" }
         }
     }
 
@@ -127,7 +135,7 @@ class FamilyBot(
         runCatching {
             pollRouter.proceed(update)
         }.onFailure {
-            log.warn("pollRouter.proceed failed", it)
+            log.warn(it) { "pollRouter.proceed failed" }
         }
     }
 
@@ -135,7 +143,7 @@ class FamilyBot(
         return runCatching {
             paymentRouter.proceedPreCheckoutQuery(update)
         }.onFailure {
-            log.error("paymentRouter.proceedPreCheckoutQuery failed", it)
+            log.error(it) { "paymentRouter.proceedPreCheckoutQuery failed" }
         }.getOrDefault { }
     }
 
@@ -143,7 +151,7 @@ class FamilyBot(
         return runCatching {
             paymentRouter.proceedSuccessfulPayment(update)
         }.onFailure {
-            log.warn("paymentRouter.proceedSuccessfulPayment failed", it)
+            log.warn(it) { "paymentRouter.proceedSuccessfulPayment failed" }
         }.getOrDefault { }
     }
 
