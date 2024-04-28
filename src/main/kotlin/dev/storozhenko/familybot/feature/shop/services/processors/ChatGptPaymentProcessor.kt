@@ -4,6 +4,7 @@ import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTPaidTill
+import dev.storozhenko.familybot.feature.settings.models.ChatGPTSummaryCooldown
 import dev.storozhenko.familybot.feature.shop.model.PreCheckOutResponse
 import dev.storozhenko.familybot.feature.shop.model.ShopItem
 import dev.storozhenko.familybot.feature.shop.model.ShopPayload
@@ -32,6 +33,7 @@ class ChatGptPaymentProcessor(private val easyKeyValueService: EasyKeyValueServi
             easyKeyValueService.put(ChatGPTPaidTill, key, value)
             value
         }
+        easyKeyValueService.remove(ChatGPTSummaryCooldown, key)
         return SuccessPaymentResponse(Phrase.CHAT_GTP_SUCCESS) {
             it.execute(SendMessage(key.chatId.toString(), "Оплачено до $newDate"))
         }

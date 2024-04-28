@@ -81,19 +81,10 @@ class TalkingServiceChatGpt(
         }
     }
 
-    fun internalMessage(message: String, gptStyle: GptStyle? = null, systemMessage: ChatMessage? = null): String {
+    fun internalMessage(message: String): String {
         try {
             if (botConfig.openAiToken == null) return "<ChatGPT is not available due to missing token>"
-
-            val chatMessages = mutableListOf<ChatMessage>()
-            if (gptStyle != null) {
-                chatMessages.add(getSystemMessage(gptStyle))
-            }
-            if (systemMessage != null) {
-                chatMessages.add(systemMessage)
-            }
-            chatMessages.add(ChatMessage("user", message))
-            val request = createRequest(chatMessages)
+            val request = createRequest(mutableListOf(ChatMessage("user", message)))
             val response = getOpenAIService().createChatCompletion(request)
             return response.choices.first().message.content
         } catch (e: Exception) {
