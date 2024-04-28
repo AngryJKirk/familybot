@@ -35,7 +35,7 @@ class RawChatLogRepository(private val template: JdbcTemplate) {
 
     fun getMessages(
         chat: Chat,
-        from: Instant = Instant.now().minus(3, ChronoUnit.HOURS),
+        from: Instant = Instant.now().minus(3, ChronoUnit.DAYS),
         limit: Int = 100
     ): List<Pair<User, String>> {
         return template.query(
