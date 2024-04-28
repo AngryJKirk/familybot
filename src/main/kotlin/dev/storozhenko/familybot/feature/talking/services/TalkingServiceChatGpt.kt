@@ -81,13 +81,16 @@ class TalkingServiceChatGpt(
         }
     }
 
-    fun internalMessage(message: String, gptStyle: GptStyle? = null): String {
+    fun internalMessage(message: String, gptStyle: GptStyle? = null, systemMessage: ChatMessage? = null): String {
         try {
             if (botConfig.openAiToken == null) return "<ChatGPT is not available due to missing token>"
 
             val chatMessages = mutableListOf<ChatMessage>()
             if (gptStyle != null) {
                 chatMessages.add(getSystemMessage(gptStyle))
+            }
+            if (systemMessage != null) {
+                chatMessages.add(systemMessage)
             }
             chatMessages.add(ChatMessage("user", message))
             val request = createRequest(chatMessages)

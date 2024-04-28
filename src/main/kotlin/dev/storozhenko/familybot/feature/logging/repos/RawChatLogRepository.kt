@@ -42,7 +42,7 @@ class RawChatLogRepository(private val template: JdbcTemplate) {
             """
             select u.id as id, u.name as name, u.username as username, message from raw_chat_log 
             join public.users u on u.id = raw_chat_log.user_id
-            where chat_id = ? and date >= ? and message is not null order by date desc limit $limit
+            where chat_id = ? and date >= ? and message is not null and message not like '/%' order by date desc limit $limit
         """.trimIndent(),
             { rs, _ -> rs.toUser(chat) to rs.getString("message") },
             chat.id,
