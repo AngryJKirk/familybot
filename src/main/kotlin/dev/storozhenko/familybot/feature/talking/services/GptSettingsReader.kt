@@ -41,12 +41,13 @@ class GptSettingsReader {
     }
 }
 
-enum class GptStyle(val value: String, val universe: GptUniverse = GptUniverse.DEFAULT) {
+enum class GptStyle(val value: String, val universe: GptUniverse = GptUniverse.DEFAULT, val internal: Boolean = false) {
     RUDE("грубый"),
     CUTE("милый"),
     SEXY("сексуальный"),
     HELPING("прислуживающий"),
     NEUTRAL("нейтральный"),
+    SUMMARY_ASSISTANT("саммари", internal = true),
     ASSISTANT("ассистент", GptUniverse.ASSISTANT);
 
     companion object {

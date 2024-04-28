@@ -11,9 +11,9 @@ import dev.storozhenko.familybot.feature.pidor.models.Pidor
 import java.sql.ResultSet
 import java.util.UUID
 
-fun ResultSet.toUser(): User = User(
+fun ResultSet.toUser(chat: Chat? = null): User = User(
     this.getLong("id"),
-    Chat(this.getLong("chat_id"), ""),
+    chat ?: Chat(this.getLong("chat_id"), ""),
     this.getString("name"),
     this.getString("username"),
 )

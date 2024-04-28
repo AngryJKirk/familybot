@@ -81,10 +81,16 @@ class TalkingServiceChatGpt(
         }
     }
 
-    fun internalMessage(message: String): String {
+    fun internalMessage(message: String, gptStyle: GptStyle? = null): String {
         try {
             if (botConfig.openAiToken == null) return "<ChatGPT is not available due to missing token>"
-            val request = createRequest(mutableListOf(ChatMessage("user", message)))
+
+            val chatMessages = mutableListOf<ChatMessage>()
+            if (gptStyle != null) {
+                chatMessages.add(getSystemMessage(gptStyle))
+            }
+            chatMessages.add(ChatMessage("user", message))
+            val request = createRequest(chatMessages)
             val response = getOpenAIService().createChatCompletion(request)
             return response.choices.first().message.content
         } catch (e: Exception) {
@@ -113,9 +119,13 @@ class TalkingServiceChatGpt(
 
     private fun getSystemMessage(
         style: GptStyle,
-        context: ExecutorContext,
+        context: ExecutorContext? = null,
     ): ChatMessage {
-        val pidorMessage = getCurrentPidors(context)
+        val pidorMessage = if (context != null) {
+            getCurrentPidors(context)
+        } else {
+            null
+        }
         val universeValue = if (pidorMessage != null && style != GptStyle.ASSISTANT) {
             gptSettingsReader.getUniverseValue(style.universe) + pidorMessage
         } else {

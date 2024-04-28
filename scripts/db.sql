@@ -318,5 +318,6 @@ VALUES (1, '/stats_month'),
        (28, '/vestnik'),
        (29, '/time'),
        (30, '/audio'),
-       (31, '/reactions')
+       (31, '/reactions'),
+       (32, '/summary')
 ;
