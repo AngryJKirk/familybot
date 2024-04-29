@@ -43,6 +43,7 @@ class ReactionsStatsExecutor(private val reactionRepository: ReactionRepository)
             .mapValues { (_, count) -> count.sumOf(Pair<String, Int>::second) }
             .entries
             .sortedByDescending { (_, count) -> count }
+            .filter { (_, count) -> count > 2 }
             .mapIndexed { index, entry ->
                 "${index + 1}. ${entry.key} ${(entry.value.toString() + " " + pluralize(entry.value, pluralizedReactions)).bold()} "
             }
