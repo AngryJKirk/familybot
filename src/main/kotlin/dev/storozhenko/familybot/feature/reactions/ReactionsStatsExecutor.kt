@@ -44,7 +44,7 @@ class ReactionsStatsExecutor(private val reactionRepository: ReactionRepository)
             .entries
             .sortedByDescending { (_, count) -> count }
             .mapIndexed { index, entry ->
-                "${index + 1}. ${entry.key} ${(entry.value.toString() + pluralize(entry.value, pluralizedReactions)).bold()} "
+                "${index + 1}. ${entry.key} ${(entry.value.toString() + " " + pluralize(entry.value, pluralizedReactions)).bold()} "
             }
             .joinToString("\n")
     }
@@ -90,6 +90,7 @@ class ReactionsStatsExecutor(private val reactionRepository: ReactionRepository)
     }
 
     private fun messageLink(reaction: ReactionRepository.Reaction): String {
-        return "от ${reaction.to.name}:".link("https://t.me/c/${reaction.to.chat.id}/${reaction.messageId}")
+        val chatId = reaction.to.chat.id.toString().replace("-100", "")
+        return "от ${reaction.to.name}:".link("https://t.me/c/$chatId/${reaction.messageId}")
     }
 }
