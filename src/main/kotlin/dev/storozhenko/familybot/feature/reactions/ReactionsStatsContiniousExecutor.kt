@@ -12,13 +12,18 @@ import dev.storozhenko.familybot.core.models.telegram.User
 import dev.storozhenko.familybot.core.repos.ReactionRepository
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.telegram.FamilyBot
+import dev.storozhenko.familybot.feature.talking.services.TalkingServiceChatGpt
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 @Component
-class ReactionsStatsContiniousExecutor(private val reactionRepository: ReactionRepository, botConfig: BotConfig) :
+class ReactionsStatsContiniousExecutor(
+    private val reactionRepository: ReactionRepository,
+    private val chatGpt: TalkingServiceChatGpt,
+    botConfig: BotConfig
+) :
     ContiniousConversationExecutor(botConfig) {
     override fun getDialogMessages(context: ExecutorContext) = setOf("За какой период реакции?")
 
@@ -30,6 +35,7 @@ class ReactionsStatsContiniousExecutor(private val reactionRepository: ReactionR
         val callbackQuery = context.update.callbackQuery
         context.sender.execute(AnswerCallbackQuery(callbackQuery.id))
         val message = callbackQuery.data
+
         val after = when (message) {
             "день" -> Instant.now().minus(24, ChronoUnit.HOURS)
             "неделя" -> Instant.now().minus(7, ChronoUnit.DAYS)
@@ -37,9 +43,21 @@ class ReactionsStatsContiniousExecutor(private val reactionRepository: ReactionR
             else -> Instant.now().minus(24, ChronoUnit.HOURS)
         }
         val reactions = reactionRepository.get(context.chat, after)
+        val reactionStats = calculateReactionStats(reactions)
+        if (message == "AI день") {
+            val analytics = chatGpt.internalMessage(
+                """
+                Ниже я передам список людей и количество реакций на свои сообщения которые они получили за последние сутки.
+                Построй веселую и забавную аналитику, не стесняйся использовать мат.
+                Список реакций:
+                $reactionStats
+            """.trimIndent()
+            )
+            context.sender.send(context, analytics, enableHtml = true)
+            return
+        }
 
-
-        context.sender.send(context, calculateReactionStats(reactions), enableHtml = true)
+        context.sender.send(context, reactionStats, enableHtml = true)
         context.sender.send(context, calculateReactionStatsByMessage(reactions), enableHtml = true)
     }
 
