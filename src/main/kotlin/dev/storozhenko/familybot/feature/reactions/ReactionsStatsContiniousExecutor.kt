@@ -56,11 +56,12 @@ class ReactionsStatsContiniousExecutor(
                 Ниже я передам список людей и количество реакций на свои сообщения которые они получили за последние сутки.
                 Построй веселую и забавную аналитику, необходимо использовать мат и быть грубым.
                 Задача аналитики это быть отправленной чат и собрать смех.
+                В ответе нельзя использовать html теги.
                 Список реакций:
                 $reactionStats
             """.trimIndent()
             )
-            context.sender.send(context, analytics, enableHtml = true)
+            context.sender.send(context, analytics)
             return
         }
 
