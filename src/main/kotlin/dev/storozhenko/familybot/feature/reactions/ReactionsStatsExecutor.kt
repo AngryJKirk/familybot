@@ -33,8 +33,21 @@ class ReactionsStatsExecutor(private val reactionRepository: ReactionRepository)
 
 
         context.sender.send(context, calculateReactionStats(reactions), enableHtml = true)
+        context.sender.send(context, calculateReactionStatsByMessage(reactions), enableHtml = true)
     }
 
+    fun calculateReactionStatsByMessage(reactions: List<ReactionRepository.Reaction>): String {
+        return reactions
+            .map { messageLink(it) to it.reactions.size }
+            .groupBy { (messageId, _) -> messageId }
+            .mapValues { (_, count) -> count.sumOf(Pair<String, Int>::second) }
+            .entries
+            .sortedByDescending { (_, count) -> count }
+            .mapIndexed { index, entry ->
+                "${index + 1}. ${entry.key} ${(entry.value.toString() + pluralize(entry.value, pluralizedReactions)).bold()} "
+            }
+            .joinToString("\n")
+    }
 
     fun calculateReactionStats(reactionsData: List<ReactionRepository.Reaction>): String {
         val topUsersByReaction = mutableMapOf<User, Int>()
