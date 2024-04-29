@@ -50,6 +50,7 @@ class SummaryExecutor(
         """.trimIndent()
         val messages = rawChatLogRepository
             .getMessages(context.chat)
+            .reversed()
             .joinToString(separator = "\n") { (user, message) -> "${user.getGeneralName(false)} >>>> $message" }
         context.sender.send(context, talkingServiceChatGpt.internalMessage(prefix + "\n" + messages))
     }
