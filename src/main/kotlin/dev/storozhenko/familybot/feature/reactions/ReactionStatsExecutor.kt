@@ -19,7 +19,7 @@ class ReactionStatsExecutor : CommandExecutor() {
     }
 
     private fun periodsKeyboard(): InlineKeyboardMarkup {
-        val buttons = listOf("день", "неделя", "месяц")
+        val buttons = listOf("день", "неделя", "месяц", "AI день")
             .map { InlineKeyboardButton.builder().text(it).callbackData(it).build() }
         return InlineKeyboardMarkup(listOf(buttons))
     }
