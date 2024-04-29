@@ -15,6 +15,7 @@ import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.feature.talking.services.TalkingServiceChatGpt
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -35,7 +36,12 @@ class ReactionsStatsContiniousExecutor(
         val callbackQuery = context.update.callbackQuery
         context.sender.execute(AnswerCallbackQuery(callbackQuery.id))
         val message = callbackQuery.data
-
+        context.sender.execute(DeleteMessage
+            .builder()
+            .chatId(context.chat.idString)
+            .messageId(context.message.messageId)
+            .build()
+        )
         val after = when (message) {
             "день" -> Instant.now().minus(24, ChronoUnit.HOURS)
             "неделя" -> Instant.now().minus(7, ChronoUnit.DAYS)
