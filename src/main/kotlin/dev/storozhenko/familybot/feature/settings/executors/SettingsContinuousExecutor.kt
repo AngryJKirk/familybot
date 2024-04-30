@@ -3,7 +3,7 @@ package dev.storozhenko.familybot.feature.settings.executors
 import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.isFromAdmin
 import dev.storozhenko.familybot.common.extensions.toEmoji
-import dev.storozhenko.familybot.core.executors.ContiniousConversationExecutor
+import dev.storozhenko.familybot.core.executors.ContinuousConversationExecutor
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -16,10 +16,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
 
 @Component
-class SettingsContiniousExecutor(
+class SettingsContinuousExecutor(
     private val configureRepository: FunctionsConfigureRepository,
     botConfig: BotConfig,
-) : ContiniousConversationExecutor(botConfig) {
+) : ContinuousConversationExecutor(botConfig) {
     private val log = KotlinLogging.logger {  }
     override fun command(): Command {
         return Command.SETTINGS

@@ -6,7 +6,7 @@ import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.link
 import dev.storozhenko.familybot.common.extensions.pluralize
 import dev.storozhenko.familybot.common.extensions.send
-import dev.storozhenko.familybot.core.executors.ContiniousConversationExecutor
+import dev.storozhenko.familybot.core.executors.ContinuousConversationExecutor
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.models.telegram.User
 import dev.storozhenko.familybot.core.repos.ReactionRepository
@@ -20,12 +20,12 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 @Component
-class ReactionsStatsContiniousExecutor(
+class ReactionsStatsContinuousExecutor(
     private val reactionRepository: ReactionRepository,
     private val chatGpt: TalkingServiceChatGpt,
     botConfig: BotConfig
 ) :
-    ContiniousConversationExecutor(botConfig) {
+    ContinuousConversationExecutor(botConfig) {
     override fun getDialogMessages(context: ExecutorContext) = setOf("За какой период реакции?")
 
     override fun command() = Command.REACTION_STATS

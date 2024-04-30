@@ -2,7 +2,7 @@ package dev.storozhenko.familybot.feature.scenario.executors
 
 import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.isFromAdmin
-import dev.storozhenko.familybot.core.executors.ContiniousConversationExecutor
+import dev.storozhenko.familybot.core.executors.ContinuousConversationExecutor
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -13,12 +13,12 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 
 @Component
-class ScenarioContiniousExecutor(
+class ScenarioContinuousExecutor(
     private val scenarioSessionManagementService: ScenarioSessionManagementService,
     private val scenarioService: ScenarioService,
     botConfig: BotConfig,
 ) :
-    ContiniousConversationExecutor(botConfig) {
+    ContinuousConversationExecutor(botConfig) {
     override fun getDialogMessages(context: ExecutorContext) = context.allPhrases(Phrase.SCENARIO_CHOOSE)
 
     override fun command() = Command.SCENARIO

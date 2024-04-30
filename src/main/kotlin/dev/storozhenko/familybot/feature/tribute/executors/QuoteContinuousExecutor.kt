@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.feature.tribute.executors
 
 import dev.storozhenko.familybot.BotConfig
-import dev.storozhenko.familybot.core.executors.ContiniousConversationExecutor
+import dev.storozhenko.familybot.core.executors.ContinuousConversationExecutor
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.tribute.repos.QuoteRepository
@@ -10,10 +10,10 @@ import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 
 @Component
-class QuoteContiniousExecutor(
+class QuoteContinuousExecutor(
     private val quoteRepository: QuoteRepository,
     botConfig: BotConfig,
-) : ContiniousConversationExecutor(botConfig) {
+) : ContinuousConversationExecutor(botConfig) {
 
     override fun command() = Command.QUOTE_BY_TAG
 

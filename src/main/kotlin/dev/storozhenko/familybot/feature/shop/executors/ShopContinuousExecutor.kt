@@ -4,7 +4,7 @@ import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.from
 import dev.storozhenko.familybot.common.extensions.rubles
 import dev.storozhenko.familybot.common.extensions.toJson
-import dev.storozhenko.familybot.core.executors.ContiniousConversationExecutor
+import dev.storozhenko.familybot.core.executors.ContinuousConversationExecutor
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -16,9 +16,9 @@ import org.telegram.telegrambots.meta.api.methods.invoices.SendInvoice
 import org.telegram.telegrambots.meta.api.objects.payments.LabeledPrice
 
 @Component
-class ShopContiniousExecutor(
+class ShopContinuousExecutor(
     private val botConfig: BotConfig,
-) : ContiniousConversationExecutor(botConfig) {
+) : ContinuousConversationExecutor(botConfig) {
 
     override fun getDialogMessages(context: ExecutorContext): Set<String> {
         return context.allPhrases(Phrase.SHOP_KEYBOARD)

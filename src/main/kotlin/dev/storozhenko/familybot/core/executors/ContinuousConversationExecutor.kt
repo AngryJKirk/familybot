@@ -4,7 +4,7 @@ import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.routers.models.Priority
 
-abstract class ContiniousConversationExecutor(private val config: BotConfig) : CommandExecutor() {
+abstract class ContinuousConversationExecutor(private val config: BotConfig) : CommandExecutor() {
 
     override fun priority(context: ExecutorContext) = Priority.MEDIUM
 
