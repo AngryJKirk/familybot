@@ -20,7 +20,7 @@ class ChatStyleSettingProcessor(
 
     override suspend fun process(context: ExecutorContext) {
         val value = context.update.getMessageTokens()[2]
-        val keys = GptStyle.entries.filter { it.internal.not() }.map(GptStyle::value)
+        val keys = GptStyle.entries.map(GptStyle::value)
         if (value in keys) {
             easyKeyValueService.put(ChatGPTStyle, context.chatKey, value)
             context.sender.send(context, "ок")
