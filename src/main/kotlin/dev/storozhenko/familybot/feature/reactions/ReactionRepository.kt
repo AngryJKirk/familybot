@@ -1,6 +1,5 @@
 package dev.storozhenko.familybot.feature.reactions
 
-import dev.storozhenko.familybot.common.extensions.DateConstants
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.User
 import org.springframework.jdbc.core.JdbcTemplate
@@ -13,6 +12,7 @@ import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.Instant
 import java.util.UUID
+import kotlin.time.Duration
 
 @Component
 class ReactionRepository(private val jdbcTemplate: JdbcTemplate) {
@@ -40,7 +40,7 @@ class ReactionRepository(private val jdbcTemplate: JdbcTemplate) {
         val reactions: List<String>
     )
 
-    fun get(chat: Chat, after: Instant = DateConstants.theBirthDayOfFamilyBot): List<Reaction> {
+    fun get(chat: Chat, reactionsWindow: Duration): List<Reaction> {
         val sql = """
             select u.id as from_id, u.name as from_name, u.username as from_username,
              CONCAT_WS(' ', l.raw_update -> 'message' -> 'from' ->> 'first_name', l.raw_update -> 'message' -> 'from' ->> 'last_name') AS to_name,
@@ -54,7 +54,12 @@ class ReactionRepository(private val jdbcTemplate: JdbcTemplate) {
             where r.chat_id = ? and l.date > ?
         """.trimIndent()
 
-        return jdbcTemplate.query(sql, { rs, _ -> mapReaction(rs, chat) }, chat.id, Timestamp.from(after))
+        return jdbcTemplate.query(
+            sql,
+            { rs, _ -> mapReaction(rs, chat) },
+            chat.id,
+            Timestamp.from(Instant.now().minusSeconds(reactionsWindow.inWholeSeconds))
+        )
     }
 
     private fun mapReaction(rs: ResultSet, chat: Chat): Reaction {

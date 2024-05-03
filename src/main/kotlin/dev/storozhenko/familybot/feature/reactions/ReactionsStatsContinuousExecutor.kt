@@ -15,8 +15,6 @@ import dev.storozhenko.familybot.feature.talking.services.TalkingServiceChatGpt
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 @Component
 class ReactionsStatsContinuousExecutor(
@@ -34,44 +32,60 @@ class ReactionsStatsContinuousExecutor(
     override suspend fun execute(context: ExecutorContext) {
         val callbackQuery = context.update.callbackQuery
         context.sender.execute(AnswerCallbackQuery(callbackQuery.id))
-        val period = callbackQuery.data
+        val callbackPeriod = callbackQuery.data
         context.sender.execute(
-            DeleteMessage
-                .builder()
-                .chatId(context.chat.idString)
-                .messageId(context.message.messageId)
-                .build()
+            DeleteMessage.builder().chatId(context.chat.idString).messageId(context.message.messageId).build()
         )
-        val after = when (period) {
-            "день" -> Instant.now().minus(24, ChronoUnit.HOURS)
-            "неделя" -> Instant.now().minus(7, ChronoUnit.DAYS)
-            "месяц" -> Instant.now().minus(30, ChronoUnit.DAYS)
-            else -> Instant.now().minus(24, ChronoUnit.HOURS)
+        val (reactionsPeriod, isAi) = ReactionsPeriod.parse(callbackPeriod)
+        val reactions = reactionRepository.get(context.chat, reactionsPeriod.period)
+        if (isAi) {
+            sendAiReactions(context, reactionsPeriod, reactions)
+        } else {
+            sendRawReactions(context, reactionsPeriod, reactions)
         }
-        val reactions = reactionRepository.get(context.chat, after)
+    }
+
+    suspend fun sendRawReactions(
+        context: ExecutorContext,
+        period: ReactionsPeriod,
+        reactions: List<ReactionRepository.Reaction>
+    ) {
+
+        val periodDesc = when (period) {
+            ReactionsPeriod.WEEK -> "неделю"
+            else -> period.periodName
+        }
+
+        context.sender.send(
+            context,
+            "Реакции за $periodDesc:".bold() + "\n${calculateReactionStats(reactions)}", enableHtml = true
+        )
+        context.sender.send(context, calculateReactionStatsByMessage(reactions), enableHtml = true)
+    }
+
+    suspend fun sendAiReactions(
+        context: ExecutorContext,
+        reactionsPeriod: ReactionsPeriod,
+        reactions: List<ReactionRepository.Reaction>
+    ) {
         val reactionStats = calculateReactionStats(reactions)
-        if (period == "AI день") {
-            val analytics = chatGpt.internalMessage(
-                """
-                Ниже я передам список людей и количество реакций на свои сообщения которые они получили за последние сутки.
+        val promptPrefix = when (reactionsPeriod) {
+            ReactionsPeriod.DAY -> "за последние сутки"
+            ReactionsPeriod.WEEK -> "за последнюю неделю"
+            ReactionsPeriod.MONTH -> "за последний месяц"
+        }
+        val analytics = chatGpt.internalMessage(
+            """
+                Ниже я передам список людей и количество реакций на свои сообщения которые они получили $promptPrefix.
                 Построй веселую и забавную аналитику с матом и грубостями.
                 Задача аналитики это быть отправленной чат и собрать смех.
                 В ответе нельзя использовать html теги.
                 Список реакций:
                 $reactionStats
             """.trimIndent()
-            )
-            context.sender.send(context, analytics)
-            return
-        }
-
-        val periodDesc = when (period) {
-            "неделя" -> "неделю"
-            else -> period
-        }
-
-        context.sender.send(context, "Реакции за $periodDesc:".bold() + "\n$reactionStats", enableHtml = true)
-        context.sender.send(context, calculateReactionStatsByMessage(reactions), enableHtml = true)
+        )
+        context.sender.send(context, analytics)
+        return
     }
 
     fun calculateReactionStatsByMessage(reactions: List<ReactionRepository.Reaction>): String {
