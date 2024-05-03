@@ -52,27 +52,22 @@ class ReactionsStatsContinuousExecutor(
         }
     }
 
-    suspend fun sendRawReactions(
+    private suspend fun sendRawReactions(
         context: ExecutorContext,
         period: ReactionsPeriod,
         reactions: List<ReactionRepository.Reaction>
     ) {
 
-        val periodDesc = when (period) {
-            ReactionsPeriod.WEEK -> "неделю"
-            else -> period.periodName
-        }
-
         context.sender.send(
             context,
-            "Реакции за $periodDesc:".bold() + "\n${calculateReactionStats(reactions)}", enableHtml = true
+            getPeriodDesc(period).bold() + "\n${calculateReactionStats(reactions)}", enableHtml = true
         )
         context.sender.send(context, calculateReactionStatsByMessage(reactions), enableHtml = true)
     }
 
-    suspend fun sendAiReactions(
+    private suspend fun sendAiReactions(
         context: ExecutorContext,
-        reactionsPeriod: ReactionsPeriod,
+        period: ReactionsPeriod,
         reactions: List<ReactionRepository.Reaction>
     ) {
         val paidTill = easyKeyValueService.get(ChatGPTPaidTill, context.chatKey)
@@ -95,8 +90,8 @@ class ReactionsStatsContinuousExecutor(
                 easyKeyValueService.put(ChatGPTReactionsCooldown, context.chatKey, true, 5.minutes)
             }
         }
-        val reactionStats = calculateReactionStats(reactions)
-        val promptPrefix = when (reactionsPeriod) {
+        val reactionStats = calculateReactionStats(reactions, htmlFree = true)
+        val promptPrefix = when (period) {
             ReactionsPeriod.DAY -> "за последние сутки"
             ReactionsPeriod.WEEK -> "за последнюю неделю"
             ReactionsPeriod.MONTH -> "за последний месяц"
@@ -106,16 +101,15 @@ class ReactionsStatsContinuousExecutor(
                 Ниже я передам список людей и количество реакций на свои сообщения которые они получили $promptPrefix.
                 Построй веселую и забавную аналитику с матом и грубостями.
                 Задача аналитики это быть отправленной чат и собрать смех.
-                В ответе нельзя использовать html теги.
                 Список реакций:
                 $reactionStats
             """.trimIndent()
         )
-        context.sender.send(context, analytics)
+        context.sender.send(context, getPeriodDesc(period) + "\n" + analytics)
         return
     }
 
-    fun calculateReactionStatsByMessage(reactions: List<ReactionRepository.Reaction>): String {
+    private fun calculateReactionStatsByMessage(reactions: List<ReactionRepository.Reaction>): String {
         return reactions
             .map { messageLink(it) to it.reactions.size }
             .groupBy { (messageId, _) -> messageId }
@@ -136,7 +130,7 @@ class ReactionsStatsContinuousExecutor(
             .joinToString("\n")
     }
 
-    fun calculateReactionStats(reactionsData: List<ReactionRepository.Reaction>): String {
+    private fun calculateReactionStats(reactionsData: List<ReactionRepository.Reaction>, htmlFree: Boolean = false): String {
         val topUsersByReaction = mutableMapOf<User, Int>()
         val totalUserReactions = mutableMapOf<User, List<String>>()
 
@@ -155,15 +149,24 @@ class ReactionsStatsContinuousExecutor(
                 formatMessage(
                     user,
                     reactionCounter,
-                    totalUserReactions[user] ?: throw FamilyBot.InternalException("some fuck up?")
+                    totalUserReactions[user] ?: throw FamilyBot.InternalException("some fuck up?"),
+                    htmlFree
                 )
             }
 
 
     }
 
-    private fun formatMessage(user: User, reactionCounter: Int, totalUserReactions: List<String>): String {
-        val name = user.getGeneralName(mention = false).bold()
+    private fun getPeriodDesc(period: ReactionsPeriod): String {
+        val periodDesc = when (period) {
+            ReactionsPeriod.WEEK -> "неделю"
+            else -> period.periodName
+        }
+        return "Отчет за $periodDesc:"
+    }
+    private fun formatMessage(user: User, reactionCounter: Int, totalUserReactions: List<String>, htmlFree: Boolean): String {
+        val generalName = user.getGeneralName(mention = false)
+        val name = if(htmlFree) generalName else generalName.bold()
         val plured = pluralize(reactionCounter, pluralizedReactions)
         val countByReactions = totalUserReactions
             .asSequence()
