@@ -7,19 +7,26 @@ import dev.storozhenko.familybot.common.extensions.link
 import dev.storozhenko.familybot.common.extensions.pluralize
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.ContinuousConversationExecutor
+import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.models.telegram.User
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.telegram.FamilyBot
+import dev.storozhenko.familybot.feature.settings.models.ChatGPTPaidTill
+import dev.storozhenko.familybot.feature.settings.models.ChatGPTReactionsCooldown
 import dev.storozhenko.familybot.feature.talking.services.TalkingServiceChatGpt
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
+import java.time.Instant
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 
 @Component
 class ReactionsStatsContinuousExecutor(
     private val reactionRepository: ReactionRepository,
     private val chatGpt: TalkingServiceChatGpt,
+    private val easyKeyValueService: EasyKeyValueService,
     botConfig: BotConfig
 ) :
     ContinuousConversationExecutor(botConfig) {
@@ -68,6 +75,26 @@ class ReactionsStatsContinuousExecutor(
         reactionsPeriod: ReactionsPeriod,
         reactions: List<ReactionRepository.Reaction>
     ) {
+        val paidTill = easyKeyValueService.get(ChatGPTPaidTill, context.chatKey)
+        val isCooldown = easyKeyValueService.get(ChatGPTReactionsCooldown, context.chatKey, false)
+        if (paidTill == null || paidTill.isBefore(Instant.now())) {
+            if (isCooldown) {
+                context.sender.send(
+                    context,
+                    "АИ реакции на кулдауне, кулдаун 12 часов, если есть подписка из /shop то кулдаун там 5 минут"
+                )
+                return
+            } else {
+                easyKeyValueService.put(ChatGPTReactionsCooldown, context.chatKey, true, 12.hours)
+            }
+        } else {
+            if (isCooldown) {
+                context.sender.send(context, "Падажжи, кулдаун, всего 5 минут")
+                return
+            } else {
+                easyKeyValueService.put(ChatGPTReactionsCooldown, context.chatKey, true, 5.minutes)
+            }
+        }
         val reactionStats = calculateReactionStats(reactions)
         val promptPrefix = when (reactionsPeriod) {
             ReactionsPeriod.DAY -> "за последние сутки"
