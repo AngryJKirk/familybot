@@ -45,6 +45,10 @@ class ReactionsStatsContinuousExecutor(
         )
         val (reactionsPeriod, isAi) = ReactionsPeriod.parse(callbackPeriod)
         val reactions = reactionRepository.get(context.chat, reactionsPeriod.period)
+        if(reactions.isEmpty()){
+            context.sender.send(context, "Реакций еще нет. Скорее всего, вам необходимо сделать бота админом чтобы он имел возможность собирать реакции.")
+            return
+        }
         if (isAi) {
             sendAiReactions(context, reactionsPeriod, reactions)
         } else {
