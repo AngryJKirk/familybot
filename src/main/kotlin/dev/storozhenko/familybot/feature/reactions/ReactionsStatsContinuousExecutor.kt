@@ -9,7 +9,6 @@ import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.ContinuousConversationExecutor
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.models.telegram.User
-import dev.storozhenko.familybot.core.repos.ReactionRepository
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.feature.talking.services.TalkingServiceChatGpt
@@ -35,14 +34,15 @@ class ReactionsStatsContinuousExecutor(
     override suspend fun execute(context: ExecutorContext) {
         val callbackQuery = context.update.callbackQuery
         context.sender.execute(AnswerCallbackQuery(callbackQuery.id))
-        val message = callbackQuery.data
-        context.sender.execute(DeleteMessage
-            .builder()
-            .chatId(context.chat.idString)
-            .messageId(context.message.messageId)
-            .build()
+        val period = callbackQuery.data
+        context.sender.execute(
+            DeleteMessage
+                .builder()
+                .chatId(context.chat.idString)
+                .messageId(context.message.messageId)
+                .build()
         )
-        val after = when (message) {
+        val after = when (period) {
             "день" -> Instant.now().minus(24, ChronoUnit.HOURS)
             "неделя" -> Instant.now().minus(7, ChronoUnit.DAYS)
             "месяц" -> Instant.now().minus(30, ChronoUnit.DAYS)
@@ -50,11 +50,11 @@ class ReactionsStatsContinuousExecutor(
         }
         val reactions = reactionRepository.get(context.chat, after)
         val reactionStats = calculateReactionStats(reactions)
-        if (message == "AI день") {
+        if (period == "AI день") {
             val analytics = chatGpt.internalMessage(
                 """
                 Ниже я передам список людей и количество реакций на свои сообщения которые они получили за последние сутки.
-                Построй веселую и забавную аналитику, необходимо использовать мат и быть грубым.
+                Построй веселую и забавную аналитику с матом и грубостями.
                 Задача аналитики это быть отправленной чат и собрать смех.
                 В ответе нельзя использовать html теги.
                 Список реакций:
@@ -65,7 +65,12 @@ class ReactionsStatsContinuousExecutor(
             return
         }
 
-        context.sender.send(context, reactionStats, enableHtml = true)
+        val periodDesc = when (period) {
+            "неделя" -> "неделю"
+            else -> period
+        }
+
+        context.sender.send(context, "Реакции за $periodDesc:".bold() + "\n$reactionStats", enableHtml = true)
         context.sender.send(context, calculateReactionStatsByMessage(reactions), enableHtml = true)
     }
 

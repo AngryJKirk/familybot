@@ -1,4 +1,4 @@
-package dev.storozhenko.familybot.core.repos
+package dev.storozhenko.familybot.feature.reactions
 
 import dev.storozhenko.familybot.common.extensions.DateConstants
 import dev.storozhenko.familybot.core.models.telegram.Chat
