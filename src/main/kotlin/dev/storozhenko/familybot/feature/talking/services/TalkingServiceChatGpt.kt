@@ -50,10 +50,16 @@ class TalkingServiceChatGpt(
             caches.values.forEach { cache -> cache.invalidate(chatId) }
             return "OK"
         }
-        val style = getStyle(context)
+        val shouldUseGpt4 = shouldUseGpt4(context)
 
+        val style = getStyle(context)
+        val universe = if (shouldUseGpt4) {
+            GptUniverse.GPT4
+        } else {
+            style.universe
+        }
         val chatMessages = getPastMessages(style, context)
-        val systemMessage = getSystemMessage(style, context)
+        val systemMessage = getSystemMessage(universe, context)
         if (text == "/debug") {
             return chatMessages.plus(systemMessage).joinToString("\n", transform = ChatMessage::toString)
         }
@@ -68,7 +74,7 @@ class TalkingServiceChatGpt(
             )
         }
         chatMessages.add(0, systemMessage)
-        val request = createRequest(chatMessages, useGpt4 = shouldUseGpt4(context))
+        val request = createRequest(chatMessages, useGpt4 = shouldUseGpt4)
         val response = getOpenAIService().createChatCompletion(request)
         saveMetric(context, response)
         chatMessages.removeFirst()
@@ -133,7 +139,7 @@ class TalkingServiceChatGpt(
     }
 
     private fun getSystemMessage(
-        style: GptStyle,
+        universe: GptUniverse,
         context: ExecutorContext? = null,
     ): ChatMessage {
 //        val pidorMessage = if (context != null) {
@@ -146,7 +152,7 @@ class TalkingServiceChatGpt(
 //        } else {
 //        gptSettingsReader.getUniverseValue(style.universe)
 //        }
-        return ChatMessage("system", gptSettingsReader.getUniverseValue(style.universe).trimIndent())
+        return ChatMessage("system", gptSettingsReader.getUniverseValue(universe).trimIndent())
     }
 
     private fun createRequest(chatMessages: MutableList<ChatMessage>, useGpt4: Boolean): ChatCompletionRequest {

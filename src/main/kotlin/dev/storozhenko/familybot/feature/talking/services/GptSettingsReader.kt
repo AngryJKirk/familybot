@@ -58,4 +58,5 @@ enum class GptStyle(val value: String, val universe: GptUniverse = GptUniverse.D
 enum class GptUniverse {
     DEFAULT,
     ASSISTANT,
+    GPT4
 }
