@@ -45,6 +45,7 @@ object ChatGPTNotificationNeeded : InstantKeyType<ChatEasyKey>
 object ChatGPTSummaryCooldown: BooleanKeyType<ChatEasyKey>
 object ChatGPTReactionsCooldown: BooleanKeyType<ChatEasyKey>
 object ChatGPT4Enabled: BooleanKeyType<ChatEasyKey>
+object ChatGPT4MessagesDailyCounter: LongKeyType<ChatEasyKey>
 object IGCookie : StringKeyType<PlainKey>
 object PidorStrikeStats : EasyKeyType<PidorStrikes, ChatEasyKey> {
     override fun mapToString(value: PidorStrikes) = value.toJson()

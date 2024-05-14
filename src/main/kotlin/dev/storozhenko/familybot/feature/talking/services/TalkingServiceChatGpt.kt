@@ -10,11 +10,14 @@ import dev.storozhenko.familybot.common.extensions.SenderLogger.log
 import dev.storozhenko.familybot.common.extensions.code
 import dev.storozhenko.familybot.common.extensions.randomInt
 import dev.storozhenko.familybot.common.extensions.startOfDay
+import dev.storozhenko.familybot.common.extensions.untilNextDay
 import dev.storozhenko.familybot.common.extensions.untilNextMonth
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.feature.pidor.repos.PidorRepository
+import dev.storozhenko.familybot.feature.settings.models.ChatGPT4Enabled
+import dev.storozhenko.familybot.feature.settings.models.ChatGPT4MessagesDailyCounter
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTStyle
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTTokenUsageByChat
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
@@ -65,7 +68,7 @@ class TalkingServiceChatGpt(
             )
         }
         chatMessages.add(0, systemMessage)
-        val request = createRequest(chatMessages, useGpt4 = false)
+        val request = createRequest(chatMessages, useGpt4 = shouldUseGpt4(context))
         val response = getOpenAIService().createChatCompletion(request)
         saveMetric(context, response)
         chatMessages.removeFirst()
@@ -90,6 +93,24 @@ class TalkingServiceChatGpt(
         } catch (e: Exception) {
             log.error(e) { "Internal message ChatGPT failure" }
             return "Internal message ChatGPT failure"
+        }
+    }
+
+    private fun shouldUseGpt4(context: ExecutorContext): Boolean {
+        val isEnabled = easyKeyValueService.get(ChatGPT4Enabled, context.chatKey, false)
+        if (isEnabled.not()) return false
+
+        val messagesUsed = easyKeyValueService.get(ChatGPT4MessagesDailyCounter, context.chatKey)
+        if (messagesUsed == null) {
+            easyKeyValueService.put(ChatGPT4MessagesDailyCounter, context.chatKey, 1, untilNextDay())
+            return true
+        } else {
+            if (messagesUsed > 30) {
+                return false
+            } else {
+                easyKeyValueService.increment(ChatGPT4MessagesDailyCounter, context.chatKey)
+                return true
+            }
         }
     }
 
