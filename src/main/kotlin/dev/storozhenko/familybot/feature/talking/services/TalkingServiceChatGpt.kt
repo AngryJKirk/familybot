@@ -136,17 +136,17 @@ class TalkingServiceChatGpt(
         style: GptStyle,
         context: ExecutorContext? = null,
     ): ChatMessage {
-        val pidorMessage = if (context != null) {
-            getCurrentPidors(context)
-        } else {
-            null
-        }
-        val universeValue = if (pidorMessage != null && style != GptStyle.ASSISTANT) {
-            gptSettingsReader.getUniverseValue(style.universe) + pidorMessage
-        } else {
-            gptSettingsReader.getUniverseValue(style.universe)
-        }
-        return ChatMessage("system", universeValue.trimIndent())
+//        val pidorMessage = if (context != null) {
+//            getCurrentPidors(context)
+//        } else {
+//            null
+//        }
+//        val universeValue = if (pidorMessage != null && style != GptStyle.ASSISTANT) {
+//            gptSettingsReader.getUniverseValue(style.universe) + pidorMessage
+//        } else {
+//        gptSettingsReader.getUniverseValue(style.universe)
+//        }
+        return ChatMessage("system", gptSettingsReader.getUniverseValue(style.universe).trimIndent())
     }
 
     private fun createRequest(chatMessages: MutableList<ChatMessage>, useGpt4: Boolean): ChatCompletionRequest {
