@@ -6,6 +6,7 @@ import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.logging.repos.RawChatLogRepository
+import dev.storozhenko.familybot.feature.settings.models.ChatGPT4Enabled
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTPaidTill
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTSummaryCooldown
 import dev.storozhenko.familybot.feature.talking.services.TalkingServiceChatGpt
@@ -52,6 +53,7 @@ class SummaryExecutor(
             .getMessages(context.chat)
             .reversed()
             .joinToString(separator = "\n") { (user, message) -> "${user.getGeneralName(false)} >>>> $message" }
-        context.sender.send(context, talkingServiceChatGpt.internalMessage(prefix + "\n" + messages))
+        val useChatGpt4 = easyKeyValueService.get(ChatGPT4Enabled, context.chatKey, false)
+        context.sender.send(context, talkingServiceChatGpt.internalMessage(prefix + "\n" + messages, useChatGpt4))
     }
 }

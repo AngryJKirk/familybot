@@ -12,6 +12,7 @@ import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.models.telegram.User
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.telegram.FamilyBot
+import dev.storozhenko.familybot.feature.settings.models.ChatGPT4Enabled
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTPaidTill
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTReactionsCooldown
 import dev.storozhenko.familybot.feature.talking.services.TalkingServiceChatGpt
@@ -45,8 +46,11 @@ class ReactionsStatsContinuousExecutor(
         )
         val (reactionsPeriod, isAi) = ReactionsPeriod.parse(callbackPeriod)
         val reactions = reactionRepository.get(context.chat, reactionsPeriod.period)
-        if(reactions.isEmpty()){
-            context.sender.send(context, "Реакций еще нет. Скорее всего, вам необходимо сделать бота админом чтобы он имел возможность собирать реакции.")
+        if (reactions.isEmpty()) {
+            context.sender.send(
+                context,
+                "Реакций еще нет. Скорее всего, вам необходимо сделать бота админом чтобы он имел возможность собирать реакции."
+            )
             return
         }
         if (isAi) {
@@ -100,6 +104,7 @@ class ReactionsStatsContinuousExecutor(
             ReactionsPeriod.WEEK -> "за последнюю неделю"
             ReactionsPeriod.MONTH -> "за последний месяц"
         }
+        val useChatGpt4 = easyKeyValueService.get(ChatGPT4Enabled, context.chatKey, false)
         val analytics = chatGpt.internalMessage(
             """
                 Ниже я передам список людей и количество реакций на свои сообщения которые они получили $promptPrefix.
@@ -107,7 +112,8 @@ class ReactionsStatsContinuousExecutor(
                 Задача аналитики это быть отправленной чат и собрать смех.
                 Список реакций:
                 $reactionStats
-            """.trimIndent()
+            """.trimIndent(),
+            useChatGpt4
         )
         context.sender.send(context, getPeriodDesc(period) + "\n" + analytics)
         return
@@ -134,7 +140,10 @@ class ReactionsStatsContinuousExecutor(
             .joinToString("\n")
     }
 
-    private fun calculateReactionStats(reactionsData: List<ReactionRepository.Reaction>, htmlFree: Boolean = false): String {
+    private fun calculateReactionStats(
+        reactionsData: List<ReactionRepository.Reaction>,
+        htmlFree: Boolean = false
+    ): String {
         val topUsersByReaction = mutableMapOf<User, Int>()
         val totalUserReactions = mutableMapOf<User, List<String>>()
 
@@ -168,9 +177,15 @@ class ReactionsStatsContinuousExecutor(
         }
         return "Отчет за $periodDesc:"
     }
-    private fun formatMessage(user: User, reactionCounter: Int, totalUserReactions: List<String>, htmlFree: Boolean): String {
+
+    private fun formatMessage(
+        user: User,
+        reactionCounter: Int,
+        totalUserReactions: List<String>,
+        htmlFree: Boolean
+    ): String {
         val generalName = user.getGeneralName(mention = false)
-        val name = if(htmlFree) generalName else generalName.bold()
+        val name = if (htmlFree) generalName else generalName.bold()
         val plured = pluralize(reactionCounter, pluralizedReactions)
         val countByReactions = totalUserReactions
             .asSequence()

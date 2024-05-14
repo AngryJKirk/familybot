@@ -65,7 +65,7 @@ class TalkingServiceChatGpt(
             )
         }
         chatMessages.add(0, systemMessage)
-        val request = createRequest(chatMessages)
+        val request = createRequest(chatMessages, useGpt4 = false)
         val response = getOpenAIService().createChatCompletion(request)
         saveMetric(context, response)
         chatMessages.removeFirst()
@@ -81,10 +81,10 @@ class TalkingServiceChatGpt(
         }
     }
 
-    fun internalMessage(message: String): String {
+    fun internalMessage(message: String, useGpt4: Boolean = false): String {
         try {
             if (botConfig.openAiToken == null) return "<ChatGPT is not available due to missing token>"
-            val request = createRequest(mutableListOf(ChatMessage("user", message)))
+            val request = createRequest(mutableListOf(ChatMessage("user", message)), useGpt4)
             val response = getOpenAIService().createChatCompletion(request)
             return response.choices.first().message.content
         } catch (e: Exception) {
@@ -128,10 +128,15 @@ class TalkingServiceChatGpt(
         return ChatMessage("system", universeValue.trimIndent())
     }
 
-    private fun createRequest(chatMessages: MutableList<ChatMessage>): ChatCompletionRequest {
+    private fun createRequest(chatMessages: MutableList<ChatMessage>, useGpt4: Boolean): ChatCompletionRequest {
+        val model = if (useGpt4) {
+            "gpt-4o"
+        } else {
+            "gpt-3.5-turbo"
+        }
         return ChatCompletionRequest
             .builder()
-            .model("gpt-3.5-turbo")
+            .model(model)
             .messages(chatMessages)
             .temperature(1.0)
             .topP(1.0)

@@ -319,5 +319,7 @@ VALUES (1, '/stats_month'),
        (29, '/time'),
        (30, '/audio'),
        (31, '/reactions'),
-       (32, '/summary')
+       (32, '/summary'),
+       (33, '/enable_gpt4')
+
 ;
