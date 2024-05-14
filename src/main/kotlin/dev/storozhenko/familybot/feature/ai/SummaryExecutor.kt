@@ -48,6 +48,7 @@ class SummaryExecutor(
             Ниже будет переписка из чата в формате ПОЛЬЗОВАТЕЛЬ >>>> СООБЩЕНИЕ.
             Сделай выжимку из этих сообщений и напиши ее в забавно и информативной форме.
             Главная цель сделать это развлекательным.
+            Запрещено использовать html и markdown.
         """.trimIndent()
         val messages = rawChatLogRepository
             .getMessages(context.chat)
