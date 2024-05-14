@@ -10,14 +10,11 @@ import dev.storozhenko.familybot.common.extensions.SenderLogger.log
 import dev.storozhenko.familybot.common.extensions.code
 import dev.storozhenko.familybot.common.extensions.randomInt
 import dev.storozhenko.familybot.common.extensions.startOfDay
-import dev.storozhenko.familybot.common.extensions.untilNextDay
 import dev.storozhenko.familybot.common.extensions.untilNextMonth
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.feature.pidor.repos.PidorRepository
-import dev.storozhenko.familybot.feature.settings.models.ChatGPT4Enabled
-import dev.storozhenko.familybot.feature.settings.models.ChatGPT4MessagesDailyCounter
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTStyle
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTTokenUsageByChat
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
@@ -59,7 +56,7 @@ class TalkingServiceChatGpt(
             style.universe
         }
         val chatMessages = getPastMessages(style, context)
-        val systemMessage = getSystemMessage(universe, context)
+        val systemMessage = getSystemMessage(universe)
         if (text == "/debug") {
             return chatMessages.plus(systemMessage).joinToString("\n", transform = ChatMessage::toString)
         }
@@ -103,21 +100,23 @@ class TalkingServiceChatGpt(
     }
 
     private fun shouldUseGpt4(context: ExecutorContext): Boolean {
-        val isEnabled = easyKeyValueService.get(ChatGPT4Enabled, context.chatKey, false)
-        if (isEnabled.not()) return false
-
-        val messagesUsed = easyKeyValueService.get(ChatGPT4MessagesDailyCounter, context.chatKey)
-        if (messagesUsed == null) {
-            easyKeyValueService.put(ChatGPT4MessagesDailyCounter, context.chatKey, 1, untilNextDay())
-            return true
-        } else {
-            if (messagesUsed > 30) {
-                return false
-            } else {
-                easyKeyValueService.increment(ChatGPT4MessagesDailyCounter, context.chatKey)
-                return true
-            }
-        }
+//        val isEnabled = easyKeyValueService.get(ChatGPT4Enabled, context.chatKey, false)
+//        if (isEnabled.not()) return false
+//
+//        val messagesUsed = easyKeyValueService.get(ChatGPT4MessagesDailyCounter, context.chatKey)
+//        if (messagesUsed == null) {
+//            easyKeyValueService.put(ChatGPT4MessagesDailyCounter, context.chatKey, 1, untilNextDay())
+//            return true
+//        } else {
+//            if (messagesUsed > 30) {
+//                return false
+//            } else {
+//                easyKeyValueService.increment(ChatGPT4MessagesDailyCounter, context.chatKey)
+//                return true
+//            }
+//        }
+        // TODO fix AI alignment
+        return false
     }
 
     private fun fixFormat(message: String) = message.replace(codeMarkupPattern, "$1".code())
@@ -140,18 +139,7 @@ class TalkingServiceChatGpt(
 
     private fun getSystemMessage(
         universe: GptUniverse,
-        context: ExecutorContext? = null,
     ): ChatMessage {
-//        val pidorMessage = if (context != null) {
-//            getCurrentPidors(context)
-//        } else {
-//            null
-//        }
-//        val universeValue = if (pidorMessage != null && style != GptStyle.ASSISTANT) {
-//            gptSettingsReader.getUniverseValue(style.universe) + pidorMessage
-//        } else {
-//        gptSettingsReader.getUniverseValue(style.universe)
-//        }
         return ChatMessage("system", gptSettingsReader.getUniverseValue(universe).trimIndent())
     }
 
