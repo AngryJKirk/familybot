@@ -1,6 +1,7 @@
 package dev.storozhenko.familybot.feature.ai
 
 import dev.storozhenko.familybot.common.extensions.send
+import dev.storozhenko.familybot.common.extensions.toJson
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.models.telegram.Command
@@ -22,6 +23,12 @@ class SummaryExecutor(
     private val easyKeyValueService: EasyKeyValueService
 ) : CommandExecutor() {
     override fun command() = Command.SUMMARY
+
+    private class UserMessage(
+        val messageNumber: Int,
+        val username: String,
+        val message: String
+    )
 
     override suspend fun execute(context: ExecutorContext) {
         val paidTill = easyKeyValueService.get(ChatGPTPaidTill, context.chatKey)
@@ -45,7 +52,7 @@ class SummaryExecutor(
             }
         }
         val prefix = """
-            Ниже будет переписка из чата в формате ПОЛЬЗОВАТЕЛЬ >>>> СООБЩЕНИЕ.
+            Ниже будет переписка из чата в формате JSON.
             Сделай выжимку из этих сообщений и напиши ее в забавно и информативной форме.
             Главная цель сделать это развлекательным.
             Запрещено использовать html и markdown.
@@ -53,7 +60,8 @@ class SummaryExecutor(
         val messages = rawChatLogRepository
             .getMessages(context.chat)
             .reversed()
-            .joinToString(separator = "\n") { (user, message) -> "${user.getGeneralName(false)} >>>> $message" }
+            .mapIndexed { id, (user, message) -> UserMessage(id, user.getGeneralName(false), message) }
+            .toJson()
         val useChatGpt4 = easyKeyValueService.get(ChatGPT4Enabled, context.chatKey, false)
         context.sender.send(context, talkingServiceChatGpt.internalMessage(prefix + "\n" + messages, useChatGpt4))
     }

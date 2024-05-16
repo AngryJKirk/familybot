@@ -143,5 +143,12 @@ fun Int.rubles() = this * 100
 private val objectMapper = jacksonObjectMapper()
 fun mapper() = objectMapper
 
-fun Any.toJson(): String = objectMapper.writeValueAsString(this)
+fun Any.toJson(pretty: Boolean = false): String {
+    return if (pretty) {
+        objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
+    } else {
+        objectMapper.writeValueAsString(this)
+    }
+}
+
 inline fun <reified T> String.parseJson(): T = mapper().readValue(this, T::class.java)
