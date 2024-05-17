@@ -61,7 +61,7 @@ class SummaryExecutor(
             .getMessages(context.chat)
             .reversed()
             .mapIndexed { id, (user, message) -> UserMessage(id, user.getGeneralName(false), message) }
-            .toJson()
+            .toJson(pretty = true)
         val useChatGpt4 = easyKeyValueService.get(ChatGPT4Enabled, context.chatKey, false)
         context.sender.send(context, talkingServiceChatGpt.internalMessage(prefix + "\n" + messages, useChatGpt4))
     }
