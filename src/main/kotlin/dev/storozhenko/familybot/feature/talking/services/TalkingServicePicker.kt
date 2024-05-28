@@ -5,6 +5,7 @@ import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTFreeMessagesLeft
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTPaidTill
+import dev.storozhenko.familybot.feature.settings.models.ChatGPTTalkingDisabled
 import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -20,6 +21,9 @@ class TalkingServicePicker(
 ) : TalkingService {
 
     override suspend fun getReplyToUser(context: ExecutorContext, shouldBeQuestion: Boolean): String {
+        if (easyKeyValueService.get(ChatGPTTalkingDisabled, context.chatKey, false)) {
+            return old.getReplyToUser(context, shouldBeQuestion)
+        }
         if (botConfig.openAiToken == null) {
             return old.getReplyToUser(context, shouldBeQuestion)
         }

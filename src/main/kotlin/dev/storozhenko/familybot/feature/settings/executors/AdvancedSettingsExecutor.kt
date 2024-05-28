@@ -39,7 +39,8 @@ class AdvancedSettingsExecutor(
                 val processor = processors
                     .find { processor -> processor.canProcess(context) }
                 return@runCatching processor
-                    ?.process(context)
+                    ?.
+                    process(context)
                     ?: sendErrorMessage(context)
             }.getOrElse { throwable ->
                 log.error(throwable) { "Advanced settings failed" }
