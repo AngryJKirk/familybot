@@ -33,9 +33,9 @@ class SettingsContinuousExecutor(
         val chat = context.chat
         val callbackQuery = context.update.callbackQuery
 
-        if (!context.sender.isFromAdmin(context)) {
+        if (!context.client.isFromAdmin(context)) {
             log.info { "Access to settings denied" }
-            context.sender.execute(
+            context.client.execute(
                 AnswerCallbackQuery(callbackQuery.id)
                     .apply {
                         showAlert = true
@@ -50,9 +50,9 @@ class SettingsContinuousExecutor(
             if (function != null) {
                 configureRepository.switch(function, chat)
                 val isEnabled = { id: FunctionId -> configureRepository.isEnabled(id, chat) }
-                context.sender.execute(AnswerCallbackQuery(callbackQuery.id))
+                context.client.execute(AnswerCallbackQuery(callbackQuery.id))
                 runCatching {
-                    context.sender.execute(
+                    context.client.execute(
                         EditMessageReplyMarkup().apply {
                             chatId = callbackQuery.message.chatId.toString()
                             messageId = callbackQuery.message.messageId
@@ -60,7 +60,7 @@ class SettingsContinuousExecutor(
                         },
                     )
                 }
-                context.sender.execute(
+                context.client.execute(
                     SendMessage(
                         chat.idString,
                         "${function.desc} → ${isEnabled.invoke(function).toEmoji()}",

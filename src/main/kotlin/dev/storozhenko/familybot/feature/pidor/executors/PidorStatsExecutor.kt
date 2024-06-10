@@ -36,7 +36,7 @@ class PidorStatsExecutor(
             )
             .take(100)
         val title = "${context.phrase(Phrase.PIDOR_STAT_ALL_TIME)}:\n".bold()
-        context.sender.send(context, title + pidorsByChat.joinToString("\n"), enableHtml = true)
+        context.client.send(context, title + pidorsByChat.joinToString("\n"), enableHtml = true)
     }
 
     override fun command(): Command {

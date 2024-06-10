@@ -20,7 +20,7 @@ class LanguageSettingProcessor(
     override suspend fun process(context: ExecutorContext) {
         val value = context.update.getMessageTokens()[2]
         if (value != "вкл" && value != "выкл") {
-            context.sender.send(
+            context.client.send(
                 context,
                 context.phrase(Phrase.ADVANCED_SETTINGS_FAILED_UKRAINIAN_CHANGE),
             )
@@ -28,6 +28,6 @@ class LanguageSettingProcessor(
         }
         val setting = value == "вкл"
         easyKeyValueService.put(UkrainianLanguage, context.chatKey, setting)
-        context.sender.send(context, context.phrase(Phrase.ADVANCED_SETTINGS_OK))
+        context.client.send(context, context.phrase(Phrase.ADVANCED_SETTINGS_OK))
     }
 }

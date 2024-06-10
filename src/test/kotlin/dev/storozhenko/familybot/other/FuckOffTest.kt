@@ -4,7 +4,7 @@ import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.context
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
 import dev.storozhenko.familybot.feature.talking.services.keyword.processor.BotMentionKeyWordProcessor
-import dev.storozhenko.familybot.infrastructure.TestSender
+import dev.storozhenko.familybot.infrastructure.TestClient
 import dev.storozhenko.familybot.infrastructure.createSimpleMessage
 import dev.storozhenko.familybot.infrastructure.createSimpleUpdate
 import dev.storozhenko.familybot.infrastructure.createSimpleUser
@@ -45,7 +45,7 @@ class FuckOffTest : FamilybotApplicationTest() {
     )
     fun `should be able to process valid message`(phrase: String) {
         val botName = botConfig.botName
-        val context = createSimpleUpdate(phrase).context(botConfig, dictionary, TestSender().sender)
+        val context = createSimpleUpdate(phrase).context(botConfig, dictionary, TestClient().client)
         context.message.replyToMessage = createSimpleMessage()
         context.message.replyToMessage.from = createSimpleUser(true, botName)
         val canProcess = botMentionKeyWordProcessor.isFuckOff(context)

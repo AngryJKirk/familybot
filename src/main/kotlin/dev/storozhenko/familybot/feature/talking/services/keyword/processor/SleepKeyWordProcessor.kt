@@ -15,7 +15,7 @@ class SleepKeyWordProcessor : KeyWordProcessor {
     }
 
     override suspend fun process(context: ExecutorContext) {
-        context.sender.sendSticker(context, Sticker.SWEET_DREAMS, replyToUpdate = true)
+        context.client.sendSticker(context, Sticker.SWEET_DREAMS, replyToUpdate = true)
     }
 
     override fun isRandom() = true

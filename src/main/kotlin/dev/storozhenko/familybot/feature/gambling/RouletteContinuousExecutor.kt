@@ -49,7 +49,7 @@ class RouletteContinuousExecutor(
 
         val number = context.message.text.split(" ")[0].toIntOrNull()
         if (number !in 1..6) {
-            context.sender.execute(SendMessage(chatId, "Мушку спили и в следующий раз играй по правилам"))
+            context.client.execute(SendMessage(chatId, "Мушку спили и в следующий раз играй по правилам"))
             coroutineScope {
                 launch {
                     pidorRepository.addPidor(
@@ -61,18 +61,18 @@ class RouletteContinuousExecutor(
                 }
             }
             delay(1.seconds)
-            context.sender.execute(SendMessage(chatId, "В наказание твое пидорское очко уходит к остальным"))
+            context.client.execute(SendMessage(chatId, "В наказание твое пидорское очко уходит к остальным"))
             return
         }
         val rouletteNumber = randomInt(1, 7)
         log.info("Roulette win number is $rouletteNumber and guessed number is $number")
         if (rouletteNumber == number) {
-            context.sender.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
+            context.client.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
             coroutineScope { launch { repeat(5) { pidorRepository.removePidorRecord(user) } } }
             delay(2.seconds)
-            context.sender.execute(SendMessage(chatId, "Но он пока не треснул. Свое пидорское очко можешь забрать. "))
+            context.client.execute(SendMessage(chatId, "Но он пока не треснул. Свое пидорское очко можешь забрать. "))
         } else {
-            context.sender.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
+            context.client.execute(SendMessage(chatId, "Ты ходишь по охуенно тонкому льду"))
             coroutineScope {
                 launch {
                     repeat(3) {
@@ -86,7 +86,7 @@ class RouletteContinuousExecutor(
                 }
             }
             delay(2.seconds)
-            context.sender.execute(
+            context.client.execute(
                 SendMessage(
                     chatId,
                     "Сорян, но ты проиграл. Твое пидорское очко уходит в зрительный зал трижды. Правильный ответ был $rouletteNumber.",
@@ -94,6 +94,6 @@ class RouletteContinuousExecutor(
             )
         }
         delay(2.seconds)
-        pidorCompetitionService.pidorCompetition(context.chat, context.chatKey).invoke(context.sender)
+        pidorCompetitionService.pidorCompetition(context.chat, context.chatKey).invoke(context.client)
     }
 }

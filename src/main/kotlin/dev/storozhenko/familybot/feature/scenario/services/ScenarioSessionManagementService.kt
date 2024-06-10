@@ -13,9 +13,11 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.methods.polls.SendPoll
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.api.objects.Message
+import org.telegram.telegrambots.meta.api.objects.message.Message
+import org.telegram.telegrambots.meta.api.objects.polls.input.InputPollOption
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -27,16 +29,15 @@ class ScenarioSessionManagementService(
     private val scenarioGameplayService: ScenarioGameplayService,
     private val scenarioPollManagingService: ScenarioPollManagingService,
 ) {
-    private val log = KotlinLogging.logger {  }
+    private val log = KotlinLogging.logger { }
 
     suspend fun startGame(context: ExecutorContext, scenario: Scenario) {
         val chat = context.chat
 
         val currentMove = scenarioGameplayService.getCurrentScenarioState(chat)
         if (currentMove != null && currentMove.move.isEnd.not()) {
-            context.sender.execute(
-                AnswerCallbackQuery().apply {
-                    callbackQueryId = context.update.callbackQuery.id
+            context.client.execute(
+                AnswerCallbackQuery(context.update.callbackQuery.id).apply {
                     showAlert = true
                     text = context.phrase(Phrase.SCENARIO_IS_RUNNING_ALREADY)
                 },
@@ -44,7 +45,7 @@ class ScenarioSessionManagementService(
             return
         }
         scenarioGameplayService.startGame(scenario, chat)
-        context.sender.send(context, context.phrase(Phrase.SCENARIO_IS_STARTING))
+        context.client.send(context, context.phrase(Phrase.SCENARIO_IS_STARTING))
         currentGame(context)
     }
 
@@ -53,11 +54,11 @@ class ScenarioSessionManagementService(
     }
 
     suspend fun listGames(context: ExecutorContext) {
-        context.sender.send(
+        context.client.send(
             context,
             context.phrase(Phrase.SCENARIO_RULES),
         )
-        context.sender.send(
+        context.client.send(
             context,
             context.phrase(Phrase.SCENARIO_CHOOSE),
             replyToUpdate = true,
@@ -93,7 +94,7 @@ class ScenarioSessionManagementService(
                     continueGame(context, nextMove, previousMove)
                 }
             } else {
-                context.sender.send(
+                context.client.send(
                     context,
                     context.phrase(Phrase.SCENARIO_POLL_DRAW),
                 )
@@ -109,7 +110,7 @@ class ScenarioSessionManagementService(
                 ).toHourMinuteString()
 
             runCatching {
-                context.sender.send(
+                context.client.send(
                     context,
                     context.phrase(Phrase.SCENARIO_POLL_EXISTS).replace("\$timeLeft", timeLeft),
                     replyMessageId = recentPoll.messageId,
@@ -117,7 +118,7 @@ class ScenarioSessionManagementService(
             }
                 .onFailure { throwable ->
                     log.error(throwable) { "Sending poll reply fucked up" }
-                    context.sender.send(
+                    context.client.send(
                         context,
                         context.phrase(Phrase.SCENARIO_POLL_EXISTS_FALLBACK).replace("\$timeLeft", timeLeft),
                     )
@@ -131,7 +132,7 @@ class ScenarioSessionManagementService(
         previousMove: ScenarioMove?,
     ) {
         if (previousMove != null) {
-            context.sender.send(context, getExpositionMessage(nextMove, previousMove), enableHtml = true)
+            context.client.send(context, getExpositionMessage(nextMove, previousMove), enableHtml = true)
             delay(2.seconds)
         }
 
@@ -167,10 +168,10 @@ class ScenarioSessionManagementService(
                         .getScenarios()
                         .chunked(1)
                         .map {
-                            it.map { (id, name) ->
+                            InlineKeyboardRow(it.map { (id, name) ->
                                 InlineKeyboardButton(name)
                                     .apply { callbackData = id.toString() }
-                            }
+                            })
                         },
                 )
         }
@@ -198,12 +199,12 @@ class ScenarioSessionManagementService(
             .mapIndexed { i, description -> "${(i + 1).toString().bold()}. $description" }
             .joinToString("\n")
         val messageToSend = moveDescription + "\n\n" + scenarioOptions
-        val message = context.sender.send(context, messageToSend, enableHtml = true)
-        return context.sender.execute(
-            SendPoll().apply {
-                chatId = context.chat.idString
-                question = context.phrase(Phrase.SCENARIO_POLL_DEFAULT_QUESTION)
-                options = (1..scenarioMove.ways.size).map { i -> "Вариант $i" }
+        val message = context.client.send(context, messageToSend, enableHtml = true)
+        return context.client.execute(
+            SendPoll(
+                context.chat.idString,
+                context.phrase(Phrase.SCENARIO_POLL_DEFAULT_QUESTION),
+                (1..scenarioMove.ways.size).map { i -> InputPollOption("Вариант $i") }).apply {
                 replyToMessageId = message.messageId
                 isAnonymous = false
             },
@@ -215,15 +216,15 @@ class ScenarioSessionManagementService(
         context: ExecutorContext,
     ): Message {
         val moveDescription = scenarioMove.description
-        val scenarioOptions = scenarioMove.ways.map(ScenarioWay::description)
-        context.sender.send(context, moveDescription)
-        return context.sender.execute(
-            SendPoll().apply {
-                chatId = context.chat.idString
-                question = context.phrase(Phrase.SCENARIO_POLL_DEFAULT_QUESTION)
-                options = scenarioOptions
-                isAnonymous = false
-            },
+        val scenarioOptions = scenarioMove.ways.map(ScenarioWay::description).map(::InputPollOption)
+        context.client.send(context, moveDescription)
+        return context.client.execute(
+            SendPoll(
+                context.chat.idString,
+                context.phrase(Phrase.SCENARIO_POLL_DEFAULT_QUESTION),
+                scenarioOptions
+            )
+                .apply { isAnonymous = false },
         )
     }
 
@@ -231,13 +232,10 @@ class ScenarioSessionManagementService(
         scenarioMove: ScenarioMove,
         context: ExecutorContext,
     ): Message {
-        val scenarioOptions = scenarioMove.ways.map(ScenarioWay::description)
-        return context.sender.execute(
-            SendPoll()
+        val scenarioOptions = scenarioMove.ways.map(ScenarioWay::description).map(::InputPollOption)
+        return context.client.execute(
+            SendPoll(context.chat.idString, scenarioMove.description, scenarioOptions)
                 .apply {
-                    chatId = context.chat.idString
-                    question = scenarioMove.description
-                    options = scenarioOptions
                     isAnonymous = false
                 },
         )
@@ -246,10 +244,10 @@ class ScenarioSessionManagementService(
     private suspend fun sendFinal(previousMove: ScenarioMove, context: ExecutorContext) {
         val evenMorePreviousMove = scenarioService.getPreviousMove(previousMove)
             ?: throw FamilyBot.InternalException("Scenario seems broken")
-        context.sender.send(context, getExpositionMessage(previousMove, evenMorePreviousMove), enableHtml = true)
+        context.client.send(context, getExpositionMessage(previousMove, evenMorePreviousMove), enableHtml = true)
         delay(2.seconds)
-        context.sender.send(context, previousMove.description)
+        context.client.send(context, previousMove.description)
         delay(2.seconds)
-        context.sender.send(context, context.phrase(Phrase.SCENARIO_END))
+        context.client.send(context, context.phrase(Phrase.SCENARIO_END))
     }
 }

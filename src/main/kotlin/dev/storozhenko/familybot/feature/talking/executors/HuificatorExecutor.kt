@@ -26,7 +26,7 @@ class HuificatorExecutor(private val easyKeyValueService: EasyKeyValueService) :
 
         if (shouldHuificate(context)) {
             val huifyed = huify(text) ?: return
-            context.sender.send(context, huifyed, shouldTypeBeforeSend = true)
+            context.client.send(context, huifyed, shouldTypeBeforeSend = true)
         }
     }
 

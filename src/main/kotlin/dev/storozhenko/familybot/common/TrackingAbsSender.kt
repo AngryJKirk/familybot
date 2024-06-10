@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.common
 
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod
+import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod
 import org.telegram.telegrambots.meta.api.methods.groupadministration.SetChatPhoto
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation
 import org.telegram.telegrambots.meta.api.methods.send.SendAudio
@@ -13,29 +13,28 @@ import org.telegram.telegrambots.meta.api.methods.send.SendVideoNote
 import org.telegram.telegrambots.meta.api.methods.send.SendVoice
 import org.telegram.telegrambots.meta.api.methods.stickers.AddStickerToSet
 import org.telegram.telegrambots.meta.api.methods.stickers.CreateNewStickerSet
-import org.telegram.telegrambots.meta.api.methods.stickers.SetStickerSetThumb
+import org.telegram.telegrambots.meta.api.methods.stickers.ReplaceStickerInSet
 import org.telegram.telegrambots.meta.api.methods.stickers.SetStickerSetThumbnail
 import org.telegram.telegrambots.meta.api.methods.stickers.UploadStickerFile
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia
 import org.telegram.telegrambots.meta.api.objects.File
-import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.bots.AbsSender
-import org.telegram.telegrambots.meta.updateshandlers.SentCallback
+import org.telegram.telegrambots.meta.api.objects.message.Message
+import org.telegram.telegrambots.meta.generics.TelegramClient
+import java.io.InputStream
 import java.io.Serializable
 import java.util.concurrent.CompletableFuture
 
-@Suppress("UNCHECKED_CAST")
-class TrackingAbsSender(
-    private val absSender: AbsSender,
+class TrackingTelegramClient(
+    private val telegramClient: TelegramClient,
     val tracking: MutableList<Message> = ArrayList(),
-) : AbsSender() {
+) : TelegramClient {
 
     override fun <T : Serializable?, Method : BotApiMethod<T>?> executeAsync(method: Method): CompletableFuture<T> {
-        return absSender.executeAsync(method)
+        return telegramClient.executeAsync(method)
     }
 
     override fun <T : Serializable?, Method : BotApiMethod<T>?> execute(method: Method): T {
-        val execute = absSender.execute(method)
+        val execute = telegramClient.execute(method)
         if (execute is Message) {
             tracking.add(execute)
         }
@@ -43,172 +42,163 @@ class TrackingAbsSender(
     }
 
     override fun execute(sendDocument: SendDocument): Message {
-        val message = absSender.execute(sendDocument)
+        val message = telegramClient.execute(sendDocument)
         tracking.add(message)
         return message
     }
 
     override fun execute(sendPhoto: SendPhoto): Message {
-        val message = absSender.execute(sendPhoto)
+        val message = telegramClient.execute(sendPhoto)
         tracking.add(message)
         return message
     }
 
     override fun execute(sendVideo: SendVideo): Message {
-        val message = absSender.execute(sendVideo)
+        val message = telegramClient.execute(sendVideo)
         tracking.add(message)
         return message
     }
 
     override fun execute(sendVideoNote: SendVideoNote): Message {
-        val message = absSender.execute(sendVideoNote)
+        val message = telegramClient.execute(sendVideoNote)
         tracking.add(message)
         return message
     }
 
     override fun execute(sendSticker: SendSticker): Message {
-        val message = absSender.execute(sendSticker)
+        val message = telegramClient.execute(sendSticker)
         tracking.add(message)
         return message
     }
 
     override fun execute(sendAudio: SendAudio): Message {
-        val message = absSender.execute(sendAudio)
+        val message = telegramClient.execute(sendAudio)
         tracking.add(message)
         return message
     }
 
     override fun execute(sendVoice: SendVoice): Message {
-        val message = absSender.execute(sendVoice)
+        val message = telegramClient.execute(sendVoice)
         tracking.add(message)
         return message
     }
 
     override fun execute(sendMediaGroup: SendMediaGroup): List<Message> {
-        return absSender.execute(sendMediaGroup)
+        return telegramClient.execute(sendMediaGroup)
     }
 
     override fun execute(setChatPhoto: SetChatPhoto): Boolean {
-        return absSender.execute(setChatPhoto)
+        return telegramClient.execute(setChatPhoto)
     }
 
     override fun execute(addStickerToSet: AddStickerToSet): Boolean {
-        return absSender.execute(addStickerToSet)
+        return telegramClient.execute(addStickerToSet)
     }
 
-    override fun execute(setStickerSetThumb: SetStickerSetThumb): Boolean {
-        return absSender.execute(setStickerSetThumb)
+    override fun execute(replaceStickerInSet: ReplaceStickerInSet?): Boolean {
+        return telegramClient.execute(replaceStickerInSet)
     }
 
     override fun execute(setStickerSetThumbnail: SetStickerSetThumbnail?): Boolean {
-        TODO("Not yet implemented")
+        return telegramClient.execute(setStickerSetThumbnail)
     }
 
     override fun execute(createNewStickerSet: CreateNewStickerSet): Boolean {
-        return absSender.execute(createNewStickerSet)
+        return telegramClient.execute(createNewStickerSet)
     }
 
     override fun execute(uploadStickerFile: UploadStickerFile): File {
-        return absSender.execute(uploadStickerFile)
+        return telegramClient.execute(uploadStickerFile)
     }
 
     override fun execute(editMessageMedia: EditMessageMedia): Serializable {
-        return absSender.execute(editMessageMedia)
+        return telegramClient.execute(editMessageMedia)
     }
 
     override fun execute(sendAnimation: SendAnimation): Message {
-        val message = absSender.execute(sendAnimation)
+        val message = telegramClient.execute(sendAnimation)
         tracking.add(message)
         return message
     }
 
+    override fun downloadFile(file: File?): java.io.File {
+        return telegramClient.downloadFile(file)
+    }
+
+    override fun downloadFileAsStream(file: File?): InputStream {
+        return telegramClient.downloadFileAsStream(file)
+    }
+
+    override fun downloadFileAsync(file: File?): CompletableFuture<java.io.File> {
+        return telegramClient.downloadFileAsync(file)
+    }
+
+    override fun downloadFileAsStreamAsync(file: File?): CompletableFuture<InputStream> {
+        return telegramClient.downloadFileAsStreamAsync(file)
+    }
+
+
     override fun executeAsync(sendDocument: SendDocument): CompletableFuture<Message> {
-        return absSender.executeAsync(sendDocument)
+        return telegramClient.executeAsync(sendDocument)
     }
 
     override fun executeAsync(sendPhoto: SendPhoto): CompletableFuture<Message> {
-        return absSender.executeAsync(sendPhoto)
+        return telegramClient.executeAsync(sendPhoto)
     }
 
     override fun executeAsync(sendVideo: SendVideo): CompletableFuture<Message> {
-        return absSender.executeAsync(sendVideo)
+        return telegramClient.executeAsync(sendVideo)
     }
 
     override fun executeAsync(sendVideoNote: SendVideoNote): CompletableFuture<Message> {
-        return absSender.executeAsync(sendVideoNote)
+        return telegramClient.executeAsync(sendVideoNote)
     }
 
     override fun executeAsync(sendSticker: SendSticker): CompletableFuture<Message> {
-        return absSender.executeAsync(sendSticker)
+        return telegramClient.executeAsync(sendSticker)
     }
 
     override fun executeAsync(sendAudio: SendAudio): CompletableFuture<Message> {
-        return absSender.executeAsync(sendAudio)
+        return telegramClient.executeAsync(sendAudio)
     }
 
     override fun executeAsync(sendVoice: SendVoice): CompletableFuture<Message> {
-        return absSender.executeAsync(sendVoice)
+        return telegramClient.executeAsync(sendVoice)
     }
 
     override fun executeAsync(sendMediaGroup: SendMediaGroup): CompletableFuture<List<Message>> {
-        return absSender.executeAsync(sendMediaGroup)
+        return telegramClient.executeAsync(sendMediaGroup)
     }
 
     override fun executeAsync(setChatPhoto: SetChatPhoto): CompletableFuture<Boolean> {
-        return absSender.executeAsync(setChatPhoto)
+        return telegramClient.executeAsync(setChatPhoto)
     }
 
     override fun executeAsync(addStickerToSet: AddStickerToSet): CompletableFuture<Boolean> {
-        return absSender.executeAsync(addStickerToSet)
+        return telegramClient.executeAsync(addStickerToSet)
     }
 
-    override fun executeAsync(setStickerSetThumb: SetStickerSetThumb?): CompletableFuture<Boolean> {
+    override fun executeAsync(replaceStickerInSet: ReplaceStickerInSet?): CompletableFuture<Boolean> {
+        return telegramClient.executeAsync(replaceStickerInSet)
+    }
+
+    override fun executeAsync(setStickerSetThumb: SetStickerSetThumbnail?): CompletableFuture<Boolean> {
         return executeAsync(setStickerSetThumb)
     }
 
-
-    override fun executeAsync(setStickerSetThumbnail: SetStickerSetThumbnail?): CompletableFuture<Boolean> {
-       return absSender.executeAsync(setStickerSetThumbnail)
-    }
-
     override fun executeAsync(createNewStickerSet: CreateNewStickerSet): CompletableFuture<Boolean> {
-        return absSender.executeAsync(createNewStickerSet)
+        return telegramClient.executeAsync(createNewStickerSet)
     }
 
     override fun executeAsync(uploadStickerFile: UploadStickerFile): CompletableFuture<File> {
-        return absSender.executeAsync(uploadStickerFile)
+        return telegramClient.executeAsync(uploadStickerFile)
     }
 
     override fun executeAsync(editMessageMedia: EditMessageMedia): CompletableFuture<Serializable> {
-        return absSender.executeAsync(editMessageMedia)
+        return telegramClient.executeAsync(editMessageMedia)
     }
 
     override fun executeAsync(sendAnimation: SendAnimation): CompletableFuture<Message> {
-        return absSender.executeAsync(sendAnimation)
-    }
-
-    public override fun <T : Serializable?, Method : BotApiMethod<T>?, Callback : SentCallback<T>?> sendApiMethodAsync(
-        method: Method,
-        callback: Callback,
-    ) {
-        callProtectedMethod(absSender, "sendApiMethodAsync", method, callback)
-    }
-
-    public override fun <T : Serializable?, Method : BotApiMethod<T>?> sendApiMethodAsync(method: Method): CompletableFuture<T> {
-        return callProtectedMethod(absSender, "sendApiMethodAsync", method) as CompletableFuture<T>
-    }
-
-    public override fun <T : Serializable?, Method : BotApiMethod<T>?> sendApiMethod(method: Method): T {
-        return callProtectedMethod(absSender, "sendApiMethod", method) as T
-    }
-
-    companion object {
-        fun callProtectedMethod(obj: Any, methodName: String, vararg args: Any?): Any? {
-            val argsArray = args.map { it?.javaClass ?: Unit::class.java }.toTypedArray()
-            val method = obj.javaClass.getDeclaredMethod(methodName, *argsArray)
-            val previousState = method.canAccess(obj)
-            method.isAccessible = true
-            return method.invoke(obj, *args).also { method.isAccessible = previousState }
-        }
+        return telegramClient.executeAsync(sendAnimation)
     }
 }

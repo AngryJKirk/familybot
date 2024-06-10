@@ -12,6 +12,6 @@ class QuoteExecutor(private val quoteRepository: QuoteRepository) : CommandExecu
     override fun command() = Command.QUOTE
 
     override suspend fun execute(context: ExecutorContext) {
-        context.sender.send(context, quoteRepository.getRandom())
+        context.client.send(context, quoteRepository.getRandom())
     }
 }

@@ -6,6 +6,7 @@ import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow
 
 enum class ShopItem(val title: Phrase, val description: Phrase, val price: Int) {
 
@@ -27,7 +28,8 @@ enum class ShopItem(val title: Phrase, val description: Phrase, val price: Int) 
                         InlineKeyboardButton(formatLine(context, shopItem))
                             .apply { callbackData = shopItem.name }
                     }
-                    .chunked(1),
+                    .chunked(1)
+                    .map(::InlineKeyboardRow),
 
                 )
         }
@@ -37,8 +39,8 @@ enum class ShopItem(val title: Phrase, val description: Phrase, val price: Int) 
             shopItem: ShopItem,
         ): String {
             val isPremium = context.update.from().isPremium ?: false
-            val additionalCost = if (isPremium) 10 else 0
-            return context.phrase(shopItem.title) + " - ${(shopItem.price / 100) + additionalCost}₽"
+            val additionalCost = if (isPremium) 5 else 0
+            return context.phrase(shopItem.title) + " - ${shopItem.price + additionalCost}⭐"
         }
     }
 }

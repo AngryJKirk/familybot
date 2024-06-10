@@ -13,7 +13,7 @@ class HelpCommandExecutor : CommandExecutor() {
     override fun command() = Command.HELP
 
     override suspend fun execute(context: ExecutorContext) {
-        context.sender.send(
+        context.client.send(
             context,
             context.phrase(Phrase.HELP_MESSAGE),
             enableHtml = true,

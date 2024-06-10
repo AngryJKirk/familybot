@@ -43,7 +43,7 @@ class MeCommandExecutor(
                 messageCount.await(),
             ).joinToString("\n")
         }
-        context.sender.send(context, message, replyToUpdate = true)
+        context.client.send(context, message, replyToUpdate = true)
     }
 
     private fun getMessageCount(chat: Chat, user: User, context: ExecutorContext): String {

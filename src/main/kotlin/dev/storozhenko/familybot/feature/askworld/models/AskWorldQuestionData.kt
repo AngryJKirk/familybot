@@ -1,17 +1,17 @@
 package dev.storozhenko.familybot.feature.askworld.models
 
 import dev.storozhenko.familybot.core.models.telegram.Chat
-import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.bots.AbsSender
+import org.telegram.telegrambots.meta.api.objects.message.Message
+import org.telegram.telegrambots.meta.generics.TelegramClient
 
 sealed interface AskWorldQuestionData
 
 class Success(
     val questionTitle: String,
     val isScam: Boolean,
-    val action: suspend (AbsSender, Chat, Chat) -> Message,
+    val action: suspend (TelegramClient, Chat, Chat) -> Message,
 ) : AskWorldQuestionData
 
 class ValidationError(
-    val invalidQuestionAction: suspend (AbsSender) -> Unit,
+    val invalidQuestionAction: suspend (TelegramClient) -> Unit,
 ) : AskWorldQuestionData

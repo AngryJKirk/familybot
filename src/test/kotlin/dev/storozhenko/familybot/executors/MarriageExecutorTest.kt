@@ -43,7 +43,7 @@ class MarriageExecutorTest : CommandExecutorTest() {
         val contextNoReply = createSimpleCommandContext(marriageExecutor.command())
         runBlocking { marriageExecutor.execute(contextNoReply) }
         argumentCaptor<SendMessage> {
-            verify(sender, times(1)).execute(capture())
+            verify(client, times(1)).execute(capture())
             assertContains(phrases(Phrase.MARRY_RULES), firstValue.text)
         }
 
@@ -57,9 +57,9 @@ class MarriageExecutorTest : CommandExecutorTest() {
                     from = secondUser
                 }
         }
-        runBlocking { marriageExecutor.execute(proposalContext.createContext(sender)) }
+        runBlocking { marriageExecutor.execute(proposalContext.createContext(client)) }
         argumentCaptor<SendMessage> {
-            verify(sender, times(2)).execute(capture())
+            verify(client, times(2)).execute(capture())
             val proposalTo = keyValueService.get(ProposalTo, proposalContext.message.replyToMessage.key())
             assertEquals(proposalTo, firstUser.id)
             assertContains(phrases(Phrase.MARRY_PROPOSED), secondValue.text)
@@ -74,9 +74,9 @@ class MarriageExecutorTest : CommandExecutorTest() {
                     from = firstUser
                 }
         }
-        runBlocking { marriageExecutor.execute(updateProposalReply.createContext(sender)) }
+        runBlocking { marriageExecutor.execute(updateProposalReply.createContext(client)) }
         argumentCaptor<SendMessage> {
-            verify(sender, times(3)).execute(capture())
+            verify(client, times(3)).execute(capture())
             assertContains(phrases(Phrase.MARRY_CONGRATS), thirdValue.text)
             assertNotNull(marriagesRepository.getMarriage(chatId = proposalContext.message.chatId, firstUser.id))
             assertNotNull(marriagesRepository.getMarriage(chatId = proposalContext.message.chatId, secondUser.id))

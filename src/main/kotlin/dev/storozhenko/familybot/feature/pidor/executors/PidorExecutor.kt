@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.bots.AbsSender
+import org.telegram.telegrambots.meta.generics.TelegramClient
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -56,14 +56,14 @@ class PidorExecutor(
         }
         log.info { "Getting pidors from chat $chat" }
         val key = context.chatKey
-        selectPidor(chat, key).first.invoke(context.sender)
+        selectPidor(chat, key).first.invoke(context.client)
     }
 
     fun selectPidor(
         chat: Chat,
         key: ChatEasyKey,
         silent: Boolean = false,
-    ): Pair<(suspend (AbsSender) -> Unit), Boolean> {
+    ): Pair<(suspend (TelegramClient) -> Unit), Boolean> {
         val users = userRepository.getUsers(chat, activeOnly = true)
 
         val pidorToleranceValue = easyKeyValueService.get(PidorTolerance, key)
@@ -78,13 +78,13 @@ class PidorExecutor(
                 return Pair({ }, false)
             }
         }
-        return Pair({ sender ->
+        return Pair({ client ->
             log.info { "Pidor is not found, initiating search procedure" }
             val nextPidor = if (easyKeyValueService.get(BotOwnerPidorSkip, key, false)) {
                 val filteredUsers = users.filter { botConfig.developerId != it.id.toString() }
-                getNextPidorAsync(filteredUsers, sender, chat)
+                getNextPidorAsync(filteredUsers, client, chat)
             } else {
-                getNextPidorAsync(users, sender, chat)
+                getNextPidorAsync(users, client, chat)
             }
 
             listOf(
@@ -95,7 +95,7 @@ class PidorExecutor(
                 .map { phrase -> dictionary.get(phrase, key) }
                 .map(String::bold)
                 .forEach { phrase ->
-                    sender.sendContextFree(
+                    client.sendContextFree(
                         chat.idString,
                         phrase,
                         botConfig,
@@ -105,7 +105,7 @@ class PidorExecutor(
                     )
                 }
             val pidor = nextPidor.await()
-            sender.sendContextFree(
+            client.sendContextFree(
                 chat.idString,
                 pidor.getGeneralName(),
                 botConfig,
@@ -118,21 +118,21 @@ class PidorExecutor(
             } else {
                 easyKeyValueService.increment(PidorTolerance, key)
             }
-            pidorStrikesService.calculateStrike(chat, key, pidor).invoke(sender)
-            pidorCompetitionService.pidorCompetition(chat, key).invoke(sender)
+            pidorStrikesService.calculateStrike(chat, key, pidor).invoke(client)
+            pidorCompetitionService.pidorCompetition(chat, key).invoke(client)
         }, true)
     }
 
     private suspend fun getNextPidorAsync(
         users: List<User>,
-        sender: AbsSender,
+        client: TelegramClient,
         chat: Chat,
     ): Deferred<User> {
         return coroutineScope {
             async {
                 runCatching {
                     users
-                        .map { user -> launch { checkIfUserStillThere(user, sender) } }
+                        .map { user -> launch { checkIfUserStillThere(user, client) } }
                         .forEach { job -> job.join() }
                     val actualizedUsers = userRepository.getUsers(chat, activeOnly = true)
                     log.info { "Users to roll: $actualizedUsers" }
@@ -159,9 +159,9 @@ class PidorExecutor(
 
     private fun checkIfUserStillThere(
         user: User,
-        sender: AbsSender,
+        client: TelegramClient,
     ) {
-        val (userFromChat, tgApiCallSuccessful) = getUserFromChat(user, sender)
+        val (userFromChat, tgApiCallSuccessful) = getUserFromChat(user, client)
         if (tgApiCallSuccessful) {
             if (userFromChat == null) {
                 log.warn { "User $user has left without notification" }
@@ -228,10 +228,10 @@ class PidorExecutor(
         return pidorToleranceValue >= limit
     }
 
-    private fun getUserFromChat(user: User, absSender: AbsSender): Pair<User?, Boolean> {
+    private fun getUserFromChat(user: User, client: TelegramClient): Pair<User?, Boolean> {
         val getChatMemberCall = GetChatMember(user.chat.idString, user.id)
         return runCatching {
-            absSender.execute(getChatMemberCall)
+            client.execute(getChatMemberCall)
                 .apply { log.info { "Chat member status: $this " } }
                 .takeIf { member -> member.status != "left" && member.status != "kicked" }
                 ?.user()
@@ -245,7 +245,7 @@ class PidorExecutor(
     private suspend fun pickPidor(context: ExecutorContext) {
         val abilityCount = easyKeyValueService.get(PickPidorAbilityCount, context.userKey, 0L)
         if (abilityCount <= 0L) {
-            context.sender.send(
+            context.client.send(
                 context,
                 context.phrase(Phrase.PICK_PIDOR_PAYMENT_REQUIRED),
                 shouldTypeBeforeSend = true,
@@ -257,14 +257,14 @@ class PidorExecutor(
 
         if (replyMessage.from.isBot) {
             if (replyMessage.from.userName == botConfig.botName) {
-                context.sender.send(
+                context.client.send(
                     context,
                     context.phrase(Phrase.PICK_PIDOR_CURRENT_BOT),
                     shouldTypeBeforeSend = true,
                     replyToUpdate = true,
                 )
             } else {
-                context.sender.send(
+                context.client.send(
                     context,
                     context.phrase(Phrase.PICK_PIDOR_ANY_BOT),
                     shouldTypeBeforeSend = true,
@@ -278,7 +278,7 @@ class PidorExecutor(
         pidorRepository.addPidor(Pidor(pickedUser, Instant.now()))
         easyKeyValueService.decrement(PickPidorAbilityCount, context.userKey)
 
-        context.sender.send(
+        context.client.send(
             context,
             context.phrase(Phrase.PICK_PIDOR_PICKED).replace("{}", pickedUser.getGeneralName()),
             shouldTypeBeforeSend = true,
@@ -290,7 +290,7 @@ class PidorExecutor(
             context.userKey,
         )
         if (newAbilityCount == 0L) {
-            context.sender.send(
+            context.client.send(
                 context,
                 context.phrase(Phrase.PICK_PIDOR_ABILITY_COUNT_LEFT_NONE),
                 shouldTypeBeforeSend = true,
@@ -298,7 +298,7 @@ class PidorExecutor(
                 enableHtml = true,
             )
         } else {
-            context.sender.send(
+            context.client.send(
                 context,
                 context.phrase(Phrase.PICK_PIDOR_ABILITY_COUNT_LEFT).replace("{}", newAbilityCount.toString()),
                 shouldTypeBeforeSend = true,

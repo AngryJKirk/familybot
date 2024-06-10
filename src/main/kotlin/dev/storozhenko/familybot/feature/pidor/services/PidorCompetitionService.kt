@@ -14,7 +14,7 @@ import dev.storozhenko.familybot.feature.pidor.repos.PidorRepository
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
 import kotlinx.coroutines.delay
 import org.springframework.stereotype.Service
-import org.telegram.telegrambots.meta.bots.AbsSender
+import org.telegram.telegrambots.meta.generics.TelegramClient
 import java.time.Instant
 import java.time.LocalDate
 import kotlin.time.Duration.Companion.seconds
@@ -26,7 +26,7 @@ class PidorCompetitionService(
     private val pidorRepository: PidorRepository,
 ) {
 
-    fun pidorCompetition(chat: Chat, chatEasyKey: ChatEasyKey): suspend (AbsSender) -> Unit {
+    fun pidorCompetition(chat: Chat, chatEasyKey: ChatEasyKey): suspend (TelegramClient) -> Unit {
         if (isEndOfMonth()) {
             val thisMonthPidors = getPidorsOfThisMonth(chat)
             if (thisMonthPidors.size < 2) {

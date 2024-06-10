@@ -9,14 +9,14 @@ import dev.storozhenko.familybot.feature.download.services.IgCookieService
 import dev.storozhenko.familybot.feature.settings.models.IGCookie
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.facilities.filedownloader.TelegramFileDownloader
 import org.telegram.telegrambots.meta.api.methods.GetFile
+import org.telegram.telegrambots.meta.generics.TelegramClient
 
 @Component
 class IgCookiesExecutor(
     private val easyKeyValueService: EasyKeyValueService,
     private val igCookieService: IgCookieService,
-    private val downloader: TelegramFileDownloader,
+    private val telegramClient: TelegramClient,
 ) :
     OnlyBotOwnerExecutor() {
     companion object {
@@ -36,13 +36,13 @@ class IgCookiesExecutor(
     override suspend fun executeInternal(context: ExecutorContext) {
         val document = context.message.document
         runCatching {
-            val filePath = context.sender.execute(GetFile(document.fileId)).filePath
-            val value = downloader.downloadFile(filePath).readText()
+            val filePath = context.client.execute(GetFile(document.fileId)).filePath
+            val value = telegramClient.downloadFile(filePath).readText()
             easyKeyValueService.put(IGCookie, IG_COOKIE_KEY, value)
             igCookieService.saveToFile(value)
-            context.sender.send(context, "Ok")
+            context.client.send(context, "Ok")
         }.onFailure {
-            context.sender.send(context, it.message ?: "wtf")
+            context.client.send(context, it.message ?: "wtf")
                 log.error(it) { "Bad happened during cookie upload" }
         }
     }

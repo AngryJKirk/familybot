@@ -22,7 +22,7 @@ class PatchNoteExecutor(
 
     override suspend fun executeInternal(context: ExecutorContext) {
         if (context.message.isReply.not()) {
-            context.sender.send(context, "No reply message found, master")
+            context.client.send(context, "No reply message found, master")
             return
         }
 
@@ -45,7 +45,7 @@ class PatchNoteExecutor(
             launch {
                 delay(500)
                 runCatching {
-                    context.sender.execute(
+                    context.client.execute(
                         ForwardMessage(
                             chat.idString,
                             context.user.id.toString(),

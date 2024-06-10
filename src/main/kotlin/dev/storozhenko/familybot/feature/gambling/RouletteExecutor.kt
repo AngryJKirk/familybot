@@ -25,7 +25,7 @@ class RouletteExecutor : CommandExecutor(), Configurable {
     override suspend fun execute(context: ExecutorContext) {
         val chatId = context.update.message.chatId.toString()
 
-        context.sender.execute(
+        context.client.execute(
             SendMessage(chatId, context.phrase(Phrase.ROULETTE_MESSAGE))
                 .apply {
                     replyMarkup = ForceReplyKeyboard().apply { selective = true }

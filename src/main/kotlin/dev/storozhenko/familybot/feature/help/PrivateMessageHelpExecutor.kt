@@ -15,7 +15,7 @@ class PrivateMessageHelpExecutor(
         if (helpExecutor.canExecute(context)) {
             helpExecutor.execute(context)
         } else {
-            context.sender.send(
+            context.client.send(
                 context,
                 context.phrase(Phrase.PRIVATE_MESSAGE_HELP),
                 shouldTypeBeforeSend = true,

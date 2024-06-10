@@ -36,19 +36,19 @@ class RageExecutor(
         if (isRageForced(context)) {
             log.warn { "Someone forced ${command()}" }
             easyKeyValueService.put(RageMode, key, AMOUNT_OF_RAGE_MESSAGES, 10.minutes)
-            context.sender.send(context, context.phrase(Phrase.RAGE_INITIAL), shouldTypeBeforeSend = true)
+            context.client.send(context, context.phrase(Phrase.RAGE_INITIAL), shouldTypeBeforeSend = true)
             return
         }
 
         if (isFirstLaunch(context)) {
             log.info { "First launch of ${command()} was detected, avoiding that" }
-            context.sender.send(context, context.phrase(Phrase.TECHNICAL_ISSUE), shouldTypeBeforeSend = true)
+            context.client.send(context, context.phrase(Phrase.TECHNICAL_ISSUE), shouldTypeBeforeSend = true)
             return
         }
 
         if (isCooldown(context)) {
             log.info { "There is a cooldown of ${command()}" }
-            context.sender.send(
+            context.client.send(
                 context,
                 context.phrase(Phrase.RAGE_DONT_CARE_ABOUT_YOU),
                 shouldTypeBeforeSend = true,
@@ -57,7 +57,7 @@ class RageExecutor(
         }
         easyKeyValueService.put(RageMode, key, AMOUNT_OF_RAGE_MESSAGES, 10.minutes)
         easyKeyValueService.put(RageTolerance, key, true, untilNextDay())
-        context.sender.send(context, context.phrase(Phrase.RAGE_INITIAL), shouldTypeBeforeSend = true)
+        context.client.send(context, context.phrase(Phrase.RAGE_INITIAL), shouldTypeBeforeSend = true)
     }
 
     private fun isCooldown(context: ExecutorContext) = easyKeyValueService.get(RageTolerance, context.chatKey, false)

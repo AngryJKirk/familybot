@@ -23,9 +23,9 @@ class ChatStyleSettingProcessor(
         val keys = GptStyle.entries.map(GptStyle::value)
         if (value in keys) {
             easyKeyValueService.put(ChatGPTStyle, context.chatKey, value)
-            context.sender.send(context, "ок")
+            context.client.send(context, "ок")
         } else {
-            context.sender.send(context, "Нет такого стиля, вот список вариантов: " + keys.joinToString(", "))
+            context.client.send(context, "Нет такого стиля, вот список вариантов: " + keys.joinToString(", "))
         }
     }
 }

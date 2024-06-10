@@ -39,14 +39,14 @@ class SubscriptionsNotifierService(private val easyKeyValueService: EasyKeyValue
             val message = context.phrase(Phrase.CHAT_GTP_SUBSCRIPTION_RUN_OUT)
                 .replace("$", expirationDate.prettyFormat(dateOnly = true))
             delay(1.minutes)
-            context.sender.send(context, message)
+            context.client.send(context, message)
         }
     }
 
     fun notifyThatFreeMessagesRunOut(context: ExecutorContext) {
         scope.launch {
             delay(1.minutes)
-            context.sender.send(context, context.phrase(Phrase.CHAT_GTP_FREE_MESSAGES_RUN_OUT))
+            context.client.send(context, context.phrase(Phrase.CHAT_GTP_FREE_MESSAGES_RUN_OUT))
         }
     }
 }

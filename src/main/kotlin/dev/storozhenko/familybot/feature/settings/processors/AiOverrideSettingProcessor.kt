@@ -21,10 +21,10 @@ class AiOverrideSettingProcessor(
             "вкл" -> easyKeyValueService.put(ChatGPTTalkingDisabled, context.chatKey, true)
             "выкл" -> easyKeyValueService.put(ChatGPTTalkingDisabled, context.chatKey, false)
             else -> {
-                context.sender.send(context, "надо передать вкл или выкл, попробуй еще раз")
+                context.client.send(context, "надо передать вкл или выкл, попробуй еще раз")
                 return
             }
         }
-        context.sender.send(context, "ок, $state")
+        context.client.send(context, "ок, $state")
     }
 }

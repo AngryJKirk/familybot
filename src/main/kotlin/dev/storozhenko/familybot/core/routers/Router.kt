@@ -35,10 +35,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
-import org.telegram.telegrambots.meta.bots.AbsSender
+import org.telegram.telegrambots.meta.api.objects.message.Message
+import org.telegram.telegrambots.meta.generics.TelegramClient
 import java.time.Instant
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
@@ -63,7 +63,7 @@ class Router(
         logger.error(exception) { "Exception in logging job" }
     }
 
-    suspend fun processUpdate(update: Update, sender: AbsSender) {
+    suspend fun processUpdate(update: Update, client: TelegramClient) {
         val message = update.message()
         val chat = message.chat
 
@@ -76,7 +76,7 @@ class Router(
                 return
             }
         }
-        val context = update.context(botConfig, dictionary, sender)
+        val context = update.context(botConfig, dictionary, client)
 
         val executor = if (isGroup) {
             selectExecutor(context) ?: selectRandom(context)
@@ -138,7 +138,7 @@ class Router(
 
     private suspend fun disabledCommand(context: ExecutorContext) {
         val phrase = context.phrase(Phrase.COMMAND_IS_OFF)
-        context.sender.send(context, phrase)
+        context.client.send(context, phrase)
     }
 
     private fun isExecutorDisabled(executor: Executor, context: ExecutorContext): Boolean {

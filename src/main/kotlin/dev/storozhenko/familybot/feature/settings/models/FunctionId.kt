@@ -5,6 +5,7 @@ import dev.storozhenko.familybot.core.keyvalue.models.BooleanKeyType
 import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow
 
 enum class FunctionId(val id: Int, val desc: String, val easySetting: BooleanKeyType<ChatEasyKey>) {
     HUIFICATE(1, "Хуификация", Huificate),
@@ -40,6 +41,7 @@ enum class FunctionId(val id: Int, val desc: String, val easySetting: BooleanKey
                                 }
                             }
                             .chunked(1)
+                            .map(::InlineKeyboardRow)
                             .toList()
                         ),
             )

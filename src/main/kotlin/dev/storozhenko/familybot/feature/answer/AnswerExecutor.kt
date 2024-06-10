@@ -33,10 +33,10 @@ class AnswerExecutor : CommandExecutor() {
 
         if (message == null) {
             log.info { "Bad argument was passed, text of message is [$text]" }
-            context.sender.send(context, context.phrase(Phrase.BAD_COMMAND_USAGE), replyToUpdate = true)
+            context.client.send(context, context.phrase(Phrase.BAD_COMMAND_USAGE), replyToUpdate = true)
             return
         }
-        context.sender.send(context, message, replyToUpdate = true, shouldTypeBeforeSend = true)
+        context.client.send(context, message, replyToUpdate = true, shouldTypeBeforeSend = true)
     }
 
     private fun isOptionsCountEnough(options: List<String>) = options.size >= 2

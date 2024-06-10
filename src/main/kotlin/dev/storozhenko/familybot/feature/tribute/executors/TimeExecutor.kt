@@ -63,7 +63,7 @@ class TimeExecutor : CommandExecutor() {
         val result = times.map { (prefix, zone) -> prefix to now.atZone(zone) }
             .sortedBy { (_, time) -> time }
             .joinToString(separator = "\n") { (prefix, time) -> prefix + time.format(timeFormatter).bold() }
-        context.sender.send(
+        context.client.send(
             context,
             "$result\n${getMortgageDate(DateConstants.vityaMortgageDate, now)}",
             replyToUpdate = true,

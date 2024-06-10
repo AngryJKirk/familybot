@@ -13,7 +13,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.Message
+import org.telegram.telegrambots.meta.api.objects.message.Message
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
@@ -55,7 +55,7 @@ class BotMentionKeyWordProcessor(
                     randomBoolean() && shouldBeQuestion,
                 )
             }
-            context.sender.sendDeferred(
+            context.client.sendDeferred(
                 context,
                 reply,
                 replyToUpdate = true,

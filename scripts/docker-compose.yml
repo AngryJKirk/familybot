@@ -66,7 +66,6 @@ services:
       - BOT_NAME_ALIASES
       - REDIS_HOST=family-redis
       - YANDEX_API_TOKEN
-      - PAYMENT_TOKEN
       - YTDL_LOCATION
       - OPEN_AI_TOKEN
       - ENABLE_JMX

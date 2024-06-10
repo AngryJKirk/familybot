@@ -22,14 +22,14 @@ class AdvancedSettingsExecutor(
     override suspend fun execute(context: ExecutorContext) {
         val messageTokens = context.update.getMessageTokens()
         if (messageTokens.size == 1) {
-            context.sender.send(
+            context.client.send(
                 context,
                 context.phrase(Phrase.ADVANCED_SETTINGS),
                 enableHtml = true,
             )
             return
         }
-        if (!context.sender.isFromAdmin(context)) {
+        if (!context.client.isFromAdmin(context)) {
             sendErrorMessage(
                 context,
                 context.phrase(Phrase.ADVANCED_SETTINGS_ADMIN_ONLY),
@@ -53,6 +53,6 @@ class AdvancedSettingsExecutor(
         context: ExecutorContext,
         message: String = context.phrase(Phrase.ADVANCED_SETTINGS_ERROR),
     ) {
-        context.sender.send(context, message)
+        context.client.send(context, message)
     }
 }

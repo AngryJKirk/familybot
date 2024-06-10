@@ -36,7 +36,7 @@ class PshenitsinKeyWordProcessor(
             .toCharArray()
             .let(::String)
 
-        context.sender.send(
+        context.client.send(
             context,
             text,
             shouldTypeBeforeSend = true,

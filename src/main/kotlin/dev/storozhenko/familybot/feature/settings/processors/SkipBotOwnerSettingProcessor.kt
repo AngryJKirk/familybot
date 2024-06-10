@@ -18,6 +18,6 @@ class SkipBotOwnerSettingProcessor(private val easyKeyValueService: EasyKeyValue
         val currentSetting = easyKeyValueService.get(BotOwnerPidorSkip, context.chatKey) ?: false
         val newSetting = currentSetting.not()
         easyKeyValueService.put(BotOwnerPidorSkip, context.chatKey, newSetting)
-        context.sender.send(context, "${currentSetting.toEmoji()} => ${newSetting.toEmoji()}")
+        context.client.send(context, "${currentSetting.toEmoji()} => ${newSetting.toEmoji()}")
     }
 }

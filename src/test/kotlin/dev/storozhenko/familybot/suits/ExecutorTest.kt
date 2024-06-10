@@ -1,11 +1,11 @@
 package dev.storozhenko.familybot.suits
 
-import dev.storozhenko.familybot.infrastructure.TestSender
+import dev.storozhenko.familybot.infrastructure.TestClient
 import org.junit.jupiter.api.Test
 
 abstract class ExecutorTest : FamilybotApplicationTest() {
 
-    val sender = TestSender().sender
+    val client = TestClient().client
 
     @Test
     fun runPriorityTest() {

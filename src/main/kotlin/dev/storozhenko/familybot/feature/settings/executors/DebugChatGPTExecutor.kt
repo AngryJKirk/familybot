@@ -38,7 +38,7 @@ class DebugChatGPTExecutor(private val easyKeyValueService: EasyKeyValueService)
             ChatGPT4MessagesDailyCounter,
         ).joinToString(separator = "\n") { key -> getDataByKey(context, key) }
 
-        context.sender.send(context, message, enableHtml = true, replyToUpdate = true)
+        context.client.send(context, message, enableHtml = true, replyToUpdate = true)
     }
 
     private fun getDataByKey(context: ExecutorContext, easyKey: EasyKeyType<out Any, ChatEasyKey>): String {

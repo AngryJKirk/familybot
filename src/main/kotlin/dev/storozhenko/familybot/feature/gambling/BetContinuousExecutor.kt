@@ -52,17 +52,17 @@ class BetContinuousExecutor(
         val key = context.userAndChatKey
 
         if (isBetAlreadyDone(key)) {
-            context.sender.send(context, context.phrase(Phrase.BET_ALREADY_WAS), shouldTypeBeforeSend = true)
+            context.client.send(context, context.phrase(Phrase.BET_ALREADY_WAS), shouldTypeBeforeSend = true)
             return
         }
         val number = extractBetNumber(context)
         if (number == null || number !in 1..3) {
-            context.sender.send(
+            context.client.send(
                 context,
                 context.phrase(Phrase.BET_BREAKING_THE_RULES_FIRST),
                 shouldTypeBeforeSend = true,
             )
-            context.sender.send(
+            context.client.send(
                 context,
                 context.phrase(Phrase.BET_BREAKING_THE_RULES_SECOND),
                 shouldTypeBeforeSend = true,
@@ -70,27 +70,27 @@ class BetContinuousExecutor(
             return
         }
         val winnableNumbers = diceNumbers.shuffled().subList(0, 3)
-        context.sender.send(
+        context.client.send(
             context,
             "${context.phrase(Phrase.BET_WINNABLE_NUMBERS_ANNOUNCEMENT)} ${formatWinnableNumbers(winnableNumbers)}",
             shouldTypeBeforeSend = true,
         )
-        context.sender.send(context, context.phrase(Phrase.BET_ZATRAVOCHKA), shouldTypeBeforeSend = true)
-        val diceMessage = context.sender.execute(SendDice(chatId.toString()))
+        context.client.send(context, context.phrase(Phrase.BET_ZATRAVOCHKA), shouldTypeBeforeSend = true)
+        val diceMessage = context.client.execute(SendDice(chatId.toString()))
         delay(4.seconds)
         val isItWinner = winnableNumbers.contains(diceMessage.dice.value)
         if (isItWinner) {
             coroutineScope { launch { repeat(number) { pidorRepository.removePidorRecord(user) } } }
-            context.sender.send(context, context.phrase(Phrase.BET_WIN), shouldTypeBeforeSend = true)
-            context.sender.send(context, winEndPhrase(number, context), shouldTypeBeforeSend = true)
+            context.client.send(context, context.phrase(Phrase.BET_WIN), shouldTypeBeforeSend = true)
+            context.client.send(context, winEndPhrase(number, context), shouldTypeBeforeSend = true)
         } else {
             coroutineScope { launch { addPidorsMultiplyTimesWithDayShift(number, user) } }
-            context.sender.send(context, context.phrase(Phrase.BET_LOSE), shouldTypeBeforeSend = true)
-            context.sender.send(context, explainPhrase(number, context), shouldTypeBeforeSend = true)
+            context.client.send(context, context.phrase(Phrase.BET_LOSE), shouldTypeBeforeSend = true)
+            context.client.send(context, explainPhrase(number, context), shouldTypeBeforeSend = true)
         }
         easyKeyValueService.put(BetTolerance, key, true, untilNextMonth())
         delay(2.seconds)
-        pidorCompetitionService.pidorCompetition(context.chat, context.chatKey).invoke(context.sender)
+        pidorCompetitionService.pidorCompetition(context.chat, context.chatKey).invoke(context.client)
     }
 
     private fun addPidorsMultiplyTimesWithDayShift(number: Int, user: User) {

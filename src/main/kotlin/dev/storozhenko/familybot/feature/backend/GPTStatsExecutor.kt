@@ -34,9 +34,9 @@ class GPTStatsExecutor(
         val total = formatValue(stats.values.sum())
         val subs = activeSubs(chats)
 
-        context.sender.send(context, message, enableHtml = true)
-        context.sender.send(context, "Всего потрачено: $total", enableHtml = true)
-        context.sender.send(context, subs, enableHtml = true)
+        context.client.send(context, message, enableHtml = true)
+        context.client.send(context, "Всего потрачено: $total", enableHtml = true)
+        context.client.send(context, subs, enableHtml = true)
     }
 
     private fun activeSubs(chats: Map<Long, Chat>): String {

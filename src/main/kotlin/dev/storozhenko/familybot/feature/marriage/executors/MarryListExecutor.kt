@@ -65,10 +65,10 @@ class MarryListExecutor(
     override suspend fun execute(context: ExecutorContext) {
         val marriages = marriagesRepository.getAllMarriages(context.chat.id)
         if (marriages.isEmpty()) {
-            context.sender.send(context, context.phrase(Phrase.MARRY_EMPTY_LIST))
+            context.client.send(context, context.phrase(Phrase.MARRY_EMPTY_LIST))
         } else {
             val marriageList = format(marriages, context)
-            context.sender.send(context, marriageList, enableHtml = true)
+            context.client.send(context, marriageList, enableHtml = true)
         }
     }
 

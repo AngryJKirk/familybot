@@ -29,10 +29,10 @@ class BanSomeoneExecutor(
         if (chat != null) {
             if (isUnban) {
                 banService.removeBan(context.chatKey)
-                context.sender.send(context, "Unbanned chat: $chat")
+                context.client.send(context, "Unbanned chat: $chat")
             } else {
                 banService.banChat(chat, description, isForever)
-                context.sender.send(context, "Banned chat: $chat")
+                context.client.send(context, "Banned chat: $chat")
             }
             return
         }
@@ -45,15 +45,15 @@ class BanSomeoneExecutor(
         if (user != null) {
             if (isUnban) {
                 banService.removeBan(context.userKey)
-                context.sender.send(context, "Unbanned user: $user")
+                context.client.send(context, "Unbanned user: $user")
             } else {
                 banService.banUser(user, description, isForever)
-                context.sender.send(context, "Banned user: $user")
+                context.client.send(context, "Banned user: $user")
             }
             return
         }
 
-        context.sender.send(context, "No one found")
+        context.client.send(context, "No one found")
     }
 
     override fun getMessagePrefix() = banPrefix

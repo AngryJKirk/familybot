@@ -12,7 +12,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.bots.AbsSender
+import org.telegram.telegrambots.meta.generics.TelegramClient
 
 class PidorAutoSelectPaymentProcessorTest : PaymentProcessorTest() {
 
@@ -30,10 +30,10 @@ class PidorAutoSelectPaymentProcessorTest : PaymentProcessorTest() {
         Assertions.assertEquals(Phrase.AUTO_PIDOR_SUCCESS, response.phrase)
         val timesLeft = easyKeyValueService.get(AutoPidorTimesLeft, payload.chatKey(), 0)
         Assertions.assertEquals(30, timesLeft)
-        val sender = mock<AbsSender>()
+        val client = mock<TelegramClient>()
         val customCallCaptor = ArgumentCaptor.forClass(SendMessage::class.java)
-        response.customCall(sender)
-        verify(sender).execute(customCallCaptor.capture())
+        response.customCall(client)
+        verify(client).execute(customCallCaptor.capture())
         Assertions.assertTrue(customCallCaptor.allValues.size == 1)
         Assertions.assertTrue(customCallCaptor.value.text.endsWith(timesLeft.toString()))
     }

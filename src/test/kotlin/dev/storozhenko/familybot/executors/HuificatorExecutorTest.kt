@@ -71,11 +71,11 @@ class HuificatorExecutorTest : ExecutorTest() {
             huificatorExecutor.execute(context)
         }
         if (expected == null) {
-            verifyNoInteractions(sender)
+            verifyNoInteractions(client)
         } else {
             val sendMessageCaptor = ArgumentCaptor.forClass(SendMessage::class.java)
-            verify(sender, atLeastOnce()).execute(any<SendChatAction>())
-            verify(sender, atLeastOnce()).execute(sendMessageCaptor.capture())
+            verify(client, atLeastOnce()).execute(any<SendChatAction>())
+            verify(client, atLeastOnce()).execute(sendMessageCaptor.capture())
             Assertions.assertEquals(expected, sendMessageCaptor.value.text)
         }
     }

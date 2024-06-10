@@ -17,7 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.payments.LabeledPrice
 
 @Component
 class ShopContinuousExecutor(
-    private val botConfig: BotConfig,
+    botConfig: BotConfig,
 ) : ContinuousConversationExecutor(botConfig) {
 
     override fun getDialogMessages(context: ExecutorContext): Set<String> {
@@ -27,7 +27,6 @@ class ShopContinuousExecutor(
     override fun command() = Command.SHOP
 
     override suspend fun execute(context: ExecutorContext) {
-        val providerToken = botConfig.paymentToken ?: return
         val chat = context.chat
 
         val callbackQuery = context.update.callbackQuery
@@ -35,20 +34,18 @@ class ShopContinuousExecutor(
             ?: return
 
         val additionalTax = if (context.update.from().isPremium == true) 10.rubles() else 0
-        context.sender.execute(AnswerCallbackQuery(callbackQuery.id))
-        context.sender.execute(
+        context.client.execute(AnswerCallbackQuery(callbackQuery.id))
+        context.client.execute(
             SendInvoice(
                 chat.idString,
                 context.phrase(shopItem.title),
                 context.phrase(shopItem.description),
                 createPayload(context, shopItem),
-                providerToken,
                 "help",
-                "RUB",
+                "XTR",
                 listOf(LabeledPrice(context.phrase(Phrase.SHOP_PAY_LABEL), shopItem.price + additionalTax)),
             ).apply {
-                maxTipAmount = 100.rubles()
-                suggestedTipAmounts = listOf(10.rubles(), 20.rubles(), 50.rubles(), 100.rubles())
+                providerToken = ""
             },
         )
     }

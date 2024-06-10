@@ -13,8 +13,12 @@ import dev.storozhenko.familybot.suits.ExecutorTest
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
-import org.telegram.telegrambots.meta.api.objects.*
-import org.telegram.telegrambots.meta.bots.AbsSender
+import org.telegram.telegrambots.meta.api.objects.MessageEntity
+import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.api.objects.User
+import org.telegram.telegrambots.meta.api.objects.chat.Chat
+import org.telegram.telegrambots.meta.api.objects.message.Message
+import org.telegram.telegrambots.meta.generics.TelegramClient
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 
 private val keyValueService = mock<EasyKeyValueService> {
@@ -29,24 +33,23 @@ val botConfig = BotConfig(
     developerId = "123",
     botNameAliases = listOf("IntegrationTests"),
     yandexKey = null,
-    paymentToken = null,
     testEnvironment = true,
     ytdlLocation = null,
     openAiToken = null,
 )
 
 fun ExecutorTest.createSimpleContext(text: String? = null, custom: Update.() -> Unit = {}): ExecutorContext {
-    return update(text).apply(custom).context(botConfig, dictionary, this.sender)
+    return update(text).apply(custom).context(botConfig, dictionary, this.client)
 }
 
-fun Update.createContext(sender: AbsSender) = this.context(botConfig, dictionary, sender)
+fun Update.createContext(client: TelegramClient) = this.context(botConfig, dictionary, client)
 
 fun ExecutorTest.createSimpleCommandContext(
     command: Command,
     prefix: String? = null,
     postfix: String? = null,
 ): ExecutorContext {
-    return createSimpleCommand(command, prefix, postfix).context(botConfig, dictionary, this.sender)
+    return createSimpleCommand(command, prefix, postfix).context(botConfig, dictionary, this.client)
 }
 
 fun createSimpleUpdate(text: String? = null): Update {
@@ -110,20 +113,13 @@ private fun message(text: String?, chat: Chat): Message {
 
 private fun user(): User {
     val userId = randomUserId()
-    return User().apply {
-        id = userId
+    return User(userId, "Test user", false).apply {
         userName = "user$userId"
-        firstName = "Test user"
         lastName = "#$userId"
-        isBot = false
     }
 }
 
 private fun chat(): Chat {
     val chatId = randomChatId()
-    return Chat().apply {
-        id = chatId
-        title = "Test chat #$chatId"
-        type = "supergroup"
-    }
+    return Chat(chatId, "supergroup").apply { title = "Test chat #$chatId" }
 }

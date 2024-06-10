@@ -23,6 +23,6 @@ class ZigaKeyWordProcessor : KeyWordProcessor {
         } else {
             Sticker.LEFT_ZIGA
         }
-        context.sender.sendSticker(context, stickerToSend, replyToUpdate = true)
+        context.client.sendSticker(context, stickerToSend, replyToUpdate = true)
     }
 }

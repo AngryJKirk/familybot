@@ -37,14 +37,14 @@ class KeyWordExecutorTest : ExecutorTest() {
     }
 
     override fun canExecuteTest() {
-        Assertions.assertTrue(keyWordExecutor.canExecute(leftZigaSticker.context(botConfig, dictionary, sender)))
-        Assertions.assertTrue(keyWordExecutor.canExecute(rightZigaSticker.context(botConfig, dictionary, sender)))
-        Assertions.assertFalse(keyWordExecutor.canExecute(noZigaSticker.context(botConfig, dictionary, sender)))
+        Assertions.assertTrue(keyWordExecutor.canExecute(leftZigaSticker.context(botConfig, dictionary, client)))
+        Assertions.assertTrue(keyWordExecutor.canExecute(rightZigaSticker.context(botConfig, dictionary, client)))
+        Assertions.assertFalse(keyWordExecutor.canExecute(noZigaSticker.context(botConfig, dictionary, client)))
     }
 
     override fun executeTest() {
-        runBlocking { keyWordExecutor.execute(leftZigaSticker.context(botConfig, dictionary, sender)) }
-        runBlocking { keyWordExecutor.execute(rightZigaSticker.context(botConfig, dictionary, sender)) }
-        verify(sender, times(2)).execute(any<SendSticker>())
+        runBlocking { keyWordExecutor.execute(leftZigaSticker.context(botConfig, dictionary, client)) }
+        runBlocking { keyWordExecutor.execute(rightZigaSticker.context(botConfig, dictionary, client)) }
+        verify(client, times(2)).execute(any<SendSticker>())
     }
 }

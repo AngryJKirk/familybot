@@ -43,6 +43,6 @@ class PidorStatsWorldExecutor(
             .take(100)
 
         val title = "${context.phrase(Phrase.PIDOR_STAT_WORLD)}:\n".bold()
-        context.sender.send(context, title + pidorsByChat.joinToString("\n"), enableHtml = true)
+        context.client.send(context, title + pidorsByChat.joinToString("\n"), enableHtml = true)
     }
 }

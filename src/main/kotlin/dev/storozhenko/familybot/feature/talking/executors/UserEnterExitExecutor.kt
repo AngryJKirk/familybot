@@ -9,7 +9,7 @@ import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.routers.models.Priority
 import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.Message
+import org.telegram.telegrambots.meta.api.objects.message.Message
 
 @Component
 class UserEnterExitExecutor(private val botConfig: BotConfig) :
@@ -22,7 +22,7 @@ class UserEnterExitExecutor(private val botConfig: BotConfig) :
             isNewChat(message) -> Phrase.BOT_WELCOME_MESSAGE
             else -> Phrase.USER_ENTERING_CHAT
         }
-        context.sender.send(
+        context.client.send(
             context,
             context.phrase(phrase),
             replyToUpdate = true,

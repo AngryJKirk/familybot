@@ -19,7 +19,7 @@ import dev.storozhenko.familybot.feature.settings.models.ProposalTo
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker
 import org.telegram.telegrambots.meta.api.objects.InputFile
-import org.telegram.telegrambots.meta.api.objects.Message
+import org.telegram.telegrambots.meta.api.objects.message.Message
 import java.io.InputStream
 import kotlin.time.Duration.Companion.minutes
 
@@ -36,7 +36,7 @@ class MarriageExecutor(
 
     override suspend fun execute(context: ExecutorContext) {
         if (!context.message.isReply) {
-            context.sender.send(context, context.phrase(Phrase.MARRY_RULES))
+            context.client.send(context, context.phrase(Phrase.MARRY_RULES))
             return
         }
         val chat = context.chat
@@ -44,7 +44,7 @@ class MarriageExecutor(
         val proposalSource = context.message
 
         if (proposalTarget.from.id == proposalSource.from.id) {
-            context.sender.execute(
+            context.client.execute(
                 SendSticker(
                     chat.idString,
                     InputFile(selfSuckStream, "selfsuck"),
@@ -53,7 +53,7 @@ class MarriageExecutor(
             return
         }
         if (proposalTarget.from.isBot) {
-            context.sender.send(
+            context.client.send(
                 context,
                 context.phrase(Phrase.MARRY_PROPOSED_TO_BOT),
                 replyToUpdate = true,
@@ -62,7 +62,7 @@ class MarriageExecutor(
         }
 
         if (isMarriedAlready(chat, proposalSource)) {
-            context.sender.send(
+            context.client.send(
                 context,
                 context.phrase(Phrase.MARRY_SOURCE_IS_MARRIED),
                 replyToUpdate = true,
@@ -71,7 +71,7 @@ class MarriageExecutor(
         }
 
         if (isMarriedAlready(chat, proposalTarget)) {
-            context.sender.send(
+            context.client.send(
                 context,
                 context.phrase(Phrase.MARRY_TARGET_IS_MARRIED),
                 replyToUpdate = true,
@@ -79,7 +79,7 @@ class MarriageExecutor(
             return
         }
         if (isProposedAlready(proposalSource, proposalTarget)) {
-            context.sender.send(
+            context.client.send(
                 context,
                 context.phrase(Phrase.MARRY_PROPOSED_AGAIN),
                 replyToUpdate = true,
@@ -118,7 +118,7 @@ class MarriageExecutor(
             value = proposalSource.from.id,
             duration = 10.minutes,
         )
-        context.sender.send(
+        context.client.send(
             context,
             context.phrase(Phrase.MARRY_PROPOSED),
             replyMessageId = proposalTarget.messageId,
@@ -132,6 +132,6 @@ class MarriageExecutor(
         val marriage = Marriage(update.chatId(), proposalTarget, proposalSource)
         marriagesRepository.addMarriage(marriage)
         keyValueService.remove(ProposalTo, UserAndChatEasyKey(proposalTarget.id, update.toChat().id))
-        context.sender.send(context, context.phrase(Phrase.MARRY_CONGRATS))
+        context.client.send(context, context.phrase(Phrase.MARRY_CONGRATS))
     }
 }

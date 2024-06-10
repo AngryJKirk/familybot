@@ -24,7 +24,7 @@ class AskWorldSettingProcessor(
         val arg = context.update.getMessageTokens()[2]
         val density = AskWorldDensityValue.entries.find { mode -> mode.text == arg }
         if (density == null) {
-            context.sender.send(
+            context.client.send(
                 context,
                 context.phrase(Phrase.ADVANCED_SETTINGS_ASK_WORLD_BAD_USAGE),
             )
@@ -36,7 +36,7 @@ class AskWorldSettingProcessor(
             isEnabled = density != AskWorldDensityValue.NONE,
         )
         easyKeyValueService.put(AskWorldDensity, context.chatKey, density.text)
-        context.sender.send(context, context.phrase(Phrase.ADVANCED_SETTINGS_OK))
+        context.client.send(context, context.phrase(Phrase.ADVANCED_SETTINGS_OK))
     }
 }
 

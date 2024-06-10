@@ -62,7 +62,7 @@ class ScenarioExecutor(
         context: ExecutorContext,
     ) {
         val story = scenarioService.getAllStoryOfCurrentGame(context.chat)
-        context.sender.send(context, story, enableHtml = true)
+        context.client.send(context, story, enableHtml = true)
     }
 
     private suspend fun moveState(
@@ -70,7 +70,7 @@ class ScenarioExecutor(
     ) {
         val nextMove = scenarioGameplayService.nextState(context.chat)
         if (nextMove == null) {
-            context.sender.send(context, "State hasn't been moved")
+            context.client.send(context, "State hasn't been moved")
         }
     }
 }

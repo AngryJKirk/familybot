@@ -36,8 +36,8 @@ class VestnikCommandExecutor(
             }
         }
 
-        context.sender.send(context, context.phrase(Phrase.RANDOM_VESTNIK))
-        context.sender.sendDeferred(context, question, shouldTypeBeforeSend = true)
+        context.client.send(context, context.phrase(Phrase.RANDOM_VESTNIK))
+        context.client.sendDeferred(context, question, shouldTypeBeforeSend = true)
     }
 
     override fun command() = Command.VESTNIK

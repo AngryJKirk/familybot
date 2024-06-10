@@ -23,10 +23,10 @@ class FindUserExecutor(
             .distinctBy(User::id)
             .associateWith { user -> commonRepository.getChatsByUser(user) }
         if (usersToChats.isEmpty()) {
-            context.sender.send(context, "No one found, master")
+            context.client.send(context, "No one found, master")
         } else {
             usersToChats.toList().chunked(5).forEach { chunk ->
-                context.sender.send(context, format(chunk))
+                context.client.send(context, format(chunk))
             }
         }
     }

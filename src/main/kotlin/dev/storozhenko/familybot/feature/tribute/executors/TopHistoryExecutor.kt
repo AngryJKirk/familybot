@@ -25,7 +25,7 @@ class TopHistoryExecutor : CommandExecutor() {
     override fun command() = Command.TOP_HISTORY
 
     override suspend fun execute(context: ExecutorContext) {
-        context.sender.send(context, mamoeb.curses.random())
+        context.client.send(context, mamoeb.curses.random())
     }
 }
 

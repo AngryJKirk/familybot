@@ -12,7 +12,8 @@ import org.springframework.boot.context.properties.bind.ConstructorBinding
 import org.springframework.context.annotation.Bean
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.scheduling.annotation.EnableScheduling
-import org.telegram.telegrambots.facilities.filedownloader.TelegramFileDownloader
+import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient
+import org.telegram.telegrambots.meta.generics.TelegramClient
 
 @SpringBootApplication
 @EnableScheduling
@@ -22,9 +23,14 @@ class FamilyBotApplication(
 ) {
     private val logger = KotlinLogging.logger {  }
 
+//    @Bean
+//    fun telegramDownloader(botConfig: BotConfig): TelegramFileDownloader {
+//        return TelegramFileDownloader { botConfig.botToken }
+//    }
+
     @Bean
-    fun telegramDownloader(botConfig: BotConfig): TelegramFileDownloader {
-        return TelegramFileDownloader { botConfig.botToken }
+    fun telegramClient(botConfig: BotConfig): TelegramClient {
+        return OkHttpTelegramClient(botConfig.botToken)
     }
 
     @Bean
@@ -42,7 +48,6 @@ class FamilyBotApplication(
             required(botConfigInjector.developerId, "developerId"),
             botNameAliases,
             optional("Yandex API key is not found, language API won't work") { botConfigInjector.yandexKey },
-            optional("Payment token is not found, payment API won't work") { botConfigInjector.paymentToken },
             env.activeProfiles.contains(BotStarter.TESTING_PROFILE_NAME),
             optional("yt-dlp is missing, downloading function won't work") { botConfigInjector.ytdlLocation },
             optional("OpenAI token is missing, API won't work") { botConfigInjector.openAiToken },
@@ -69,7 +74,6 @@ data class BotConfig(
     val developerId: String,
     val botNameAliases: List<String>,
     val yandexKey: String?,
-    val paymentToken: String?,
     val testEnvironment: Boolean,
     val ytdlLocation: String?,
     val openAiToken: String?,
@@ -83,7 +87,6 @@ data class BotConfigInjector @ConstructorBinding constructor(
     val developerId: String,
     val botNameAliases: String?,
     val yandexKey: String?,
-    val paymentToken: String?,
     val ytdlLocation: String?,
     val openAiToken: String?,
 )

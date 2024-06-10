@@ -52,11 +52,11 @@ class TopPidorsByMonthsExecutor(
             .reversed()
             .map(formatLeaderBoard(context))
         if (result.isEmpty()) {
-            context.sender.send(context, context.phrase(Phrase.LEADERBOARD_NONE))
+            context.client.send(context, context.phrase(Phrase.LEADERBOARD_NONE))
             return
         }
         val message = "${context.phrase(Phrase.LEADERBOARD_TITLE)}:\n".bold()
-        context.sender.send(context, message + "\n" + result.joinToString(delimiter), enableHtml = true)
+        context.client.send(context, message + "\n" + result.joinToString(delimiter), enableHtml = true)
     }
 
     private fun formatLeaderBoard(context: ExecutorContext): (Map.Entry<LocalDate, PidorStat>) -> String = {

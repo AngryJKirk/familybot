@@ -51,8 +51,8 @@ class AnswerExecutorTest : CommandExecutorTest() {
         val context = createSimpleCommandContext(Command.ANSWER, postfix = postfix)
         runBlocking { answerExecutor.execute(context) }
         val sendMessageCaptor = ArgumentCaptor.forClass(SendMessage::class.java)
-        verify(sender, Mockito.atLeastOnce()).execute(any<SendChatAction>())
-        verify(sender, Mockito.atLeastOnce()).execute(sendMessageCaptor.capture())
+        verify(client, Mockito.atLeastOnce()).execute(any<SendChatAction>())
+        verify(client, Mockito.atLeastOnce()).execute(sendMessageCaptor.capture())
         val reply = sendMessageCaptor.value.text
         Assertions.assertTrue(values.map(String::capitalized).contains(reply))
     }

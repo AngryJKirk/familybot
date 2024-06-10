@@ -79,11 +79,11 @@ class BanSomeoneExecutorTest : ExecutorTest() {
     @ParameterizedTest
     @MethodSource("valuesProvider")
     fun executeTest(banModel: BanTestModel) {
-        clearInvocations(sender)
+        clearInvocations(client)
         val description = randomString()
         val update = updateFromDeveloper("${banSomeoneExecutor.getMessagePrefix()}${banModel.key}|$description")
         runBlocking { banSomeoneExecutor.execute(update) }
-        verify(sender).execute(any<SendMessage>())
+        verify(client).execute(any<SendMessage>())
 
         banService.findBanByKey(banModel.easyKey)
             ?: throw AssertionError("Should be a new ban")

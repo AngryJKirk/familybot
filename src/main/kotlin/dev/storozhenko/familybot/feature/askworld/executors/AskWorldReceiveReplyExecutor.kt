@@ -35,8 +35,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendVideo
 import org.telegram.telegrambots.meta.api.methods.send.SendVideoNote
 import org.telegram.telegrambots.meta.api.methods.send.SendVoice
 import org.telegram.telegrambots.meta.api.objects.InputFile
-import org.telegram.telegrambots.meta.api.objects.Message
-import org.telegram.telegrambots.meta.bots.AbsSender
+import org.telegram.telegrambots.meta.api.objects.message.Message
+import org.telegram.telegrambots.meta.generics.TelegramClient
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -88,7 +88,7 @@ class AskWorldReceiveReplyExecutor(
         val question =
             askWorldRepository.findQuestionByMessageId(messageId + chatId, chatId) ?: return
         if (reply == "/ignore") {
-            if (context.sender.isFromAdmin(context)) {
+            if (context.client.isFromAdmin(context)) {
                 val ignoreList =
                     easyKeyValueService.get(AskWorldIgnore, context.chatKey, emptyMap())
                 easyKeyValueService.put(
@@ -97,14 +97,14 @@ class AskWorldReceiveReplyExecutor(
                     ignoreList.plus(question.chat.idString to Instant.now().plus(30, ChronoUnit.DAYS))
                 )
                 log.info("Char $chat decided to ignore chat ${question.chat.idString}")
-                context.sender.send(context, context.phrase(Phrase.ASK_WORLD_IGNORE_DONE), replyToUpdate = true)
+                context.client.send(context, context.phrase(Phrase.ASK_WORLD_IGNORE_DONE), replyToUpdate = true)
 
             } else {
-                context.sender.send(context, context.phrase(Phrase.ASK_WORLD_IGNORE_ADMIN_ONLY), replyToUpdate = true)
+                context.client.send(context, context.phrase(Phrase.ASK_WORLD_IGNORE_ADMIN_ONLY), replyToUpdate = true)
             }
         }
         if (askWorldRepository.isReplied(question, chat, user)) {
-            context.sender.execute(
+            context.client.execute(
                 SendMessage(
                     chat.idString,
                     context.phrase(Phrase.ASK_WORLD_ANSWER_COULD_BE_ONLY_ONE),
@@ -133,7 +133,7 @@ class AskWorldReceiveReplyExecutor(
             val answerTitle = dictionary.get(Phrase.ASK_WORLD_REPLY_FROM_CHAT, ChatEasyKey(question.chat.id))
             if (contentType == MessageContentType.TEXT) {
                 sendAnswerWithQuestion(
-                    context.sender,
+                    context.client,
                     chatIdToReply,
                     answerTitle,
                     context,
@@ -142,51 +142,51 @@ class AskWorldReceiveReplyExecutor(
                 )
             } else {
                 sendOnlyQuestion(
-                    context.sender,
+                    context.client,
                     chatIdToReply,
                     answerTitle,
                     context,
                     questionTitle,
                 )
-                dispatchMedia(context.sender, contentType, chatIdToReply, message)
+                dispatchMedia(context.client, contentType, chatIdToReply, message)
             }
-            context.sender.send(context, "Принято и отправлено")
+            context.client.send(context, "Принято и отправлено")
         }.onFailure { e ->
-            context.sender.send(context, "Принято")
+            context.client.send(context, "Принято")
             log.info("Could not send reply instantly", e)
         }
     }
 
     private fun dispatchMedia(
-        sender: AbsSender,
+        client: TelegramClient,
         contentType: MessageContentType,
         chatIdToReply: String,
         message: Message,
     ) {
         when (contentType) {
             MessageContentType.PHOTO ->
-                sender.execute(sendPhoto(chatIdToReply, message))
+                client.execute(sendPhoto(chatIdToReply, message))
 
             MessageContentType.AUDIO ->
-                sender.execute(sendAudio(chatIdToReply, message))
+                client.execute(sendAudio(chatIdToReply, message))
 
-            MessageContentType.ANIMATION -> sender.execute(sendAnimation(chatIdToReply, message))
+            MessageContentType.ANIMATION -> client.execute(sendAnimation(chatIdToReply, message))
 
-            MessageContentType.DOCUMENT -> sender.execute(sendDocument(chatIdToReply, message))
+            MessageContentType.DOCUMENT -> client.execute(sendDocument(chatIdToReply, message))
 
             MessageContentType.VOICE ->
-                sender.execute(sendVoice(chatIdToReply, message))
+                client.execute(sendVoice(chatIdToReply, message))
 
             MessageContentType.VIDEO_NOTE ->
-                sender.execute(sendVideoNote(chatIdToReply, message))
+                client.execute(sendVideoNote(chatIdToReply, message))
 
-            MessageContentType.LOCATION -> sender.execute(sendLocation(chatIdToReply, message))
+            MessageContentType.LOCATION -> client.execute(sendLocation(chatIdToReply, message))
 
-            MessageContentType.STICKER -> sender.execute(sendSticker(chatIdToReply, message))
+            MessageContentType.STICKER -> client.execute(sendSticker(chatIdToReply, message))
 
-            MessageContentType.CONTACT -> sender.execute(sendContact(chatIdToReply, message))
+            MessageContentType.CONTACT -> client.execute(sendContact(chatIdToReply, message))
 
-            MessageContentType.VIDEO -> sender.execute(sendVideo(chatIdToReply, message))
+            MessageContentType.VIDEO -> client.execute(sendVideo(chatIdToReply, message))
             else -> log.warn("Something went wrong with content type detection logic")
         }
     }
@@ -291,7 +291,7 @@ class AskWorldReceiveReplyExecutor(
     }
 
     private fun sendOnlyQuestion(
-        it: AbsSender,
+        it: TelegramClient,
         chatIdToReply: String,
         answerTitle: String,
         context: ExecutorContext,
@@ -309,7 +309,7 @@ class AskWorldReceiveReplyExecutor(
     }
 
     private fun sendAnswerWithQuestion(
-        it: AbsSender,
+        it: TelegramClient,
         chatIdToReply: String,
         answerTitle: String,
         context: ExecutorContext,

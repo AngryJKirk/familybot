@@ -16,7 +16,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker
 import org.telegram.telegrambots.meta.api.methods.stickers.GetStickerSet
 import org.telegram.telegrambots.meta.api.objects.InputFile
-import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember
@@ -26,14 +25,15 @@ import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberLeft
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberMember
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberOwner
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberRestricted
-import org.telegram.telegrambots.meta.bots.AbsSender
+import org.telegram.telegrambots.meta.api.objects.message.Message
+import org.telegram.telegrambots.meta.generics.TelegramClient
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 
 object SenderLogger {
     val log = KotlinLogging.logger { }
 }
 
-suspend fun AbsSender.sendDeferred(
+suspend fun TelegramClient.sendDeferred(
     context: ExecutorContext,
     text: Deferred<String>,
     replyMessageId: Int? = null,
@@ -58,7 +58,7 @@ suspend fun AbsSender.sendDeferred(
     )
 }
 
-suspend fun AbsSender.send(
+suspend fun TelegramClient.send(
     context: ExecutorContext,
     text: String,
     replyMessageId: Int? = null,
@@ -83,7 +83,7 @@ suspend fun AbsSender.send(
     )
 }
 
-suspend fun AbsSender.sendContextFree(
+suspend fun TelegramClient.sendContextFree(
     chatId: String,
     text: String,
     botConfig: BotConfig,
@@ -109,7 +109,7 @@ suspend fun AbsSender.sendContextFree(
     )
 }
 
-private suspend fun AbsSender.sendInternal(
+private suspend fun TelegramClient.sendInternal(
     chatId: String,
     testEnvironment: Boolean,
     messageId: Int? = null,
@@ -131,7 +131,7 @@ private suspend fun AbsSender.sendInternal(
                 "typeDelay=$typeDelay"
     }
     if (shouldTypeBeforeSend) {
-        execute(SendChatAction(chatId, "typing", null))
+        execute(SendChatAction(chatId, "typing"))
         if (testEnvironment.not()) {
             delay(randomInt(typeDelay.first, typeDelay.second).toLong())
         }
@@ -158,7 +158,7 @@ private suspend fun AbsSender.sendInternal(
         }.first()
 }
 
-suspend fun AbsSender.sendSticker(
+suspend fun TelegramClient.sendSticker(
     context: ExecutorContext,
     sticker: Sticker,
     replyToUpdate: Boolean = false,
@@ -168,7 +168,7 @@ suspend fun AbsSender.sendSticker(
     }
 }
 
-suspend fun AbsSender.sendRandomSticker(
+suspend fun TelegramClient.sendRandomSticker(
     context: ExecutorContext,
     stickerPack: StickerPack,
     replyToUpdate: Boolean = false,
@@ -180,7 +180,7 @@ suspend fun AbsSender.sendRandomSticker(
 
 private val adminStatuses = setOf(ChatMemberAdministrator.STATUS, ChatMemberOwner.STATUS)
 
-fun AbsSender.isFromAdmin(context: ExecutorContext): Boolean {
+fun TelegramClient.isFromAdmin(context: ExecutorContext): Boolean {
     if (context.isFromDeveloper) {
         return true
     }
@@ -192,7 +192,7 @@ fun AbsSender.isFromAdmin(context: ExecutorContext): Boolean {
 }
 
 private suspend fun sendStickerInternal(
-    sender: AbsSender,
+    client: TelegramClient,
     context: ExecutorContext,
     replyToUpdate: Boolean = false,
     stickerPack: StickerPack,
@@ -200,17 +200,14 @@ private suspend fun sendStickerInternal(
 ): Message {
     val stickerId = coroutineScope {
         async {
-            stickerSelector(sender.execute(GetStickerSet(stickerPack.packName)).stickers)
+            stickerSelector(client.execute(GetStickerSet(stickerPack.packName)).stickers)
         }
     }
-    val sendSticker = SendSticker().apply {
-        sticker = InputFile(stickerId.await()?.fileId)
-        chatId = context.update.chatIdString()
-    }
+    val sendSticker = SendSticker(context.update.chatIdString(), InputFile(stickerId.await()?.fileId))
     if (replyToUpdate) {
         sendSticker.replyToMessageId = context.update.message.messageId
     }
-    return sender.execute(sendSticker)
+    return client.execute(sendSticker)
 }
 
 fun ChatMember.user(): User {

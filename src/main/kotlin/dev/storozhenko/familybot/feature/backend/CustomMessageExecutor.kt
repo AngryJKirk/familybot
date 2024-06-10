@@ -20,12 +20,12 @@ class CustomMessageExecutor(
             .getChats()
             .filter { chat -> chat.name?.contains(tokens[1], ignoreCase = true) ?: false }
         if (chats.size != 1) {
-            context.sender.send(context, "Chat is not found, specify search: $chats")
+            context.client.send(context, "Chat is not found, specify search: $chats")
             return
         }
 
-        context.sender.execute(SendMessage(chats.first().idString, tokens[2]))
-        context.sender.send(context, "Message \"${tokens[2]}\" has been sent")
+        context.client.execute(SendMessage(chats.first().idString, tokens[2]))
+        context.client.send(context, "Message \"${tokens[2]}\" has been sent")
     }
 
     override fun getMessagePrefix() = "custom_message|"

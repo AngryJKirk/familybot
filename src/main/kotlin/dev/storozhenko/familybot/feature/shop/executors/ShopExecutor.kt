@@ -1,6 +1,5 @@
 package dev.storozhenko.familybot.feature.shop.executors
 
-import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
@@ -11,20 +10,13 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 
 @Component
-class ShopExecutor(
-    botConfig: BotConfig,
-) : CommandExecutor() {
-    private val isEnabled = botConfig.paymentToken != null
+class ShopExecutor : CommandExecutor() {
 
     override fun command() = Command.SHOP
 
     override suspend fun execute(context: ExecutorContext) {
-        if (isEnabled.not()) {
-            context.sender.send(context, context.phrase(Phrase.SHOP_DISABLED))
-            return
-        }
 
-        context.sender.send(
+        context.client.send(
             context,
             context.phrase(Phrase.SHOP_KEYBOARD),
             replyToUpdate = true,

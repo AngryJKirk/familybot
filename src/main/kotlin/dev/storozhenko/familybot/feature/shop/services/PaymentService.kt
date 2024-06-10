@@ -15,7 +15,7 @@ class PaymentService(
     fun processPreCheckoutCheck(shopPayload: ShopPayload) = getProcessor(shopPayload).preCheckOut(shopPayload)
 
 
-    fun processSuccessfulPayment(shopPayload: ShopPayload) = getProcessor(shopPayload).processSuccess(shopPayload)
+    fun processSuccessfulPayment(shopPayload: ShopPayload, chargeId: String) = getProcessor(shopPayload).processSuccess(shopPayload)
 
     private fun getProcessor(shopPayload: ShopPayload): PaymentProcessor {
         val paymentProcessor = processors[shopPayload.shopItem]

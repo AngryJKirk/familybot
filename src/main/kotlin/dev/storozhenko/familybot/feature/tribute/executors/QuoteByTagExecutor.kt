@@ -9,6 +9,7 @@ import dev.storozhenko.familybot.feature.tribute.repos.QuoteRepository
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow
 
 const val QUOTE_MESSAGE = "Тег?"
 
@@ -24,7 +25,8 @@ class QuoteByTagExecutor(private val quoteRepository: QuoteRepository) : Command
                     .apply { callbackData = tag }
             }
             .chunked(3)
-        context.sender.send(
+            .map(::InlineKeyboardRow)
+        context.client.send(
             context,
             QUOTE_MESSAGE,
             replyToUpdate = true,

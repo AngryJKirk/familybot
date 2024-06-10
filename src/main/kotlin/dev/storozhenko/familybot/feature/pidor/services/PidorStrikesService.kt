@@ -14,7 +14,7 @@ import dev.storozhenko.familybot.feature.pidor.models.PidorStrikes
 import dev.storozhenko.familybot.feature.settings.models.PidorStrikeStats
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.bots.AbsSender
+import org.telegram.telegrambots.meta.generics.TelegramClient
 import java.lang.Integer.max
 
 @Component
@@ -23,7 +23,7 @@ class PidorStrikesService(
     private val dictionary: Dictionary,
     private val botConfig: BotConfig,
 ) {
-    fun calculateStrike(chat: Chat, chatEasyKey: ChatEasyKey, pidor: User): suspend (AbsSender) -> Unit {
+    fun calculateStrike(chat: Chat, chatEasyKey: ChatEasyKey, pidor: User): suspend (TelegramClient) -> Unit {
         val stats = easyKeyValueService.get(PidorStrikeStats, chatEasyKey, PidorStrikes())
         val newStats = calculateStrike(stats, pidor)
 
@@ -64,7 +64,7 @@ class PidorStrikesService(
         chat: Chat,
         chatEasyKey: ChatEasyKey,
         strike: PidorStrikeStat,
-    ): suspend (AbsSender) -> Unit {
+    ): suspend (TelegramClient) -> Unit {
         val phrase = when (strike.currentStrike) {
             2 -> Phrase.PIDOR_STRIKE_2
             3 -> Phrase.PIDOR_STRIKE_3
@@ -77,8 +77,8 @@ class PidorStrikesService(
             10 -> Phrase.PIDOR_STRIKE_10
             else -> Phrase.PIDOR_STRIKE_ELSE
         }
-        return { sender ->
-            sender.sendContextFree(
+        return { client ->
+            client.sendContextFree(
                 chat.idString,
                 dictionary.get(phrase, chatEasyKey).bold(),
                 botConfig,

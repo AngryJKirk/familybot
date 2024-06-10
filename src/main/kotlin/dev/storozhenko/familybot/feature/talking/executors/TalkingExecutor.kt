@@ -46,7 +46,7 @@ class TalkingExecutor(
             } else {
                 100 to 500
             }
-            context.sender.sendDeferred(
+            context.client.sendDeferred(
                 context,
                 messageText,
                 replyToUpdate = true,

@@ -27,7 +27,7 @@ class CommandStatExecutor(
             .sortedByDescending { (_, list) -> list.size }
             .joinToString(separator = "\n") { (command, list) -> "${command.command}: ${list.size} ${pluralize(list.size)}" }
 
-        context.sender.send(
+        context.client.send(
             context,
             "${context.phrase(Phrase.STATS_BY_COMMAND)}:\n".bold() + topList,
             enableHtml = true,

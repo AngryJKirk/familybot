@@ -8,13 +8,23 @@ import dev.storozhenko.familybot.feature.shop.model.PreCheckOutResponse
 import dev.storozhenko.familybot.feature.shop.model.ShopItem
 import dev.storozhenko.familybot.feature.shop.model.SuccessPaymentResponse
 import dev.storozhenko.familybot.feature.shop.services.PaymentService
-import dev.storozhenko.familybot.infrastructure.*
+import dev.storozhenko.familybot.infrastructure.TestClient
+import dev.storozhenko.familybot.infrastructure.createSimpleUpdate
+import dev.storozhenko.familybot.infrastructure.payload
+import dev.storozhenko.familybot.infrastructure.randomInt
+import dev.storozhenko.familybot.infrastructure.randomString
 import dev.storozhenko.familybot.suits.FamilybotApplicationTest
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
-import org.mockito.kotlin.*
+import org.mockito.kotlin.any
+import org.mockito.kotlin.atLeastOnce
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.firstValue
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery
@@ -31,7 +41,7 @@ class PaymentRouterTest : FamilybotApplicationTest() {
     @Autowired
     lateinit var router: PaymentRouter
 
-    private val testSender = TestSender().sender
+    private val testSender = TestClient().client
 
     @Test
     fun successPreCheckout() {
@@ -73,7 +83,7 @@ class PaymentRouterTest : FamilybotApplicationTest() {
 
     @Test
     fun successPayment() {
-        whenever(paymentService.processSuccessfulPayment(any())).thenReturn(
+        whenever(paymentService.processSuccessfulPayment(any(), any())).thenReturn(
             SuccessPaymentResponse(
                 Phrase.entries.toTypedArray().random(),
             ),
@@ -85,7 +95,7 @@ class PaymentRouterTest : FamilybotApplicationTest() {
 
     @Test
     fun failedPayment() {
-        whenever(paymentService.processSuccessfulPayment(any())).thenThrow(RuntimeException())
+        whenever(paymentService.processSuccessfulPayment(any(), any())).thenThrow(RuntimeException())
         val update = createUpdateWithSuccessPayment()
         runBlocking { router.proceedSuccessfulPayment(update).invoke(testSender) }
         verify(testSender, times(2)).execute(any<SendMessage>())

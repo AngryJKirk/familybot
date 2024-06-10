@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.core.executors
 
-import dev.storozhenko.familybot.common.TrackingAbsSender
+import dev.storozhenko.familybot.common.TrackingTelegramClient
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.routers.models.Priority
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -32,16 +32,16 @@ abstract class OnlyBotOwnerExecutor : PrivateMessageExecutor {
     override suspend fun execute(context: ExecutorContext) {
         if (context.testEnvironment) return executeInternal(context)
 
-        val trackingAbsSender = TrackingAbsSender(context.sender)
-        executeInternal(context.copy(sender = trackingAbsSender))
-        val idsToDelete = trackingAbsSender.tracking
+        val trackingTelegramClient = TrackingTelegramClient(context.client)
+        executeInternal(context.copy(client = trackingTelegramClient))
+        val idsToDelete = trackingTelegramClient.tracking
             .map { DeleteMessage(it.chat.id.toString(), it.messageId) }
             .plus(DeleteMessage(context.chat.idString, context.message.messageId))
 
         deleteMessageScope.launch {
             runCatching {
                 delay(3.minutes)
-                idsToDelete.forEach { context.sender.execute(it) }
+                idsToDelete.forEach { context.client.execute(it) }
             }.onFailure { e -> log.error(e) { "Failed to delete message" } }
         }
     }

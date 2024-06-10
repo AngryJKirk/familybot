@@ -46,14 +46,14 @@ class AntiDdosExecutor(
         context: ExecutorContext,
         message: String,
     ) {
-        context.sender.send(context, message)
+        context.client.send(context, message)
     }
 
     private fun callbackQueryCase(
         context: ExecutorContext,
         message: String,
     ) {
-        context.sender.execute(
+        context.client.execute(
             AnswerCallbackQuery(context.update.callbackQuery.id)
                 .apply {
                     showAlert = true

@@ -55,9 +55,9 @@ class PidorStatsStrikesExecutor(
             )
         val title = "${context.phrase(Phrase.PIDOR_STRIKE_STAT_TITLE)}:\n".bold()
         if (stats.isNotEmpty()) {
-            context.sender.send(context, title + stats.joinToString("\n"), enableHtml = true)
+            context.client.send(context, title + stats.joinToString("\n"), enableHtml = true)
         } else {
-            context.sender.send(
+            context.client.send(
                 context,
                 title + context.phrase(Phrase.PIDOR_STRIKE_STAT_NONE),
                 enableHtml = true,

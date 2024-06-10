@@ -5,7 +5,6 @@ settings:
   developer: ${BOT_OWNER_NAME:}
   developer-id: ${BOT_OWNER_TELEGRAM_ID:}
   yandex-key: ${YANDEX_API_TOKEN:}
-  payment-token: ${PAYMENT_TOKEN:}
   ytdlLocation: ${YTDL_LOCATION:}
   openAiToken: ${OPEN_AI_TOKEN:}
 spring:

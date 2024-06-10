@@ -11,7 +11,7 @@ class ReactionStatsExecutor : CommandExecutor() {
     override fun command() = Command.REACTION_STATS
 
     override suspend fun execute(context: ExecutorContext) {
-        context.sender.send(context, "За какой период реакции?", customization = {
+        context.client.send(context, "За какой период реакции?", customization = {
             replyMarkup = ReactionsPeriod.toKeyBoard()
         })
     }

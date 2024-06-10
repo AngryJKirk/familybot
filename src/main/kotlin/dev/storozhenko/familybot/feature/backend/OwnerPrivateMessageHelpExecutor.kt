@@ -16,6 +16,6 @@ class OwnerPrivateMessageHelpExecutor(
         .joinToString("\n") { (prefix, executorName) -> "$prefix — $executorName" }
 
     override suspend fun executeInternal(context: ExecutorContext) {
-        context.sender.send(context, helpMessage)
+        context.client.send(context, helpMessage)
     }
 }

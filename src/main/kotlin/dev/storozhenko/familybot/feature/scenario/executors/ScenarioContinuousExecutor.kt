@@ -26,8 +26,8 @@ class ScenarioContinuousExecutor(
     override suspend fun execute(context: ExecutorContext) {
         val callbackQuery = context.update.callbackQuery
 
-        if (!context.sender.isFromAdmin(context)) {
-            context.sender.execute(
+        if (!context.client.isFromAdmin(context)) {
+            context.client.execute(
                 AnswerCallbackQuery(callbackQuery.id)
                     .apply {
                         showAlert = true

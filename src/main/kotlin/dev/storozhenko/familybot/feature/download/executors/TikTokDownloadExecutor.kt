@@ -41,7 +41,7 @@ class TikTokDownloadExecutor(
     override suspend fun execute(context: ExecutorContext) {
         val urls = getTikTokUrls(context)
         urls.forEach { url ->
-            context.sender.execute(SendChatAction(context.chat.idString, "upload_video", null))
+            context.client.execute(SendChatAction(context.chat.idString, "upload_video"))
             val downloadedFile = download(url)
             val video = SendVideo
                 .builder()
@@ -49,7 +49,7 @@ class TikTokDownloadExecutor(
                 .chatId(context.chat.id)
                 .replyToMessageId(context.message.messageId)
                 .build()
-            context.sender.execute(video)
+            context.client.execute(video)
             downloadedFile.delete()
         }
     }
@@ -114,6 +114,7 @@ class TikTokDownloadExecutor(
             ?.video ?: return url
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     fun encodeUrl(text: String): String {
         val keyBytes = "qwertyuioplkjhgf".toByteArray()
         val textBytes = text.toByteArray()

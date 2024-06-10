@@ -20,7 +20,7 @@ class SettingsExecutor(
     }
 
     override suspend fun execute(context: ExecutorContext) {
-        context.sender.send(
+        context.client.send(
             context,
             context.phrase(Phrase.WHICH_SETTING_SHOULD_CHANGE),
             replyToUpdate = true,

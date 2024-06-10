@@ -20,6 +20,6 @@ class QuoteExecutorTest : CommandExecutorTest() {
     override fun executeTest() {
         val update = createSimpleCommandContext(quoteExecutorTest.command())
         runBlocking { quoteExecutorTest.execute(update) }
-        verify(sender, times(1)).execute(any<SendMessage>())
+        verify(client, times(1)).execute(any<SendMessage>())
     }
 }

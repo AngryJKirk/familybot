@@ -24,14 +24,14 @@ class BetExecutor(
 
     override suspend fun execute(context: ExecutorContext) {
         if (isBetAlreadyDone(context.userAndChatKey)) {
-            context.sender.send(
+            context.client.send(
                 context,
                 context.phrase(Phrase.BET_ALREADY_WAS),
                 shouldTypeBeforeSend = true,
             )
             return
         }
-        context.sender.send(
+        context.client.send(
             context,
             context.phrase(Phrase.BET_INITIAL_MESSAGE),
             replyToUpdate = true,

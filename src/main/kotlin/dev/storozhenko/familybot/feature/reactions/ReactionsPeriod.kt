@@ -3,6 +3,7 @@ package dev.storozhenko.familybot.feature.reactions
 import dev.storozhenko.familybot.core.telegram.FamilyBot
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
@@ -26,20 +27,21 @@ enum class ReactionsPeriod(val periodName: String, val period: Duration) {
         fun toKeyBoard(): InlineKeyboardMarkup {
             return InlineKeyboardMarkup(
                 listOf(
-                    entries.map {
+                    InlineKeyboardRow(entries.map {
                         InlineKeyboardButton
                             .builder()
                             .text(it.periodName)
                             .callbackData(it.periodName)
                             .build()
-                    },
-                    entries.map {
+                    }),
+                    InlineKeyboardRow(entries.map {
                         InlineKeyboardButton
                             .builder()
                             .text(AI_PREFIX + it.periodName)
                             .callbackData(AI_PREFIX + it.periodName)
                             .build()
                     })
+                )
             )
 
         }

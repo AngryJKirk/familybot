@@ -11,7 +11,7 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.core.StringRedisTemplate
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod
+import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import java.io.Serializable
 
@@ -36,7 +36,7 @@ class PidorExecutorTest : CommandExecutorTest() {
 
         runBlocking { pidorExecutor.execute(context) }
         val captor = argumentCaptor<BotApiMethod<Serializable>> {
-            verify(sender, times(11)).execute(capture())
+            verify(client, times(11)).execute(capture())
         }
 
         val pidorsAfterFirstInvoke =
@@ -63,7 +63,7 @@ class PidorExecutorTest : CommandExecutorTest() {
         )
         runBlocking { pidorExecutor.execute(context) }
         argumentCaptor<BotApiMethod<Serializable>> {
-            verify(sender, times(12)).execute(capture())
+            verify(client, times(12)).execute(capture())
         }
 
         val pidorsAfterSecondInvoke =

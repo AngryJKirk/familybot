@@ -5,25 +5,26 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>dev.storozhenko</groupId>
     <artifactId>familybot</artifactId>
-    <version>3.0.0</version>
+    <version>4.0.0</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.5</version>
+        <version>3.3.0</version>
     </parent>
 
     <properties>
-        <kotlin.version>1.9.23</kotlin.version>
-        <telegrambots.version>6.9.7.1</telegrambots.version>
-        <testcontainers.version>1.19.7</testcontainers.version>
+        <kotlin.version>2.0.0</kotlin.version>
+        <telegrambots.version>7.4.0</telegrambots.version>
+        <testcontainers.version>1.19.8</testcontainers.version>
         <mockito-kotlin.version>5.3.1</mockito-kotlin.version>
         <tomlj.version>1.1.1</tomlj.version>
-        <spring.version>3.2.5</spring.version>
-        <kotlinx-coroutines.version>1.8.0</kotlinx-coroutines.version>
+        <spring.version>3.3.0</spring.version>
+        <kotlinx-coroutines.version>1.9.0-RC</kotlinx-coroutines.version>
         <openai-client.version>0.18.2</openai-client.version>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin-logging-jvm.version>6.0.9</kotlin-logging-jvm.version>
+        <commons-codec.version>1.17.0</commons-codec.version>
     </properties>
 
     <dependencies>
@@ -87,9 +88,20 @@
         </dependency>
         <dependency>
             <groupId>org.telegram</groupId>
-            <artifactId>telegrambots</artifactId>
+            <artifactId>telegrambots-meta</artifactId>
             <version>${telegrambots.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambots-longpolling</artifactId>
+            <version>${telegrambots.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambots-client</artifactId>
+            <version>${telegrambots.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.tomlj</groupId>
             <artifactId>tomlj</artifactId>
@@ -116,6 +128,12 @@
             <artifactId>kotlin-logging-jvm</artifactId>
             <version>${kotlin-logging-jvm.version}</version>
         </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons-codec.version}</version>
+        </dependency>
+
         <!--Test-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

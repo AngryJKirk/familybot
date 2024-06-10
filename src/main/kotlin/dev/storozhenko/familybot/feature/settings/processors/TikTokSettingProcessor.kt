@@ -21,10 +21,10 @@ class TikTokSettingProcessor(
             "вкл" -> easyKeyValueService.put(TikTokDownload, context.chatKey, true)
             "выкл" -> easyKeyValueService.put(TikTokDownload, context.chatKey, false)
             else -> {
-                context.sender.send(context, context.phrase(Phrase.ADVANCED_SETTINGS_ERROR))
+                context.client.send(context, context.phrase(Phrase.ADVANCED_SETTINGS_ERROR))
                 return
             }
         }
-        context.sender.send(context, context.phrase(Phrase.ADVANCED_SETTINGS_OK))
+        context.client.send(context, context.phrase(Phrase.ADVANCED_SETTINGS_OK))
     }
 }

@@ -22,7 +22,7 @@ class SlavaUkraineKeyWordProcessor : KeyWordProcessor {
         } else {
             "Слава Україні"
         }
-        context.sender.send(context, response, replyToUpdate = true, shouldTypeBeforeSend = true)
+        context.client.send(context, response, replyToUpdate = true, shouldTypeBeforeSend = true)
     }
 
     private fun containsRussianName(text: String): Boolean {

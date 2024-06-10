@@ -19,7 +19,7 @@ class Gpt4AdminSettingExecutor(private val easyKeyValueService: EasyKeyValueServ
             // haha nice placebo
             easyKeyValueService.put(ChatGPT4Enabled, context.chatKey, currentValue.not())
         }
-        context.sender.send(
+        context.client.send(
             context,
             "OK, ${currentValue.toEmoji()} => ${currentValue.not().toEmoji()}",
             replyToUpdate = true

@@ -23,7 +23,7 @@ class TalkingDensitySettingProcessor(
         val value = context.update.getMessageTokens()[2]
         val amountOfDensity = value.toLongOrNull()
         if (amountOfDensity == null) {
-            context.sender.send(
+            context.client.send(
                 context,
                 context.phrase(Phrase.ADVANCED_SETTINGS_FAILED_TALKING_DENSITY_NOT_NUMBER)
                     .replace("#value", value),
@@ -32,13 +32,13 @@ class TalkingDensitySettingProcessor(
         }
 
         if (amountOfDensity < 0) {
-            context.sender.send(
+            context.client.send(
                 context,
                 context.phrase(Phrase.ADVANCED_SETTINGS_FAILED_TALKING_DENSITY_NEGATIVE),
             )
         }
 
         easyKeyValueService.put(TalkingDensity, context.chatKey, amountOfDensity)
-        context.sender.send(context, context.phrase(Phrase.ADVANCED_SETTINGS_OK))
+        context.client.send(context, context.phrase(Phrase.ADVANCED_SETTINGS_OK))
     }
 }

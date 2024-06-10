@@ -14,10 +14,10 @@ class ManualPidorSelectExecutor(
 
     override suspend fun executeInternal(context: ExecutorContext) {
         val response = runCatching {
-            pidorAutoSelectService.autoSelect(context.sender)
+            pidorAutoSelectService.autoSelect(context.client)
             "it's done"
         }
             .onFailure { exception -> exception.message }
-        context.sender.send(context, response.getOrDefault("error"))
+        context.client.send(context, response.getOrDefault("error"))
     }
 }

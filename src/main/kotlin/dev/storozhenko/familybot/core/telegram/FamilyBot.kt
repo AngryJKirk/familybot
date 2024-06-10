@@ -1,6 +1,5 @@
 package dev.storozhenko.familybot.core.telegram
 
-import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.toChat
 import dev.storozhenko.familybot.common.extensions.toJson
 import dev.storozhenko.familybot.common.extensions.toUser
@@ -15,69 +14,55 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.slf4j.MDC
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.bots.DefaultBotOptions
-import org.telegram.telegrambots.bots.TelegramLongPollingBot
+import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer
 import org.telegram.telegrambots.meta.api.objects.Update
-import org.telegram.telegrambots.meta.bots.AbsSender
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException
+import org.telegram.telegrambots.meta.generics.TelegramClient
+import java.util.concurrent.ConcurrentHashMap
 
 @Component
 class FamilyBot(
-    val config: BotConfig,
     val router: Router,
     val pollRouter: PollRouter,
     val paymentRouter: PaymentRouter,
     val reactionsRouter: ReactionsRouter,
     val easyKeyValueService: EasyKeyValueService,
-) : TelegramLongPollingBot(DefaultBotOptions().apply { allowedUpdates = botAllowedUpdates }, config.botToken) {
-
-    companion object {
-
-        private val botAllowedUpdates = listOf(
-            "message",
-            "edited_message",
-            "callback_query",
-            "shipping_query",
-            "pre_checkout_query",
-            "poll",
-            "poll_answer",
-            "my_chat_member",
-            "chat_member",
-            "message_reaction",
-            "message_reaction_count"
-        )
-    }
+    val telegramClient: TelegramClient
+) : LongPollingUpdateConsumer {
 
     private val log = KotlinLogging.logger {}
     private val routerScope = CoroutineScope(Dispatchers.Default)
-    private val channels = HashMap<Long, Channel<Update>>()
+    private val channels = ConcurrentHashMap<Long, Channel<Update>>()
 
-    override fun onUpdateReceived(tgUpdate: Update?) {
-        val update = tgUpdate ?: throw InternalException("Update should not be null")
+    override fun consume(updates: List<Update>) {
+        updates
+            .asSequence()
+            .filterNot(Update::hasPoll)
+            .forEach { update -> routerScope.launch { consumeInternal(update) } }
+    }
+
+    private suspend fun consumeInternal(update: Update) {
         if (update.hasPollAnswer()) {
-            routerScope.launch { proceedPollAnswer(update) }
+            coroutineScope { launch { proceedPollAnswer(update) } }
             return
         }
 
         if (update.hasPreCheckoutQuery()) {
-            routerScope.launch { proceedPreCheckoutQuery(update).invoke(this@FamilyBot) }
+            coroutineScope { launch { proceedPreCheckoutQuery(update).invoke(telegramClient) } }
             return
         }
 
         if (update.message?.hasSuccessfulPayment() == true) {
-            routerScope.launch { proceedSuccessfulPayment(update).invoke(this@FamilyBot) }
-            return
-        }
-
-        if (update.hasPoll()) {
+            coroutineScope { launch { proceedSuccessfulPayment(update).invoke(telegramClient) } }
             return
         }
 
         if (update.messageReaction != null) {
-            routerScope.launch { proceedReaction(update) }
+            coroutineScope { launch { proceedReaction(update) } }
             return
         }
         if (update.hasMessage() || update.hasCallbackQuery() || update.hasEditedMessage()) {
@@ -85,12 +70,9 @@ class FamilyBot(
 
             val channel = channels.computeIfAbsent(chat.id) { createChannel() }
 
-            routerScope.launch { channel.send(update) }
+            coroutineScope { launch { channel.send(update) } }
+            return
         }
-    }
-
-    override fun getBotUsername(): String {
-        return config.botName
     }
 
     private suspend fun proceed(update: Update) {
@@ -98,7 +80,7 @@ class FamilyBot(
             val user = update.toUser()
             MDC.put("chat", "${user.chat.name}:${user.chat.id}")
             MDC.put("user", "${user.name}:${user.id}")
-            router.processUpdate(update, this)
+            router.processUpdate(update, telegramClient)
         } catch (e: TelegramApiRequestException) {
             val logMessage = "Telegram error: ${e.apiResponse}, ${e.errorCode}, update is ${update.toJson()}"
             if (e.errorCode in 400..499) {
@@ -139,7 +121,7 @@ class FamilyBot(
         }
     }
 
-    private fun proceedPreCheckoutQuery(update: Update): suspend (AbsSender) -> Unit {
+    private fun proceedPreCheckoutQuery(update: Update): suspend (TelegramClient) -> Unit {
         return runCatching {
             paymentRouter.proceedPreCheckoutQuery(update)
         }.onFailure {
@@ -147,7 +129,7 @@ class FamilyBot(
         }.getOrDefault { }
     }
 
-    private fun proceedSuccessfulPayment(update: Update): suspend (AbsSender) -> Unit {
+    private fun proceedSuccessfulPayment(update: Update): suspend (TelegramClient) -> Unit {
         return runCatching {
             paymentRouter.proceedSuccessfulPayment(update)
         }.onFailure {

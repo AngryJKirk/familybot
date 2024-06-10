@@ -26,9 +26,9 @@ class DownloadAudioExecutor(
         if (split.size != 2) {
             return
         }
-        context.sender.execute(SendChatAction(context.chat.idString, "upload_document", null))
+        context.client.execute(SendChatAction(context.chat.idString, "upload_document"))
         val audio = ytDlpWrapper.downloadAudio(split[1])
-        context.sender.execute(
+        context.client.execute(
             SendAudio
                 .builder()
                 .audio(InputFile(audio))

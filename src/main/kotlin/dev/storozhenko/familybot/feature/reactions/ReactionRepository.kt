@@ -91,7 +91,7 @@ class ReactionRepository(private val jdbcTemplate: JdbcTemplate) {
 
                 is ReactionTypeCustomEmoji -> {
                     @Suppress("USELESS_ELVIS") // it actually could be null, @NonNull annotation is a bug
-                    reaction.customEmoji ?: UUID.randomUUID().toString()
+                    reaction.customEmojiId ?: UUID.randomUUID().toString()
                 }
 
                 else -> {

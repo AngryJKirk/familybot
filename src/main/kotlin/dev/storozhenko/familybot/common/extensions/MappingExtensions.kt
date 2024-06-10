@@ -12,14 +12,14 @@ import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
 import org.telegram.telegrambots.meta.api.objects.EntityType
-import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
-import org.telegram.telegrambots.meta.bots.AbsSender
+import org.telegram.telegrambots.meta.api.objects.message.Message
+import org.telegram.telegrambots.meta.generics.TelegramClient
 import java.time.Month
 import java.time.format.TextStyle
 import java.util.Locale
-import org.telegram.telegrambots.meta.api.objects.Chat as TelegramChat
 import org.telegram.telegrambots.meta.api.objects.User as TelegramUser
+import org.telegram.telegrambots.meta.api.objects.chat.Chat as TelegramChat
 
 fun TelegramChat.toChat(): Chat = Chat(id, title)
 
@@ -73,7 +73,7 @@ fun Update.message(): Message {
     }
 }
 
-fun Update.context(botConfig: BotConfig, dictionary: Dictionary, sender: AbsSender): ExecutorContext {
+fun Update.context(botConfig: BotConfig, dictionary: Dictionary, client: TelegramClient): ExecutorContext {
     val message = message()
     val isFromDeveloper = botConfig.developer == from().userName
     val chat = toChat()
@@ -89,7 +89,7 @@ fun Update.context(botConfig: BotConfig, dictionary: Dictionary, sender: AbsSend
         user.key(),
         chat.key(),
         botConfig.testEnvironment,
-        sender,
+        client,
         dictionary,
     )
 }
@@ -138,7 +138,7 @@ fun Boolean.toEmoji(): String {
     return if (this) "✅" else "❌"
 }
 
-fun Int.rubles() = this * 100
+fun Int.rubles() = this / 2
 
 private val objectMapper = jacksonObjectMapper()
 fun mapper() = objectMapper

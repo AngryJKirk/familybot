@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
-import org.telegram.telegrambots.meta.bots.AbsSender
+import org.telegram.telegrambots.meta.generics.TelegramClient
 
 @Component
 class PaymentRouter(
@@ -30,59 +30,60 @@ class PaymentRouter(
 ) {
     private val log = KotlinLogging.logger {  }
 
-    fun proceedPreCheckoutQuery(update: Update): suspend (AbsSender) -> Unit {
+    fun proceedPreCheckoutQuery(update: Update): suspend (TelegramClient) -> Unit {
         val shopPayload = getPayload(update.preCheckoutQuery.invoicePayload)
             .copy(userId = update.from().id)
         val settingsKey = ChatEasyKey(shopPayload.chatId)
         val chatId = shopPayload.chatId.toString()
-        return { sender ->
+        return { client ->
             runCatching { paymentService.processPreCheckoutCheck(shopPayload) }
                 .onFailure { e ->
                     log.error(e) { "Can not check pre checkout query" }
                     val message = dictionary.get(Phrase.SHOP_PRE_CHECKOUT_FAIL, settingsKey)
-                    sender.execute(AnswerPreCheckoutQuery(update.preCheckoutQuery.id, false, message))
-                    sender.execute(SendMessage(chatId, message))
+                    client.execute(AnswerPreCheckoutQuery(update.preCheckoutQuery.id, false, message))
+                    client.execute(SendMessage(chatId, message))
                 }
                 .onSuccess { response ->
                     when (response) {
                         is PreCheckOutResponse.Success -> {
-                            sender.execute(AnswerPreCheckoutQuery(update.preCheckoutQuery.id, true))
+                            client.execute(AnswerPreCheckoutQuery(update.preCheckoutQuery.id, true))
                             log.info { "Pre checkout query is valid" }
                         }
 
                         is PreCheckOutResponse.Error -> {
                             val message = dictionary.get(response.explainPhrase, settingsKey)
-                            sender.execute(
+                            client.execute(
                                 AnswerPreCheckoutQuery(
                                     update.preCheckoutQuery.id,
                                     false,
                                     message,
                                 ),
                             )
-                            sender.execute(SendMessage(chatId, message))
+                            client.execute(SendMessage(chatId, message))
                         }
                     }
                 }
         }
     }
 
-    fun proceedSuccessfulPayment(update: Update): suspend (AbsSender) -> Unit {
+    fun proceedSuccessfulPayment(update: Update): suspend (TelegramClient) -> Unit {
         val shopPayload = getPayload(update.message.successfulPayment.invoicePayload)
-        return { sender ->
-            runCatching { paymentService.processSuccessfulPayment(shopPayload) }
+        val chargeId = update.message.successfulPayment.telegramPaymentChargeId
+        return { client ->
+            runCatching { paymentService.processSuccessfulPayment(shopPayload, chargeId) }
                 .onFailure { e ->
                     log.error(e) { "Can not process payment" }
-                    onFailure(sender, update, shopPayload)
+                    onFailure(client, update, shopPayload)
                 }
                 .onSuccess { result ->
                     log.info { "Wow, payment!" }
-                    onSuccess(sender, update, result, shopPayload)
+                    onSuccess(client, update, result, shopPayload)
                 }
         }
     }
 
     private fun onSuccess(
-        sender: AbsSender,
+        client: TelegramClient,
         update: Update,
         successPaymentResponse: SuccessPaymentResponse,
         shopPayload: ShopPayload,
@@ -94,9 +95,9 @@ class PaymentRouter(
             .replace("$0", user.getGeneralName())
             .replace("$1", "@" + botConfig.developer)
         val chatId = shopPayload.chatId.toString()
-        sender.execute(SendMessage(chatId, text).apply { enableHtml(true) })
-        sender.execute(SendMessage(chatId, dictionary.get(successPaymentResponse.phrase, chatKey)))
-        successPaymentResponse.customCall(sender)
+        client.execute(SendMessage(chatId, text).apply { enableHtml(true) })
+        client.execute(SendMessage(chatId, dictionary.get(successPaymentResponse.phrase, chatKey)))
+        successPaymentResponse.customCall(client)
         val chat = commonRepository
             .getChatsByUser(user)
             .find { shopPayload.chatId == it.id }
@@ -104,7 +105,7 @@ class PaymentRouter(
         val additionalTax = if (update.from().isPremium == true) 10 else 0
         val message =
             "<b>+${(shopPayload.shopItem.price / 100) + additionalTax}₽</b> от ${user.getGeneralName()} из чата <b>$chat</b> за <b>${shopPayload.shopItem}</b>"
-        sender.execute(
+        client.execute(
             SendMessage(developerId, message).apply {
                 enableHtml(true)
             },
@@ -112,15 +113,15 @@ class PaymentRouter(
     }
 
     private fun onFailure(
-        sender: AbsSender,
+        client: TelegramClient,
         update: Update,
         shopPayload: ShopPayload,
     ) {
         val developerId = botConfig.developerId
         val text = dictionary.get(Phrase.SHOP_ERROR, update.toChat().key()).replace("$1", "@" + botConfig.developer)
-        sender.execute(SendMessage(shopPayload.chatId.toString(), text))
+        client.execute(SendMessage(shopPayload.chatId.toString(), text))
 
-        sender.execute(SendMessage(developerId, "Payment gone wrong: $update"))
+        client.execute(SendMessage(developerId, "Payment gone wrong: $update"))
     }
 
     private fun getPayload(invoicePayload: String): ShopPayload {

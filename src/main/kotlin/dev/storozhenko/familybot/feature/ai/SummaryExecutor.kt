@@ -35,7 +35,7 @@ class SummaryExecutor(
         val isCooldown = easyKeyValueService.get(ChatGPTSummaryCooldown, context.chatKey, false)
         if (paidTill == null || paidTill.isBefore(Instant.now())) {
             if (isCooldown) {
-                context.sender.send(
+                context.client.send(
                     context,
                     "Саммари на кулдауне, кулдаун 24 часа, если есть подписка из /shop то кулдаун там 5 минут"
                 )
@@ -45,7 +45,7 @@ class SummaryExecutor(
             }
         } else {
             if (isCooldown) {
-                context.sender.send(context, "Падажжи, кулдаун, всего 5 минут")
+                context.client.send(context, "Падажжи, кулдаун, всего 5 минут")
                 return
             } else {
                 easyKeyValueService.put(ChatGPTSummaryCooldown, context.chatKey, true, 5.minutes)
@@ -63,6 +63,6 @@ class SummaryExecutor(
             .mapIndexed { id, (user, message) -> UserMessage(id, user.getGeneralName(false), message) }
             .toJson(pretty = true)
         val useChatGpt4 = easyKeyValueService.get(ChatGPT4Enabled, context.chatKey, false)
-        context.sender.send(context, talkingServiceChatGpt.internalMessage(prefix + "\n" + messages, useChatGpt4))
+        context.client.send(context, talkingServiceChatGpt.internalMessage(prefix + "\n" + messages, useChatGpt4))
     }
 }

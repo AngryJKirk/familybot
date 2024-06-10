@@ -21,8 +21,8 @@ class QuoteContinuousExecutor(
 
     override suspend fun execute(context: ExecutorContext) {
         val callbackQuery = context.update.callbackQuery
-        context.sender.execute(AnswerCallbackQuery(callbackQuery.id))
-        context.sender.execute(
+        context.client.execute(AnswerCallbackQuery(callbackQuery.id))
+        context.client.execute(
             (
                     SendMessage(
                         callbackQuery.message.chatId.toString(),

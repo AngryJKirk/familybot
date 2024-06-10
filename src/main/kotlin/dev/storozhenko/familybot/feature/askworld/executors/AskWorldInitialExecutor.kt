@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.api.objects.Message
+import org.telegram.telegrambots.meta.api.objects.message.Message
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -70,20 +70,20 @@ class AskWorldInitialExecutor(
         if (isNotFromDeveloper) {
             if (chatUsages != null && chatUsages > 0L) {
                 log.info { "Limit was exceed for chat" }
-                context.sender.send(context, context.phrase(Phrase.ASK_WORLD_LIMIT_BY_CHAT), replyToUpdate = true)
+                context.client.send(context, context.phrase(Phrase.ASK_WORLD_LIMIT_BY_CHAT), replyToUpdate = true)
                 return
             }
 
             if (userUsages != null && userUsages > 1) {
                 log.info { "Limit was exceed for user" }
-                context.sender.send(context, context.phrase(Phrase.ASK_WORLD_LIMIT_BY_USER), replyToUpdate = true)
+                context.client.send(context, context.phrase(Phrase.ASK_WORLD_LIMIT_BY_USER), replyToUpdate = true)
                 return
             }
         }
 
         val askWorldData = getAskWorldData(context)
         if (askWorldData is ValidationError) {
-            askWorldData.invalidQuestionAction.invoke(context.sender)
+            askWorldData.invalidQuestionAction.invoke(context.client)
             return
         }
 
@@ -98,7 +98,7 @@ class AskWorldInitialExecutor(
         )
 
         val questionId = coroutineScope { async { askWorldRepository.addQuestion(question) } }
-        context.sender.send(context, context.phrase(Phrase.DATA_CONFIRM))
+        context.client.send(context, context.phrase(Phrase.DATA_CONFIRM))
         if (!successData.isScam) {
             getChatsToSendQuestion(context)
                 .forEach { chatToSend ->
@@ -113,7 +113,7 @@ class AskWorldInitialExecutor(
                             log.info { "Chat $chatToSend marked sender ${context.chat} as ignored" }
                             markQuestionIgnored(question, questionId, chatToSend)
                         } else {
-                            val result = successData.action.invoke(context.sender, chatToSend, currentChat)
+                            val result = successData.action.invoke(context.client, chatToSend, currentChat)
                             markQuestionDelivered(question, questionId, result, chatToSend)
                         }
                     }.onFailure { e -> markChatInactive(chatToSend, questionId, e) }
@@ -144,14 +144,14 @@ class AskWorldInitialExecutor(
             return Success(
                 poll.question,
                 false,
-            ) { sender, chatToSend, currentChat ->
-                sender.execute(
+            ) { client, chatToSend, currentChat ->
+                client.execute(
                     SendMessage(
                         chatToSend.idString,
                         formatPollMessage(currentChat, chatToSend),
                     ).also { it.enableHtml(true) },
                 )
-                sender.execute(
+                client.execute(
                     ForwardMessage(
                         chatToSend.idString,
                         currentChat.idString,
@@ -170,7 +170,7 @@ class AskWorldInitialExecutor(
                     ?.removePrefix(" ")
             }
                 ?.takeIf(String::isNotEmpty) ?: return ValidationError {
-                context.sender.send(
+                context.client.send(
                     context,
                     context.phrase(Phrase.ASK_WORLD_HELP),
                 )
@@ -184,15 +184,15 @@ class AskWorldInitialExecutor(
 
             if (message.length > 2000) {
                 return ValidationError {
-                    context.sender.send(
+                    context.client.send(
                         context,
                         context.phrase(Phrase.ASK_WORLD_QUESTION_TOO_LONG),
                         replyToUpdate = true,
                     )
                 }
             }
-            return Success(message, isScam) { sender, chatToSend, currentChat ->
-                sender.execute(
+            return Success(message, isScam) { client, chatToSend, currentChat ->
+                client.execute(
                     SendMessage(
                         chatToSend.idString,
                         formatMessage(currentChat, message, chatToSend),

@@ -18,7 +18,7 @@ class BanResponseExecutor(
             ?: "иди нахуй"
 
         if (context.command != null) {
-            context.sender.send(context, banMessage, replyToUpdate = true)
+            context.client.send(context, banMessage, replyToUpdate = true)
         }
     }
 

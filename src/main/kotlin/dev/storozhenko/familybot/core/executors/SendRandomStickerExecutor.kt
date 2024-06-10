@@ -20,9 +20,9 @@ abstract class SendRandomStickerExecutor(
             return
         }
 
-        context.sender.send(context, getMessage())
+        context.client.send(context, getMessage())
         delay(1000)
-        context.sender.sendRandomSticker(context, getStickerPack())
+        context.client.sendRandomSticker(context, getStickerPack())
     }
 
     private fun isInvokedToday(user: User): Boolean {
