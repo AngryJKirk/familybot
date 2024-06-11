@@ -1,5 +1,6 @@
 package dev.storozhenko.familybot.core.telegram
 
+import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.toChat
 import dev.storozhenko.familybot.common.extensions.toJson
 import dev.storozhenko.familybot.common.extensions.toUser
@@ -13,6 +14,7 @@ import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -26,16 +28,17 @@ import java.util.concurrent.ConcurrentHashMap
 
 @Component
 class FamilyBot(
-    val router: Router,
-    val pollRouter: PollRouter,
-    val paymentRouter: PaymentRouter,
-    val reactionsRouter: ReactionsRouter,
-    val easyKeyValueService: EasyKeyValueService,
-    val telegramClient: TelegramClient
+    private val router: Router,
+    private val pollRouter: PollRouter,
+    private val paymentRouter: PaymentRouter,
+    private val reactionsRouter: ReactionsRouter,
+    private val easyKeyValueService: EasyKeyValueService,
+    private val telegramClient: TelegramClient,
+    private val botConfig: BotConfig
 ) : LongPollingUpdateConsumer {
 
     private val log = KotlinLogging.logger {}
-    private val routerScope = CoroutineScope(Dispatchers.Default)
+    private val routerScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
     private val channels = ConcurrentHashMap<Long, Channel<Update>>()
 
     override fun consume(updates: List<Update>) {
@@ -63,6 +66,14 @@ class FamilyBot(
 
         if (update.messageReaction != null) {
             coroutineScope { launch { proceedReaction(update) } }
+            return
+        }
+
+        if (update.hasCallbackQuery() &&
+            update.callbackQuery.from.id.toString() == botConfig.developerId &&
+            update.callbackQuery.data.startsWith("REFUND=")
+        ) {
+            coroutineScope { launch { proceedRefund(update).invoke(telegramClient) } }
             return
         }
         if (update.hasMessage() || update.hasCallbackQuery() || update.hasEditedMessage()) {
@@ -134,6 +145,14 @@ class FamilyBot(
             paymentRouter.proceedSuccessfulPayment(update)
         }.onFailure {
             log.warn(it) { "paymentRouter.proceedSuccessfulPayment failed" }
+        }.getOrDefault { }
+    }
+
+    private fun proceedRefund(update: Update): suspend (TelegramClient) -> Unit {
+        return runCatching {
+            paymentRouter.proceedRefund(update)
+        }.onFailure {
+            log.warn(it) { "paymentRouter.proceedRefund failed" }
         }.getOrDefault { }
     }
 

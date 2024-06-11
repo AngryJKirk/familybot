@@ -48,6 +48,7 @@ object ChatGPT4Enabled: BooleanKeyType<ChatEasyKey>
 object ChatGPT4MessagesDailyCounter: LongKeyType<ChatEasyKey>
 object ChatGPTTalkingDisabled: BooleanKeyType<ChatEasyKey>
 object IGCookie : StringKeyType<PlainKey>
+object PaymentKey: StringKeyType<PlainKey>
 object PidorStrikeStats : EasyKeyType<PidorStrikes, ChatEasyKey> {
     override fun mapToString(value: PidorStrikes) = value.toJson()
 
