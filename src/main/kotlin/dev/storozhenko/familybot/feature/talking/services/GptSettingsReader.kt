@@ -7,25 +7,20 @@ import org.tomlj.TomlTable
 
 @Component
 class GptSettingsReader {
-    private val universes: Map<GptUniverse, String>
-    private val styles: Map<GptStyle, String>
+    private val toml = readTomlFromStatic("gpt.toml")
+
+    private val universes: Map<GptUniverse, String> = getTable(toml, UNIVERSE_TABLE)
+        .toMap()
+        .map { (key, value) -> GptUniverse.valueOf(key) to value as String }
+        .toMap()
+    private val styles: Map<GptStyle, String> = getTable(toml, STYLE_TABLE)
+        .toMap()
+        .map { (key, value) -> GptStyle.valueOf(key) to value as String }
+        .toMap()
 
     companion object {
         private const val UNIVERSE_TABLE = "UNIVERSE"
         private const val STYLE_TABLE = "STYLE"
-    }
-
-    init {
-        val toml = readTomlFromStatic("gpt.toml")
-        universes = getTable(toml, UNIVERSE_TABLE)
-            .toMap()
-            .map { (key, value) -> GptUniverse.valueOf(key) to value as String }
-            .toMap()
-
-        styles = getTable(toml, STYLE_TABLE)
-            .toMap()
-            .map { (key, value) -> GptStyle.valueOf(key) to value as String }
-            .toMap()
     }
 
     private fun getTable(toml: TomlTable, name: String): TomlTable {

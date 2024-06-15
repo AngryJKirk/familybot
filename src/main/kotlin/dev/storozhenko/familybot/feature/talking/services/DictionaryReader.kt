@@ -9,16 +9,16 @@ import org.tomlj.TomlTable
 
 @Component
 class DictionaryReader {
-    private val dictionary: Map<Phrase, Map<PhraseTheme, List<String>>>
+    private val toml = readTomlFromStatic("dictionary.toml")
+    private val dictionary: Map<Phrase, Map<PhraseTheme, List<String>>> = Phrase.entries
+        .map { phrase ->
+            phrase to (toml.getTable(phrase.name) ?: throw FamilyBot.InternalException(
+                "Phrase $phrase is missing"
+            ))
+        }
+        .associate { (phrase, table) -> phrase to parsePhrasesByTheme(table) }
 
     init {
-        val toml = readTomlFromStatic("dictionary.toml")
-
-        dictionary = Phrase.entries
-            .map { phrase ->
-                phrase to (toml.getTable(phrase.name) ?: throw FamilyBot.InternalException("Phrase $phrase is missing"))
-            }
-            .associate { (phrase, table) -> phrase to parsePhrasesByTheme(table) }
         checkDefaults(dictionary)
     }
 
