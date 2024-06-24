@@ -23,10 +23,6 @@ class FamilyBotApplication(
 ) {
     private val logger = KotlinLogging.logger {  }
 
-//    @Bean
-//    fun telegramDownloader(botConfig: BotConfig): TelegramFileDownloader {
-//        return TelegramFileDownloader { botConfig.botToken }
-//    }
 
     @Bean
     fun telegramClient(botConfig: BotConfig): TelegramClient {

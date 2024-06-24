@@ -15,6 +15,7 @@ import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.repos.UserRepository
 import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.feature.settings.models.PaymentKey
+import dev.storozhenko.familybot.feature.settings.models.RefundNeedsToPressTime
 import dev.storozhenko.familybot.feature.shop.model.PreCheckOutResponse
 import dev.storozhenko.familybot.feature.shop.model.ShopPayload
 import dev.storozhenko.familybot.feature.shop.model.SuccessPaymentResponse
@@ -24,7 +25,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery
-import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodBoolean
+import org.telegram.telegrambots.meta.api.methods.payments.RefundStarPayment
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
@@ -32,6 +33,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow
 import org.telegram.telegrambots.meta.generics.TelegramClient
 import java.util.UUID
+import kotlin.time.Duration.Companion.minutes
 
 @Component
 class PaymentRouter(
@@ -94,31 +96,42 @@ class PaymentRouter(
         }
     }
 
-    // todo, there is a bug in the telegram lib
-    private class Refund(
-        val user_id: Long,
-        val telegram_payment_charge_id: String
-    ) : BotApiMethodBoolean() {
-        override fun getMethod() = "refundStarPayment"
-    }
 
     fun proceedRefund(update: Update): suspend (TelegramClient) -> Unit {
         val callbackQuery = update.callbackQuery
         val paymentId = callbackQuery.data.split("=")[1]
-        val refundJson = easyKeyValueService.get(PaymentKey, PlainKey(paymentId))
+        val key = PlainKey(paymentId)
+
+        val refundJson = easyKeyValueService.get(PaymentKey, key)
             ?: throw FamilyBot.InternalException("Can't find a key, update is $update")
         val refundData = refundJson.parseJson<RefundData>()
+
         return { client ->
-            client.execute(AnswerCallbackQuery(callbackQuery.id))
-            val result = runCatching { client.execute(Refund(refundData.userId, refundData.chargeId)) }
-                .onFailure { e -> log.error(e) { "Can't refund due to error" } }
-                .getOrDefault(false)
-            client.execute(
-                SendMessage(
-                    botConfig.developerId,
-                    "Trying to refund ${refundData.amount}⭐: ${result.toEmoji()}"
+            var timesNeedToPress = easyKeyValueService.get(RefundNeedsToPressTime, key)
+            if(timesNeedToPress == null){
+                easyKeyValueService.put(RefundNeedsToPressTime, key, 4, duration = 1.minutes)
+                timesNeedToPress = 4
+            }
+            if (timesNeedToPress > 0) {
+                client.execute(AnswerCallbackQuery(callbackQuery.id)
+                    .apply {
+                        text = "$timesNeedToPress times more to press to refund"
+                        showAlert = true
+                    })
+                easyKeyValueService.decrement(RefundNeedsToPressTime, key)
+            } else {
+                client.execute(AnswerCallbackQuery(callbackQuery.id))
+                val result = runCatching { client.execute(RefundStarPayment(refundData.userId, refundData.chargeId)) }
+                    .onFailure { e -> log.error(e) { "Can't refund due to error" } }
+                    .getOrDefault(false)
+                client.execute(
+                    SendMessage(
+                        botConfig.developerId,
+                        "Trying to refund ${refundData.amount}⭐: ${result.toEmoji()}"
+                    )
                 )
-            )
+            }
+
         }
     }
 
