@@ -13,6 +13,7 @@ import dev.storozhenko.familybot.core.keyvalue.models.StringKeyType
 import dev.storozhenko.familybot.core.keyvalue.models.UserAndChatEasyKey
 import dev.storozhenko.familybot.core.keyvalue.models.UserEasyKey
 import dev.storozhenko.familybot.feature.pidor.models.PidorStrikes
+import dev.storozhenko.familybot.feature.story.PollResults
 import java.time.Instant
 
 object FuckOffTolerance : BooleanKeyType<UserAndChatEasyKey>
@@ -50,6 +51,20 @@ object ChatGPTTalkingDisabled: BooleanKeyType<ChatEasyKey>
 object IGCookie : StringKeyType<PlainKey>
 object PaymentKey: StringKeyType<PlainKey>
 object RefundNeedsToPressTime: LongKeyType<PlainKey>
+
+object StoryGameActive: BooleanKeyType<ChatEasyKey>
+object StoryPollBlocked: InstantKeyType<ChatEasyKey>
+object StoryPollsCounter: LongKeyType<ChatEasyKey>
+object StoryCurrentPollResults: EasyKeyType<PollResults, ChatEasyKey> {
+    override fun mapToString(value: PollResults) = value.toJson()
+
+    override fun mapFromString(value: String): PollResults {
+        return value.parseJson()
+    }
+}
+
+
+
 object PidorStrikeStats : EasyKeyType<PidorStrikes, ChatEasyKey> {
     override fun mapToString(value: PidorStrikes) = value.toJson()
 

@@ -321,6 +321,7 @@ VALUES (1, '/stats_month'),
        (31, '/reactions'),
        (32, '/summary'),
        (33, '/enable_gpt4'),
-       (34, '/debug_gpt')
+       (34, '/debug_gpt'),
+       (35, '/story')
 
 ;

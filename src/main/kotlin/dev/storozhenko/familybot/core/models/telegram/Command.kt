@@ -34,7 +34,8 @@ enum class Command(val command: String, val id: Int) {
     REACTION_STATS("/reactions", 31),
     SUMMARY("/summary", 32),
     ENABLE_GPT4("/enable_gpt4", 33),
-    DEBUG_GPT("/debug_gpt", 34);
+    DEBUG_GPT("/debug_gpt", 34),
+    STORY("/story", 35);
 
     companion object {
         val LOOKUP = entries.associateBy(Command::command)
