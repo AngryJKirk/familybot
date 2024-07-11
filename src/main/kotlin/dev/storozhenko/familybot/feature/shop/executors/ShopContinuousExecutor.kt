@@ -41,10 +41,10 @@ class ShopContinuousExecutor(
                 context.phrase(shopItem.title),
                 context.phrase(shopItem.description),
                 createPayload(context, shopItem),
-                "help",
                 "XTR",
                 listOf(LabeledPrice(context.phrase(Phrase.SHOP_PAY_LABEL), shopItem.price + additionalTax)),
             ).apply {
+                startParameter = "help"
                 providerToken = ""
             },
         )

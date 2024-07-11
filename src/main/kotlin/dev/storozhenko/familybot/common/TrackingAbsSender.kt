@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendAnimation
 import org.telegram.telegrambots.meta.api.methods.send.SendAudio
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup
+import org.telegram.telegrambots.meta.api.methods.send.SendPaidMedia
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo
@@ -16,6 +17,7 @@ import org.telegram.telegrambots.meta.api.methods.stickers.CreateNewStickerSet
 import org.telegram.telegrambots.meta.api.methods.stickers.ReplaceStickerInSet
 import org.telegram.telegrambots.meta.api.methods.stickers.SetStickerSetThumbnail
 import org.telegram.telegrambots.meta.api.methods.stickers.UploadStickerFile
+import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia
 import org.telegram.telegrambots.meta.api.objects.File
 import org.telegram.telegrambots.meta.api.objects.message.Message
@@ -29,9 +31,7 @@ class TrackingTelegramClient(
     val tracking: MutableList<Message> = ArrayList(),
 ) : TelegramClient {
 
-    override fun <T : Serializable?, Method : BotApiMethod<T>?> executeAsync(method: Method): CompletableFuture<T> {
-        return telegramClient.executeAsync(method)
-    }
+
 
     override fun <T : Serializable?, Method : BotApiMethod<T>?> execute(method: Method): T {
         val execute = telegramClient.execute(method)
@@ -51,6 +51,10 @@ class TrackingTelegramClient(
         val message = telegramClient.execute(sendPhoto)
         tracking.add(message)
         return message
+    }
+
+    override fun execute(setWebhook: SetWebhook?): Boolean {
+        return telegramClient.execute(setWebhook)
     }
 
     override fun execute(sendVideo: SendVideo): Message {
@@ -85,6 +89,10 @@ class TrackingTelegramClient(
 
     override fun execute(sendMediaGroup: SendMediaGroup): List<Message> {
         return telegramClient.execute(sendMediaGroup)
+    }
+
+    override fun execute(sendPaidMedia: SendPaidMedia?): MutableList<Message> {
+        return telegramClient.execute(sendPaidMedia)
     }
 
     override fun execute(setChatPhoto: SetChatPhoto): Boolean {
@@ -137,6 +145,10 @@ class TrackingTelegramClient(
         return telegramClient.downloadFileAsStreamAsync(file)
     }
 
+    override fun <T : Serializable?, Method : BotApiMethod<T>?> executeAsync(method: Method): CompletableFuture<T> {
+        return telegramClient.executeAsync(method)
+    }
+
 
     override fun executeAsync(sendDocument: SendDocument): CompletableFuture<Message> {
         return telegramClient.executeAsync(sendDocument)
@@ -144,6 +156,10 @@ class TrackingTelegramClient(
 
     override fun executeAsync(sendPhoto: SendPhoto): CompletableFuture<Message> {
         return telegramClient.executeAsync(sendPhoto)
+    }
+
+    override fun executeAsync(setWebhook: SetWebhook?): CompletableFuture<Boolean> {
+        return telegramClient.executeAsync(setWebhook)
     }
 
     override fun executeAsync(sendVideo: SendVideo): CompletableFuture<Message> {
@@ -168,6 +184,10 @@ class TrackingTelegramClient(
 
     override fun executeAsync(sendMediaGroup: SendMediaGroup): CompletableFuture<List<Message>> {
         return telegramClient.executeAsync(sendMediaGroup)
+    }
+
+    override fun executeAsync(sendPaidMedia: SendPaidMedia?): CompletableFuture<MutableList<Message>> {
+        return telegramClient.executeAsync(sendPaidMedia);
     }
 
     override fun executeAsync(setChatPhoto: SetChatPhoto): CompletableFuture<Boolean> {
