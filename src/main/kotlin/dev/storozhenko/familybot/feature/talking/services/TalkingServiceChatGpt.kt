@@ -147,14 +147,14 @@ class TalkingServiceChatGpt(
         val model = if (useGpt4) {
             "gpt-4o"
         } else {
-            "gpt-3.5-turbo"
+            "gpt-4o-mini"
         }
         return ChatCompletionRequest
             .builder()
             .model(model)
             .messages(chatMessages)
-            .temperature(1.0)
-            .topP(1.0)
+            .temperature(0.7)
+            .topP(0.8)
             .frequencyPenalty(1.0)
             .presencePenalty(1.0)
             .build()
