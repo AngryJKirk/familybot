@@ -68,7 +68,7 @@ services:
       - YANDEX_API_TOKEN
       - YTDL_LOCATION
       - OPEN_AI_TOKEN
-      - ENABLE_JMX
+      - ENABLE_JFR
     depends_on:
       - family-db
       - family-redis
