@@ -23,4 +23,4 @@ COPY --from=build /app/target/familybot.jar /usr/local/lib/familybot.jar
 
 ENV CMD_JFR="java -Xmx256m -XX:StartFlightRecording=disk=false,duration=30m,maxage=30m -jar /usr/local/lib/familybot.jar"
 ENV CMD_NO_JFR="java -Xmx256m -jar /usr/local/lib/familybot.jar"
-ENTRYPOINT ["bash", "-c", "if [[ $ENABLE_JFR == true ]]; then exec $CMD_JMX; else exec $CMD_NO_JMX; fi"]
+ENTRYPOINT ["bash", "-c", "if [[ $ENABLE_JFR == true ]]; then exec $CMD_JFR; else exec $CMD_NO_JFR; fi"]
