@@ -17,6 +17,7 @@ class PshenitsinKeyWordProcessor(
     private val keyValueService: EasyKeyValueService,
 ) : KeyWordProcessor {
 
+    private val spaceSplit = Regex("\\s+")
     override fun canProcess(context: ExecutorContext): Boolean {
         val text = context.message.text ?: return false
         return containsSymbolsY(text) && isTolerant(context.message.chatId).not()
@@ -51,7 +52,7 @@ class PshenitsinKeyWordProcessor(
     }
 
     private fun containsSymbolsY(text: String): Boolean {
-        val splitText = text.split(Regex("\\s+"))
+        val splitText = text.split(spaceSplit)
         return if (splitText.first().toCharArray().isEmpty()) {
             false
         } else {
