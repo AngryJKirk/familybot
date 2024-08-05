@@ -21,6 +21,7 @@ services:
     networks:
       family-net:
     image: postgres:14
+    shm_size: '512mb'
     container_name: family-db
     restart: always
     volumes:
