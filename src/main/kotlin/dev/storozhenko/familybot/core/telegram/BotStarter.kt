@@ -33,8 +33,8 @@ class BotStarter {
             "poll_answer",
             "my_chat_member",
             "chat_member",
-            "message_reaction",
-            "message_reaction_count"
+//            "message_reaction",
+//            "message_reaction_count"
         )
     }
 
