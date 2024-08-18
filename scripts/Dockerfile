@@ -1,8 +1,6 @@
 FROM maven:3.9.7-eclipse-temurin-22-alpine AS build
 
 WORKDIR /app
-RUN apk update && apk upgrade && apk add git
-RUN git clone https://github.com/AngryJKirk/TelegramBots.git && cd TelegramBots && mvn -q install -Dgpg.skip
 
 COPY ./pom.xml .
 
