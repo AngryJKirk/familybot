@@ -17,7 +17,7 @@ class StoryContinuousExecutor(
     private val storyTellingService: StoryTellingService
 ) : ContinuousConversationExecutor(botConfig) {
     override fun getDialogMessages(context: ExecutorContext) =
-        setOf("Расскажи затравку истории в двух-трех предложениях")
+        setOf("Расскажи затравку истории в двух-трех предложениях (ответом на это сообщение). История продлится около 5 шагов")
 
     override fun command() = Command.STORY
 
