@@ -6,19 +6,18 @@ import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.repos.UserRepository
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage
 
-@Component
-class PatchNoteExecutor(
+abstract class PatchNoteExecutor(
     private val commonRepository: UserRepository,
 ) : OnlyBotOwnerExecutor() {
 
-    private val patchNotePrefix = "patch_note"
-    private val log = KotlinLogging.logger {  }
+    private val log = KotlinLogging.logger { }
 
     override suspend fun executeInternal(context: ExecutorContext) {
         if (context.message.isReply.not()) {
@@ -26,12 +25,16 @@ class PatchNoteExecutor(
             return
         }
 
-        val chats = commonRepository.getChats()
+        val chats = getChats()
         log.info { "Sending in ${chats.size} chats" }
-        chats.forEach { tryToSendMessage(it, context) }
+        val results = chats.map { tryToSendMessage(it, context) }
+        val message = results.awaitAll()
+            .groupBy { it }
+            .let { "${it[true]?.size ?: 0} sent, ${it[false]?.size ?: 0} failed" }
+        context.client.send(context, message)
     }
 
-    override fun getMessagePrefix() = patchNotePrefix
+    abstract fun getChats(): List<Chat>
 
     private fun markChatAsInactive(chat: Chat) {
         commonRepository.changeChatActiveStatus(chat, false)
@@ -40,9 +43,9 @@ class PatchNoteExecutor(
     private suspend fun tryToSendMessage(
         chat: Chat,
         context: ExecutorContext,
-    ) {
-        coroutineScope {
-            launch {
+    ): Deferred<Boolean> {
+        return coroutineScope {
+            async {
                 delay(500)
                 runCatching {
                     context.client.execute(
@@ -53,10 +56,11 @@ class PatchNoteExecutor(
                         ),
                     )
                     log.info { "Sent patchnote to chatId=${chat.idString}" }
+                    true
                 }.onFailure { throwable ->
                     log.warn(throwable) { "Can not send message by patchnote executor" }
                     markChatAsInactive(chat)
-                }
+                }.getOrDefault(false)
             }
         }
     }
