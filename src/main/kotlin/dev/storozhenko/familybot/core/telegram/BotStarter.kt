@@ -9,6 +9,7 @@ import org.springframework.context.event.EventListener
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication
 import org.telegram.telegrambots.meta.TelegramUrl
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.updates.GetUpdates
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeAllGroupChats
@@ -73,6 +74,7 @@ class BotStarter {
                 .scope(BotCommandScopeAllPrivateChats())
                 .build(),
         )
+        telegramClient.execute(SendMessage(botConfig.developerId, "Bot is up"))
     }
 
     private fun extractValue(toml: TomlParseResult, key: String): String {
