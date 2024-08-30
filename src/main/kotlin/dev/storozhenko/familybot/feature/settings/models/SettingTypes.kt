@@ -14,6 +14,7 @@ import dev.storozhenko.familybot.core.keyvalue.models.UserAndChatEasyKey
 import dev.storozhenko.familybot.core.keyvalue.models.UserEasyKey
 import dev.storozhenko.familybot.feature.pidor.models.PidorStrikes
 import dev.storozhenko.familybot.feature.story.PollResults
+import dev.storozhenko.familybot.feature.story.StoryMessages
 import java.time.Instant
 
 object FuckOffTolerance : BooleanKeyType<UserAndChatEasyKey>
@@ -43,26 +44,30 @@ object ChatGPTPaidTill : InstantKeyType<ChatEasyKey>
 object ChatGPTFreeMessagesLeft : LongKeyType<ChatEasyKey>
 object ChatGPTTokenUsageByChat : LongKeyType<ChatEasyKey>
 object ChatGPTNotificationNeeded : InstantKeyType<ChatEasyKey>
-object ChatGPTSummaryCooldown: BooleanKeyType<ChatEasyKey>
-object ChatGPTReactionsCooldown: BooleanKeyType<ChatEasyKey>
-object ChatGPT4Enabled: BooleanKeyType<ChatEasyKey>
-object ChatGPT4MessagesDailyCounter: LongKeyType<ChatEasyKey>
-object ChatGPTTalkingDisabled: BooleanKeyType<ChatEasyKey>
+object ChatGPTSummaryCooldown : BooleanKeyType<ChatEasyKey>
+object ChatGPTReactionsCooldown : BooleanKeyType<ChatEasyKey>
+object ChatGPT4Enabled : BooleanKeyType<ChatEasyKey>
+object ChatGPT4MessagesDailyCounter : LongKeyType<ChatEasyKey>
+object ChatGPTTalkingDisabled : BooleanKeyType<ChatEasyKey>
 object IGCookie : StringKeyType<PlainKey>
-object PaymentKey: StringKeyType<PlainKey>
-object RefundNeedsToPressTime: LongKeyType<PlainKey>
+object PaymentKey : StringKeyType<PlainKey>
+object RefundNeedsToPressTime : LongKeyType<PlainKey>
 
-object StoryGameActive: BooleanKeyType<ChatEasyKey>
-object StoryPollBlocked: InstantKeyType<ChatEasyKey>
-object StoryPollsCounter: LongKeyType<ChatEasyKey>
-object StoryCurrentPollResults: EasyKeyType<PollResults, ChatEasyKey> {
-    override fun mapToString(value: PollResults) = value.toJson()
+object StoryGameActive : BooleanKeyType<ChatEasyKey>
+object StoryPollBlocked : InstantKeyType<ChatEasyKey>
+object StoryPollsCounter : LongKeyType<ChatEasyKey>
+object StoryContext : EasyKeyType<StoryMessages, ChatEasyKey> {
+    override fun mapToString(value: StoryMessages) = value.toJson()
 
-    override fun mapFromString(value: String): PollResults {
-        return value.parseJson()
-    }
+    override fun mapFromString(value: String) = value.parseJson<StoryMessages>()
+
 }
 
+object StoryCurrentPollResults : EasyKeyType<PollResults, ChatEasyKey> {
+    override fun mapToString(value: PollResults) = value.toJson()
+
+    override fun mapFromString(value: String) = value.parseJson<PollResults>()
+}
 
 
 object PidorStrikeStats : EasyKeyType<PidorStrikes, ChatEasyKey> {

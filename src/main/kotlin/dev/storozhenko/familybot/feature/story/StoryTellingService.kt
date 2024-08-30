@@ -3,6 +3,7 @@ package dev.storozhenko.familybot.feature.story
 import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
+import dev.storozhenko.familybot.feature.settings.models.StoryContext
 import dev.storozhenko.familybot.feature.settings.models.StoryCurrentPollResults
 import dev.storozhenko.familybot.feature.settings.models.StoryGameActive
 import dev.storozhenko.familybot.feature.settings.models.StoryPollBlocked
@@ -20,17 +21,22 @@ class StoryTellingService(
     private val talkingService: TalkingServiceChatGpt,
     private val easyKeyValueService: EasyKeyValueService
 ) {
-    private val messageStory: MutableMap<Long, MutableList<String>> = mutableMapOf()
     suspend fun initStory(context: ExecutorContext) {
+        cleanUp(context)
         val initMessage = """
             Ты чат бот, ведущий текстовой игры. Игроки начинают игру сообщением, которое описывает контекст или затравку.
             Твоя задача развить историю в несколько предложений, создать ситуацию и предложить игрокам выбрать что они будут делать.
-            Продолжение истории должно быть по стилю связанное с изначальной ситуацией, иными словами должен повторяться стиль и подача.
+            Продолжение истории должно быть по стилю связанное с контекстом, иными словами должен повторяться стиль и подача (включая мат и жаргон).
+            Обильный мат и пошлости разрешены.
             Варианты исходов событий должны быть в одно предложение. 
             Пришли три нумерованных варианта развитий событий.
             
-            Вот контекст присланный игроками: "${context.message.text}"
+            Вот контекст присланный игроками: "
+            ===== НАЧАЛО КОНТЕКСТА ====
+            ${context.message.text}
+            ===== КОНЕЦ КОНТЕКСТА ====
         """.trimIndent()
+        addResponse(context, initMessage)
         val initResponse = talkingService.internalMessage(initMessage, useGpt4 = true)
         addResponse(context, initResponse)
         sendPoll(context, initResponse)
@@ -53,7 +59,8 @@ class StoryTellingService(
         """.trimIndent()
         }
 
-        val previousMessages = (messageStory[context.chat.id] ?: emptyList()).joinToString("\n\n")
+        val previousMessages =
+            easyKeyValueService.get(StoryContext, context.chatKey, StoryMessages()).answers.joinToString("\n\n")
         val continueStoryResponse = talkingService.internalMessage(previousMessages + "\n\n" + message, useGpt4 = true)
         if (isEndOfStory) {
             cleanUp(context)
@@ -67,13 +74,15 @@ class StoryTellingService(
 
     private fun addResponse(
         context: ExecutorContext,
-        initResponse: String
+        response: String
     ) {
-        messageStory.computeIfAbsent(context.chat.id, { mutableListOf() })
-            .add("Вот история присланная тобою ранее: $initResponse")
+        val storyMessages = easyKeyValueService.get(StoryContext, context.chatKey, StoryMessages())
+        storyMessages.answers.add(response)
+        easyKeyValueService.put(StoryContext, context.chatKey, storyMessages)
     }
 
     private fun cleanUp(context: ExecutorContext) {
+        easyKeyValueService.remove(StoryContext, context.chatKey)
         easyKeyValueService.remove(StoryGameActive, context.chatKey)
         easyKeyValueService.remove(StoryPollsCounter, context.chatKey)
         easyKeyValueService.remove(StoryCurrentPollResults, context.chatKey)
@@ -91,7 +100,7 @@ class StoryTellingService(
                 }
         )
         easyKeyValueService.put(StoryGameActive, context.chatKey, true)
-        easyKeyValueService.put(StoryPollBlocked, context.chatKey, Instant.now().plus(5 , ChronoUnit.MINUTES))
+        easyKeyValueService.put(StoryPollBlocked, context.chatKey, Instant.now().plus(5, ChronoUnit.MINUTES))
         easyKeyValueService.put(StoryCurrentPollResults, context.chatKey, PollResults(poll.poll.id))
     }
 }

@@ -52,7 +52,7 @@ class StoryCommandExecutor(
                     storyTellingService.continueStory(context, choice)
                 }
             } else {
-                context.client.send(context, "Расскажи затравку истории в двух-трех предложениях")
+                context.client.send(context, "Расскажи затравку истории в двух-трех предложениях (ответом на это сообщение). История продлится около 5 шагов")
             }
         }
     }
