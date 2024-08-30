@@ -7,13 +7,11 @@ import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.settings.models.StoryGameActive
-import dev.storozhenko.familybot.feature.talking.services.TalkingServiceChatGpt
 import org.springframework.stereotype.Component
 
 
 @Component
 class StoryContinuousExecutor(
-    private val talkingServiceChatGpt: TalkingServiceChatGpt,
     private val botConfig: BotConfig,
     private val easyKeyValueService: EasyKeyValueService,
     private val storyTellingService: StoryTellingService
@@ -37,7 +35,5 @@ class StoryContinuousExecutor(
             return
         }
         storyTellingService.initStory(context)
-
-
     }
 }
