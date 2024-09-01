@@ -114,12 +114,11 @@ class BanSomeoneExecutorTest : ExecutorTest() {
     }
 
     private fun updateFromDeveloper(messageText: String): ExecutorContext {
-        val developerUsername = botConfig.developer
         return createSimpleContext(messageText) {
-            message.from.userName = developerUsername
+            message.from.id = botConfig.developerId
             message.chat.apply {
                 type = "private"
-                userName = developerUsername
+                id = botConfig.developerId
             }
         }
     }

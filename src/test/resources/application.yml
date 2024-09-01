@@ -1,5 +1,4 @@
 settings:
-  developer: IntegrationTestsDeveloper
   developer-id: 123
   bot-token: 123
   bot-name: IntegrationTests

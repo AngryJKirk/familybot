@@ -82,11 +82,11 @@ class BotStarter {
                 .build(),
         )
         telegramClient
-            .execute(SendMessage(botConfig.developerId, "Bot is up"))
+            .execute(SendMessage(botConfig.developerId.toString(), "Bot is up"))
             .also { message ->
                 coroutineScope.launch {
                     delay(10.minutes)
-                    telegramClient.execute(DeleteMessage(botConfig.developerId, message.messageId))
+                    telegramClient.execute(DeleteMessage(botConfig.developerId.toString(), message.messageId))
                 }
             }
 

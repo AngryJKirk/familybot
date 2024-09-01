@@ -40,8 +40,7 @@ class FamilyBotApplication(
         return BotConfig(
             required(botConfigInjector.botToken, "botToken"),
             required(botConfigInjector.botName, "botName"),
-            required(botConfigInjector.developer, "developer"),
-            required(botConfigInjector.developerId, "developerId"),
+            required(botConfigInjector.developerId, "developerId").toLong(),
             botNameAliases,
             optional("Yandex API key is not found, language API won't work") { botConfigInjector.yandexKey },
             env.activeProfiles.contains(BotStarter.TESTING_PROFILE_NAME),
@@ -66,8 +65,7 @@ class FamilyBotApplication(
 data class BotConfig(
     val botToken: String,
     val botName: String,
-    val developer: String,
-    val developerId: String,
+    val developerId: Long,
     val botNameAliases: List<String>,
     val yandexKey: String?,
     val testEnvironment: Boolean,
@@ -79,7 +77,6 @@ data class BotConfig(
 data class BotConfigInjector @ConstructorBinding constructor(
     val botToken: String,
     val botName: String,
-    val developer: String,
     val developerId: String,
     val botNameAliases: String?,
     val yandexKey: String?,

@@ -75,7 +75,7 @@ fun Update.message(): Message {
 
 fun Update.context(botConfig: BotConfig, dictionary: Dictionary, client: TelegramClient): ExecutorContext {
     val message = message()
-    val isFromDeveloper = botConfig.developer == from().userName
+    val isFromDeveloper = botConfig.developerId == from().id
     val chat = toChat()
     val user = toUser()
     return ExecutorContext(

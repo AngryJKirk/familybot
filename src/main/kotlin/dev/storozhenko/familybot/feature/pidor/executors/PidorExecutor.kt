@@ -81,7 +81,7 @@ class PidorExecutor(
         return Pair({ client ->
             log.info { "Pidor is not found, initiating search procedure" }
             val nextPidor = if (easyKeyValueService.get(BotOwnerPidorSkip, key, false)) {
-                val filteredUsers = users.filter { botConfig.developerId != it.id.toString() }
+                val filteredUsers = users.filter { botConfig.developerId != it.id }
                 getNextPidorAsync(filteredUsers, client, chat)
             } else {
                 getNextPidorAsync(users, client, chat)

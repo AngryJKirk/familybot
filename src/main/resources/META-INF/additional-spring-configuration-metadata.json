@@ -14,12 +14,6 @@
       "sourceType": "dev.storozhenko.familybot.BotConfigInjector"
     },
     {
-      "name": "settings.developer",
-      "type": "java.lang.String",
-      "description": "Developer's Telegram nickname. Must starts without @, e.g BigDickBoy.",
-      "sourceType": "dev.storozhenko.familybot.BotConfigInjector"
-    },
-    {
       "name": "settings.developer-id",
       "type": "java.lang.String",
       "description": "Developer's Telegram ID.",

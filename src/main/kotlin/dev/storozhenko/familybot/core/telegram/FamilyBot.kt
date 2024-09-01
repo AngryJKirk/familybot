@@ -70,7 +70,7 @@ class FamilyBot(
         }
 
         if (update.hasCallbackQuery() &&
-            update.callbackQuery.from.id.toString() == botConfig.developerId &&
+            update.callbackQuery.from.id == botConfig.developerId &&
             update.callbackQuery.data.startsWith("REFUND=")
         ) {
             coroutineScope { launch { proceedRefund(update).invoke(telegramClient) } }

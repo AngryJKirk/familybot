@@ -108,7 +108,7 @@ class PaymentRouter(
 
         return { client ->
             var timesNeedToPress = easyKeyValueService.get(RefundNeedsToPressTime, key)
-            if(timesNeedToPress == null){
+            if (timesNeedToPress == null) {
                 easyKeyValueService.put(RefundNeedsToPressTime, key, 4, duration = 1.minutes)
                 timesNeedToPress = 4
             }
@@ -126,7 +126,7 @@ class PaymentRouter(
                     .getOrDefault(false)
                 client.execute(
                     SendMessage(
-                        botConfig.developerId,
+                        botConfig.developerId.toString(),
                         "Trying to refund ${refundData.amount}⭐: ${result.toEmoji()}"
                     )
                 )
@@ -145,7 +145,6 @@ class PaymentRouter(
         val chatKey = update.toChat().key()
         val text = dictionary.get(Phrase.SHOP_THANKS, chatKey)
             .replace("$0", user.getGeneralName())
-            .replace("$1", "@" + botConfig.developer)
         val chatId = shopPayload.chatId.toString()
         client.execute(SendMessage(chatId, text).apply { enableHtml(true) })
         client.execute(SendMessage(chatId, dictionary.get(successPaymentResponse.phrase, chatKey)))
@@ -160,7 +159,6 @@ class PaymentRouter(
     )
 
     private fun notifyDeveloper(client: TelegramClient, update: Update, shopPayload: ShopPayload) {
-        val developerId = botConfig.developerId
         val successfulPayment = update.message.successfulPayment
         val user = update.toUser()
         val chat = commonRepository.getChatsByUser(user).find { shopPayload.chatId == it.id }?.name ?: "[хуй знает чат]"
@@ -179,7 +177,7 @@ class PaymentRouter(
             callbackData = "REFUND=$paymentKey"
         }
         client.execute(
-            SendMessage(developerId, message).apply {
+            SendMessage(botConfig.developerId.toString(), message).apply {
                 enableHtml(true)
                 replyMarkup = InlineKeyboardMarkup(listOf(InlineKeyboardRow(refundButton)))
             },
@@ -191,11 +189,16 @@ class PaymentRouter(
         update: Update,
         shopPayload: ShopPayload,
     ) {
-        val developerId = botConfig.developerId
-        val text = dictionary.get(Phrase.SHOP_ERROR, update.toChat().key()).replace("$1", "@" + botConfig.developer)
-        client.execute(SendMessage(shopPayload.chatId.toString(), text))
 
-        client.execute(SendMessage(developerId, "Payment gone wrong: $update"))
+        client.execute(SendMessage(botConfig.developerId.toString(), "Payment gone wrong: $update"))
+
+        client.execute(
+            SendMessage(
+                shopPayload.chatId.toString(),
+                dictionary.get(Phrase.SHOP_ERROR, update.toChat().key())
+            )
+        )
+
     }
 
     private fun getPayload(invoicePayload: String): ShopPayload {

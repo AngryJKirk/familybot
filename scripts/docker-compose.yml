@@ -62,7 +62,6 @@ services:
       - POSTGRES_PASSWORD
       - BOT_NAME
       - BOT_TOKEN
-      - BOT_OWNER_NAME
       - BOT_OWNER_TELEGRAM_ID
       - BOT_NAME_ALIASES
       - REDIS_HOST=family-redis
