@@ -7,6 +7,7 @@ import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTPaidTill
+import dev.storozhenko.familybot.feature.settings.models.StoryContext
 import dev.storozhenko.familybot.feature.settings.models.StoryCurrentPollResults
 import dev.storozhenko.familybot.feature.settings.models.StoryGameActive
 import dev.storozhenko.familybot.feature.settings.models.StoryPollBlocked
@@ -24,12 +25,7 @@ class StoryCommandExecutor(
 
     override suspend fun execute(context: ExecutorContext) {
         if (context.message.text.contains("reset")) {
-            listOf(
-                StoryGameActive,
-                StoryPollBlocked,
-                StoryPollsCounter,
-                StoryCurrentPollResults
-            ).forEach { easyKeyValueService.remove(it, context.chatKey) }
+            easyKeyValueService.remove(StoryGameActive, context.chatKey)
         }
         val paidTill = easyKeyValueService.get(ChatGPTPaidTill, context.chatKey, Instant.MIN)
         if (paidTill.isBefore(Instant.now())) {

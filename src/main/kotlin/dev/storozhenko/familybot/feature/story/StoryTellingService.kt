@@ -85,6 +85,7 @@ class StoryTellingService(
         easyKeyValueService.remove(StoryContext, context.chatKey)
         easyKeyValueService.remove(StoryGameActive, context.chatKey)
         easyKeyValueService.remove(StoryPollsCounter, context.chatKey)
+        easyKeyValueService.remove(StoryPollBlocked, context.chatKey)
         easyKeyValueService.remove(StoryCurrentPollResults, context.chatKey)
     }
 

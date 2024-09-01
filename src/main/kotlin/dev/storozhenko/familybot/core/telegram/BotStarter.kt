@@ -2,6 +2,10 @@ package dev.storozhenko.familybot.core.telegram
 
 import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.readTomlFromStatic
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -11,15 +15,18 @@ import org.telegram.telegrambots.meta.TelegramUrl
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.updates.GetUpdates
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeAllGroupChats
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeAllPrivateChats
 import org.telegram.telegrambots.meta.generics.TelegramClient
 import org.tomlj.TomlParseResult
+import kotlin.time.Duration.Companion.minutes
 
 @Configuration
 @Profile(BotStarter.NOT_TESTING_PROFILE_NAME)
 class BotStarter {
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     companion object Profile {
         const val TESTING_PROFILE_NAME = "testing"
@@ -74,7 +81,15 @@ class BotStarter {
                 .scope(BotCommandScopeAllPrivateChats())
                 .build(),
         )
-        telegramClient.execute(SendMessage(botConfig.developerId, "Bot is up"))
+        telegramClient
+            .execute(SendMessage(botConfig.developerId, "Bot is up"))
+            .also { message ->
+                coroutineScope.launch {
+                    delay(10.minutes)
+                    telegramClient.execute(DeleteMessage(botConfig.developerId, message.messageId))
+                }
+            }
+
     }
 
     private fun extractValue(toml: TomlParseResult, key: String): String {
