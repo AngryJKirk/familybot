@@ -38,6 +38,7 @@ object MessageCounter : LongKeyType<UserAndChatEasyKey>
 object PickPidorAbilityCount : LongKeyType<UserEasyKey>
 object AutoPidorTimesLeft : LongKeyType<ChatEasyKey>
 object TikTokDownload : BooleanKeyType<ChatEasyKey>
+object TwitterUnroll : BooleanKeyType<ChatEasyKey>
 object BotOwnerPidorSkip : BooleanKeyType<ChatEasyKey>
 object ChatGPTStyle : StringKeyType<ChatEasyKey>
 object ChatGPTPaidTill : InstantKeyType<ChatEasyKey>
