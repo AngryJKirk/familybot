@@ -27,7 +27,7 @@ class KeyWordExecutor(val processors: List<KeyWordProcessor>) : Executor, Config
 
     override fun canExecute(context: ExecutorContext): Boolean {
         val message = context.message
-        if (message.from.isBot) {
+        if (message.from.isBot && message.from.userName != "GroupAnonymousBot") {
             return false
         }
         val keyWordProcessor = processors
