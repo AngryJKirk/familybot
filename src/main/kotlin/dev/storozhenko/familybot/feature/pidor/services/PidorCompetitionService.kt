@@ -13,13 +13,13 @@ import dev.storozhenko.familybot.feature.pidor.models.Pidor
 import dev.storozhenko.familybot.feature.pidor.repos.PidorRepository
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
 import kotlinx.coroutines.delay
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.generics.TelegramClient
 import java.time.Instant
 import java.time.LocalDate
 import kotlin.time.Duration.Companion.seconds
 
-@Service
+@Component
 class PidorCompetitionService(
     private val dictionary: Dictionary,
     private val botConfig: BotConfig,
