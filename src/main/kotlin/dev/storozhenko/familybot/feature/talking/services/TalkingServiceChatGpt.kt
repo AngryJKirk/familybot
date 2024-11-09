@@ -90,7 +90,7 @@ class TalkingServiceChatGpt(
         val cache = caches[style] ?: throw FamilyBot.InternalException("Internal logic error, check logs")
         var chatMessages = cache.get(chatId)
 
-        if (chatMessages.size >= 20) {
+        if (chatMessages.size >= 40) {
             cache.invalidate(chatId)
             chatMessages = cache.get(chatId)
         }
