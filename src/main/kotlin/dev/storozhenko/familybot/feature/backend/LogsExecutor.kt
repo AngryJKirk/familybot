@@ -47,7 +47,7 @@ class LogsExecutor(private val talkingServiceChatGpt: TalkingServiceChatGpt) : O
         }
     }
 
-    private fun getChatGptAnalysis(): InputStream {
+    private suspend fun getChatGptAnalysis(): InputStream {
         return talkingServiceChatGpt.internalMessage(
             """
             Summarize the errors/warns from my Java/Kotlin application. Do not give recommendations, I just need a summary.
@@ -55,7 +55,7 @@ class LogsExecutor(private val talkingServiceChatGpt: TalkingServiceChatGpt) : O
             If you think something is really bad mark it as (!!!).
             Some messages have exceptions, they will be provided with the exception's message and class.
             Here is the log:
-           ${ErrorLogsDeferredAppender.messagesToAnalyze}  
+           ${ErrorLogsDeferredAppender.messagesToAnalyze.takeLast(20)}  
         """.trimIndent()
         ).byteInputStream()
     }

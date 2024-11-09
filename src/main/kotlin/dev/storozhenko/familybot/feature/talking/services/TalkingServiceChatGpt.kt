@@ -1,10 +1,13 @@
 package dev.storozhenko.familybot.feature.talking.services
 
+import com.aallam.openai.api.chat.ChatCompletion
+import com.aallam.openai.api.chat.ChatCompletionRequest
+import com.aallam.openai.api.chat.ChatMessage
+import com.aallam.openai.api.core.Role
+import com.aallam.openai.api.http.Timeout
+import com.aallam.openai.api.model.ModelId
+import com.aallam.openai.client.OpenAI
 import com.github.benmanes.caffeine.cache.Caffeine
-import com.theokanning.openai.completion.chat.ChatCompletionRequest
-import com.theokanning.openai.completion.chat.ChatCompletionResult
-import com.theokanning.openai.completion.chat.ChatMessage
-import com.theokanning.openai.service.OpenAiService
 import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.SenderLogger.log
 import dev.storozhenko.familybot.common.extensions.code
@@ -21,6 +24,7 @@ import dev.storozhenko.familybot.feature.settings.models.FunctionId
 import org.springframework.stereotype.Component
 import java.time.Duration
 import java.util.LinkedList
+import kotlin.time.Duration.Companion.seconds
 
 @Component("GPT")
 class TalkingServiceChatGpt(
@@ -61,38 +65,44 @@ class TalkingServiceChatGpt(
             return chatMessages.plus(systemMessage).joinToString("\n", transform = ChatMessage::toString)
         }
         if (style == GptStyle.ASSISTANT) {
-            chatMessages.add(ChatMessage("user", text))
+            chatMessages.add(ChatMessage(Role.User, content = text))
         } else {
             chatMessages.add(
                 ChatMessage(
-                    "user",
-                    listOf(text, gptSettingsReader.getStyleValue(style), getMessageSizeLimiter()).joinToString("\n"),
+                    Role.User,
+                    content = listOf(
+                        text,
+                        gptSettingsReader.getStyleValue(style),
+                        getMessageSizeLimiter()
+                    ).joinToString("\n"),
                 ),
             )
         }
         chatMessages.add(0, systemMessage)
         val request = createRequest(chatMessages, useGpt4 = shouldUseGpt4)
-        val response = getOpenAIService().createChatCompletion(request)
+        val response = getOpenAIService().chatCompletion(request)
         saveMetric(context, response)
         chatMessages.removeFirst()
         val message = response.choices.first().message
+        val messageContent = message.content
+            ?: throw FamilyBot.InternalException("Message content is null, response is $response")
         return if (style == GptStyle.ASSISTANT) {
             chatMessages.add(message)
-            fixFormat(message.content)
+            fixFormat(messageContent)
         } else {
             chatMessages.removeLast()
-            chatMessages.add(ChatMessage("user", text))
+            chatMessages.add(ChatMessage(Role.User, content = text))
             chatMessages.add(message)
-            message.content
+            messageContent
         }
     }
 
-    fun internalMessage(message: String, useGpt4: Boolean = false): String {
+    suspend fun internalMessage(message: String, useGpt4: Boolean = false): String {
         try {
             if (botConfig.openAiToken == null) return "<ChatGPT is not available due to missing token>"
-            val request = createRequest(mutableListOf(ChatMessage("user", message)), useGpt4)
-            val response = getOpenAIService().createChatCompletion(request)
-            return response.choices.first().message.content
+            val request = createRequest(mutableListOf(ChatMessage(Role.User, content = message)), useGpt4)
+            val response = getOpenAIService().chatCompletion(request)
+            return response.choices.first().message.content ?: "<ChatGPT response is not available>"
         } catch (e: Exception) {
             log.error(e) { "Internal message ChatGPT failure" }
             return "Internal message ChatGPT failure"
@@ -140,7 +150,7 @@ class TalkingServiceChatGpt(
     private fun getSystemMessage(
         universe: GptUniverse,
     ): ChatMessage {
-        return ChatMessage("system", gptSettingsReader.getUniverseValue(universe).trimIndent())
+        return ChatMessage(Role.System, content = gptSettingsReader.getUniverseValue(universe).trimIndent())
     }
 
     private fun createRequest(chatMessages: MutableList<ChatMessage>, useGpt4: Boolean): ChatCompletionRequest {
@@ -149,23 +159,22 @@ class TalkingServiceChatGpt(
         } else {
             "gpt-4o-mini"
         }
-        return ChatCompletionRequest
-            .builder()
-            .model(model)
-            .messages(chatMessages)
-            .temperature(0.7)
-            .topP(0.8)
-            .frequencyPenalty(1.0)
-            .presencePenalty(1.0)
-            .build()
+        return ChatCompletionRequest(
+            model = ModelId(model),
+            messages = chatMessages,
+            temperature = 0.7,
+            topP = 0.8,
+            frequencyPenalty = 1.0,
+            presencePenalty = 1.0
+        )
     }
 
-    private fun saveMetric(context: ExecutorContext, response: ChatCompletionResult) {
+    private fun saveMetric(context: ExecutorContext, response: ChatCompletion) {
         val currentValue = easyKeyValueService.get(ChatGPTTokenUsageByChat, context.chatKey, 0)
         easyKeyValueService.put(
             ChatGPTTokenUsageByChat,
             context.chatKey,
-            currentValue + response.usage.totalTokens,
+            currentValue + (response.usage?.totalTokens ?: 0),
             untilNextMonth(),
         )
     }
@@ -193,12 +202,14 @@ class TalkingServiceChatGpt(
         }
     }
 
-    private var openAI: OpenAiService? = null
+    private var openAI: OpenAI? = null
 
-    private fun getOpenAIService(): OpenAiService {
+    private fun getOpenAIService(): OpenAI {
         if (openAI == null) {
-            openAI = OpenAiService(botConfig.openAiToken, Duration.ofMinutes(2))
+            val token = botConfig.openAiToken
+                ?: throw FamilyBot.InternalException("Open AI token is not available, check config")
+            openAI = OpenAI(token = token, timeout = Timeout(socket = 60.seconds))
         }
-        return openAI as OpenAiService
+        return openAI as OpenAI
     }
 }

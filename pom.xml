@@ -10,21 +10,23 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.0</version>
+        <version>3.3.5</version>
     </parent>
 
     <properties>
-        <kotlin.version>2.0.0</kotlin.version>
-        <telegrambots.version>7.9.0</telegrambots.version>
-        <testcontainers.version>1.20.1</testcontainers.version>
-        <mockito-kotlin.version>5.3.1</mockito-kotlin.version>
+        <kotlin.version>2.0.21</kotlin.version>
+        <telegrambots.version>7.10.0</telegrambots.version>
+        <testcontainers.version>1.20.3</testcontainers.version>
+        <mockito-kotlin.version>5.4.0</mockito-kotlin.version>
         <tomlj.version>1.1.1</tomlj.version>
-        <spring.version>3.3.1</spring.version>
-        <kotlinx-coroutines.version>1.9.0-RC</kotlinx-coroutines.version>
+        <spring.version>3.3.5</spring.version>
+        <kotlinx-coroutines.version>1.9.0</kotlinx-coroutines.version>
         <openai-client.version>0.18.2</openai-client.version>
         <kotlin.code.style>official</kotlin.code.style>
-        <kotlin-logging-jvm.version>6.0.9</kotlin-logging-jvm.version>
-        <commons-codec.version>1.17.0</commons-codec.version>
+        <kotlin-logging-jvm.version>7.0.0</kotlin-logging-jvm.version>
+        <commons-codec.version>1.17.1</commons-codec.version>
+        <openai-client-jvm.version>3.8.0</openai-client-jvm.version>
+        <ktor-client-okhttp-jvm.version>2.3.2</ktor-client-okhttp-jvm.version>
     </properties>
 
     <dependencies>
@@ -107,20 +109,18 @@
             <artifactId>tomlj</artifactId>
             <version>${tomlj.version}</version>
         </dependency>
+
         <dependency>
-            <groupId>com.theokanning.openai-gpt3-java</groupId>
-            <artifactId>api</artifactId>
-            <version>${openai-client.version}</version>
+            <groupId>com.aallam.openai</groupId>
+            <artifactId>openai-client-jvm</artifactId>
+            <version>${openai-client-jvm.version}</version>
         </dependency>
+
         <dependency>
-            <groupId>com.theokanning.openai-gpt3-java</groupId>
-            <artifactId>client</artifactId>
-            <version>${openai-client.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.theokanning.openai-gpt3-java</groupId>
-            <artifactId>service</artifactId>
-            <version>${openai-client.version}</version>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-client-okhttp-jvm</artifactId>
+            <version>${ktor-client-okhttp-jvm.version}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
