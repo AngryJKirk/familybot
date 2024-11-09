@@ -162,10 +162,10 @@ class TalkingServiceChatGpt(
         return ChatCompletionRequest(
             model = ModelId(model),
             messages = chatMessages,
-            temperature = 0.7,
-            topP = 0.8,
-            frequencyPenalty = 1.0,
-            presencePenalty = 1.0
+            temperature = 0.9,
+            topP = 1.0,
+            frequencyPenalty = 0.0,
+            presencePenalty = 0.6
         )
     }
 
