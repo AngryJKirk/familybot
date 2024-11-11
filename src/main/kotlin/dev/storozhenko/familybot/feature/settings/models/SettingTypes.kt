@@ -48,7 +48,6 @@ object ChatGPTNotificationNeeded : InstantKeyType<ChatEasyKey>
 object ChatGPTSummaryCooldown : BooleanKeyType<ChatEasyKey>
 object ChatGPTReactionsCooldown : BooleanKeyType<ChatEasyKey>
 object ChatGPT4Enabled : BooleanKeyType<ChatEasyKey>
-object ChatGPT4MessagesDailyCounter : LongKeyType<ChatEasyKey>
 object ChatGPTTalkingDisabled : BooleanKeyType<ChatEasyKey>
 object IGCookie : StringKeyType<PlainKey>
 object PaymentKey : StringKeyType<PlainKey>

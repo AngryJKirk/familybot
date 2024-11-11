@@ -22,7 +22,7 @@ class TwitterUnroll(
     override fun canExecute(context: ExecutorContext): Boolean {
         if (!easyKeyValueService.get(TwitterUnroll, context.chatKey, false)) return false
 
-        if (context.message.entities.size == 0) return false
+        if (context.message.entities?.isEmpty() == true) return false
 
         return getTwitterUrls(context).isNotEmpty()
     }
