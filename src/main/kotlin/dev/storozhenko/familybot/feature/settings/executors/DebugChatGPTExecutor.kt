@@ -10,7 +10,6 @@ import dev.storozhenko.familybot.core.keyvalue.models.EasyKeyType
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.settings.models.ChatGPT4Enabled
-import dev.storozhenko.familybot.feature.settings.models.ChatGPT4MessagesDailyCounter
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTFreeMessagesLeft
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTNotificationNeeded
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTPaidTill
