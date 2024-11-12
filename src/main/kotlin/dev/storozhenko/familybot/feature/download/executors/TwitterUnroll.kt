@@ -31,9 +31,10 @@ class TwitterUnroll(
 
     private fun getTwitterUrls(context: ExecutorContext): List<String> {
         return context.message.entities
-            .filter { entity -> entity.type == "url" }
-            .map { entity -> entity.text }
-            .filter { url -> (url.contains("twitter.com") || url.contains("x.com")) && url.contains("/status/") }
+            ?.filter { entity -> entity.type == "url" }
+            ?.map { entity -> entity.text }
+            ?.filter { url -> (url.contains("twitter.com") || url.contains("x.com")) && url.contains("/status/") }
+            ?: emptyList()
     }
 
     fun extractStatusId(url: String): String? {
