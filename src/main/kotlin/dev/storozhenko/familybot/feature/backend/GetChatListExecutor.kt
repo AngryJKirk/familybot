@@ -30,6 +30,9 @@ class GetChatListExecutor(
         chat: Chat,
     ): Int {
         return runCatching { client.execute(GetChatMemberCount(chat.idString)) }
-            .getOrElse { 0 }
+            .getOrElse {
+                commonRepository.changeChatActiveStatus(chat, false)
+                0
+            }
     }
 }
