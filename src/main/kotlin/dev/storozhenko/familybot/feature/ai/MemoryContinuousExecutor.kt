@@ -44,7 +44,7 @@ class MemoryContinuousExecutor(
     }
 
     private suspend fun add(context: ExecutorContext) {
-        context.client.send(context, "Напиши что добавить в ответ на это сообщение, 300 символов максимум")
+        context.client.send(context, "Напиши что добавить в ответ на это сообщение, 500 символов максимум")
     }
 
     private suspend fun clear(context: ExecutorContext) {

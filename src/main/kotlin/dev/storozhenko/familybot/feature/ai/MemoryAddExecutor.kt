@@ -22,8 +22,8 @@ class MemoryAddExecutor(
             context.client.send(context, "Пришли нормально")
             return
         }
-        if (text.length > 300) {
-            context.client.send(context, "Говорили же меньше 300 символов. Ты прислал ${text.length}")
+        if (text.length > 500) {
+            context.client.send(context, "Говорили же меньше 500 символов. Ты прислал ${text.length}")
             return
         }
 
@@ -35,7 +35,7 @@ class MemoryAddExecutor(
     override fun canExecute(context: ExecutorContext): Boolean {
         val replyToMessage = context.update.message?.replyToMessage
         return replyToMessage != null && replyToMessage.from.userName == botConfig.botName
-                && replyToMessage.text == "Напиши что добавить в ответ на это сообщение, 300 символов максимум"
+                && replyToMessage.text == "Напиши что добавить в ответ на это сообщение, 500 символов максимум"
     }
 
     override fun priority(context: ExecutorContext) = Priority.MEDIUM

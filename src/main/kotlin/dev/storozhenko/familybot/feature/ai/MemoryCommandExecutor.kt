@@ -14,21 +14,24 @@ class MemoryCommandExecutor : CommandExecutor() {
     override fun command() = Command.MEMORY
 
     override suspend fun execute(context: ExecutorContext) {
-        context.client.send(context, "Какое действие с ИИ памятью вы хотите выполнить?", customization = {
-            replyMarkup = InlineKeyboardMarkup(
-                listOf(
-                    InlineKeyboardRow(
-                        listOf(
-                            InlineKeyboardButton("Добавить")
-                                .apply { callbackData = "add" },
-                            InlineKeyboardButton("Показать что есть")
-                                .apply { callbackData = "show" },
-                            InlineKeyboardButton("Стереть все")
-                                .apply { callbackData = "clear" },
+        context.client.send(
+            context,
+            "Какое действие с ИИ памятью вы хотите выполнить? Эта память будет использована чтобы у бота был контекст при общении.",
+            customization = {
+                replyMarkup = InlineKeyboardMarkup(
+                    listOf(
+                        InlineKeyboardRow(
+                            listOf(
+                                InlineKeyboardButton("Добавить")
+                                    .apply { callbackData = "add" },
+                                InlineKeyboardButton("Показать что есть")
+                                    .apply { callbackData = "show" },
+                                InlineKeyboardButton("Стереть все")
+                                    .apply { callbackData = "clear" },
+                            )
                         )
                     )
                 )
-            )
-        })
+            })
     }
 }
