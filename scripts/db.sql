@@ -323,6 +323,7 @@ VALUES (1, '/stats_month'),
        (33, '/enable_gpt4'),
        (34, '/debug_gpt'),
        (35, '/story'),
-       (36, '/privacy')
+       (36, '/privacy'),
+       (37, '/memory')
 
 ;

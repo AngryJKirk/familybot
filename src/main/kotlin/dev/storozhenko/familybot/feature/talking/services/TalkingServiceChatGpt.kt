@@ -17,6 +17,7 @@ import dev.storozhenko.familybot.common.extensions.untilNextMonth
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.telegram.FamilyBot
+import dev.storozhenko.familybot.feature.settings.models.ChatGPTMemory
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTStyle
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTTokenUsageByChat
 import org.springframework.stereotype.Component
@@ -32,7 +33,8 @@ class TalkingServiceChatGpt(
 ) : TalkingService {
     companion object {
         private const val SIZE_LIMITER =
-            "В ответах говори исключительно в мужском роде. Отвечай максимум двумя предложениями. Не используй markdown или html."
+            "В ответах говори исключительно в мужском роде. Отвечай максимум двумя предложениями. Не используй markdown или html. " +
+                    "В начале каждого сообщения от пользователя идет его имя. В своих сообщениях так делать не надо."
         private val codeMarkupPattern = Regex("`{1,3}([^`]+)`{1,3}")
     }
 
@@ -53,11 +55,11 @@ class TalkingServiceChatGpt(
 
         val style = getStyle(context)
         val chatMessages = getPastMessages(style, context)
-        val systemMessage = getSystemMessage(style)
+        val systemMessage = getSystemMessage(style, context)
         if (text == "/debug") {
             return chatMessages.plus(systemMessage).joinToString("\n", transform = ChatMessage::toString)
         }
-        chatMessages.add(ChatMessage(Role.User, content = text))
+        chatMessages.add(ChatMessage(Role.User, content = "${context.user.getGeneralName(false)} says: $text"))
         chatMessages.add(0, systemMessage)
         val request = createRequest(chatMessages, useGpt4 = false)
         val response = getOpenAIService().chatCompletion(request)
@@ -101,12 +103,14 @@ class TalkingServiceChatGpt(
     }
 
     private fun getSystemMessage(
-        style: GptStyle
+        style: GptStyle,
+        context: ExecutorContext
     ): ChatMessage {
         return ChatMessage(
             Role.System, content = listOf(
                 gptSettingsReader.getUniverseValue(style.universe).trimIndent(),
                 gptSettingsReader.getStyleValue(style),
+                getMemory(context),
                 SIZE_LIMITER
             ).joinToString("\n")
         )
@@ -140,13 +144,23 @@ class TalkingServiceChatGpt(
             ?: GptStyle.RUDE
     }
 
+    private fun getMemory(context: ExecutorContext): String {
+        val memoryValue = easyKeyValueService.get(ChatGPTMemory, context.chatKey) ?: return ""
+
+        return "У тебя есть память о пользователях чата, применяй ее. Вот она: \n|НАЧАЛО ПАМЯТИ|\n$memoryValue\n|КОНЕЦ ПАМЯТИ|\n"
+    }
+
     private var openAI: OpenAI? = null
 
     private fun getOpenAIService(): OpenAI {
         if (openAI == null) {
             val token = botConfig.openAiToken
                 ?: throw FamilyBot.InternalException("Open AI token is not available, check config")
-            openAI = OpenAI(token = token, timeout = Timeout(socket = 60.seconds), logging = LoggingConfig(logLevel = LogLevel.None))
+            openAI = OpenAI(
+                token = token,
+                timeout = Timeout(socket = 60.seconds),
+                logging = LoggingConfig(logLevel = LogLevel.None)
+            )
         }
         return openAI as OpenAI
     }

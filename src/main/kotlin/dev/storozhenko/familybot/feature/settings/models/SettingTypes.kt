@@ -49,6 +49,7 @@ object ChatGPTSummaryCooldown : BooleanKeyType<ChatEasyKey>
 object ChatGPTReactionsCooldown : BooleanKeyType<ChatEasyKey>
 object ChatGPT4Enabled : BooleanKeyType<ChatEasyKey>
 object ChatGPTTalkingDisabled : BooleanKeyType<ChatEasyKey>
+object ChatGPTMemory: StringKeyType<ChatEasyKey>
 object IGCookie : StringKeyType<PlainKey>
 object PaymentKey : StringKeyType<PlainKey>
 object RefundNeedsToPressTime : LongKeyType<PlainKey>
