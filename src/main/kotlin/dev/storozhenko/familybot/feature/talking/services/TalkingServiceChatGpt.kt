@@ -33,8 +33,7 @@ class TalkingServiceChatGpt(
 ) : TalkingService {
     companion object {
         private const val SIZE_LIMITER =
-            "В ответах говори исключительно в мужском роде. Отвечай максимум двумя предложениями. Не используй markdown или html. " +
-                    "В начале каждого сообщения от пользователя идет его имя. В своих сообщениях так делать не надо."
+            "В ответах говори исключительно в мужском роде. Отвечай максимум двумя предложениями. Не используй markdown или html. "
         private val codeMarkupPattern = Regex("`{1,3}([^`]+)`{1,3}")
     }
 
@@ -59,7 +58,7 @@ class TalkingServiceChatGpt(
         if (text == "/debug") {
             return chatMessages.plus(systemMessage).joinToString("\n", transform = ChatMessage::toString)
         }
-        chatMessages.add(ChatMessage(Role.User, content = "${context.user.getGeneralName(false)} says: $text"))
+        chatMessages.add(ChatMessage(Role.User, content = "${context.user.name} говорит: $text"))
         chatMessages.add(0, systemMessage)
         val request = createRequest(chatMessages, useGpt4 = false)
         val response = getOpenAIService().chatCompletion(request)
