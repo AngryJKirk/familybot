@@ -5,7 +5,9 @@ import com.aallam.openai.api.chat.ChatCompletionRequest
 import com.aallam.openai.api.chat.ChatMessage
 import com.aallam.openai.api.core.Role
 import com.aallam.openai.api.http.Timeout
+import com.aallam.openai.api.logging.LogLevel
 import com.aallam.openai.api.model.ModelId
+import com.aallam.openai.client.LoggingConfig
 import com.aallam.openai.client.OpenAI
 import com.github.benmanes.caffeine.cache.Caffeine
 import dev.storozhenko.familybot.BotConfig
@@ -144,7 +146,7 @@ class TalkingServiceChatGpt(
         if (openAI == null) {
             val token = botConfig.openAiToken
                 ?: throw FamilyBot.InternalException("Open AI token is not available, check config")
-            openAI = OpenAI(token = token, timeout = Timeout(socket = 60.seconds))
+            openAI = OpenAI(token = token, timeout = Timeout(socket = 60.seconds), logging = LoggingConfig(logLevel = LogLevel.None))
         }
         return openAI as OpenAI
     }
