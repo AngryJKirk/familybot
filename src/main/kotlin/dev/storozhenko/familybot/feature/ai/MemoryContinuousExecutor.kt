@@ -18,7 +18,7 @@ class MemoryContinuousExecutor(
     botConfig: BotConfig
 ) : ContinuousConversationExecutor(botConfig) {
     override fun getDialogMessages(context: ExecutorContext): Set<String> {
-        return setOf("Какое действие с ИИ памятью вы хотите выполнить?")
+        return setOf("Какое действие с ИИ памятью вы хотите выполнить? Эта память будет использована чтобы у бота был контекст при общении.")
     }
 
     override fun command() = Command.MEMORY
