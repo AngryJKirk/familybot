@@ -72,12 +72,12 @@ class TalkingServiceChatGpt(
         }
         text = if (text == null && photoDescription == null) {
             "<пользователь скинул хрень>"
-        } else if (text == null && photoDescription != null) {
-            "$photoDescription ${context.user.name} говорит: $text"
+        } else if (context.message.caption != null && photoDescription != null) {
+            "$photoDescription ${context.user.name} говорит: ${context.message.caption}"
         } else {
             "${context.user.name} говорит: $text"
         }
-        chatMessages.add(ChatMessage(Role.User, content = "$photoDescription $text"))
+        chatMessages.add(ChatMessage(Role.User, content = text))
         chatMessages.add(0, systemMessage)
         val request = createRequest(chatMessages, useGpt4 = false)
         val response = getOpenAIService().chatCompletion(request)
@@ -192,7 +192,7 @@ class TalkingServiceChatGpt(
                     model = ModelId("gpt-4o-mini"),
                     messages = listOf(
                         ChatMessage(
-                            role = ChatRole.System,
+                            role = ChatRole.User,
                             content = listOf(
                                 ImagePart(url),
                                 TextPart("Пользователь отправил эту картинку. Опиши ее.")
