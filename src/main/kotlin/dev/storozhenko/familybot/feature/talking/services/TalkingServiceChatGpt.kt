@@ -49,7 +49,7 @@ class TalkingServiceChatGpt(
         }
 
     override suspend fun getReplyToUser(context: ExecutorContext, shouldBeQuestion: Boolean): String {
-        var text = context.message.text
+        var text = context.message.text ?: context.message.caption
         val photoUrl = getPhotoUrl(context)
         var photoDescription: String? = null
         if (photoUrl != null) {
@@ -72,8 +72,8 @@ class TalkingServiceChatGpt(
         }
         text = if (text == null && photoDescription == null) {
             "<пользователь скинул хрень>"
-        } else if (context.message.caption != null && photoDescription != null) {
-            "$photoDescription ${context.user.name} говорит: ${context.message.caption}"
+        } else if (text != null && photoDescription != null) {
+            "$photoDescription ${context.user.name} говорит: ${text}"
         } else {
             "${context.user.name} говорит: $text"
         }
