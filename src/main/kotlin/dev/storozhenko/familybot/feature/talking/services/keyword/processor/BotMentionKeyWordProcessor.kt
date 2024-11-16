@@ -72,11 +72,11 @@ class BotMentionKeyWordProcessor(
     }
 
     private fun isBotMention(message: Message): Boolean {
-        return message.text?.contains("@${botConfig.botName}") ?: false
+        return getText(message)?.contains("@${botConfig.botName}") == true
     }
 
     private fun isBotNameMention(message: Message): Boolean {
-        val text = message.text ?: return false
+        val text = getText(message) ?: return false
 
         return botConfig
             .botNameAliases.any { alias -> text.contains(alias, ignoreCase = true) }
@@ -84,6 +84,10 @@ class BotMentionKeyWordProcessor(
 
     private fun isReplyToBot(message: Message): Boolean {
         return message.isReply && message.replyToMessage.from.userName == botConfig.botName
+    }
+
+    private fun getText(message: Message): String? {
+        return message.text ?: message.caption
     }
 
     fun isFuckOff(context: ExecutorContext): Boolean {
