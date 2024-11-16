@@ -73,7 +73,9 @@ class TalkingServiceChatGpt(
         text = if (text == null && photoDescription == null) {
             "<пользователь скинул хрень>"
         } else if (text != null && photoDescription != null) {
-            "$photoDescription ${context.user.name} говорит: ${text}"
+            "$photoDescription ${context.user.name} говорит: $text"
+        } else if (text == null && photoDescription != null) {
+            "${context.user.name} отправил: $photoDescription"
         } else {
             "${context.user.name} говорит: $text"
         }
