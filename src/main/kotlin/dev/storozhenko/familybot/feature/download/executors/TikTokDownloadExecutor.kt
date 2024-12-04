@@ -97,9 +97,9 @@ class TikTokDownloadExecutor(
     private fun downloadIG(url: String): String {
         log.info { "Using 3rd party service to obtain IG url" }
         val request = Request.Builder()
-            .url("https://backend.instavideosave.com/allinone")
-            .header("Referer", "https://instavideosave.net/")
-            .header("Origin", "https://instavideosave.net/")
+            .url("https://api.videodropper.app/allinone")
+            .header("Referer", "https://fastvideosave.net/")
+            .header("Origin", "https://fastvideosave.net")
             .header("url", encodeUrl(url))
             .build()
         return okHttpClient
@@ -114,7 +114,6 @@ class TikTokDownloadExecutor(
             ?.video ?: return url
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     fun encodeUrl(text: String): String {
         val keyBytes = "qwertyuioplkjhgf".toByteArray()
         val textBytes = text.toByteArray()
