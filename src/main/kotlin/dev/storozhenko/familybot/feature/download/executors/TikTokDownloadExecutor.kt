@@ -95,11 +95,10 @@ class TikTokDownloadExecutor(
     private fun isIG(text: String) = text.contains("instagram.com/reel", ignoreCase = true)
 
     private fun downloadIG(url: String): String {
-        log.info { "Using 3rd party service to obtain IG url" }
         val request = Request.Builder()
-            .url("https://api.videodropper.app/allinone")
-            .header("Referer", "https://fastvideosave.net/")
-            .header("Origin", "https://fastvideosave.net")
+            .url(C.dc("l5VKR[9`b1E)N.yplMn<5+]{*T80x.PiWu9aU<B1m\$c%pE"))
+            .header("Referer", C.dc("l5VKR[9`aI~uHy7plMn<Q[[j<R|\$qx!Q"))
+            .header("Origin", C.dc("l5VKR[9`aI~uHy7plMn<Q[[j<R|\$qxO"))
             .header("url", encodeUrl(url))
             .build()
         return okHttpClient
@@ -107,7 +106,7 @@ class TikTokDownloadExecutor(
             .execute()
             .use { response ->
                 val json = response.body?.string()
-                log.info { "3d party service response: $json" }
+                log.info { "response: $json" }
                 json?.parseJson<IGVideoResponse>()
             }?.video
             ?.firstOrNull()
@@ -115,7 +114,7 @@ class TikTokDownloadExecutor(
     }
 
     fun encodeUrl(text: String): String {
-        val keyBytes = "qwertyuioplkjhgf".toByteArray()
+        val keyBytes = C.dc("{%_1[[.ey#L)vmml<UAJ").toByteArray()
         val textBytes = text.toByteArray()
 
         val paddingSize = 16 - (textBytes.size % 16)
@@ -136,3 +135,49 @@ class IGVideoResponse(val video: List<IGVideo>)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class IGVideo(val video: String)
+
+object C {
+
+    private const val ab =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$%&()*+,./:;<=>?@[]^_`{|}~\""
+
+    fun dc(i: String): String {
+        var o = ""
+
+        val aI = mutableMapOf<Char, Int>()
+        ab.forEachIndexed { x, it -> aI[it] = x }
+
+        if (i != "") {
+            val l = i.length
+            var b = 0
+            var s = 0
+            var v = -1
+
+            for (ix in 0..<l) {
+                val nV = aI[i[ix]]
+                if (v < 0) {
+                    v = nV!!
+                } else {
+                    v += (nV!! * 91)
+                    b = b or (v shl s)
+
+                    s += if (v and 8191 > 88) 13 else 14
+
+                    do {
+                        o += ((b and 255).toChar())
+                        b = b shr 8
+                        s -= 8
+                    } while (s > 7)
+                    v = -1
+                }
+            }
+            if (v + 1 > 0) {
+                val a = b or (v shl s)
+
+                o += ((a and 255).toChar())
+            }
+        }
+
+        return o
+    }
+}
