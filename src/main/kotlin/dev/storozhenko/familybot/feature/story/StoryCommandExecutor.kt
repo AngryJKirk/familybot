@@ -7,11 +7,9 @@ import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTPaidTill
-import dev.storozhenko.familybot.feature.settings.models.StoryContext
 import dev.storozhenko.familybot.feature.settings.models.StoryCurrentPollResults
 import dev.storozhenko.familybot.feature.settings.models.StoryGameActive
 import dev.storozhenko.familybot.feature.settings.models.StoryPollBlocked
-import dev.storozhenko.familybot.feature.settings.models.StoryPollsCounter
 import org.springframework.stereotype.Component
 import java.time.Duration
 import java.time.Instant
@@ -48,7 +46,10 @@ class StoryCommandExecutor(
                     storyTellingService.continueStory(context, choice)
                 }
             } else {
-                context.client.send(context, "Расскажи затравку истории в двух-трех предложениях (ответом на это сообщение). История продлится около 5 шагов")
+                context.client.send(
+                    context,
+                    "Расскажи затравку истории в двух-трех предложениях (ответом на это сообщение). История продлится около 5 шагов"
+                )
             }
         }
     }

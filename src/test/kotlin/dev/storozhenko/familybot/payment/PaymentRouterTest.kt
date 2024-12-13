@@ -127,6 +127,9 @@ class PaymentRouterTest : FamilybotApplicationTest() {
                     null,
                     randomString(),
                     randomString(),
+                    0,
+                    false,
+                    false
                 )
             }
     }

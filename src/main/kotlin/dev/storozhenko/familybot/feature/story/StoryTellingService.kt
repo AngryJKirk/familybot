@@ -15,7 +15,6 @@ import org.telegram.telegrambots.meta.api.objects.polls.input.InputPollOption
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
-@Suppress("MoveLambdaOutsideParentheses")
 @Component
 class StoryTellingService(
     private val talkingService: TalkingServiceChatGpt,

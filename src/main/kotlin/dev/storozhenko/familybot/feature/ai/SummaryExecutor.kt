@@ -24,6 +24,7 @@ class SummaryExecutor(
 ) : CommandExecutor() {
     override fun command() = Command.SUMMARY
 
+    @Suppress("unused")
     private class UserMessage(
         val messageNumber: Int,
         val username: String,

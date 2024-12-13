@@ -217,7 +217,7 @@ class TalkingServiceChatGpt(
                 else -> return null
             }
             if (fileId == null) return null
-            var file = context.client.execute(GetFile(fileId))
+            val file = context.client.execute(GetFile(fileId))
             val url = file.getFileUrl(botConfig.botToken)
             return if (message.hasPhoto()) url else null
         } catch (e: Exception) {

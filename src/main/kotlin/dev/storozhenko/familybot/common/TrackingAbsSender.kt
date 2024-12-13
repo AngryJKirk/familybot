@@ -187,7 +187,7 @@ class TrackingTelegramClient(
     }
 
     override fun executeAsync(sendPaidMedia: SendPaidMedia?): CompletableFuture<MutableList<Message>> {
-        return telegramClient.executeAsync(sendPaidMedia);
+        return telegramClient.executeAsync(sendPaidMedia)
     }
 
     override fun executeAsync(setChatPhoto: SetChatPhoto): CompletableFuture<Boolean> {
