@@ -25,7 +25,7 @@
         <kotlin-logging-jvm.version>7.0.3</kotlin-logging-jvm.version>
         <commons-codec.version>1.17.1</commons-codec.version>
         <openai-client-jvm.version>3.8.2</openai-client-jvm.version>
-        <ktor-client-okhttp-jvm.version>3.0.2</ktor-client-okhttp-jvm.version>
+        <ktor-client-okhttp-jvm.version>2.3.2</ktor-client-okhttp-jvm.version>
     </properties>
 
     <dependencies>
