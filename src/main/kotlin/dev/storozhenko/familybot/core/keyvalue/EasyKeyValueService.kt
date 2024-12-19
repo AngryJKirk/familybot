@@ -6,6 +6,7 @@ import dev.storozhenko.familybot.core.keyvalue.models.EasyKeyType
 import dev.storozhenko.familybot.core.keyvalue.models.PlainKey
 import dev.storozhenko.familybot.core.keyvalue.models.UserAndChatEasyKey
 import dev.storozhenko.familybot.core.keyvalue.models.UserEasyKey
+import dev.storozhenko.familybot.core.models.telegram.Chat
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.data.redis.core.ScanOptions.scanOptions
 import org.springframework.data.redis.core.StringRedisTemplate
@@ -124,6 +125,23 @@ class EasyKeyValueService(
         return keys
     }
 
+    fun migrate(from: Chat, to: Chat) {
+        val keys = redisTemplate.keys("*:${from.id}:*") ?: return
+
+        keys.forEach { key ->
+            val parts = key.split(":")
+            if (parts.size < 3) return@forEach
+            val (keyType, _, userId) = parts
+            val newKey = "${keyType}:${to.id}:${userId}"
+            val value = redisTemplate.opsForValue().get(key)
+
+            if (value != null) {
+                redisTemplate.opsForValue().set(newKey, value)
+                redisTemplate.delete(key)
+            }
+        }
+    }
+
     private fun <INPUT : Any, KEY : EasyKey> getKeyRaw(easyKeyType: EasyKeyType<INPUT, KEY>, key: KEY): String {
         return "${easyKeyType.getName()}:${key.value()}"
     }
@@ -138,12 +156,10 @@ class EasyKeyValueService(
             throw IllegalArgumentException("Wrong key format")
         }
         val (_, chatId, userId) = rawSplit
-        if (chatId == "null") {
-            return UserEasyKey(userId.toLong())
+        return when {
+            chatId == "null" -> UserEasyKey(userId.toLong())
+            userId == "null" -> ChatEasyKey(chatId.toLong())
+            else -> UserAndChatEasyKey(chatId.toLong(), userId.toLong())
         }
-        if (userId == "null") {
-            return ChatEasyKey(chatId.toLong())
-        }
-        return UserAndChatEasyKey(chatId.toLong(), userId.toLong())
     }
 }

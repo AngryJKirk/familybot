@@ -34,7 +34,8 @@ class FamilyBot(
     private val reactionsRouter: ReactionsRouter,
     private val easyKeyValueService: EasyKeyValueService,
     private val telegramClient: TelegramClient,
-    private val botConfig: BotConfig
+    private val botConfig: BotConfig,
+    private val migrateService: MigrateService
 ) : LongPollingUpdateConsumer {
 
     private val log = KotlinLogging.logger {}
@@ -49,6 +50,12 @@ class FamilyBot(
     }
 
     private suspend fun consumeInternal(update: Update) {
+        if (update.hasMessage() && (update.message.migrateFromChatId != null || update.message.migrateToChatId != null)) {
+            val from = update.message.migrateFromChatId ?: update.message.chatId
+            val to = update.message.migrateToChatId ?: update.message.chatId
+            log.info { "Migrating: $update" }
+            migrateService.migrate(from, to)
+        }
         if (update.hasPollAnswer()) {
             coroutineScope { launch { proceedPollAnswer(update) } }
             return

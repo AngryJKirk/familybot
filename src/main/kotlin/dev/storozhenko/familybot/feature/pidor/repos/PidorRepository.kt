@@ -69,4 +69,11 @@ class PidorRepository(private val template: JdbcTemplate) {
             Timestamp.from(endDate),
         ) ?: emptyList()
     }
+
+    fun migrate(from: Chat, to: Chat) {
+        template.update(
+            "UPDATE pidors set chat_id = ? where chat_id = ?",
+            to.id, from.id
+        )
+    }
 }

@@ -68,7 +68,6 @@
             <artifactId>kotlinx-coroutines-core-jvm</artifactId>
             <version>${kotlinx-coroutines.version}</version>
         </dependency>
-
         <!--Other-->
 
         <dependency>
