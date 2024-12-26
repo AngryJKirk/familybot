@@ -78,9 +78,7 @@ class ReactionRepository(private val jdbcTemplate: JdbcTemplate) {
                 rs.getString("to_username"),
             ),
             rs.getLong("message_id"),
-            (rs.getArray("reactions").array as Array<String>)
-                .filterNot { s -> s.toCharArray().all { c -> c.isDigit() } }
-                .toList()
+            (rs.getArray("reactions").array as Array<String>).toList()
         )
     }
 

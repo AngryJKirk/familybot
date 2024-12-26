@@ -187,7 +187,7 @@ class ReactionsStatsContinuousExecutor(
         val plured = pluralize(reactionCounter, pluralizedReactions)
         val countByReactions = totalUserReactions
             .asSequence()
-            .map { if (it.length > 30) "другие" else it }
+            .map { if (it.toCharArray().all(Char::isDigit)) "другие" else it }
             .groupBy { it }
             .map { (reaction, count) -> reaction to count.size }
             .sortedByDescending { (_, count) -> count }
