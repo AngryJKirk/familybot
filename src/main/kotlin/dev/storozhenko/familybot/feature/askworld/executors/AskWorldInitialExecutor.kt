@@ -4,7 +4,7 @@ import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.boldNullable
 import dev.storozhenko.familybot.common.extensions.italic
 import dev.storozhenko.familybot.common.extensions.key
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.common.extensions.untilNextDay
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.executors.Configurable
@@ -70,13 +70,13 @@ class AskWorldInitialExecutor(
         if (isNotFromDeveloper) {
             if (chatUsages != null && chatUsages > 0L) {
                 log.info { "Limit was exceed for chat" }
-                context.client.send(context, context.phrase(Phrase.ASK_WORLD_LIMIT_BY_CHAT), replyToUpdate = true)
+                context.send(context.phrase(Phrase.ASK_WORLD_LIMIT_BY_CHAT), replyToUpdate = true)
                 return
             }
 
             if (userUsages != null && userUsages > 1) {
                 log.info { "Limit was exceed for user" }
-                context.client.send(context, context.phrase(Phrase.ASK_WORLD_LIMIT_BY_USER), replyToUpdate = true)
+                context.send(context.phrase(Phrase.ASK_WORLD_LIMIT_BY_USER), replyToUpdate = true)
                 return
             }
         }
@@ -98,7 +98,7 @@ class AskWorldInitialExecutor(
         )
 
         val questionId = coroutineScope { async { askWorldRepository.addQuestion(question) } }
-        context.client.send(context, context.phrase(Phrase.DATA_CONFIRM))
+        context.send(context.phrase(Phrase.DATA_CONFIRM))
         if (!successData.isScam) {
             getChatsToSendQuestion(context)
                 .forEach { chatToSend ->
@@ -170,8 +170,7 @@ class AskWorldInitialExecutor(
                     ?.removePrefix(" ")
             }
                 ?.takeIf(String::isNotEmpty) ?: return ValidationError {
-                context.client.send(
-                    context,
+                context.send(
                     context.phrase(Phrase.ASK_WORLD_HELP),
                 )
             }
@@ -184,8 +183,7 @@ class AskWorldInitialExecutor(
 
             if (message.length > 2000) {
                 return ValidationError {
-                    context.client.send(
-                        context,
+                    context.send(
                         context.phrase(Phrase.ASK_WORLD_QUESTION_TOO_LONG),
                         replyToUpdate = true,
                     )

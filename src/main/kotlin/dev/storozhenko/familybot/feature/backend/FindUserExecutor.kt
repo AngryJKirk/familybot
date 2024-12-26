@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.feature.backend
 
 import dev.storozhenko.familybot.common.extensions.getMessageTokens
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.OnlyBotOwnerExecutor
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.models.telegram.User
@@ -23,10 +23,10 @@ class FindUserExecutor(
             .distinctBy(User::id)
             .associateWith { user -> commonRepository.getChatsByUser(user) }
         if (usersToChats.isEmpty()) {
-            context.client.send(context, "No one found, master")
+            context.send("No one found, master")
         } else {
             usersToChats.toList().chunked(5).forEach { chunk ->
-                context.client.send(context, format(chunk))
+                context.send(format(chunk))
             }
         }
     }

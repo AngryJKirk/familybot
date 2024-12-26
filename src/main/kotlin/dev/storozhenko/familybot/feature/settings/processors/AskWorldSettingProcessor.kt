@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.feature.settings.processors
 
 import dev.storozhenko.familybot.common.extensions.getMessageTokens
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -24,8 +24,7 @@ class AskWorldSettingProcessor(
         val arg = context.update.getMessageTokens()[2]
         val density = AskWorldDensityValue.entries.find { mode -> mode.text == arg }
         if (density == null) {
-            context.client.send(
-                context,
+            context.send(
                 context.phrase(Phrase.ADVANCED_SETTINGS_ASK_WORLD_BAD_USAGE),
             )
             return
@@ -36,7 +35,7 @@ class AskWorldSettingProcessor(
             isEnabled = density != AskWorldDensityValue.NONE,
         )
         easyKeyValueService.put(AskWorldDensity, context.chatKey, density.text)
-        context.client.send(context, context.phrase(Phrase.ADVANCED_SETTINGS_OK))
+        context.send(context.phrase(Phrase.ADVANCED_SETTINGS_OK))
     }
 }
 

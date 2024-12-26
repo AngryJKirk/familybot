@@ -4,7 +4,7 @@ import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.capitalized
 import dev.storozhenko.familybot.common.extensions.dropLastDelimiter
 import dev.storozhenko.familybot.common.extensions.italic
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.common.extensions.startOfCurrentMonth
 import dev.storozhenko.familybot.common.extensions.toRussian
 import dev.storozhenko.familybot.core.executors.CommandExecutor
@@ -52,11 +52,11 @@ class TopPidorsByMonthsExecutor(
             .reversed()
             .map(formatLeaderBoard(context))
         if (result.isEmpty()) {
-            context.client.send(context, context.phrase(Phrase.LEADERBOARD_NONE))
+            context.send(context.phrase(Phrase.LEADERBOARD_NONE))
             return
         }
         val message = "${context.phrase(Phrase.LEADERBOARD_TITLE)}:\n".bold()
-        context.client.send(context, message + "\n" + result.joinToString(delimiter), enableHtml = true)
+        context.send(message + "\n" + result.joinToString(delimiter), enableHtml = true)
     }
 
     private fun formatLeaderBoard(context: ExecutorContext): (Map.Entry<LocalDate, PidorStat>) -> String = {

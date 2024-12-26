@@ -2,7 +2,7 @@ package dev.storozhenko.familybot.feature.settings.executors
 
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.code
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
@@ -36,7 +36,7 @@ class DebugChatGPTExecutor(private val easyKeyValueService: EasyKeyValueService)
             ChatGPT4Enabled,
         ).joinToString(separator = "\n") { key -> getDataByKey(context, key) }
 
-        context.client.send(context, message, enableHtml = true, replyToUpdate = true)
+        context.send(message, enableHtml = true, replyToUpdate = true)
     }
 
     private fun getDataByKey(context: ExecutorContext, easyKey: EasyKeyType<out Any, ChatEasyKey>): String {

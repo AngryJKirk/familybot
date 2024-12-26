@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.feature.settings.processors
 
 import dev.storozhenko.familybot.common.extensions.getMessageTokens
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -21,10 +21,10 @@ class TikTokSettingProcessor(
             "вкл" -> easyKeyValueService.put(TikTokDownload, context.chatKey, true)
             "выкл" -> easyKeyValueService.put(TikTokDownload, context.chatKey, false)
             else -> {
-                context.client.send(context, context.phrase(Phrase.ADVANCED_SETTINGS_ERROR))
+                context.send(context.phrase(Phrase.ADVANCED_SETTINGS_ERROR))
                 return
             }
         }
-        context.client.send(context, context.phrase(Phrase.ADVANCED_SETTINGS_OK))
+        context.send(context.phrase(Phrase.ADVANCED_SETTINGS_OK))
     }
 }

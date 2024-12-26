@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.feature.settings.processors
 
 import dev.storozhenko.familybot.common.extensions.getMessageTokens
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTStyle
@@ -23,9 +23,9 @@ class ChatStyleSettingProcessor(
         val keys = GptStyle.entries.map(GptStyle::value)
         if (value in keys) {
             easyKeyValueService.put(ChatGPTStyle, context.chatKey, value)
-            context.client.send(context, "ок")
+            context.send("ок")
         } else {
-            context.client.send(context, "Нет такого стиля, вот список вариантов: " + keys.joinToString(", "))
+            context.send("Нет такого стиля, вот список вариантов: " + keys.joinToString(", "))
         }
     }
 }

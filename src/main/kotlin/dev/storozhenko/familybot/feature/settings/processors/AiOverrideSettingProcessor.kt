@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.feature.settings.processors
 
 import dev.storozhenko.familybot.common.extensions.getMessageTokens
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTTalkingDisabled
@@ -21,10 +21,10 @@ class AiOverrideSettingProcessor(
             "вкл" -> easyKeyValueService.put(ChatGPTTalkingDisabled, context.chatKey, true)
             "выкл" -> easyKeyValueService.put(ChatGPTTalkingDisabled, context.chatKey, false)
             else -> {
-                context.client.send(context, "надо передать вкл или выкл, попробуй еще раз")
+                context.send("надо передать вкл или выкл, попробуй еще раз")
                 return
             }
         }
-        context.client.send(context, "ок, $state")
+        context.send("ок, $state")
     }
 }

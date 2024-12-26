@@ -4,7 +4,7 @@ import dev.storozhenko.familybot.common.extensions.PluralizedWordsProvider
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.formatTopList
 import dev.storozhenko.familybot.common.extensions.key
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.executors.Configurable
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
@@ -55,10 +55,9 @@ class PidorStatsStrikesExecutor(
             )
         val title = "${context.phrase(Phrase.PIDOR_STRIKE_STAT_TITLE)}:\n".bold()
         if (stats.isNotEmpty()) {
-            context.client.send(context, title + stats.joinToString("\n"), enableHtml = true)
+            context.send(title + stats.joinToString("\n"), enableHtml = true)
         } else {
-            context.client.send(
-                context,
+            context.send(
                 title + context.phrase(Phrase.PIDOR_STRIKE_STAT_NONE),
                 enableHtml = true,
             )

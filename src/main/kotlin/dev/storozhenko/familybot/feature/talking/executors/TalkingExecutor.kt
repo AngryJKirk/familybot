@@ -2,7 +2,6 @@ package dev.storozhenko.familybot.feature.talking.executors
 
 import dev.storozhenko.familybot.common.extensions.randomBoolean
 import dev.storozhenko.familybot.common.extensions.randomInt
-import dev.storozhenko.familybot.common.extensions.sendDeferred
 import dev.storozhenko.familybot.core.executors.Configurable
 import dev.storozhenko.familybot.core.executors.Executor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
@@ -46,8 +45,7 @@ class TalkingExecutor(
             } else {
                 100 to 500
             }
-            context.client.sendDeferred(
-                context,
+            context.sendDeferred(
                 messageText,
                 replyToUpdate = true,
                 shouldTypeBeforeSend = true,

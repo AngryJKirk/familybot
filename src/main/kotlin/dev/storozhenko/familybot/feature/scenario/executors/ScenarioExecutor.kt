@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.feature.scenario.executors
 
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -62,7 +62,7 @@ class ScenarioExecutor(
         context: ExecutorContext,
     ) {
         val story = scenarioService.getAllStoryOfCurrentGame(context.chat)
-        context.client.send(context, story, enableHtml = true)
+        context.send(story, enableHtml = true)
     }
 
     private suspend fun moveState(
@@ -70,7 +70,7 @@ class ScenarioExecutor(
     ) {
         val nextMove = scenarioGameplayService.nextState(context.chat)
         if (nextMove == null) {
-            context.client.send(context, "State hasn't been moved")
+            context.send("State hasn't been moved")
         }
     }
 }

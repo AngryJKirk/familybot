@@ -2,7 +2,7 @@ package dev.storozhenko.familybot.feature.talking.services
 
 import dev.storozhenko.familybot.common.extensions.isToday
 import dev.storozhenko.familybot.common.extensions.prettyFormat
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -39,14 +39,14 @@ class SubscriptionsNotifierService(private val easyKeyValueService: EasyKeyValue
             val message = context.phrase(Phrase.CHAT_GTP_SUBSCRIPTION_RUN_OUT)
                 .replace("$", expirationDate.prettyFormat(dateOnly = true))
             delay(1.minutes)
-            context.client.send(context, message)
+            context.send(message)
         }
     }
 
     fun notifyThatFreeMessagesRunOut(context: ExecutorContext) {
         scope.launch {
             delay(1.minutes)
-            context.client.send(context, context.phrase(Phrase.CHAT_GTP_FREE_MESSAGES_RUN_OUT))
+            context.send(context.phrase(Phrase.CHAT_GTP_FREE_MESSAGES_RUN_OUT))
         }
     }
 }

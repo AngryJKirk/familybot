@@ -1,7 +1,5 @@
 package dev.storozhenko.familybot.feature.tribute.executors
 
-import dev.storozhenko.familybot.common.extensions.send
-import dev.storozhenko.familybot.common.extensions.sendDeferred
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
@@ -36,8 +34,8 @@ class VestnikCommandExecutor(
             }
         }
 
-        context.client.send(context, context.phrase(Phrase.RANDOM_VESTNIK))
-        context.client.sendDeferred(context, question, shouldTypeBeforeSend = true)
+        context.send(context.phrase(Phrase.RANDOM_VESTNIK))
+        context.sendDeferred(question, shouldTypeBeforeSend = true)
     }
 
     override fun command() = Command.VESTNIK

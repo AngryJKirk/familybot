@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.feature.ban.executors
 
 import dev.storozhenko.familybot.common.extensions.getMessageTokens
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.OnlyBotOwnerExecutor
 import dev.storozhenko.familybot.core.repos.UserRepository
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -29,10 +29,10 @@ class BanSomeoneExecutor(
         if (chat != null) {
             if (isUnban) {
                 banService.removeBan(context.chatKey)
-                context.client.send(context, "Unbanned chat: $chat")
+                context.send("Unbanned chat: $chat")
             } else {
                 banService.banChat(chat, description, isForever)
-                context.client.send(context, "Banned chat: $chat")
+                context.send("Banned chat: $chat")
             }
             return
         }
@@ -45,15 +45,15 @@ class BanSomeoneExecutor(
         if (user != null) {
             if (isUnban) {
                 banService.removeBan(context.userKey)
-                context.client.send(context, "Unbanned user: $user")
+                context.send("Unbanned user: $user")
             } else {
                 banService.banUser(user, description, isForever)
-                context.client.send(context, "Banned user: $user")
+                context.send("Banned user: $user")
             }
             return
         }
 
-        context.client.send(context, "No one found")
+        context.send("No one found")
     }
 
     override fun getMessagePrefix() = banPrefix

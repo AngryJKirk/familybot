@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.feature.help
 
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.PrivateMessageExecutor
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -15,8 +15,7 @@ class PrivateMessageHelpExecutor(
         if (helpExecutor.canExecute(context)) {
             helpExecutor.execute(context)
         } else {
-            context.client.send(
-                context,
+            context.send(
                 context.phrase(Phrase.PRIVATE_MESSAGE_HELP),
                 shouldTypeBeforeSend = true,
             )

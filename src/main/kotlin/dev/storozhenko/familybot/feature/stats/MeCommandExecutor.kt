@@ -3,7 +3,7 @@ package dev.storozhenko.familybot.feature.stats
 import dev.storozhenko.familybot.common.extensions.DateConstants
 import dev.storozhenko.familybot.common.extensions.PluralizedWordsProvider
 import dev.storozhenko.familybot.common.extensions.pluralize
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.keyvalue.models.UserAndChatEasyKey
@@ -43,7 +43,7 @@ class MeCommandExecutor(
                 messageCount.await(),
             ).joinToString("\n")
         }
-        context.client.send(context, message, replyToUpdate = true)
+        context.send(message, replyToUpdate = true)
     }
 
     private fun getMessageCount(chat: Chat, user: User, context: ExecutorContext): String {

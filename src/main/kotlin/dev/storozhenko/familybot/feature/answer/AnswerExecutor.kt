@@ -2,7 +2,6 @@ package dev.storozhenko.familybot.feature.answer
 
 import dev.storozhenko.familybot.common.extensions.capitalized
 import dev.storozhenko.familybot.common.extensions.dropLastDelimiter
-import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Command
@@ -33,10 +32,10 @@ class AnswerExecutor : CommandExecutor() {
 
         if (message == null) {
             log.info { "Bad argument was passed, text of message is [$text]" }
-            context.client.send(context, context.phrase(Phrase.BAD_COMMAND_USAGE), replyToUpdate = true)
+            context.send(context.phrase(Phrase.BAD_COMMAND_USAGE), replyToUpdate = true)
             return
         }
-        context.client.send(context, message, replyToUpdate = true, shouldTypeBeforeSend = true)
+        context.send(message, replyToUpdate = true, shouldTypeBeforeSend = true)
     }
 
     private fun isOptionsCountEnough(options: List<String>) = options.size >= 2

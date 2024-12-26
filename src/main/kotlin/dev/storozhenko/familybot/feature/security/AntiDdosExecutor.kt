@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.feature.security
 
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.Configurable
 import dev.storozhenko.familybot.core.executors.Executor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
@@ -46,7 +46,7 @@ class AntiDdosExecutor(
         context: ExecutorContext,
         message: String,
     ) {
-        context.client.send(context, message)
+        context.send(message)
     }
 
     private fun callbackQueryCase(

@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.feature.talking.executors
 
 import dev.storozhenko.familybot.BotConfig
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.Configurable
 import dev.storozhenko.familybot.core.executors.Executor
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
@@ -22,8 +22,7 @@ class UserEnterExitExecutor(private val botConfig: BotConfig) :
             isNewChat(message) -> Phrase.BOT_WELCOME_MESSAGE
             else -> Phrase.USER_ENTERING_CHAT
         }
-        context.client.send(
-            context,
+        context.send(
             context.phrase(phrase),
             replyToUpdate = true,
             shouldTypeBeforeSend = true,

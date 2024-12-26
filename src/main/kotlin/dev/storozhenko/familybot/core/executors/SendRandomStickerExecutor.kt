@@ -1,7 +1,5 @@
 package dev.storozhenko.familybot.core.executors
 
-import dev.storozhenko.familybot.common.extensions.send
-import dev.storozhenko.familybot.common.extensions.sendRandomSticker
 import dev.storozhenko.familybot.common.extensions.startOfDay
 import dev.storozhenko.familybot.common.extensions.toUser
 import dev.storozhenko.familybot.core.models.telegram.CommandByUser
@@ -20,9 +18,9 @@ abstract class SendRandomStickerExecutor(
             return
         }
 
-        context.client.send(context, getMessage())
+        context.send(getMessage())
         delay(1000)
-        context.client.sendRandomSticker(context, getStickerPack())
+        context.sendRandomSticker(getStickerPack())
     }
 
     private fun isInvokedToday(user: User): Boolean {

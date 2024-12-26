@@ -3,7 +3,7 @@ package dev.storozhenko.familybot.feature.pidor.executors
 import dev.storozhenko.familybot.common.extensions.PluralizedWordsProvider
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.formatTopList
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.common.extensions.startOfCurrentMonth
 import dev.storozhenko.familybot.common.extensions.toRussian
 import dev.storozhenko.familybot.core.executors.CommandExecutor
@@ -46,6 +46,6 @@ class PidorStatsMonthExecutor(
                 ),
             )
         val title = "${context.phrase(Phrase.PIDOR_STAT_MONTH)} ${now.month.toRussian()}:\n".bold()
-        context.client.send(context, title + pidorsByChat.joinToString("\n"), enableHtml = true)
+        context.send(title + pidorsByChat.joinToString("\n"), enableHtml = true)
     }
 }

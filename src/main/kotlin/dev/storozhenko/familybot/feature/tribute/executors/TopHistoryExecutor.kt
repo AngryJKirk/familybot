@@ -2,7 +2,7 @@ package dev.storozhenko.familybot.feature.tribute.executors
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import dev.storozhenko.familybot.common.extensions.parseJson
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -25,7 +25,7 @@ class TopHistoryExecutor : CommandExecutor() {
     override fun command() = Command.TOP_HISTORY
 
     override suspend fun execute(context: ExecutorContext) {
-        context.client.send(context, mamoeb.curses.random())
+        context.send(mamoeb.curses.random())
     }
 }
 

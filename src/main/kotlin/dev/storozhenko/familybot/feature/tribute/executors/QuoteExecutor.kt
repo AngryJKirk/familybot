@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.feature.tribute.executors
 
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -12,6 +12,6 @@ class QuoteExecutor(private val quoteRepository: QuoteRepository) : CommandExecu
     override fun command() = Command.QUOTE
 
     override suspend fun execute(context: ExecutorContext) {
-        context.client.send(context, quoteRepository.getRandom())
+        context.send(quoteRepository.getRandom())
     }
 }

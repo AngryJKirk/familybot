@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.feature.story
 
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.models.telegram.Command
@@ -27,15 +27,14 @@ class StoryCommandExecutor(
         }
         val paidTill = easyKeyValueService.get(ChatGPTPaidTill, context.chatKey, Instant.MIN)
         if (paidTill.isBefore(Instant.now())) {
-            context.client.send(context, "Игра работает только на оплаченном ИИ, велком в /shop")
+            context.send("Игра работает только на оплаченном ИИ, велком в /shop")
         } else {
             val isGameActive = easyKeyValueService.get(StoryGameActive, context.chatKey, false)
             if (isGameActive) {
                 val storyPollUnblockTime = easyKeyValueService.get(StoryPollBlocked, context.chatKey, Instant.MIN)
                 if (storyPollUnblockTime.isAfter(Instant.now())) {
                     val minutesLeft = Duration.between(Instant.now(), storyPollUnblockTime).toMinutes()
-                    context.client.send(
-                        context,
+                    context.send(
                         "Следующее голосование будет доступно через $minutesLeft мин"
                     )
                 } else {
@@ -46,8 +45,7 @@ class StoryCommandExecutor(
                     storyTellingService.continueStory(context, choice)
                 }
             } else {
-                context.client.send(
-                    context,
+                context.send(
                     "Расскажи затравку истории в двух-трех предложениях (ответом на это сообщение). История продлится около 5 шагов"
                 )
             }

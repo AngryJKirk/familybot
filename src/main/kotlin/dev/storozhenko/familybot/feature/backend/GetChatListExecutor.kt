@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.feature.backend
 
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.OnlyBotOwnerExecutor
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.repos.UserRepository
@@ -19,10 +19,10 @@ class GetChatListExecutor(
     override suspend fun executeInternal(context: ExecutorContext) {
         val chats = commonRepository.getChats()
 
-        context.client.send(context, "Active chats count=${chats.size}")
+        context.send("Active chats count=${chats.size}")
         val totalUsersCount =
             chats.sumOf { chat -> calculate(context.client, chat) }
-        context.client.send(context, "Total users count=$totalUsersCount")
+        context.send("Total users count=$totalUsersCount")
     }
 
     private fun calculate(

@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.feature.settings.processors
 
 import dev.storozhenko.familybot.common.extensions.getMessageTokens
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -20,14 +20,13 @@ class LanguageSettingProcessor(
     override suspend fun process(context: ExecutorContext) {
         val value = context.update.getMessageTokens()[2]
         if (value != "вкл" && value != "выкл") {
-            context.client.send(
-                context,
+            context.send(
                 context.phrase(Phrase.ADVANCED_SETTINGS_FAILED_UKRAINIAN_CHANGE),
             )
             return
         }
         val setting = value == "вкл"
         easyKeyValueService.put(UkrainianLanguage, context.chatKey, setting)
-        context.client.send(context, context.phrase(Phrase.ADVANCED_SETTINGS_OK))
+        context.send(context.phrase(Phrase.ADVANCED_SETTINGS_OK))
     }
 }

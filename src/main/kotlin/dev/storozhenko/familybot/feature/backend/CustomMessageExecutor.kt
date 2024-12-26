@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.feature.backend
 
 import dev.storozhenko.familybot.common.extensions.getMessageTokens
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.OnlyBotOwnerExecutor
 import dev.storozhenko.familybot.core.repos.UserRepository
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -20,12 +20,12 @@ class CustomMessageExecutor(
             .getChats()
             .filter { chat -> chat.name?.contains(tokens[1], ignoreCase = true) ?: false }
         if (chats.size != 1) {
-            context.client.send(context, "Chat is not found, specify search: $chats")
+            context.send("Chat is not found, specify search: $chats")
             return
         }
 
         context.client.execute(SendMessage(chats.first().idString, tokens[2]))
-        context.client.send(context, "Message \"${tokens[2]}\" has been sent")
+        context.send("Message \"${tokens[2]}\" has been sent")
     }
 
     override fun getMessagePrefix() = "custom_message|"

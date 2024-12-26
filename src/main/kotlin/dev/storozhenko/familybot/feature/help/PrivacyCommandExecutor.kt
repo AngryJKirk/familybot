@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.feature.help
 
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -11,8 +11,7 @@ class PrivacyCommandExecutor : CommandExecutor() {
     override fun command() = Command.PRIVACY
 
     override suspend fun execute(context: ExecutorContext) {
-        context.client.send(
-            context, """
+        context.send( """
         Privacy Policy
         
         1. Data Collection

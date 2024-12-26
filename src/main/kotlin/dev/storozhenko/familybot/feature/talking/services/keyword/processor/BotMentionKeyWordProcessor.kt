@@ -2,7 +2,6 @@ package dev.storozhenko.familybot.feature.talking.services.keyword.processor
 
 import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.randomBoolean
-import dev.storozhenko.familybot.common.extensions.sendDeferred
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.settings.models.FuckOffOverride
@@ -55,8 +54,7 @@ class BotMentionKeyWordProcessor(
                     randomBoolean() && shouldBeQuestion,
                 )
             }
-            context.client.sendDeferred(
-                context,
+            context.sendDeferred(
                 reply,
                 replyToUpdate = true,
                 shouldTypeBeforeSend = true,

@@ -1,7 +1,6 @@
 package dev.storozhenko.familybot.feature.ai
 
 import dev.storozhenko.familybot.BotConfig
-import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.Executor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -19,17 +18,17 @@ class MemoryAddExecutor(
     override suspend fun execute(context: ExecutorContext) {
         val text = context.message.text
         if (text.isNullOrBlank()) {
-            context.client.send(context, "Пришли нормально")
+            context.send("Пришли нормально")
             return
         }
         if (text.length > 500) {
-            context.client.send(context, "Говорили же меньше 500 символов. Ты прислал ${text.length}")
+            context.send("Говорили же меньше 500 символов. Ты прислал ${text.length}")
             return
         }
 
         val currentMemory = easyKeyValueService.get(ChatGPTMemory, context.chatKey, "")
         easyKeyValueService.put(ChatGPTMemory, context.chatKey, "$currentMemory\n$text")
-        context.client.send(context, "Готово")
+        context.send("Готово")
     }
 
     override fun canExecute(context: ExecutorContext): Boolean {

@@ -2,7 +2,7 @@ package dev.storozhenko.familybot.feature.scenario.services
 
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.italic
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.common.extensions.toHourMinuteString
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -45,7 +45,7 @@ class ScenarioSessionManagementService(
             return
         }
         scenarioGameplayService.startGame(scenario, chat)
-        context.client.send(context, context.phrase(Phrase.SCENARIO_IS_STARTING))
+        context.send(context.phrase(Phrase.SCENARIO_IS_STARTING))
         currentGame(context)
     }
 
@@ -54,12 +54,10 @@ class ScenarioSessionManagementService(
     }
 
     suspend fun listGames(context: ExecutorContext) {
-        context.client.send(
-            context,
+        context.send(
             context.phrase(Phrase.SCENARIO_RULES),
         )
-        context.client.send(
-            context,
+        context.send(
             context.phrase(Phrase.SCENARIO_CHOOSE),
             replyToUpdate = true,
             customization = createKeyboardMarkup(),
@@ -94,8 +92,7 @@ class ScenarioSessionManagementService(
                     continueGame(context, nextMove, previousMove)
                 }
             } else {
-                context.client.send(
-                    context,
+                context.send(
                     context.phrase(Phrase.SCENARIO_POLL_DRAW),
                 )
                 val evenMorePreviousMove = scenarioService.getPreviousMove(previousMove)
@@ -110,16 +107,14 @@ class ScenarioSessionManagementService(
                 ).toHourMinuteString()
 
             runCatching {
-                context.client.send(
-                    context,
+                context.send(
                     context.phrase(Phrase.SCENARIO_POLL_EXISTS).replace("\$timeLeft", timeLeft),
                     replyMessageId = recentPoll.messageId,
                 )
             }
                 .onFailure { throwable ->
                     log.error(throwable) { "Sending poll reply fucked up" }
-                    context.client.send(
-                        context,
+                    context.send(
                         context.phrase(Phrase.SCENARIO_POLL_EXISTS_FALLBACK).replace("\$timeLeft", timeLeft),
                     )
                 }
@@ -132,7 +127,7 @@ class ScenarioSessionManagementService(
         previousMove: ScenarioMove?,
     ) {
         if (previousMove != null) {
-            context.client.send(context, getExpositionMessage(nextMove, previousMove), enableHtml = true)
+            context.send(getExpositionMessage(nextMove, previousMove), enableHtml = true)
             delay(2.seconds)
         }
 
@@ -199,7 +194,7 @@ class ScenarioSessionManagementService(
             .mapIndexed { i, description -> "${(i + 1).toString().bold()}. $description" }
             .joinToString("\n")
         val messageToSend = moveDescription + "\n\n" + scenarioOptions
-        val message = context.client.send(context, messageToSend, enableHtml = true)
+        val message = context.send(messageToSend, enableHtml = true)
         return context.client.execute(
             SendPoll(
                 context.chat.idString,
@@ -217,7 +212,7 @@ class ScenarioSessionManagementService(
     ): Message {
         val moveDescription = scenarioMove.description
         val scenarioOptions = scenarioMove.ways.map(ScenarioWay::description).map(::InputPollOption)
-        context.client.send(context, moveDescription)
+        context.send(moveDescription)
         return context.client.execute(
             SendPoll(
                 context.chat.idString,
@@ -244,10 +239,10 @@ class ScenarioSessionManagementService(
     private suspend fun sendFinal(previousMove: ScenarioMove, context: ExecutorContext) {
         val evenMorePreviousMove = scenarioService.getPreviousMove(previousMove)
             ?: throw FamilyBot.InternalException("Scenario seems broken")
-        context.client.send(context, getExpositionMessage(previousMove, evenMorePreviousMove), enableHtml = true)
+        context.send(getExpositionMessage(previousMove, evenMorePreviousMove), enableHtml = true)
         delay(2.seconds)
-        context.client.send(context, previousMove.description)
+        context.send(previousMove.description)
         delay(2.seconds)
-        context.client.send(context, context.phrase(Phrase.SCENARIO_END))
+        context.send(context.phrase(Phrase.SCENARIO_END))
     }
 }

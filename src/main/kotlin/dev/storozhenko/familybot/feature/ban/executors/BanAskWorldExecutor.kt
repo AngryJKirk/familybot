@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.feature.ban.executors
 
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -31,7 +31,7 @@ class BanAskWorldExecutor(
             }
         log.info { "Trying to ban, questions found: $questions" }
         when (questions.size) {
-            0 -> context.client.send(context, "Can't find anyone, sorry, my master")
+            0 -> context.send("Can't find anyone, sorry, my master")
             1 -> ban(context, questions.first())
             else ->
                 questions
@@ -50,10 +50,10 @@ class BanAskWorldExecutor(
         val isChat = tokens.getOrNull(2) == "chat"
         if (isChat) {
             banService.banChat(question.chat, banReason)
-            context.client.send(context, "${question.chat} is banned, my master", replyToUpdate = true)
+            context.send("${question.chat} is banned, my master", replyToUpdate = true)
         } else {
             banService.banUser(question.user, banReason)
-            context.client.send(context, "${question.user} is banned, my master", replyToUpdate = true)
+            context.send("${question.user} is banned, my master", replyToUpdate = true)
         }
     }
 }

@@ -3,7 +3,7 @@ package dev.storozhenko.familybot.feature.backend
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.code
 import dev.storozhenko.familybot.common.extensions.prettyFormat
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.OnlyBotOwnerExecutor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.models.telegram.Chat
@@ -34,9 +34,9 @@ class GPTStatsExecutor(
         val total = formatValue(stats.values.sum())
         val subs = activeSubs(chats)
 
-        context.client.send(context, message, enableHtml = true)
-        context.client.send(context, "Всего потрачено: $total", enableHtml = true)
-        context.client.send(context, subs, enableHtml = true)
+        context.send(message, enableHtml = true)
+        context.send("Всего потрачено: $total", enableHtml = true)
+        context.send(subs, enableHtml = true)
     }
 
     private fun activeSubs(chats: Map<Long, Chat>): String {

@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.feature.settings.executors
 
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Chat
@@ -20,8 +20,7 @@ class SettingsExecutor(
     }
 
     override suspend fun execute(context: ExecutorContext) {
-        context.client.send(
-            context,
+        context.send(
             context.phrase(Phrase.WHICH_SETTING_SHOULD_CHANGE),
             replyToUpdate = true,
             customization = customization(context.chat),

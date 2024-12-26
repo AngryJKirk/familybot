@@ -245,8 +245,7 @@ class PidorExecutor(
     private suspend fun pickPidor(context: ExecutorContext) {
         val abilityCount = easyKeyValueService.get(PickPidorAbilityCount, context.userKey, 0L)
         if (abilityCount <= 0L) {
-            context.client.send(
-                context,
+            context.send(
                 context.phrase(Phrase.PICK_PIDOR_PAYMENT_REQUIRED),
                 shouldTypeBeforeSend = true,
                 replyToUpdate = true,
@@ -257,15 +256,13 @@ class PidorExecutor(
 
         if (replyMessage.from.isBot) {
             if (replyMessage.from.userName == botConfig.botName) {
-                context.client.send(
-                    context,
+                context.send(
                     context.phrase(Phrase.PICK_PIDOR_CURRENT_BOT),
                     shouldTypeBeforeSend = true,
                     replyToUpdate = true,
                 )
             } else {
-                context.client.send(
-                    context,
+                context.send(
                     context.phrase(Phrase.PICK_PIDOR_ANY_BOT),
                     shouldTypeBeforeSend = true,
                     replyToUpdate = true,
@@ -278,8 +275,7 @@ class PidorExecutor(
         pidorRepository.addPidor(Pidor(pickedUser, Instant.now()))
         easyKeyValueService.decrement(PickPidorAbilityCount, context.userKey)
 
-        context.client.send(
-            context,
+        context.send(
             context.phrase(Phrase.PICK_PIDOR_PICKED).replace("{}", pickedUser.getGeneralName()),
             shouldTypeBeforeSend = true,
             replyMessageId = replyMessage.messageId,
@@ -290,16 +286,14 @@ class PidorExecutor(
             context.userKey,
         )
         if (newAbilityCount == 0L) {
-            context.client.send(
-                context,
+            context.send(
                 context.phrase(Phrase.PICK_PIDOR_ABILITY_COUNT_LEFT_NONE),
                 shouldTypeBeforeSend = true,
                 replyToUpdate = true,
                 enableHtml = true,
             )
         } else {
-            context.client.send(
-                context,
+            context.send(
                 context.phrase(Phrase.PICK_PIDOR_ABILITY_COUNT_LEFT).replace("{}", newAbilityCount.toString()),
                 shouldTypeBeforeSend = true,
                 replyToUpdate = true,

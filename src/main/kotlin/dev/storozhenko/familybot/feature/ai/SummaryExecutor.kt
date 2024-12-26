@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.feature.ai
 
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.common.extensions.toJson
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
@@ -36,8 +36,7 @@ class SummaryExecutor(
         val isCooldown = easyKeyValueService.get(ChatGPTSummaryCooldown, context.chatKey, false)
         if (paidTill == null || paidTill.isBefore(Instant.now())) {
             if (isCooldown) {
-                context.client.send(
-                    context,
+                context.send(
                     "Саммари на кулдауне, кулдаун 24 часа, если есть подписка из /shop то кулдаун там 5 минут"
                 )
                 return
@@ -46,7 +45,7 @@ class SummaryExecutor(
             }
         } else {
             if (isCooldown) {
-                context.client.send(context, "Падажжи, кулдаун, всего 5 минут")
+                context.send("Падажжи, кулдаун, всего 5 минут")
                 return
             } else {
                 easyKeyValueService.put(ChatGPTSummaryCooldown, context.chatKey, true, 5.minutes)
@@ -64,6 +63,6 @@ class SummaryExecutor(
             .mapIndexed { id, (user, message) -> UserMessage(id, user.getGeneralName(false), message) }
             .toJson(pretty = true)
         val useChatGpt4 = easyKeyValueService.get(ChatGPT4Enabled, context.chatKey, false)
-        context.client.send(context, talkingServiceChatGpt.internalMessage(prefix + "\n" + messages, useChatGpt4))
+        context.send(talkingServiceChatGpt.internalMessage(prefix + "\n" + messages, useChatGpt4))
     }
 }

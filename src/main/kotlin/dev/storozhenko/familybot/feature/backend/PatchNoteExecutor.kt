@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.feature.backend
 
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.OnlyBotOwnerExecutor
 import dev.storozhenko.familybot.core.models.telegram.Chat
 import dev.storozhenko.familybot.core.repos.UserRepository
@@ -21,7 +21,7 @@ abstract class PatchNoteExecutor(
 
     override suspend fun executeInternal(context: ExecutorContext) {
         if (context.message.isReply.not()) {
-            context.client.send(context, "No reply message found, master")
+            context.send("No reply message found, master")
             return
         }
 
@@ -31,7 +31,7 @@ abstract class PatchNoteExecutor(
         val message = results.awaitAll()
             .groupBy { it }
             .let { "${it[true]?.size ?: 0} sent, ${it[false]?.size ?: 0} failed" }
-        context.client.send(context, message)
+        context.send(message)
     }
 
     abstract fun getChats(): List<Chat>

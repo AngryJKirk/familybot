@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.feature.pidor.executors
 
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.OnlyBotOwnerExecutor
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.pidor.services.PidorAutoSelectService
@@ -18,6 +18,6 @@ class ManualPidorSelectExecutor(
             "it's done"
         }
             .onFailure { exception -> exception.message }
-        context.client.send(context, response.getOrDefault("error"))
+        context.send(response.getOrDefault("error"))
     }
 }

@@ -1,8 +1,7 @@
 package dev.storozhenko.familybot.feature.settings.executors
 
 import dev.storozhenko.familybot.common.extensions.getMessageTokens
-import dev.storozhenko.familybot.common.extensions.isFromAdmin
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Command
@@ -22,14 +21,13 @@ class AdvancedSettingsExecutor(
     override suspend fun execute(context: ExecutorContext) {
         val messageTokens = context.update.getMessageTokens()
         if (messageTokens.size == 1) {
-            context.client.send(
-                context,
+            context.send(
                 context.phrase(Phrase.ADVANCED_SETTINGS),
                 enableHtml = true,
             )
             return
         }
-        if (!context.client.isFromAdmin(context)) {
+        if (!context.isFromAdmin()) {
             sendErrorMessage(
                 context,
                 context.phrase(Phrase.ADVANCED_SETTINGS_ADMIN_ONLY),
@@ -53,6 +51,6 @@ class AdvancedSettingsExecutor(
         context: ExecutorContext,
         message: String = context.phrase(Phrase.ADVANCED_SETTINGS_ERROR),
     ) {
-        context.client.send(context, message)
+        context.send(message)
     }
 }

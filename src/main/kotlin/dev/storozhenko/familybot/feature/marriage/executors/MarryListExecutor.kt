@@ -3,7 +3,7 @@ package dev.storozhenko.familybot.feature.marriage.executors
 import dev.storozhenko.familybot.common.extensions.PluralizedWordsProvider
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.pluralize
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Command
@@ -65,10 +65,10 @@ class MarryListExecutor(
     override suspend fun execute(context: ExecutorContext) {
         val marriages = marriagesRepository.getAllMarriages(context.chat.id)
         if (marriages.isEmpty()) {
-            context.client.send(context, context.phrase(Phrase.MARRY_EMPTY_LIST))
+            context.send(context.phrase(Phrase.MARRY_EMPTY_LIST))
         } else {
             val marriageList = format(marriages, context)
-            context.client.send(context, marriageList, enableHtml = true)
+            context.send(marriageList, enableHtml = true)
         }
     }
 

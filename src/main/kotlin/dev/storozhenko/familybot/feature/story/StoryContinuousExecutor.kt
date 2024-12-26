@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.feature.story
 
 import dev.storozhenko.familybot.BotConfig
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.ContinuousConversationExecutor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.models.telegram.Command
@@ -31,7 +31,7 @@ class StoryContinuousExecutor(
     override suspend fun execute(context: ExecutorContext) {
         val isGameActive = easyKeyValueService.get(StoryGameActive, context.chatKey, false)
         if (isGameActive) {
-            context.client.send(context, "Игра уже начата, дурачок, просто вызови /story")
+            context.send("Игра уже начата, дурачок, просто вызови /story")
             return
         }
         storyTellingService.initStory(context)

@@ -2,7 +2,7 @@ package dev.storozhenko.familybot.feature.talking.executors
 
 import dev.storozhenko.familybot.common.extensions.dropLastDelimiter
 import dev.storozhenko.familybot.common.extensions.randomBoolean
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.Configurable
 import dev.storozhenko.familybot.core.executors.Executor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
@@ -26,7 +26,7 @@ class HuificatorExecutor(private val easyKeyValueService: EasyKeyValueService) :
 
         if (shouldHuificate(context)) {
             val huifyed = huify(text) ?: return
-            context.client.send(context, huifyed, shouldTypeBeforeSend = true)
+            context.send(huifyed, shouldTypeBeforeSend = true)
         }
     }
 

@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.feature.ban.executors
 
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.Executor
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.routers.models.Priority
@@ -18,7 +18,7 @@ class BanResponseExecutor(
             ?: "иди нахуй"
 
         if (context.command != null) {
-            context.client.send(context, banMessage, replyToUpdate = true)
+            context.send(banMessage, replyToUpdate = true)
         }
     }
 

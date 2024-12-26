@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.feature.settings.executors
 
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.common.extensions.toEmoji
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
@@ -19,8 +19,7 @@ class Gpt4AdminSettingExecutor(private val easyKeyValueService: EasyKeyValueServ
             // haha nice placebo
             easyKeyValueService.put(ChatGPT4Enabled, context.chatKey, currentValue.not())
         }
-        context.client.send(
-            context,
+        context.send(
             "OK, ${currentValue.toEmoji()} => ${currentValue.not().toEmoji()}",
             replyToUpdate = true
         )

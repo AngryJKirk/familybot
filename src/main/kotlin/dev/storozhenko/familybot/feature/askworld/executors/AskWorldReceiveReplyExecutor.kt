@@ -2,9 +2,8 @@ package dev.storozhenko.familybot.feature.askworld.executors
 
 import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.boldNullable
-import dev.storozhenko.familybot.common.extensions.isFromAdmin
 import dev.storozhenko.familybot.common.extensions.italic
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.Configurable
 import dev.storozhenko.familybot.core.executors.Executor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
@@ -88,7 +87,7 @@ class AskWorldReceiveReplyExecutor(
         val question =
             askWorldRepository.findQuestionByMessageId(messageId + chatId, chatId) ?: return
         if (reply == "/ignore") {
-            if (context.client.isFromAdmin(context)) {
+            if (context.isFromAdmin()) {
                 val ignoreList =
                     easyKeyValueService.get(AskWorldIgnore, context.chatKey, emptyMap())
                 easyKeyValueService.put(
@@ -97,10 +96,10 @@ class AskWorldReceiveReplyExecutor(
                     ignoreList.plus(question.chat.idString to Instant.now().plus(30, ChronoUnit.DAYS))
                 )
                 log.info("Char $chat decided to ignore chat ${question.chat.idString}")
-                context.client.send(context, context.phrase(Phrase.ASK_WORLD_IGNORE_DONE), replyToUpdate = true)
+                context.send(context.phrase(Phrase.ASK_WORLD_IGNORE_DONE), replyToUpdate = true)
 
             } else {
-                context.client.send(context, context.phrase(Phrase.ASK_WORLD_IGNORE_ADMIN_ONLY), replyToUpdate = true)
+                context.send(context.phrase(Phrase.ASK_WORLD_IGNORE_ADMIN_ONLY), replyToUpdate = true)
             }
         }
         if (askWorldRepository.isReplied(question, chat, user)) {
@@ -150,9 +149,9 @@ class AskWorldReceiveReplyExecutor(
                 )
                 dispatchMedia(context.client, contentType, chatIdToReply, message)
             }
-            context.client.send(context, "Принято и отправлено")
+            context.send("Принято и отправлено")
         }.onFailure { e ->
-            context.client.send(context, "Принято")
+            context.send("Принято")
             log.info("Could not send reply instantly", e)
         }
     }

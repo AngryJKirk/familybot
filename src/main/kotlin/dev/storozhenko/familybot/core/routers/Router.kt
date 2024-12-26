@@ -5,7 +5,6 @@ import dev.storozhenko.familybot.common.extensions.context
 import dev.storozhenko.familybot.common.extensions.key
 import dev.storozhenko.familybot.common.extensions.message
 import dev.storozhenko.familybot.common.extensions.prettyFormat
-import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.common.extensions.toChat
 import dev.storozhenko.familybot.common.extensions.toUser
 import dev.storozhenko.familybot.core.executors.CommandExecutor
@@ -138,7 +137,7 @@ class Router(
 
     private suspend fun disabledCommand(context: ExecutorContext) {
         val phrase = context.phrase(Phrase.COMMAND_IS_OFF)
-        context.client.send(context, phrase)
+        context.send(phrase)
     }
 
     private fun isExecutorDisabled(executor: Executor, context: ExecutorContext): Boolean {

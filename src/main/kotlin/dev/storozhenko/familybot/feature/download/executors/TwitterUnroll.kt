@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.feature.download.executors
 
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.Executor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -16,7 +16,7 @@ class TwitterUnroll(
         val message = getTwitterUrls(context)
             .mapNotNull(::extractStatusId)
             .joinToString(separator = "\n") { "https://unrollnow.com/status/$it" }
-        context.client.send(context, message, replyToUpdate = true)
+        context.send(message, replyToUpdate = true)
     }
 
     override fun canExecute(context: ExecutorContext): Boolean {

@@ -3,7 +3,7 @@ package dev.storozhenko.familybot.feature.stats
 import dev.storozhenko.familybot.common.extensions.DateConstants
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.pluralize
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Command
@@ -27,8 +27,7 @@ class CommandStatExecutor(
             .sortedByDescending { (_, list) -> list.size }
             .joinToString(separator = "\n") { (command, list) -> "${command.command}: ${list.size} ${pluralize(list.size)}" }
 
-        context.client.send(
-            context,
+        context.send(
             "${context.phrase(Phrase.STATS_BY_COMMAND)}:\n".bold() + topList,
             enableHtml = true,
         )

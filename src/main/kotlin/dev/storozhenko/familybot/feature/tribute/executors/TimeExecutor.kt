@@ -4,7 +4,7 @@ import dev.storozhenko.familybot.common.extensions.DateConstants
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.code
 import dev.storozhenko.familybot.common.extensions.pluralize
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -63,8 +63,7 @@ class TimeExecutor : CommandExecutor() {
         val result = times.map { (prefix, zone) -> prefix to now.atZone(zone) }
             .sortedBy { (_, time) -> time }
             .joinToString(separator = "\n") { (prefix, time) -> prefix + time.format(timeFormatter).bold() }
-        context.client.send(
-            context,
+        context.send(
             "$result\n${getMortgageDate(DateConstants.vityaMortgageDate, now)}",
             replyToUpdate = true,
             enableHtml = true

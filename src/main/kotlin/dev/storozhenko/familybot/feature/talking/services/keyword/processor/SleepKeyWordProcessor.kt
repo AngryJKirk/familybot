@@ -1,6 +1,5 @@
 package dev.storozhenko.familybot.feature.talking.services.keyword.processor
 
-import dev.storozhenko.familybot.common.extensions.sendSticker
 import dev.storozhenko.familybot.core.models.telegram.stickers.Sticker
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.talking.services.keyword.KeyWordProcessor
@@ -15,7 +14,7 @@ class SleepKeyWordProcessor : KeyWordProcessor {
     }
 
     override suspend fun process(context: ExecutorContext) {
-        context.client.sendSticker(context, Sticker.SWEET_DREAMS, replyToUpdate = true)
+        context.sendSticker(Sticker.SWEET_DREAMS, replyToUpdate = true)
     }
 
     override fun isRandom() = true

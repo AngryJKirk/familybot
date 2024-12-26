@@ -2,7 +2,6 @@ package dev.storozhenko.familybot.feature.marriage.executors
 
 import dev.storozhenko.familybot.common.extensions.chatId
 import dev.storozhenko.familybot.common.extensions.key
-import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.common.extensions.toChat
 import dev.storozhenko.familybot.common.extensions.toUser
 import dev.storozhenko.familybot.core.executors.CommandExecutor
@@ -36,7 +35,7 @@ class MarriageExecutor(
 
     override suspend fun execute(context: ExecutorContext) {
         if (!context.message.isReply) {
-            context.client.send(context, context.phrase(Phrase.MARRY_RULES))
+            context.send(context.phrase(Phrase.MARRY_RULES))
             return
         }
         val chat = context.chat
@@ -53,8 +52,7 @@ class MarriageExecutor(
             return
         }
         if (proposalTarget.from.isBot) {
-            context.client.send(
-                context,
+            context.send(
                 context.phrase(Phrase.MARRY_PROPOSED_TO_BOT),
                 replyToUpdate = true,
             )
@@ -62,8 +60,7 @@ class MarriageExecutor(
         }
 
         if (isMarriedAlready(chat, proposalSource)) {
-            context.client.send(
-                context,
+            context.send(
                 context.phrase(Phrase.MARRY_SOURCE_IS_MARRIED),
                 replyToUpdate = true,
             )
@@ -71,16 +68,14 @@ class MarriageExecutor(
         }
 
         if (isMarriedAlready(chat, proposalTarget)) {
-            context.client.send(
-                context,
+            context.send(
                 context.phrase(Phrase.MARRY_TARGET_IS_MARRIED),
                 replyToUpdate = true,
             )
             return
         }
         if (isProposedAlready(proposalSource, proposalTarget)) {
-            context.client.send(
-                context,
+            context.send(
                 context.phrase(Phrase.MARRY_PROPOSED_AGAIN),
                 replyToUpdate = true,
             )
@@ -118,8 +113,7 @@ class MarriageExecutor(
             value = proposalSource.from.id,
             duration = 10.minutes,
         )
-        context.client.send(
-            context,
+        context.send(
             context.phrase(Phrase.MARRY_PROPOSED),
             replyMessageId = proposalTarget.messageId,
         )
@@ -132,6 +126,6 @@ class MarriageExecutor(
         val marriage = Marriage(update.chatId(), proposalTarget, proposalSource)
         marriagesRepository.addMarriage(marriage)
         keyValueService.remove(ProposalTo, UserAndChatEasyKey(proposalTarget.id, update.toChat().id))
-        context.client.send(context, context.phrase(Phrase.MARRY_CONGRATS))
+        context.send(context.phrase(Phrase.MARRY_CONGRATS))
     }
 }

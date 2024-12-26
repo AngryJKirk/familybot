@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.feature.gambling
 
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.executors.Configurable
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
@@ -24,15 +24,13 @@ class BetExecutor(
 
     override suspend fun execute(context: ExecutorContext) {
         if (isBetAlreadyDone(context.userAndChatKey)) {
-            context.client.send(
-                context,
+            context.send(
                 context.phrase(Phrase.BET_ALREADY_WAS),
                 shouldTypeBeforeSend = true,
             )
             return
         }
-        context.client.send(
-            context,
+        context.send(
             context.phrase(Phrase.BET_INITIAL_MESSAGE),
             replyToUpdate = true,
             shouldTypeBeforeSend = true,

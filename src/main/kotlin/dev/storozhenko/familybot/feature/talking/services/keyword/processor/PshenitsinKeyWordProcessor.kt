@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.feature.talking.services.keyword.processor
 
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -37,8 +37,7 @@ class PshenitsinKeyWordProcessor(
             .toCharArray()
             .let(::String)
 
-        context.client.send(
-            context,
+        context.send(
             text,
             shouldTypeBeforeSend = true,
             replyToUpdate = true,

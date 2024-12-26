@@ -3,7 +3,7 @@ package dev.storozhenko.familybot.feature.pidor.executors
 import dev.storozhenko.familybot.common.extensions.PluralizedWordsProvider
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.formatTopList
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.executors.Configurable
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
@@ -36,7 +36,7 @@ class PidorStatsExecutor(
             )
             .take(100)
         val title = "${context.phrase(Phrase.PIDOR_STAT_ALL_TIME)}:\n".bold()
-        context.client.send(context, title + pidorsByChat.joinToString("\n"), enableHtml = true)
+        context.send(title + pidorsByChat.joinToString("\n"), enableHtml = true)
     }
 
     override fun command(): Command {

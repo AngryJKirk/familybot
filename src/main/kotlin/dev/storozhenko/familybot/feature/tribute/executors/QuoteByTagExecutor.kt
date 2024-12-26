@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.feature.tribute.executors
 
 import dev.storozhenko.familybot.common.extensions.capitalized
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -26,8 +26,7 @@ class QuoteByTagExecutor(private val quoteRepository: QuoteRepository) : Command
             }
             .chunked(3)
             .map(::InlineKeyboardRow)
-        context.client.send(
-            context,
+        context.send(
             QUOTE_MESSAGE,
             replyToUpdate = true,
             customization = { replyMarkup = InlineKeyboardMarkup(rows) },

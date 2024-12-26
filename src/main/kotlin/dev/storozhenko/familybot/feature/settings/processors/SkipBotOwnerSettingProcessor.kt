@@ -1,7 +1,7 @@
 package dev.storozhenko.familybot.feature.settings.processors
 
 import dev.storozhenko.familybot.common.extensions.getMessageTokens
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.common.extensions.toEmoji
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -18,6 +18,6 @@ class SkipBotOwnerSettingProcessor(private val easyKeyValueService: EasyKeyValue
         val currentSetting = easyKeyValueService.get(BotOwnerPidorSkip, context.chatKey) ?: false
         val newSetting = currentSetting.not()
         easyKeyValueService.put(BotOwnerPidorSkip, context.chatKey, newSetting)
-        context.client.send(context, "${currentSetting.toEmoji()} => ${newSetting.toEmoji()}")
+        context.send("${currentSetting.toEmoji()} => ${newSetting.toEmoji()}")
     }
 }

@@ -1,8 +1,6 @@
 package dev.storozhenko.familybot.feature.ai
 
 import dev.storozhenko.familybot.BotConfig
-import dev.storozhenko.familybot.common.extensions.isFromAdmin
-import dev.storozhenko.familybot.common.extensions.send
 import dev.storozhenko.familybot.core.executors.ContinuousConversationExecutor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.models.telegram.Command
@@ -37,26 +35,26 @@ class MemoryContinuousExecutor(
     private suspend fun show(context: ExecutorContext) {
         val memory = easyKeyValueService.get(ChatGPTMemory, context.chatKey)
         if (memory != null) {
-            context.client.send(context, "Текущая память: $memory")
+            context.send("Текущая память: $memory")
         } else {
-            context.client.send(context, "Память отсутствует.")
+            context.send("Память отсутствует.")
         }
     }
 
     private suspend fun add(context: ExecutorContext) {
-        context.client.send(context, "Напиши что добавить в ответ на это сообщение, 500 символов максимум")
+        context.send("Напиши что добавить в ответ на это сообщение, 500 символов максимум")
     }
 
     private suspend fun clear(context: ExecutorContext) {
-        if (context.client.isFromAdmin(context)) {
+        if (context.isFromAdmin()) {
             val memory = easyKeyValueService.getAndRemove(ChatGPTMemory, context.chatKey)
             if (memory != null) {
-                context.client.send(context, "Память удалена. Вот на память бэкап: $memory")
+                context.send("Память удалена. Вот на память бэкап: $memory")
             } else {
-                context.client.send(context, "Нечего чистить, памяти нет.")
+                context.send("Нечего чистить, памяти нет.")
             }
         } else {
-            context.client.send(context, "Чистить память можно только админам")
+            context.send("Чистить память можно только админам")
         }
     }
 }

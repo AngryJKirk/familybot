@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.feature.story
 
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.settings.models.StoryContext
@@ -63,7 +63,7 @@ class StoryTellingService(
         val continueStoryResponse = talkingService.internalMessage(previousMessages + "\n\n" + message, useGpt4 = true)
         if (isEndOfStory) {
             cleanUp(context)
-            context.client.send(context, continueStoryResponse)
+            context.send(continueStoryResponse)
         } else {
             addResponse(context, continueStoryResponse)
             sendPoll(context, continueStoryResponse)
@@ -89,7 +89,7 @@ class StoryTellingService(
     }
 
     private suspend fun sendPoll(context: ExecutorContext, response: String) {
-        context.client.send(context, response)
+        context.send(response)
         val poll = context.client.execute(
             SendPoll(
                 context.chat.idString, "Какой вариант выбираете?",

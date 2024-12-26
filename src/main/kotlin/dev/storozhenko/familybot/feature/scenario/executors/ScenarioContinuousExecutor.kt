@@ -1,7 +1,6 @@
 package dev.storozhenko.familybot.feature.scenario.executors
 
 import dev.storozhenko.familybot.BotConfig
-import dev.storozhenko.familybot.common.extensions.isFromAdmin
 import dev.storozhenko.familybot.core.executors.ContinuousConversationExecutor
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Command
@@ -26,7 +25,7 @@ class ScenarioContinuousExecutor(
     override suspend fun execute(context: ExecutorContext) {
         val callbackQuery = context.update.callbackQuery
 
-        if (!context.client.isFromAdmin(context)) {
+        if (!context.isFromAdmin()) {
             context.client.execute(
                 AnswerCallbackQuery(callbackQuery.id)
                     .apply {

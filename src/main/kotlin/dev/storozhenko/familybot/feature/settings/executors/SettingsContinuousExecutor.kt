@@ -1,7 +1,6 @@
 package dev.storozhenko.familybot.feature.settings.executors
 
 import dev.storozhenko.familybot.BotConfig
-import dev.storozhenko.familybot.common.extensions.isFromAdmin
 import dev.storozhenko.familybot.common.extensions.toEmoji
 import dev.storozhenko.familybot.core.executors.ContinuousConversationExecutor
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
@@ -33,7 +32,7 @@ class SettingsContinuousExecutor(
         val chat = context.chat
         val callbackQuery = context.update.callbackQuery
 
-        if (!context.client.isFromAdmin(context)) {
+        if (!context.isFromAdmin()) {
             log.info { "Access to settings denied" }
             context.client.execute(
                 AnswerCallbackQuery(callbackQuery.id)

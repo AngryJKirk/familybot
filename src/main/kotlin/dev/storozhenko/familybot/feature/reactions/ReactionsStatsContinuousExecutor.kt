@@ -5,7 +5,7 @@ import dev.storozhenko.familybot.common.extensions.PluralizedWordsProvider
 import dev.storozhenko.familybot.common.extensions.bold
 import dev.storozhenko.familybot.common.extensions.link
 import dev.storozhenko.familybot.common.extensions.pluralize
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.ContinuousConversationExecutor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.models.telegram.Command
@@ -47,8 +47,7 @@ class ReactionsStatsContinuousExecutor(
         val (reactionsPeriod, isAi) = ReactionsPeriod.parse(callbackPeriod)
         val reactions = reactionRepository.get(context.chat, reactionsPeriod.period)
         if (reactions.isEmpty()) {
-            context.client.send(
-                context,
+            context.send(
                 "Реакций еще нет. Скорее всего, вам необходимо сделать бота админом чтобы он имел возможность собирать реакции."
             )
             return
@@ -66,11 +65,10 @@ class ReactionsStatsContinuousExecutor(
         reactions: List<ReactionRepository.Reaction>
     ) {
 
-        context.client.send(
-            context,
+        context.send(
             getPeriodDesc(period).bold() + "\n${calculateReactionStats(reactions)}", enableHtml = true
         )
-        context.client.send(context, calculateReactionStatsByMessage(reactions), enableHtml = true)
+        context.send(calculateReactionStatsByMessage(reactions), enableHtml = true)
     }
 
     private suspend fun sendAiReactions(
@@ -82,8 +80,7 @@ class ReactionsStatsContinuousExecutor(
         val isCooldown = easyKeyValueService.get(ChatGPTReactionsCooldown, context.chatKey, false)
         if (paidTill == null || paidTill.isBefore(Instant.now())) {
             if (isCooldown) {
-                context.client.send(
-                    context,
+                context.send(
                     "АИ реакции на кулдауне, кулдаун 12 часов, если есть подписка из /shop то кулдаун там 5 минут"
                 )
                 return
@@ -92,7 +89,7 @@ class ReactionsStatsContinuousExecutor(
             }
         } else {
             if (isCooldown) {
-                context.client.send(context, "Падажжи, кулдаун, всего 5 минут")
+                context.send("Падажжи, кулдаун, всего 5 минут")
                 return
             } else {
                 easyKeyValueService.put(ChatGPTReactionsCooldown, context.chatKey, true, 5.minutes)
@@ -116,7 +113,7 @@ class ReactionsStatsContinuousExecutor(
             """.trimIndent(),
             useChatGpt4
         )
-        context.client.send(context, getPeriodDesc(period) + "\n" + analytics)
+        context.send(getPeriodDesc(period) + "\n" + analytics)
         return
     }
 

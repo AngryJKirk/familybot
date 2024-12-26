@@ -2,7 +2,7 @@ package dev.storozhenko.familybot.feature.backend
 
 import dev.storozhenko.familybot.common.ErrorLogsDeferredAppender
 import dev.storozhenko.familybot.common.extensions.getMessageTokens
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.OnlyBotOwnerExecutor
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.talking.services.TalkingServiceChatGpt
@@ -21,11 +21,11 @@ class LogsExecutor(private val talkingServiceChatGpt: TalkingServiceChatGpt) : O
         val tokens = context.update.getMessageTokens()
         if (tokens.getOrNull(1) == "clear") {
             ErrorLogsDeferredAppender.errors.clear()
-            context.client.send(context, "Cleared")
+            context.send("Cleared")
         }
 
         if (ErrorLogsDeferredAppender.errors.isEmpty()) {
-            context.client.send(context, "No errors yet")
+            context.send("No errors yet")
         } else {
             val chatGptAnalysis = coroutineScope { async { getChatGptAnalysis() } }
             val errors = ErrorLogsDeferredAppender

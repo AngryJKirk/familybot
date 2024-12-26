@@ -26,9 +26,9 @@ class KeyWordExecutorTest : ExecutorTest() {
     lateinit var keyWordExecutor: KeyWordExecutor
 
     companion object {
-        private val leftZigaSticker = singleStickerUpdate(Sticker.LEFT_ZIGA)
-        private val rightZigaSticker = singleStickerUpdate(Sticker.RIGHT_ZIGA)
-        private val noZigaSticker = singleStickerUpdate(Sticker.SWEET_DREAMS)
+        private val leftHelloSticker = singleStickerUpdate(Sticker.LEFT_HELLO)
+        private val rightHelloSticker = singleStickerUpdate(Sticker.RIGHT_HELLO)
+        private val noHelloSticker = singleStickerUpdate(Sticker.SWEET_DREAMS)
     }
 
     override fun priorityTest() {
@@ -37,14 +37,14 @@ class KeyWordExecutorTest : ExecutorTest() {
     }
 
     override fun canExecuteTest() {
-        Assertions.assertTrue(keyWordExecutor.canExecute(leftZigaSticker.context(botConfig, dictionary, client)))
-        Assertions.assertTrue(keyWordExecutor.canExecute(rightZigaSticker.context(botConfig, dictionary, client)))
-        Assertions.assertFalse(keyWordExecutor.canExecute(noZigaSticker.context(botConfig, dictionary, client)))
+        Assertions.assertTrue(keyWordExecutor.canExecute(leftHelloSticker.context(botConfig, dictionary, client)))
+        Assertions.assertTrue(keyWordExecutor.canExecute(rightHelloSticker.context(botConfig, dictionary, client)))
+        Assertions.assertFalse(keyWordExecutor.canExecute(noHelloSticker.context(botConfig, dictionary, client)))
     }
 
     override fun executeTest() {
-        runBlocking { keyWordExecutor.execute(leftZigaSticker.context(botConfig, dictionary, client)) }
-        runBlocking { keyWordExecutor.execute(rightZigaSticker.context(botConfig, dictionary, client)) }
+        runBlocking { keyWordExecutor.execute(leftHelloSticker.context(botConfig, dictionary, client)) }
+        runBlocking { keyWordExecutor.execute(rightHelloSticker.context(botConfig, dictionary, client)) }
         verify(client, times(2)).execute(any<SendSticker>())
     }
 }

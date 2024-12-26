@@ -1,6 +1,6 @@
 package dev.storozhenko.familybot.feature.download.executors
 
-import dev.storozhenko.familybot.common.extensions.send
+
 import dev.storozhenko.familybot.core.executors.OnlyBotOwnerExecutor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
 import dev.storozhenko.familybot.core.keyvalue.models.PlainKey
@@ -40,9 +40,9 @@ class IgCookiesExecutor(
             val value = telegramClient.downloadFile(filePath).readText()
             easyKeyValueService.put(IGCookie, IG_COOKIE_KEY, value)
             igCookieService.saveToFile(value)
-            context.client.send(context, "Ok")
+            context.send("Ok")
         }.onFailure {
-            context.client.send(context, it.message ?: "wtf")
+            context.send(it.message ?: "wtf")
                 log.error(it) { "Bad happened during cookie upload" }
         }
     }
