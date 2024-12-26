@@ -1,7 +1,6 @@
 package dev.storozhenko.familybot.feature.settings.executors
 
 import dev.storozhenko.familybot.BotConfig
-import dev.storozhenko.familybot.common.extensions.toEmoji
 import dev.storozhenko.familybot.core.executors.ContinuousConversationExecutor
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Command
@@ -11,7 +10,6 @@ import dev.storozhenko.familybot.feature.settings.repos.FunctionsConfigureReposi
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
 
 @Component
@@ -59,12 +57,6 @@ class SettingsContinuousExecutor(
                         },
                     )
                 }
-                context.client.execute(
-                    SendMessage(
-                        chat.idString,
-                        "${function.desc} → ${isEnabled.invoke(function).toEmoji()}",
-                    ),
-                )
             }
         }
     }

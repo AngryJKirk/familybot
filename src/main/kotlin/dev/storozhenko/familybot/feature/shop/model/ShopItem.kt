@@ -1,12 +1,7 @@
 package dev.storozhenko.familybot.feature.shop.model
 
-import dev.storozhenko.familybot.common.extensions.from
 import dev.storozhenko.familybot.common.extensions.rubles
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
-import dev.storozhenko.familybot.core.routers.models.ExecutorContext
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow
 
 enum class ShopItem(val title: Phrase, val description: Phrase, val price: Int) {
 
@@ -20,27 +15,5 @@ enum class ShopItem(val title: Phrase, val description: Phrase, val price: Int) 
     CHAT_GPT(Phrase.CHAT_GTP_TITLE, Phrase.CHAT_GTP_DESC, 300.rubles()),
     I_AM_RICH(Phrase.I_AM_RICH_TITLE, Phrase.I_AM_RICH_DESC, 1000.rubles());
 
-    companion object {
-        fun toKeyBoard(context: ExecutorContext): InlineKeyboardMarkup {
-            return InlineKeyboardMarkup(
-                entries
-                    .map { shopItem ->
-                        InlineKeyboardButton(formatLine(context, shopItem))
-                            .apply { callbackData = shopItem.name }
-                    }
-                    .chunked(1)
-                    .map(::InlineKeyboardRow),
 
-                )
-        }
-
-        private fun formatLine(
-            context: ExecutorContext,
-            shopItem: ShopItem,
-        ): String {
-            val isPremium = context.update.from().isPremium ?: false
-            val additionalCost = if (isPremium) 5 else 0
-            return context.phrase(shopItem.title) + " - ${shopItem.price + additionalCost}⭐"
-        }
-    }
 }

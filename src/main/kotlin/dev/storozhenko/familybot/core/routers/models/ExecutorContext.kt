@@ -30,6 +30,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberAdministrator
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberOwner
 import org.telegram.telegrambots.meta.api.objects.message.Message
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.generics.TelegramClient
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker as TelegramSticker
 
@@ -64,6 +65,7 @@ data class ExecutorContext(
             customization: SendMessage.() -> Unit = { },
             shouldTypeBeforeSend: Boolean = false,
             typeDelay: Pair<Int, Int> = 1000 to 2000,
+            keyboard: (KeyboardDsl.() -> InlineKeyboardMarkup)? = null
         ): Message {
             SenderLogger.log.info {
                 "Sending message, update=${update?.toJson() ?: "[N/A]"}, " +
@@ -93,6 +95,7 @@ data class ExecutorContext(
                             if (replyToUpdate) {
                                 replyToMessageId = messageId
                             }
+                            replyMarkup = keyboard?.invoke(KeyboardDsl())
                             customization()
                         }
                 }.map { message ->
@@ -136,6 +139,7 @@ data class ExecutorContext(
         customization: SendMessage.() -> Unit = { },
         shouldTypeBeforeSend: Boolean = false,
         typeDelay: Pair<Int, Int> = 1000 to 2000,
+        keyboard: (KeyboardDsl.() -> InlineKeyboardMarkup)? = null
     ): Message {
         return sendInternal(
             client,
@@ -150,6 +154,7 @@ data class ExecutorContext(
             customization,
             shouldTypeBeforeSend,
             typeDelay,
+            keyboard
         )
     }
 

@@ -1,13 +1,13 @@
 package dev.storozhenko.familybot.feature.shop.executors
 
 
+import dev.storozhenko.familybot.common.extensions.from
 import dev.storozhenko.familybot.core.executors.CommandExecutor
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.shop.model.ShopItem
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 
 @Component
 class ShopExecutor : CommandExecutor() {
@@ -19,13 +19,21 @@ class ShopExecutor : CommandExecutor() {
         context.send(
             context.phrase(Phrase.SHOP_KEYBOARD),
             replyToUpdate = true,
-            customization = customization(context),
-        )
+        ) {
+            keyboard {
+                ShopItem.entries.forEach { item ->
+                    row(button(formatLine(context, item)) { item.name })
+                }
+            }
+        }
     }
 
-    private fun customization(context: ExecutorContext): SendMessage.() -> Unit {
-        return {
-            replyMarkup = ShopItem.toKeyBoard(context)
-        }
+    private fun formatLine(
+        context: ExecutorContext,
+        shopItem: ShopItem,
+    ): String {
+        val isPremium = context.update.from().isPremium ?: false
+        val additionalCost = if (isPremium) 5 else 0
+        return context.phrase(shopItem.title) + " - ${shopItem.price + additionalCost}⭐"
     }
 }

@@ -13,6 +13,7 @@ import dev.storozhenko.familybot.core.keyvalue.models.ChatEasyKey
 import dev.storozhenko.familybot.core.keyvalue.models.PlainKey
 import dev.storozhenko.familybot.core.models.dictionary.Phrase
 import dev.storozhenko.familybot.core.repos.UserRepository
+import dev.storozhenko.familybot.core.routers.models.KeyboardDsl
 import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.feature.settings.models.PaymentKey
 import dev.storozhenko.familybot.feature.settings.models.RefundNeedsToPressTime
@@ -28,9 +29,6 @@ import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery
 import org.telegram.telegrambots.meta.api.methods.payments.RefundStarPayment
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow
 import org.telegram.telegrambots.meta.generics.TelegramClient
 import java.util.UUID
 import kotlin.time.Duration.Companion.minutes
@@ -113,11 +111,12 @@ class PaymentRouter(
                 timesNeedToPress = 4
             }
             if (timesNeedToPress > 0) {
-                client.execute(AnswerCallbackQuery(callbackQuery.id)
-                    .apply {
-                        text = "$timesNeedToPress times more to press to refund"
-                        showAlert = true
-                    })
+                client.execute(
+                    AnswerCallbackQuery(callbackQuery.id)
+                        .apply {
+                            text = "$timesNeedToPress times more to press to refund"
+                            showAlert = true
+                        })
                 easyKeyValueService.decrement(RefundNeedsToPressTime, key)
             } else {
                 client.execute(AnswerCallbackQuery(callbackQuery.id))
@@ -173,13 +172,10 @@ class PaymentRouter(
         ).toJson()
         easyKeyValueService.put(PaymentKey, PlainKey(paymentKey), refundJson)
 
-        val refundButton = InlineKeyboardButton("Refund⭐").apply {
-            callbackData = "REFUND=$paymentKey"
-        }
         client.execute(
             SendMessage(botConfig.developerId.toString(), message).apply {
                 enableHtml(true)
-                replyMarkup = InlineKeyboardMarkup(listOf(InlineKeyboardRow(refundButton)))
+                replyMarkup = KeyboardDsl().keyboard { row(button("Refund⭐") { "REFUND=$paymentKey" }) }
             },
         )
     }
