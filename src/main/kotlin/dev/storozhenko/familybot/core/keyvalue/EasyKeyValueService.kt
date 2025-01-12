@@ -11,6 +11,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.data.redis.core.ScanOptions.scanOptions
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Component
+import java.util.concurrent.TimeUnit
 import kotlin.time.toJavaDuration
 
 @Component
@@ -137,6 +138,10 @@ class EasyKeyValueService(
 
             if (value != null) {
                 redisTemplate.opsForValue().set(newKey, value)
+                val ttl = redisTemplate.getExpire(key)
+                if (ttl > 0) {
+                    redisTemplate.expire(newKey, ttl, TimeUnit.SECONDS)
+                }
                 redisTemplate.delete(key)
             }
         }
