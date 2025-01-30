@@ -14,12 +14,11 @@ class ReactionStatsExecutor : CommandExecutor() {
     override suspend fun execute(context: ExecutorContext) {
         context.send("За какой период реакции?") {
             keyboard {
-                row(ReactionsPeriod.entries.map { period -> button(period.periodName) { period.periodName } })
-                row(ReactionsPeriod.entries.map { period -> button(AI_PREFIX + period.periodName) { AI_PREFIX + period.periodName } })
+                row { ReactionsPeriod.entries.forEach { period -> button(period.periodName) { period.periodName } } }
+                row { ReactionsPeriod.entries.forEach { period -> button(AI_PREFIX + period.periodName) { AI_PREFIX + period.periodName } } }
             }
         }
     }
-
 
 
 }

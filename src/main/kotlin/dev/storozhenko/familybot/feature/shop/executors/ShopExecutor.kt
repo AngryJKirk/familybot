@@ -22,7 +22,7 @@ class ShopExecutor : CommandExecutor() {
         ) {
             keyboard {
                 ShopItem.entries.forEach { item ->
-                    row(button(formatLine(context, item)) { item.name })
+                    row { button(formatLine(context, item)) { item.name } }
                 }
             }
         }

@@ -15,11 +15,11 @@ class MemoryCommandExecutor : CommandExecutor() {
             "Какое действие с ИИ памятью вы хотите выполнить? Эта память будет использована чтобы у бота был контекст при общении.",
         ) {
             keyboard {
-                row(
-                    button("Добавить") { "add" },
-                    button("Показать что есть") { "add" },
-                    button("Стереть все") { "clear" },
-                )
+                row {
+                    button("Добавить") { "add" }
+                    button("Показать что есть") { "add" }
+                    button("Стереть все") { "clear" }
+                }
             }
         }
     }

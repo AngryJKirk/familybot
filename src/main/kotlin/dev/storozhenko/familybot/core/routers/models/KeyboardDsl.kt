@@ -12,22 +12,31 @@ class KeyboardDsl {
         return markup
     }
 
-    fun row(vararg buttons: InlineKeyboardButton) = row(buttons.toList())
+    fun row(init: RowDsl.() -> Unit) {
+        val buttons = RowDsl().apply(init).buttons
+        if (buttons.isNotEmpty()) {
+            markup.keyboard.add(InlineKeyboardRow(buttons))
+        }
+    }
+}
 
-    fun row(buttons: List<InlineKeyboardButton>) {
-        markup.keyboard.add(InlineKeyboardRow(buttons))
+class RowDsl {
+    val buttons = mutableListOf<InlineKeyboardButton>()
+
+    fun row(init: RowDsl.() -> Unit): List<InlineKeyboardButton> {
+        init.invoke(this)
+        return buttons
     }
 
-    fun button(text: String, data: () -> String): InlineKeyboardButton {
-        return InlineKeyboardButton(text).apply {
+    fun button(text: String, data: () -> String) {
+        buttons.add(InlineKeyboardButton(text).apply {
             callbackData = data()
-        }
+        })
     }
 
-    fun link(text: String, data: () -> String): InlineKeyboardButton {
-        return InlineKeyboardButton(text).apply {
+    fun link(text: String, data: () -> String) {
+        buttons.add(InlineKeyboardButton(text).apply {
             url = data()
-        }
+        })
     }
-
 }
