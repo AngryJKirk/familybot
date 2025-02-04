@@ -92,7 +92,7 @@ class TikTokDownloadExecutor(
 
     private fun isVk(text: String) = text.contains("vk.com/clip", ignoreCase = true)
 
-    private fun isIG(text: String) = text.contains("instagram.com/reel", ignoreCase = true)
+    private fun isIG(text: String) = text.contains("instagram.com", ignoreCase = true) && text.contains("/reel/", ignoreCase = true)
 
     private fun downloadIG(url: String): String {
         val request = Request.Builder()
