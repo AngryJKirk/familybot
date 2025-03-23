@@ -10,22 +10,22 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.0</version>
+        <version>3.4.4</version>
     </parent>
 
     <properties>
-        <kotlin.version>2.1.0</kotlin.version>
-        <telegrambots.version>8.0.0</telegrambots.version>
-        <testcontainers.version>1.20.4</testcontainers.version>
+        <kotlin.version>2.1.20</kotlin.version>
+        <telegrambots.version>8.2.0</telegrambots.version>
+        <testcontainers.version>1.20.6</testcontainers.version>
         <mockito-kotlin.version>5.4.0</mockito-kotlin.version>
         <tomlj.version>1.1.1</tomlj.version>
-        <spring.version>3.4.0</spring.version>
-        <kotlinx-coroutines.version>1.9.0</kotlinx-coroutines.version>
+        <spring.version>3.4.4</spring.version>
+        <kotlinx-coroutines.version>1.10.1</kotlinx-coroutines.version>
         <kotlin.code.style>official</kotlin.code.style>
-        <kotlin-logging-jvm.version>7.0.3</kotlin-logging-jvm.version>
-        <commons-codec.version>1.17.1</commons-codec.version>
-        <openai-client-jvm.version>3.8.2</openai-client-jvm.version>
-        <ktor-client-okhttp-jvm.version>2.3.2</ktor-client-okhttp-jvm.version>
+        <kotlin-logging-jvm.version>7.0.5</kotlin-logging-jvm.version>
+        <commons-codec.version>1.18.0</commons-codec.version>
+        <openai-client-jvm.version>4.0.1</openai-client-jvm.version>
+        <ktor-client-okhttp-jvm.version>3.1.1</ktor-client-okhttp-jvm.version>
     </properties>
 
     <dependencies>
