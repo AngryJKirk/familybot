@@ -23,3 +23,8 @@ fun readTomlFromStatic(filename: String): TomlParseResult {
 
     return Toml.parse(resourceAsStream)
 }
+
+fun readFileFromStatic(filename: String): String? {
+    return FamilyBot::class.java.classLoader
+        .getResource("static/$filename")?.readText()
+}

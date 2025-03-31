@@ -2,3 +2,5 @@ target
 .idea
 *.iml
 production.env
+ads.txt
+ads_link.txt

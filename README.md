@@ -40,3 +40,4 @@ Run `./deploy.sh --help` if you need help.
 
 This project may seem offensive. You have been warned. It was made just for fun, I don't have any negative feelings
 towards anyone.
+

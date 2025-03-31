@@ -26,6 +26,7 @@ import dev.storozhenko.familybot.feature.settings.models.FirstBotInteraction
 import dev.storozhenko.familybot.feature.settings.models.FirstTimeInChat
 import dev.storozhenko.familybot.feature.settings.models.MessageCounter
 import dev.storozhenko.familybot.feature.settings.repos.FunctionsConfigureRepository
+import dev.storozhenko.familybot.feature.talking.services.AdManager
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -53,6 +54,7 @@ class Router(
     private val botConfig: BotConfig,
     private val dictionary: Dictionary,
     private val easyKeyValueService: EasyKeyValueService,
+    private val adManager: AdManager,
 ) {
 
     private val logger = KotlinLogging.logger { }
@@ -93,11 +95,14 @@ class Router(
             }
         } else {
             executor.execute(context)
+            adManager.promote(executor, context)
+
         }.also {
             loggingScope.launch(loggingExceptionHandler) {
                 logChatCommand(executor, context)
             }
         }
+
     }
 
     private fun registerUpdate(
@@ -132,6 +137,7 @@ class Router(
             disabledCommand(context)
         } else {
             executor.execute(context)
+            adManager.promote(executor, context)
         }
     }
 

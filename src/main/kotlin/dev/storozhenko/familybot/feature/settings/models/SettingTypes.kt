@@ -53,6 +53,7 @@ object ChatGPTMemory: StringKeyType<ChatEasyKey>
 object IGCookie : StringKeyType<PlainKey>
 object PaymentKey : StringKeyType<PlainKey>
 object RefundNeedsToPressTime : LongKeyType<PlainKey>
+object AdCooldown : InstantKeyType<ChatEasyKey>
 
 object StoryGameActive : BooleanKeyType<ChatEasyKey>
 object StoryPollBlocked : InstantKeyType<ChatEasyKey>
