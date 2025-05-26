@@ -137,7 +137,7 @@ class TalkingServiceChatGpt(
     }
 
     private fun createRequest(chatMessages: MutableList<ChatMessage>, useGpt4: Boolean): ChatCompletionRequest {
-        val model = if (useGpt4) "gpt-4o" else "gpt-4o-mini"
+        val model = if (useGpt4) "gpt-4.1" else "gpt-4.1-mini"
 
         return ChatCompletionRequest(
             model = ModelId(model),
