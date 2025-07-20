@@ -238,7 +238,7 @@ class AskWorldInitialExecutor(
         val messagePrefix = dictionary.get(Phrase.ASK_WORLD_QUESTION_FROM_CHAT, chatToSend.key())
         val boldChatName = currentChat.name.boldNullable()
         val italicMessage = question.italic()
-        return "$messagePrefix $boldChatName: $italicMessage"
+        return "$messagePrefix $boldChatName:\n\n$italicMessage"
     }
 
     private fun formatPollMessage(currentChat: Chat, chatToSend: Chat): String {

@@ -3,7 +3,6 @@ package dev.storozhenko.familybot.feature.askworld.executors
 import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.boldNullable
 import dev.storozhenko.familybot.common.extensions.italic
-
 import dev.storozhenko.familybot.core.executors.Configurable
 import dev.storozhenko.familybot.core.executors.Executor
 import dev.storozhenko.familybot.core.keyvalue.EasyKeyValueService
@@ -319,7 +318,7 @@ class AskWorldReceiveReplyExecutor(
             SendMessage(
                 chatIdToReply,
                 "$answerTitle ${context.chat.name.boldNullable()} " +
-                        "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\": ${reply.italic()}",
+                        "от ${context.user.getGeneralName()} на вопрос \"$questionTitle\":\n\n${reply.italic()}",
             ).apply {
                 enableHtml(true)
             },
