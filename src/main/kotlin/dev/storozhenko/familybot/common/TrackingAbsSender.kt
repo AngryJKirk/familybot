@@ -1,6 +1,7 @@
 package dev.storozhenko.familybot.common
 
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod
+import org.telegram.telegrambots.meta.api.methods.business.SetBusinessAccountProfilePhoto
 import org.telegram.telegrambots.meta.api.methods.groupadministration.SetChatPhoto
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation
 import org.telegram.telegrambots.meta.api.methods.send.SendAudio
@@ -73,6 +74,10 @@ class TrackingTelegramClient(
         val message = telegramClient.execute(sendSticker)
         tracking.add(message)
         return message
+    }
+
+    override fun execute(setBusinessAccountProfilePhoto: SetBusinessAccountProfilePhoto?): Boolean {
+        return telegramClient.execute(setBusinessAccountProfilePhoto)
     }
 
     override fun execute(sendAudio: SendAudio): Message {
@@ -220,5 +225,9 @@ class TrackingTelegramClient(
 
     override fun executeAsync(sendAnimation: SendAnimation): CompletableFuture<Message> {
         return telegramClient.executeAsync(sendAnimation)
+    }
+
+    override fun executeAsync(setBusinessAccountProfilePhoto: SetBusinessAccountProfilePhoto?): CompletableFuture<Boolean> {
+        return telegramClient.executeAsync(setBusinessAccountProfilePhoto)
     }
 }
