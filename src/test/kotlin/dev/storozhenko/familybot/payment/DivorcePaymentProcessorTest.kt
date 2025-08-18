@@ -10,6 +10,7 @@ import dev.storozhenko.familybot.feature.shop.model.ShopPayload
 import dev.storozhenko.familybot.feature.shop.services.processors.DivorcePaymentProcessor
 import dev.storozhenko.familybot.infrastructure.createSimpleUpdate
 import dev.storozhenko.familybot.infrastructure.createSimpleUser
+import dev.storozhenko.familybot.infrastructure.createUpdateForPayment
 import dev.storozhenko.familybot.infrastructure.payload
 import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,7 +33,7 @@ class DivorcePaymentProcessorTest : PaymentProcessorTest() {
 
     override fun processSuccessTest() {
         val (payload, marriage) = createMarriageAndPayload()
-        processor.processSuccess(payload)
+        processor.processSuccess(payload, createUpdateForPayment(payload))
         Assertions.assertNull(marriagesRepository.getMarriage(marriage.chatId, marriage.firstUser.id))
     }
 

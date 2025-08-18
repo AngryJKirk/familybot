@@ -5,6 +5,7 @@ import dev.storozhenko.familybot.feature.settings.models.AskWorldUserUsages
 import dev.storozhenko.familybot.feature.shop.model.PreCheckOutResponse
 import dev.storozhenko.familybot.feature.shop.model.ShopItem
 import dev.storozhenko.familybot.feature.shop.services.processors.AskWorldLimitPaymentProcessor
+import dev.storozhenko.familybot.infrastructure.createUpdateForPayment
 import dev.storozhenko.familybot.infrastructure.payload
 import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,7 +30,7 @@ class AskWorldLimitProcessorTest : PaymentProcessorTest() {
         easyKeyValueService.put(AskWorldChatUsages, chatKey, 1)
         val userKey = payload.userKey()
         easyKeyValueService.put(AskWorldUserUsages, userKey, 5)
-        processor.processSuccess(payload)
+        processor.processSuccess(payload, createUpdateForPayment(payload))
         Assertions.assertNull(easyKeyValueService.get(AskWorldChatUsages, chatKey))
         Assertions.assertNull(easyKeyValueService.get(AskWorldUserUsages, userKey))
     }

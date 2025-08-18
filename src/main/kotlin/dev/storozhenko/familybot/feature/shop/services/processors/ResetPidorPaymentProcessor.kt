@@ -15,6 +15,7 @@ import dev.storozhenko.familybot.feature.shop.model.SuccessPaymentResponse
 import dev.storozhenko.familybot.feature.shop.services.PaymentProcessor
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.objects.Update
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -39,7 +40,7 @@ class ResetPidorPaymentProcessor(
         }
     }
 
-    override fun processSuccess(shopPayload: ShopPayload): SuccessPaymentResponse {
+    override fun processSuccess(shopPayload: ShopPayload, rawUpdate: Update): SuccessPaymentResponse {
         val chat = Chat(shopPayload.chatId, null)
         val now = Instant.now()
         val amountOfRemovedPidors = pidorRepository.removePidorRecords(

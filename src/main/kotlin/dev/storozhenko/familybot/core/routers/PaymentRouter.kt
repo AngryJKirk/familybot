@@ -82,7 +82,7 @@ class PaymentRouter(
     fun proceedSuccessfulPayment(update: Update): suspend (TelegramClient) -> Unit {
         val shopPayload = getPayload(update.message.successfulPayment.invoicePayload)
         return { client ->
-            runCatching { paymentService.processSuccessfulPayment(shopPayload) }
+            runCatching { paymentService.processSuccessfulPayment(shopPayload, update) }
                 .onFailure { e ->
                     log.error(e) { "Can not process payment" }
                     onFailure(client, update, shopPayload)

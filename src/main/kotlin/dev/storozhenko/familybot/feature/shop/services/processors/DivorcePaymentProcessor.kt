@@ -8,6 +8,7 @@ import dev.storozhenko.familybot.feature.shop.model.ShopPayload
 import dev.storozhenko.familybot.feature.shop.model.SuccessPaymentResponse
 import dev.storozhenko.familybot.feature.shop.services.PaymentProcessor
 import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.objects.Update
 
 @Component
 class DivorcePaymentProcessor(
@@ -24,7 +25,7 @@ class DivorcePaymentProcessor(
         }
     }
 
-    override fun processSuccess(shopPayload: ShopPayload): SuccessPaymentResponse {
+    override fun processSuccess(shopPayload: ShopPayload, rawUpdate: Update): SuccessPaymentResponse {
         marriagesRepository.removeMarriage(shopPayload.chatId, shopPayload.userId)
         return SuccessPaymentResponse(Phrase.MARRY_DIVORCE)
     }

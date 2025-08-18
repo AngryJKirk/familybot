@@ -4,6 +4,7 @@ import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.feature.shop.model.ShopPayload
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.objects.Update
 
 @Component
 class PaymentService(
@@ -15,7 +16,7 @@ class PaymentService(
     fun processPreCheckoutCheck(shopPayload: ShopPayload) = getProcessor(shopPayload).preCheckOut(shopPayload)
 
 
-    fun processSuccessfulPayment(shopPayload: ShopPayload) = getProcessor(shopPayload).processSuccess(shopPayload)
+    fun processSuccessfulPayment(shopPayload: ShopPayload, update: Update) = getProcessor(shopPayload).processSuccess(shopPayload, update)
 
     private fun getProcessor(shopPayload: ShopPayload): PaymentProcessor {
         val paymentProcessor = processors[shopPayload.shopItem]

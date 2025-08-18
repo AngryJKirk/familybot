@@ -7,6 +7,7 @@ import dev.storozhenko.familybot.core.models.telegram.Command
 import dev.storozhenko.familybot.core.models.telegram.stickers.Sticker
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.feature.settings.models.UkrainianLanguage
+import dev.storozhenko.familybot.feature.shop.model.ShopPayload
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
 import dev.storozhenko.familybot.feature.talking.services.DictionaryReader
 import dev.storozhenko.familybot.suits.ExecutorTest
@@ -49,6 +50,17 @@ fun ExecutorTest.createSimpleCommandContext(
     postfix: String? = null,
 ): ExecutorContext {
     return createSimpleCommand(command, prefix, postfix).context(botConfig, dictionary, this.client)
+}
+
+fun createUpdateForPayment(payload: ShopPayload): Update {
+    return update().apply {
+        message = Message().apply {
+            from = createSimpleUser().apply {
+                id = payload.userId
+            }
+            chat = Chat(payload.chatId, randomString())
+        }
+    }
 }
 
 fun createSimpleUpdate(text: String? = null): Update {

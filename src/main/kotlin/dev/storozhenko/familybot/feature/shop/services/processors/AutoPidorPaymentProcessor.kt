@@ -11,6 +11,7 @@ import dev.storozhenko.familybot.feature.shop.services.PaymentProcessor
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.objects.Update
 
 @Component
 class AutoPidorPaymentProcessor(
@@ -21,7 +22,7 @@ class AutoPidorPaymentProcessor(
 
     override fun preCheckOut(shopPayload: ShopPayload) = PreCheckOutResponse.Success()
 
-    override fun processSuccess(shopPayload: ShopPayload): SuccessPaymentResponse {
+    override fun processSuccess(shopPayload: ShopPayload, rawUpdate: Update): SuccessPaymentResponse {
         val chatKey = shopPayload.chatKey()
         val autoPidorLeft = keyValueService.get(AutoPidorTimesLeft, chatKey, defaultValue = 0)
         val value = autoPidorLeft + 30

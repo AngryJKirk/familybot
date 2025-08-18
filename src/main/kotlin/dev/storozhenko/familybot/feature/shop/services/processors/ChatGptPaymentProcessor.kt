@@ -12,6 +12,7 @@ import dev.storozhenko.familybot.feature.shop.model.SuccessPaymentResponse
 import dev.storozhenko.familybot.feature.shop.services.PaymentProcessor
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.objects.Update
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -21,7 +22,7 @@ class ChatGptPaymentProcessor(private val easyKeyValueService: EasyKeyValueServi
 
     override fun preCheckOut(shopPayload: ShopPayload) = PreCheckOutResponse.Success()
 
-    override fun processSuccess(shopPayload: ShopPayload): SuccessPaymentResponse {
+    override fun processSuccess(shopPayload: ShopPayload, rawUpdate: Update): SuccessPaymentResponse {
         val key = ChatEasyKey(shopPayload.chatId)
         val paidTill = easyKeyValueService.get(ChatGPTPaidTill, key, Instant.now())
         val newDate = if (paidTill.isBefore(Instant.now())) {

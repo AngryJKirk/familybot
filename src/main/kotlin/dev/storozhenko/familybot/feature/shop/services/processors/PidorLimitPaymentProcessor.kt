@@ -10,6 +10,7 @@ import dev.storozhenko.familybot.feature.shop.model.SuccessPaymentResponse
 import dev.storozhenko.familybot.feature.shop.services.PaymentProcessor
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.objects.Update
 
 @Component
 class PidorLimitPaymentProcessor(
@@ -29,7 +30,7 @@ class PidorLimitPaymentProcessor(
         }
     }
 
-    override fun processSuccess(shopPayload: ShopPayload): SuccessPaymentResponse {
+    override fun processSuccess(shopPayload: ShopPayload, rawUpdate: Update): SuccessPaymentResponse {
         easyKeyValueService.remove(PidorTolerance, shopPayload.chatKey())
         log.info { "Removed pidor limit for $shopPayload" }
         return SuccessPaymentResponse(Phrase.DROP_PIDOR_LIMIT_DONE)

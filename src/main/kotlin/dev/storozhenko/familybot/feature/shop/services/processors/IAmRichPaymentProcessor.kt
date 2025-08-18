@@ -7,6 +7,7 @@ import dev.storozhenko.familybot.feature.shop.model.ShopPayload
 import dev.storozhenko.familybot.feature.shop.model.SuccessPaymentResponse
 import dev.storozhenko.familybot.feature.shop.services.PaymentProcessor
 import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.api.objects.Update
 
 @Component
 class IAmRichPaymentProcessor : PaymentProcessor {
@@ -14,5 +15,5 @@ class IAmRichPaymentProcessor : PaymentProcessor {
 
     override fun preCheckOut(shopPayload: ShopPayload) = PreCheckOutResponse.Success()
 
-    override fun processSuccess(shopPayload: ShopPayload) = SuccessPaymentResponse(Phrase.I_AM_RICH_DONE)
+    override fun processSuccess(shopPayload: ShopPayload, rawUpdate: Update) = SuccessPaymentResponse(Phrase.I_AM_RICH_DONE)
 }

@@ -4,6 +4,7 @@ import dev.storozhenko.familybot.feature.settings.models.BetTolerance
 import dev.storozhenko.familybot.feature.shop.model.PreCheckOutResponse
 import dev.storozhenko.familybot.feature.shop.model.ShopItem
 import dev.storozhenko.familybot.feature.shop.services.processors.BetLimitPaymentProcessor
+import dev.storozhenko.familybot.infrastructure.createUpdateForPayment
 import dev.storozhenko.familybot.infrastructure.payload
 import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,7 +28,7 @@ class BetLimitPaymentProcessorTest : PaymentProcessorTest() {
         val payload = payload(ShopItem.DROP_BET_LIMIT)
         val key = payload.userAndChatKey()
         easyKeyValueService.put(BetTolerance, key, true)
-        processor.processSuccess(payload)
+        processor.processSuccess(payload, createUpdateForPayment(payload))
         Assertions.assertNull(easyKeyValueService.get(BetTolerance, key))
     }
 }

@@ -9,6 +9,7 @@ import dev.storozhenko.familybot.feature.shop.model.PreCheckOutResponse
 import dev.storozhenko.familybot.feature.shop.model.ShopItem
 import dev.storozhenko.familybot.feature.shop.services.processors.ResetPidorPaymentProcessor
 import dev.storozhenko.familybot.infrastructure.createSimpleUpdate
+import dev.storozhenko.familybot.infrastructure.createUpdateForPayment
 import dev.storozhenko.familybot.infrastructure.payload
 import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,7 +41,7 @@ class PidorResetProcessorTest : PaymentProcessorTest() {
         val key = payload.chatKey()
         pidorRepository.addPidor(Pidor(user, Instant.now().minusSeconds(1000)))
         easyKeyValueService.put(PidorTolerance, key, 1)
-        processor.processSuccess(payload)
+        processor.processSuccess(payload, createUpdateForPayment(payload))
         Assertions.assertNull(easyKeyValueService.get(PidorTolerance, key))
         val pidors = pidorRepository.getPidorsByChat(user.chat)
         Assertions.assertEquals(0, pidors.size)
