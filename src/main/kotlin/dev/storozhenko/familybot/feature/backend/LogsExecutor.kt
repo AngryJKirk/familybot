@@ -22,29 +22,32 @@ class LogsExecutor(private val talkingServiceChatGpt: TalkingServiceChatGpt) : O
         if (tokens.getOrNull(1) == "clear") {
             ErrorLogsDeferredAppender.errors.clear()
             context.send("Cleared")
+            return
         }
 
         if (ErrorLogsDeferredAppender.errors.isEmpty()) {
             context.send("No errors yet")
-        } else {
-            val chatGptAnalysis = coroutineScope { async { getChatGptAnalysis() } }
-            val errors = ErrorLogsDeferredAppender
-                .errors
-                .joinToString(separator = "\n")
-                .byteInputStream()
-            context.client.execute(
-                SendDocument(
-                    context.chat.idString,
-                    InputFile(errors, "error_logs.txt"),
-                )
-            )
-            context.client.execute(
-                SendDocument(
-                    context.chat.idString,
-                    InputFile(chatGptAnalysis.await(), "chatgpt_analysis.txt")
-                )
-            )
+            return
         }
+
+        val chatGptAnalysis = coroutineScope { async { getChatGptAnalysis() } }
+        val errors = ErrorLogsDeferredAppender
+            .errors
+            .joinToString(separator = "\n")
+            .byteInputStream()
+        context.client.execute(
+            SendDocument(
+                context.chat.idString,
+                InputFile(errors, "error_logs.txt"),
+            )
+        )
+        context.client.execute(
+            SendDocument(
+                context.chat.idString,
+                InputFile(chatGptAnalysis.await(), "chatgpt_analysis.txt")
+            )
+        )
+
     }
 
     private suspend fun getChatGptAnalysis(): InputStream {
