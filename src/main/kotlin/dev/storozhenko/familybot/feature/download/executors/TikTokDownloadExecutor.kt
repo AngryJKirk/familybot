@@ -85,7 +85,7 @@ class TikTokDownloadExecutor(
     }
 
     private fun containsUrl(text: String): Boolean {
-        return isIG(text) || isTikTok(text) || isVk(text)
+        return isIG(text) || isTikTok(text) || isVk(text) || isYtShort(text)
     }
 
     private fun isTikTok(text: String) = text.contains("tiktok", ignoreCase = true)
@@ -93,6 +93,8 @@ class TikTokDownloadExecutor(
     private fun isVk(text: String) = text.contains("vk.com/clip", ignoreCase = true)
 
     private fun isIG(text: String) = text.contains("instagram.com", ignoreCase = true) && text.contains("/reel/", ignoreCase = true)
+
+    private fun isYtShort(text: String) = text.contains("youtube.com/shorts/", ignoreCase = true)
 
     private fun downloadIG(url: String): String {
         val request = Request.Builder()
