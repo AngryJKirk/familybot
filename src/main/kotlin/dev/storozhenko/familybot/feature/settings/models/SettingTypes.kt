@@ -54,6 +54,7 @@ object IGCookie : StringKeyType<PlainKey>
 object PaymentKey : StringKeyType<PlainKey>
 object RefundNeedsToPressTime : LongKeyType<PlainKey>
 object AdCooldown : InstantKeyType<ChatEasyKey>
+object RagContext: BooleanKeyType<ChatEasyKey>
 
 object StoryGameActive : BooleanKeyType<ChatEasyKey>
 object StoryPollBlocked : InstantKeyType<ChatEasyKey>

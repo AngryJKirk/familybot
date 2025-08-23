@@ -1,4 +1,4 @@
-FROM postgres:latest
+FROM pgvector/pgvector:pg14
 
 ENV POSTGRES_PASSWORD testPassword
 

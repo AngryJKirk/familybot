@@ -32,6 +32,14 @@ class UserRepository(private val template: JdbcTemplate) {
         return template.query(select) { rs, _ -> rs.toUser() }
     }
 
+    fun getUserNamesById(ids: List<Long>): Map<Long, String> {
+        return template.query("select id, name, username from users where id in (${ids.joinToString(",")})", { rs, _ ->
+            rs.getLong("id") to (rs.getString("name") + "|" + (rs.getString("username") ?: "N/A"))
+        })
+            .toMap()
+
+    }
+
     fun addChat(chat: Chat) {
         template.update(
             "INSERT INTO chats (id, name) VALUES (?, ?) ON CONFLICT(id) DO UPDATE SET name = excluded.name, active = TRUE",

@@ -23,6 +23,8 @@ import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTMemory
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTStyle
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTTokenUsageByChat
+import dev.storozhenko.familybot.feature.settings.models.RagContext
+import dev.storozhenko.familybot.feature.talking.services.rag.RagService
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.GetFile
 import java.time.Duration
@@ -33,6 +35,7 @@ import kotlin.time.Duration.Companion.seconds
 class TalkingServiceChatGpt(
     private val easyKeyValueService: EasyKeyValueService,
     private val gptSettingsReader: GptSettingsReader,
+    private val ragService: RagService,
     private val botConfig: BotConfig,
 ) : TalkingService {
     companion object {
@@ -110,6 +113,7 @@ class TalkingServiceChatGpt(
         style: GptStyle,
         context: ExecutorContext,
     ): MutableList<ChatMessage> {
+
         val chatId = context.chat.idString
         val cache = caches[style] ?: throw FamilyBot.InternalException("Internal logic error, check logs")
         var chatMessages = cache.get(chatId)
@@ -122,14 +126,15 @@ class TalkingServiceChatGpt(
         return chatMessages
     }
 
-    private fun getSystemMessage(
+    private suspend fun getSystemMessage(
         style: GptStyle,
-        context: ExecutorContext
+        context: ExecutorContext,
     ): ChatMessage {
         return ChatMessage(
             Role.System, content = listOf(
                 gptSettingsReader.getUniverseValue(style.universe).trimIndent(),
                 gptSettingsReader.getStyleValue(style),
+                getRagMemory(context),
                 getMemory(context),
                 SIZE_LIMITER
             ).joinToString("\n")
@@ -170,6 +175,14 @@ class TalkingServiceChatGpt(
         return "У тебя есть память о пользователях чата, применяй ее. Вот она: \n|НАЧАЛО ПАМЯТИ|\n$memoryValue\n|КОНЕЦ ПАМЯТИ|\n"
     }
 
+    private suspend fun getRagMemory(context: ExecutorContext): String {
+        return if (easyKeyValueService.get(RagContext, context.chatKey, false)) {
+            ragService.getContext(context)
+        } else {
+            ""
+        }
+    }
+
     private var openAI: OpenAI? = null
 
     private fun getOpenAIService(): OpenAI {
@@ -186,7 +199,7 @@ class TalkingServiceChatGpt(
     }
 
     private suspend fun getImageDescription(
-        url: String
+        url: String,
     ): String {
         try {
             return getOpenAIService().chatCompletion(
