@@ -39,7 +39,7 @@ class RagService(
 
             if (imageDesc != null) {
                 log.info { "Adding image to rag" }
-                val text = if (isTextValid(context)) "с подписью <${context.message.text}>" else ""
+                val text = if (isTextValid(context)) "с подписью <${context.message.caption}>" else ""
                 ragRepository.add(
                     context,
                     getEmbedding(imageDesc).first(),
@@ -59,7 +59,7 @@ class RagService(
     }
 
     private fun isTextValid(context: ExecutorContext): Boolean {
-        val text = context.message.text ?: return false
+        val text = context.message.text ?: context.message.caption ?: return false
         if (text.isBlank()) return false
         if (text.length <= 3) return false
         if (text.startsWith("/")) return false

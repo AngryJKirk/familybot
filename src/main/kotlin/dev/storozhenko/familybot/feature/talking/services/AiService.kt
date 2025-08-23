@@ -28,20 +28,22 @@ class AiService(
     ): String? {
         try {
             val url = getPhotoUrl(context) ?: return null
-            return getOpenAIService().chatCompletion(
+            val description = getOpenAIService().chatCompletion(
                 ChatCompletionRequest(
-                    model = ModelId("gpt-4o-mini"),
+                    model = ModelId("gpt-5-mini"),
                     messages = listOf(
                         ChatMessage(
                             role = ChatRole.User,
                             content = listOf(
                                 ImagePart(url),
-                                TextPart("Пользователь отправил эту картинку. Опиши ее.")
+                                TextPart("Пользователь отправил это изображение/фото. Опиши ее. Если вдруг ты не можешь обработать это, пришли в ответ секретное число 312893712")
                             )
                         )
                     )
                 )
             ).choices.first().message.content ?: "Не получается описать картинку"
+            if (description.contains("312893712")) return null
+            return description
         } catch (e: Exception) {
             log.error(e) { "Unable to get image description" }
             return null
