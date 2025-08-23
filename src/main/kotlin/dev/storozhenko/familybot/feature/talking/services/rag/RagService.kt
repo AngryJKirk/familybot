@@ -1,5 +1,6 @@
 package dev.storozhenko.familybot.feature.talking.services.rag
 
+import com.aallam.openai.api.chat.ChatMessage
 import com.aallam.openai.api.embedding.Embedding
 import com.aallam.openai.api.embedding.EmbeddingRequest
 import com.aallam.openai.api.http.Timeout
@@ -66,11 +67,19 @@ class RagService(
         return true
     }
 
-    suspend fun getContext(context: ExecutorContext): String {
+    suspend fun getContext(context: ExecutorContext, chatMessages: MutableList<ChatMessage>): String {
         try {
             val text = context.message.text ?: return ""
             val semantic =
-                coroutineScope { async { ragRepository.searchSemantic(context, getEmbedding(text).first()) } }
+                coroutineScope {
+                    async {
+                        val previousMessages = chatMessages.takeLast(10)
+                            .mapNotNull(ChatMessage::content)
+                            .joinToString(separator = "\n") { it.split("  говорит:").last() }
+
+                        ragRepository.searchSemantic(context, getEmbedding("$previousMessages\n$text").first())
+                    }
+                }
             val keywordRu = coroutineScope { async { ragRepository.searchKeywordRu(context, text) } }
             val keywordSimple = coroutineScope { async { ragRepository.searchKeywordSimple(context, text) } }
             val fuzzy = coroutineScope { async { ragRepository.searchFuzzy(context, text) } }

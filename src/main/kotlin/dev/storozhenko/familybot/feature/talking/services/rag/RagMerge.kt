@@ -12,7 +12,7 @@ fun mergeAndRerank(
     keywordSimple: List<RagHit> = emptyList(),
     recent: List<RagHit> = emptyList(),
     fuzzy: List<RagHit> = emptyList(),
-    maxResults: Int = 50,
+    maxResults: Int = 25,
     shortQuery: Boolean = false,
 ): List<RagHit> {
     val now = Instant.now()

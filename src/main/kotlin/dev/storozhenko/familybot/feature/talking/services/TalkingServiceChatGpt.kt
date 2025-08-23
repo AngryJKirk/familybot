@@ -65,7 +65,7 @@ class TalkingServiceChatGpt(
 
         val style = getStyle(context)
         val chatMessages = getPastMessages(style, context)
-        val systemMessage = getSystemMessage(style, context)
+        val systemMessage = getSystemMessage(style, context, chatMessages)
         if (text == "/debug") {
             return chatMessages.plus(systemMessage).joinToString("\n", transform = ChatMessage::toString)
         }
@@ -125,12 +125,13 @@ class TalkingServiceChatGpt(
     private suspend fun getSystemMessage(
         style: GptStyle,
         context: ExecutorContext,
+        chatMessages: MutableList<ChatMessage>,
     ): ChatMessage {
         return ChatMessage(
             Role.System, content = listOf(
                 gptSettingsReader.getUniverseValue(style.universe).trimIndent(),
                 gptSettingsReader.getStyleValue(style),
-                getRagMemory(context),
+                getRagMemory(context, chatMessages),
                 getMemory(context),
                 SIZE_LIMITER
             ).joinToString("\n")
@@ -171,9 +172,9 @@ class TalkingServiceChatGpt(
         return "У тебя есть память о пользователях чата, применяй ее. Вот она: \n|НАЧАЛО ПАМЯТИ|\n$memoryValue\n|КОНЕЦ ПАМЯТИ|\n"
     }
 
-    private suspend fun getRagMemory(context: ExecutorContext): String {
+    private suspend fun getRagMemory(context: ExecutorContext, chatMessages: MutableList<ChatMessage>): String {
         return if (easyKeyValueService.get(RagContext, context.chatKey, false)) {
-            ragService.getContext(context)
+            ragService.getContext(context, chatMessages)
         } else {
             ""
         }
