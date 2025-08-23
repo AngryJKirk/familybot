@@ -34,6 +34,7 @@ class RagService(
             val text = context.message.text ?: return
             if (text.isBlank()) return
             if (text.length <= 3) return
+            if (text.startsWith("/")) return
             if (context.message.messageId == null) return
             val embeddings = getEmbedding(text)
             log.info { "Adding new message to rag" }
