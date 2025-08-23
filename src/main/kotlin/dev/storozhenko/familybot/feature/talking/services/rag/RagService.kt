@@ -32,25 +32,25 @@ class RagService(
     private val log = KotlinLogging.logger {}
 
     suspend fun add(context: ExecutorContext) {
+        if (context.message.messageId == null) return
+
         try {
             val imageDesc = aiService.getImageDescription(context)
+
             if (imageDesc != null) {
                 log.info { "Adding image to rag" }
+                val text = if (isTextValid(context)) "с подписью <${context.message.text}>" else ""
                 ragRepository.add(
                     context,
                     getEmbedding(imageDesc).first(),
-                    textOverride = "Пользователь прислал изображение: [$imageDesc]"
+                    textOverride = "Пользователь прислал изображение $text: [$imageDesc]"
                 )
+            } else {
+                if (!isTextValid(context)) return
+                val embeddings = getEmbedding(context.message.text)
+                log.info { "Adding new message to rag" }
+                ragRepository.add(context, embeddings.first())
             }
-
-            val text = context.message.text ?: return
-            if (text.isBlank()) return
-            if (text.length <= 3) return
-            if (text.startsWith("/")) return
-            if (context.message.messageId == null) return
-            val embeddings = getEmbedding(text)
-            log.info { "Adding new message to rag" }
-            ragRepository.add(context, embeddings.first())
 
         } catch (e: Exception) {
             log.error(e) { "Rag adding failed" }
@@ -58,6 +58,13 @@ class RagService(
 
     }
 
+    private fun isTextValid(context: ExecutorContext): Boolean {
+        val text = context.message.text ?: return false
+        if (text.isBlank()) return false
+        if (text.length <= 3) return false
+        if (text.startsWith("/")) return false
+        return true
+    }
 
     suspend fun getContext(context: ExecutorContext): String {
         try {
