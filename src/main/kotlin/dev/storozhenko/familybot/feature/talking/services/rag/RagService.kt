@@ -36,7 +36,7 @@ class RagService(
             if (text.length <= 3) return
             if (context.message.messageId == null) return
             val embeddings = getEmbedding(text)
-
+            log.info { "Adding new message to rag" }
             ragRepository.add(context, embeddings.first())
 
         } catch (e: Exception) {
