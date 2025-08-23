@@ -47,7 +47,7 @@ class RagService(
                 )
             } else {
                 if (!isTextValid(context)) return
-                val embeddings = getEmbedding(context.message.text)
+                val embeddings = getEmbedding(context.message.text ?: context.message.caption)
                 log.info { "Adding new message to rag" }
                 ragRepository.add(context, embeddings.first())
             }
