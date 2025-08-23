@@ -34,8 +34,7 @@ class RawUpdateLogger(private val rawChatLogRepository: RawChatLogRepository) {
             ?.let { Instant.ofEpochSecond(it) }
             ?: Instant.now()
 
-        val messageId = rawMessage.messageId.toLong()
 
-        rawChatLogRepository.add(update.toChat(), update.toUser(), text, messageId, fileId, update.toJson(), date)
+        rawChatLogRepository.add(update.toChat(), update.toUser(), text, fileId, update.toJson(), date)
     }
 }
