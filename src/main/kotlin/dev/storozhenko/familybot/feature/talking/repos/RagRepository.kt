@@ -15,7 +15,7 @@ import kotlin.math.exp
 class RagRepository(private val template: JdbcTemplate) {
 
 
-    fun add(executorContext: ExecutorContext, embedding: Embedding) {
+    fun add(executorContext: ExecutorContext, embedding: Embedding, textOverride: String? = null) {
 
         template.update(
             """
@@ -26,7 +26,7 @@ class RagRepository(private val template: JdbcTemplate) {
             executorContext.message.messageId,
             Timestamp.from(Instant.now()),
             executorContext.user.id,
-            executorContext.message.text,
+            textOverride ?: executorContext.message.text,
             PGvector(embedding.embedding)
         )
 

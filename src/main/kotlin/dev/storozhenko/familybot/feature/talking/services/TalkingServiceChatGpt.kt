@@ -3,9 +3,6 @@ package dev.storozhenko.familybot.feature.talking.services
 import com.aallam.openai.api.chat.ChatCompletion
 import com.aallam.openai.api.chat.ChatCompletionRequest
 import com.aallam.openai.api.chat.ChatMessage
-import com.aallam.openai.api.chat.ChatRole
-import com.aallam.openai.api.chat.ImagePart
-import com.aallam.openai.api.chat.TextPart
 import com.aallam.openai.api.core.Role
 import com.aallam.openai.api.http.Timeout
 import com.aallam.openai.api.logging.LogLevel
@@ -26,7 +23,6 @@ import dev.storozhenko.familybot.feature.settings.models.ChatGPTTokenUsageByChat
 import dev.storozhenko.familybot.feature.settings.models.RagContext
 import dev.storozhenko.familybot.feature.talking.services.rag.RagService
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.GetFile
 import java.time.Duration
 import java.util.LinkedList
 import kotlin.time.Duration.Companion.seconds
@@ -37,6 +33,7 @@ class TalkingServiceChatGpt(
     private val gptSettingsReader: GptSettingsReader,
     private val ragService: RagService,
     private val botConfig: BotConfig,
+    private val aiService: AiService,
 ) : TalkingService {
     companion object {
         private const val SIZE_LIMITER =
@@ -53,12 +50,11 @@ class TalkingServiceChatGpt(
 
     override suspend fun getReplyToUser(context: ExecutorContext, shouldBeQuestion: Boolean): String {
         var text = context.message.text ?: context.message.caption
-        val photoUrl = getPhotoUrl(context)
-        var photoDescription: String? = null
-        if (photoUrl != null) {
+        var photoDescription: String? = aiService.getImageDescription(context)
+        if (photoDescription != null) {
             photoDescription =
                 "<Пользователь отправил изображение, вот описание изображения, реагируй как если бы ты ее видел: ${
-                    getImageDescription(photoUrl)
+                    photoDescription
                 }>"
         }
         val chatId = context.chat.idString
@@ -198,44 +194,5 @@ class TalkingServiceChatGpt(
         return openAI as OpenAI
     }
 
-    private suspend fun getImageDescription(
-        url: String,
-    ): String {
-        try {
-            return getOpenAIService().chatCompletion(
-                ChatCompletionRequest(
-                    model = ModelId("gpt-4o-mini"),
-                    messages = listOf(
-                        ChatMessage(
-                            role = ChatRole.User,
-                            content = listOf(
-                                ImagePart(url),
-                                TextPart("Пользователь отправил эту картинку. Опиши ее.")
-                            )
-                        )
-                    )
-                )
-            ).choices.first().message.content ?: "Не получается описать картинку"
-        } catch (e: Exception) {
-            log.error(e) { "Unable to get image description" }
-            return "Не получается описать картинку"
-        }
-    }
 
-    private suspend fun getPhotoUrl(context: ExecutorContext): String? {
-        try {
-            val message = context.update.message
-            val fileId: String? = when {
-                message.hasPhoto() -> message.photo.lastOrNull()?.fileId
-                else -> return null
-            }
-            if (fileId == null) return null
-            val file = context.client.execute(GetFile(fileId))
-            val url = file.getFileUrl(botConfig.botToken)
-            return if (message.hasPhoto()) url else null
-        } catch (e: Exception) {
-            log.error(e) { "Can not download file" }
-            return null
-        }
-    }
 }

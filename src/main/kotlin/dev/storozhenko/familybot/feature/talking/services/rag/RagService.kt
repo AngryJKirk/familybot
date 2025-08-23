@@ -14,6 +14,7 @@ import dev.storozhenko.familybot.core.routers.models.ExecutorContext
 import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.feature.talking.models.RagHit
 import dev.storozhenko.familybot.feature.talking.repos.RagRepository
+import dev.storozhenko.familybot.feature.talking.services.AiService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -24,6 +25,7 @@ import kotlin.time.Duration.Companion.seconds
 class RagService(
     private val ragRepository: RagRepository,
     private val userRepository: UserRepository,
+    private val aiService: AiService,
     private val botConfig: BotConfig,
 ) {
 
@@ -31,6 +33,16 @@ class RagService(
 
     suspend fun add(context: ExecutorContext) {
         try {
+            val imageDesc = aiService.getImageDescription(context)
+            if (imageDesc != null) {
+                log.info { "Adding image to rag" }
+                ragRepository.add(
+                    context,
+                    getEmbedding(imageDesc).first(),
+                    textOverride = "Пользователь прислал изображение: [$imageDesc]"
+                )
+            }
+
             val text = context.message.text ?: return
             if (text.isBlank()) return
             if (text.length <= 3) return
