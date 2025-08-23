@@ -21,11 +21,12 @@ class RawChatLogRepository(private val template: JdbcTemplate) {
         )
     }
 
-    fun add(chat: Chat, user: User, message: String?, fileId: String?, rawUpdate: String, date: Instant) {
+    fun add(chat: Chat, user: User, message: String?, messageId: Long, fileId: String?, rawUpdate: String, date: Instant) {
         template.update(
-            "INSERT INTO raw_chat_log (chat_id, user_id, message, raw_update, date, file_id) VALUES (?, ?, ?, ?::JSON, ?, ?)",
+            "INSERT INTO raw_chat_log (chat_id, user_id, msg_id, message, raw_update, date, file_id) VALUES (?, ?, ?, ?, ?::JSON, ?, ?)",
             chat.id,
             user.id,
+            messageId,
             message,
             rawUpdate,
             Timestamp.from(date),

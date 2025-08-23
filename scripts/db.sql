@@ -131,6 +131,7 @@ CREATE TABLE IF NOT EXISTS raw_chat_log
 (
     chat_id    BIGINT                  NOT NULL,
     user_id    BIGINT                  NOT NULL,
+    msg_id BIGINT,
     message    VARCHAR(30000),
     raw_update JSON                    NOT NULL,
     date       TIMESTAMP DEFAULT NOW() NOT NULL,
