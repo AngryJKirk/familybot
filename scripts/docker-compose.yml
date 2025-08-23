@@ -18,7 +18,7 @@ services:
   family-db:
     networks:
       family-net:
-    image: pgvector/pgvector:14
+    image: pgvector/pgvector:pg14
     shm_size: '512mb'
     container_name: family-db
     restart: always
