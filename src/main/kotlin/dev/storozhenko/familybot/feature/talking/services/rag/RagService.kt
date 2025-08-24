@@ -71,9 +71,9 @@ class RagService(
         if (text == null) return null
         var clean: String  = text
         for (alias in botConfig.botNameAliases) {
-            clean = clean.replace(alias, "")
+            clean = clean.replace(alias, "", ignoreCase = true)
         }
-        return clean.replace(botConfig.botName, "")
+        return clean.replace(botConfig.botName, "", ignoreCase = true)
     }
 
     suspend fun getContext(context: ExecutorContext, chatMessages: MutableList<ChatMessage>): String {
