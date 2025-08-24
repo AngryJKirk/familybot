@@ -67,9 +67,18 @@ class RagService(
         return true
     }
 
+    private fun cleanupBotMentions(text: String?): String? {
+        if (text == null) return null
+        var clean: String  = text
+        for (alias in botConfig.botNameAliases) {
+            clean = clean.replace(alias, "")
+        }
+        return clean.replace(botConfig.botName, "")
+    }
+
     suspend fun getContext(context: ExecutorContext, chatMessages: MutableList<ChatMessage>): String {
         try {
-            val text = context.message.text ?: return ""
+            val text = cleanupBotMentions(context.message.text) ?: return ""
             val semantic =
                 coroutineScope {
                     async {
