@@ -17,7 +17,7 @@ class MemoryCommandExecutor : CommandExecutor() {
             keyboard {
                 row {
                     button("Добавить") { "add" }
-                    button("Показать что есть") { "add" }
+                    button("Показать что есть") { "show" }
                     button("Стереть все") { "clear" }
                 }
             }
