@@ -79,7 +79,7 @@ class HuificatorExecutor(private val easyKeyValueService: EasyKeyValueService) :
     companion object {
         private const val VOWELS = "ёэоеаяуюыи"
         private val rules = mapOf('о' to "ё", 'а' to "я", 'у' to "ю", 'ы' to "и", 'э' to "е")
-        private val nonLetters = Pattern.compile(".*[^a-я]+.*")
+        private val nonLetters = Pattern.compile(".*[^а-я]+.*")
         private val onlyDashes = Pattern.compile("^-*$")
         private val english = Pattern.compile(".*[A-Za-z]+.*")
         private val spaces = Pattern.compile("\\s+")
