@@ -36,7 +36,7 @@ class StoryTellingService(
             ===== КОНЕЦ КОНТЕКСТА ====
         """.trimIndent()
         addResponse(context, initMessage)
-        val initResponse = talkingService.internalMessage(initMessage, useGpt4 = true)
+        val initResponse = talkingService.internalMessage(initMessage)
         addResponse(context, initResponse)
         sendPoll(context, initResponse)
         easyKeyValueService.put(StoryPollsCounter, context.chatKey, 1)
@@ -60,7 +60,7 @@ class StoryTellingService(
 
         val previousMessages =
             easyKeyValueService.get(StoryContext, context.chatKey, StoryMessages()).answers.joinToString("\n\n")
-        val continueStoryResponse = talkingService.internalMessage(previousMessages + "\n\n" + message, useGpt4 = true)
+        val continueStoryResponse = talkingService.internalMessage(previousMessages + "\n\n" + message)
         if (isEndOfStory) {
             cleanUp(context)
             context.send(continueStoryResponse)

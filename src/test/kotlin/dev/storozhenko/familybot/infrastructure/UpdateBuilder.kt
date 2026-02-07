@@ -35,7 +35,9 @@ val botConfig = BotConfig(
     yandexKey = null,
     testEnvironment = true,
     ytdlLocation = null,
-    openAiToken = null,
+    aiToken = null,
+    aiApiUrl = null,
+    aiModel = null
 )
 
 fun ExecutorTest.createSimpleContext(text: String? = null, custom: Update.() -> Unit = {}): ExecutorContext {

@@ -51,7 +51,9 @@ services:
       - REDIS_HOST=family-redis
       - YANDEX_API_TOKEN
       - YTDL_LOCATION
-      - OPEN_AI_TOKEN
+      - AI_TOKEN
+      - AI_API_URL
+      - AI_MODEL
       - ENABLE_JFR
     depends_on:
       - family-db

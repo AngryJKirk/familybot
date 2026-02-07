@@ -10,6 +10,7 @@ import com.aallam.openai.api.logging.LogLevel
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.LoggingConfig
 import com.aallam.openai.client.OpenAI
+import com.aallam.openai.client.OpenAIHost
 import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.SenderLogger.log
 import dev.storozhenko.familybot.core.routers.models.ExecutorContext
@@ -30,7 +31,7 @@ class AiService(
             val url = getPhotoUrl(context) ?: return null
             val description = getOpenAIService().chatCompletion(
                 ChatCompletionRequest(
-                    model = ModelId("gpt-5-mini"),
+                    model = ModelId(botConfig.aiModel ?: throw FamilyBot.InternalException("AI model is missing")),
                     messages = listOf(
                         ChatMessage(
                             role = ChatRole.User,
@@ -69,11 +70,13 @@ class AiService(
 
     private var openAI: OpenAI? = null
 
-    private fun getOpenAIService(): OpenAI {
+    fun getOpenAIService(): OpenAI {
         if (openAI == null) {
-            val token = botConfig.openAiToken
+            val token = botConfig.aiToken
                 ?: throw FamilyBot.InternalException("Open AI token is not available, check config")
+            val aiApiUrl = botConfig.aiApiUrl ?: throw FamilyBot.InternalException("API url is missing, check config")
             openAI = OpenAI(
+                host = OpenAIHost(baseUrl = aiApiUrl),
                 token = token,
                 timeout = Timeout(socket = 60.seconds),
                 logging = LoggingConfig(logLevel = LogLevel.None)

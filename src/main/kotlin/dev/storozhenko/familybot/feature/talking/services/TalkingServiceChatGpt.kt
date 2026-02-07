@@ -3,13 +3,8 @@ package dev.storozhenko.familybot.feature.talking.services
 import com.aallam.openai.api.chat.ChatCompletion
 import com.aallam.openai.api.chat.ChatCompletionRequest
 import com.aallam.openai.api.chat.ChatMessage
-import com.aallam.openai.client.OpenAIHost
 import com.aallam.openai.api.core.Role
-import com.aallam.openai.api.http.Timeout
-import com.aallam.openai.api.logging.LogLevel
 import com.aallam.openai.api.model.ModelId
-import com.aallam.openai.client.LoggingConfig
-import com.aallam.openai.client.OpenAI
 import com.github.benmanes.caffeine.cache.Caffeine
 import dev.storozhenko.familybot.BotConfig
 import dev.storozhenko.familybot.common.extensions.SenderLogger.log
@@ -26,7 +21,6 @@ import dev.storozhenko.familybot.feature.talking.services.rag.RagService
 import org.springframework.stereotype.Component
 import java.time.Duration
 import java.util.LinkedList
-import kotlin.time.Duration.Companion.seconds
 
 @Component("GPT")
 class TalkingServiceChatGpt(
@@ -81,8 +75,8 @@ class TalkingServiceChatGpt(
         }
         chatMessages.add(ChatMessage(Role.User, content = text))
         chatMessages.add(0, systemMessage)
-        val request = createRequest(chatMessages, useGpt4 = false)
-        val response = getOpenAIService().chatCompletion(request)
+        val request = createRequest(chatMessages)
+        val response = aiService.getOpenAIService().chatCompletion(request)
         saveMetric(context, response)
         chatMessages.removeFirst()
         val message = response.choices.first().message
@@ -92,11 +86,11 @@ class TalkingServiceChatGpt(
         return fixFormat(messageContent)
     }
 
-    suspend fun internalMessage(message: String, useGpt4: Boolean = false): String {
+    suspend fun internalMessage(message: String): String {
         try {
-            if (botConfig.openAiToken == null) return "<ChatGPT is not available due to missing token>"
-            val request = createRequest(mutableListOf(ChatMessage(Role.User, content = message)), useGpt4)
-            val response = getOpenAIService().chatCompletion(request)
+            if (botConfig.aiToken == null) return "<ChatGPT is not available due to missing token>"
+            val request = createRequest(mutableListOf(ChatMessage(Role.User, content = message)))
+            val response = aiService.getOpenAIService().chatCompletion(request)
             return response.choices.first().message.content ?: "<ChatGPT response is not available>"
         } catch (e: Exception) {
             log.error(e) { "Internal message ChatGPT failure" }
@@ -139,11 +133,9 @@ class TalkingServiceChatGpt(
         )
     }
 
-    private fun createRequest(chatMessages: MutableList<ChatMessage>, useGpt4: Boolean): ChatCompletionRequest {
-        val model = "x-ai/grok-4.1-fast"
-
+    private fun createRequest(chatMessages: MutableList<ChatMessage>): ChatCompletionRequest {
         return ChatCompletionRequest(
-            model = ModelId(model),
+            model = ModelId(botConfig.aiModel ?: throw FamilyBot.InternalException("Missing ai model, check config")),
             messages = chatMessages
         )
     }
@@ -177,21 +169,7 @@ class TalkingServiceChatGpt(
         }
     }
 
-    private var openAI: OpenAI? = null
 
-    private fun getOpenAIService(): OpenAI {
-        if (openAI == null) {
-            val token = botConfig.openAiToken
-                ?: throw FamilyBot.InternalException("Open AI token is not available, check config")
-            openAI = OpenAI(
-                host = OpenAIHost(baseUrl = "https://openrouter.ai/api/v1/"),
-                token = token,
-                timeout = Timeout(socket = 60.seconds),
-                logging = LoggingConfig(logLevel = LogLevel.None)
-            )
-        }
-        return openAI as OpenAI
-    }
 
 
 }

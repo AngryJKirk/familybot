@@ -5,7 +5,9 @@ settings:
   developer-id: ${BOT_OWNER_TELEGRAM_ID:}
   yandex-key: ${YANDEX_API_TOKEN:}
   ytdlLocation: ${YTDL_LOCATION:}
-  openAiToken: ${OPEN_AI_TOKEN:}
+  aiToken: ${AI_TOKEN:}
+  aiApiUrl: ${AI_API_URL:https://api.openai.com/v1/}
+  aiModel: ${AI_MODEL:gpt-4o-mini}
 spring:
   datasource:
     url: ${JDBC_URL:jdbc:postgresql://localhost:5432/family}

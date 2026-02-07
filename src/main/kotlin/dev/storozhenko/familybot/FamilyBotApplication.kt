@@ -38,14 +38,16 @@ class FamilyBotApplication(
             botConfigInjector.botNameAliases.split(",")
         }
         return BotConfig(
-            required(botConfigInjector.botToken, "botToken"),
-            required(botConfigInjector.botName, "botName"),
-            required(botConfigInjector.developerId, "developerId").toLong(),
-            botNameAliases,
-            optional("Yandex API key is not found, language API won't work") { botConfigInjector.yandexKey },
-            env.activeProfiles.contains(BotStarter.TESTING_PROFILE_NAME),
-            optional("yt-dlp is missing, downloading function won't work") { botConfigInjector.ytdlLocation },
-            optional("OpenAI token is missing, API won't work") { botConfigInjector.openAiToken },
+            botToken = required(botConfigInjector.botToken, "botToken"),
+            botName = required(botConfigInjector.botName, "botName"),
+            developerId = required(botConfigInjector.developerId, "developerId").toLong(),
+            botNameAliases = botNameAliases,
+            yandexKey = optional("Yandex API key is not found, language API won't work") { botConfigInjector.yandexKey },
+            testEnvironment = env.activeProfiles.contains(BotStarter.TESTING_PROFILE_NAME),
+            ytdlLocation = optional("yt-dlp is missing, downloading function won't work") { botConfigInjector.ytdlLocation },
+            aiToken = optional("AI token is missing, API won't work") { botConfigInjector.aiToken },
+            aiApiUrl = optional("AI url is missing, API won't work") { botConfigInjector.aiApiUrl },
+            aiModel = optional("AI model is missing, API won't work") { botConfigInjector.aiModel },
         )
     }
 
@@ -70,7 +72,9 @@ data class BotConfig(
     val yandexKey: String?,
     val testEnvironment: Boolean,
     val ytdlLocation: String?,
-    val openAiToken: String?,
+    val aiToken: String?,
+    val aiApiUrl: String?,
+    val aiModel: String?
 )
 
 @ConfigurationProperties("settings", ignoreInvalidFields = false)
@@ -81,12 +85,14 @@ data class BotConfigInjector @ConstructorBinding constructor(
     val botNameAliases: String?,
     val yandexKey: String?,
     val ytdlLocation: String?,
-    val openAiToken: String?,
+    val aiToken: String?,
+    val aiApiUrl: String?,
+    val aiModel: String?
 )
 
 
 fun main() {
     val app = SpringApplication(FamilyBotApplication::class.java)
-    app.webApplicationType = WebApplicationType.NONE
+    app.setWebApplicationType(WebApplicationType.NONE)
     app.run()
 }

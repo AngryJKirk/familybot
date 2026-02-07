@@ -26,7 +26,7 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -35,7 +35,7 @@ import org.telegram.telegrambots.meta.api.objects.payments.SuccessfulPayment
 
 class PaymentRouterTest : FamilybotApplicationTest() {
 
-    @MockBean
+    @MockitoBean
     lateinit var paymentService: PaymentService
 
     @Autowired

@@ -110,8 +110,7 @@ class ReactionsStatsContinuousExecutor(
                 Запрещено использовать html и markdown.
                 Список реакций:
                 $reactionStats
-            """.trimIndent(),
-            useChatGpt4
+            """.trimIndent()
         )
         context.send(getPeriodDesc(period) + "\n" + analytics)
         return

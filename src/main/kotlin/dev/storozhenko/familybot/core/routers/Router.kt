@@ -88,7 +88,7 @@ class Router(
                         RagContext,
                         update.toChat().key(),
                         false
-                    ) && botConfig.openAiToken != null
+                    ) && botConfig.aiToken != null
                 ) {
                     ragService.add(context)
                 }

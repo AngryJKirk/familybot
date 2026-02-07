@@ -24,7 +24,7 @@ class TalkingServicePicker(
         if (easyKeyValueService.get(ChatGPTTalkingDisabled, context.chatKey, false)) {
             return old.getReplyToUser(context, shouldBeQuestion)
         }
-        if (botConfig.openAiToken == null) {
+        if (botConfig.aiToken == null) {
             return old.getReplyToUser(context, shouldBeQuestion)
         }
 

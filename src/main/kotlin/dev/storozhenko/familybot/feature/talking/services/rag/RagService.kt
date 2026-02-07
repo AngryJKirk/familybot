@@ -123,7 +123,7 @@ class RagService(
     private var openAI: OpenAI? = null
     private fun getOpenAIService(): OpenAI {
         if (openAI == null) {
-            val token = botConfig.openAiToken
+            val token = botConfig.aiToken
                 ?: throw FamilyBot.InternalException("Open AI token is not available, check config")
             openAI = OpenAI(
                 token = token,

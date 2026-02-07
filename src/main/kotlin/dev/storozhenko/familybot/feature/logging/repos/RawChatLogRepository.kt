@@ -18,7 +18,7 @@ class RawChatLogRepository(private val template: JdbcTemplate) {
             Int::class.java,
             chat.id,
             user.id,
-        )
+        ) ?: 0
     }
 
     fun add(chat: Chat, user: User, message: String?, fileId: String?, rawUpdate: String, date: Instant) {

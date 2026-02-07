@@ -39,7 +39,7 @@ class ChatLogRepository(private val template: JdbcTemplate) {
     }
 
     fun get(user: User): List<String> {
-        return allByUserCache[user] ?: allByUserLoader(user)
+        return (allByUserCache[user] ?: allByUserLoader(user)).filterNotNull()
     }
 
     fun getRandomMessagesFromCommonPool(): List<String> {
@@ -52,7 +52,7 @@ class ChatLogRepository(private val template: JdbcTemplate) {
             "SELECT message FROM chat_log WHERE id IN (:ids)",
             paramMap,
             String::class.java,
-        )
+        ).filterNotNull()
     }
 
     private fun getMaxCommonMessageId(): Long {
