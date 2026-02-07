@@ -3,6 +3,7 @@ package dev.storozhenko.familybot.feature.talking.services
 import com.aallam.openai.api.chat.ChatCompletion
 import com.aallam.openai.api.chat.ChatCompletionRequest
 import com.aallam.openai.api.chat.ChatMessage
+import com.aallam.openai.client.OpenAIHost
 import com.aallam.openai.api.core.Role
 import com.aallam.openai.api.http.Timeout
 import com.aallam.openai.api.logging.LogLevel
@@ -37,7 +38,7 @@ class TalkingServiceChatGpt(
 ) : TalkingService {
     companion object {
         private const val SIZE_LIMITER =
-            "В ответах говори исключительно в мужском роде. Отвечай максимум двумя предложениями. Не используй markdown или html. "
+            "В ответах говори исключительно в мужском роде. Отвечай коротко. Не используй markdown или html. "
         private val codeMarkupPattern = Regex("`{1,3}([^`]+)`{1,3}")
     }
 
@@ -139,15 +140,11 @@ class TalkingServiceChatGpt(
     }
 
     private fun createRequest(chatMessages: MutableList<ChatMessage>, useGpt4: Boolean): ChatCompletionRequest {
-        val model = if (useGpt4) "gpt-4o" else "gpt-4o-mini"
+        val model = "x-ai/grok-4.1-fast"
 
         return ChatCompletionRequest(
             model = ModelId(model),
-            messages = chatMessages,
-            temperature = 0.9,
-            topP = 1.0,
-            frequencyPenalty = 0.0,
-            presencePenalty = 0.6
+            messages = chatMessages
         )
     }
 
@@ -187,6 +184,7 @@ class TalkingServiceChatGpt(
             val token = botConfig.openAiToken
                 ?: throw FamilyBot.InternalException("Open AI token is not available, check config")
             openAI = OpenAI(
+                host = OpenAIHost(baseUrl = "https://openrouter.ai/api/v1/"),
                 token = token,
                 timeout = Timeout(socket = 60.seconds),
                 logging = LoggingConfig(logLevel = LogLevel.None)
