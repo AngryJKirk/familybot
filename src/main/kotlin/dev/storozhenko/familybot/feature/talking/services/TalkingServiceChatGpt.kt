@@ -3,6 +3,9 @@ package dev.storozhenko.familybot.feature.talking.services
 import com.aallam.openai.api.chat.ChatCompletion
 import com.aallam.openai.api.chat.ChatCompletionRequest
 import com.aallam.openai.api.chat.ChatMessage
+import com.aallam.openai.api.chat.Effort
+import com.aallam.openai.api.chat.ListContent
+import com.aallam.openai.api.chat.TextPart
 import com.aallam.openai.api.core.Role
 import com.aallam.openai.api.model.ModelId
 import com.github.benmanes.caffeine.cache.Caffeine
@@ -16,8 +19,8 @@ import dev.storozhenko.familybot.core.telegram.FamilyBot
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTMemory
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTStyle
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTTokenUsageByChat
-import dev.storozhenko.familybot.feature.settings.models.RagContext
-import dev.storozhenko.familybot.feature.talking.services.rag.RagService
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 import java.time.Duration
 import java.util.LinkedList
@@ -26,7 +29,6 @@ import java.util.LinkedList
 class TalkingServiceChatGpt(
     private val easyKeyValueService: EasyKeyValueService,
     private val gptSettingsReader: GptSettingsReader,
-    private val ragService: RagService,
     private val botConfig: BotConfig,
     private val aiService: AiService,
 ) : TalkingService {
@@ -45,13 +47,7 @@ class TalkingServiceChatGpt(
 
     override suspend fun getReplyToUser(context: ExecutorContext, shouldBeQuestion: Boolean): String {
         var text = context.message.text ?: context.message.caption
-        var photoDescription: String? = aiService.getImageDescription(context)
-        if (photoDescription != null) {
-            photoDescription =
-                "<Пользователь отправил изображение, вот описание изображения, реагируй как если бы ты ее видел: ${
-                    photoDescription
-                }>"
-        }
+        val imagePart = coroutineScope { async { aiService.getImagePart(context) } }
         val chatId = context.chat.idString
         if (text == "/reset") {
             caches.values.forEach { cache -> cache.invalidate(chatId) }
@@ -60,20 +56,15 @@ class TalkingServiceChatGpt(
 
         val style = getStyle(context)
         val chatMessages = getPastMessages(style, context)
-        val systemMessage = getSystemMessage(style, context, chatMessages)
-        if (text == "/debug") {
-            return chatMessages.plus(systemMessage).joinToString("\n", transform = ChatMessage::toString)
-        }
-        text = if (text == null && photoDescription == null) {
-            "<пользователь скинул хрень>"
-        } else if (text != null && photoDescription != null) {
-            "$photoDescription ${context.user.name} говорит: $text"
-        } else if (text == null && photoDescription != null) {
-            "${context.user.name} отправил: $photoDescription"
-        } else {
-            "${context.user.name} говорит: $text"
-        }
-        chatMessages.add(ChatMessage(Role.User, content = text))
+        val systemMessage = getSystemMessage(style, context)
+        text = "${context.user.name} говорит, отвечай ему в первом лице: $text"
+
+        chatMessages.add(
+            ChatMessage(
+                role = Role.User,
+                messageContent = ListContent(listOfNotNull(TextPart(text), imagePart.await()))
+            )
+        )
         chatMessages.add(0, systemMessage)
         val request = createRequest(chatMessages)
         val response = aiService.getOpenAIService().chatCompletion(request)
@@ -119,14 +110,12 @@ class TalkingServiceChatGpt(
 
     private suspend fun getSystemMessage(
         style: GptStyle,
-        context: ExecutorContext,
-        chatMessages: MutableList<ChatMessage>,
+        context: ExecutorContext
     ): ChatMessage {
         return ChatMessage(
             Role.System, content = listOf(
                 gptSettingsReader.getUniverseValue(style.universe).trimIndent(),
                 gptSettingsReader.getStyleValue(style),
-                getRagMemory(context, chatMessages),
                 getMemory(context),
                 SIZE_LIMITER
             ).joinToString("\n")
@@ -136,7 +125,8 @@ class TalkingServiceChatGpt(
     private fun createRequest(chatMessages: MutableList<ChatMessage>): ChatCompletionRequest {
         return ChatCompletionRequest(
             model = ModelId(botConfig.aiModel ?: throw FamilyBot.InternalException("Missing ai model, check config")),
-            messages = chatMessages
+            messages = chatMessages,
+            reasoningEffort = Effort("none")
         )
     }
 
@@ -160,15 +150,6 @@ class TalkingServiceChatGpt(
 
         return "У тебя есть память о пользователях чата, применяй ее. Вот она: \n|НАЧАЛО ПАМЯТИ|\n$memoryValue\n|КОНЕЦ ПАМЯТИ|\n"
     }
-
-    private suspend fun getRagMemory(context: ExecutorContext, chatMessages: MutableList<ChatMessage>): String {
-        return if (easyKeyValueService.get(RagContext, context.chatKey, false)) {
-            ragService.getContext(context, chatMessages)
-        } else {
-            ""
-        }
-    }
-
 
 
 

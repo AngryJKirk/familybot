@@ -1,13 +1,8 @@
 package dev.storozhenko.familybot.feature.talking.services
 
-import com.aallam.openai.api.chat.ChatCompletionRequest
-import com.aallam.openai.api.chat.ChatMessage
-import com.aallam.openai.api.chat.ChatRole
 import com.aallam.openai.api.chat.ImagePart
-import com.aallam.openai.api.chat.TextPart
 import com.aallam.openai.api.http.Timeout
 import com.aallam.openai.api.logging.LogLevel
-import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.LoggingConfig
 import com.aallam.openai.client.OpenAI
 import com.aallam.openai.client.OpenAIHost
@@ -35,27 +30,12 @@ class AiService(
         .retryOnConnectionFailure(true)
         .build()
 
-    suspend fun getImageDescription(
+    suspend fun getImagePart(
         context: ExecutorContext,
-    ): String? {
+    ): ImagePart? {
         try {
-            val url = getPhotoUrl(context) ?: return null
-            val description = getOpenAIService().chatCompletion(
-                ChatCompletionRequest(
-                    model = ModelId(botConfig.aiModel ?: throw FamilyBot.InternalException("AI model is missing")),
-                    messages = listOf(
-                        ChatMessage(
-                            role = ChatRole.User,
-                            content = listOf(
-                                ImagePart(url),
-                                TextPart("Пользователь отправил это изображение/фото. Опиши ее. Если вдруг ты не можешь обработать это, пришли в ответ секретное число 312893712")
-                            )
-                        )
-                    )
-                )
-            ).choices.first().message.content ?: "Не получается описать картинку"
-            if (description.contains("312893712")) return null
-            return description
+            val base64EncodedImage = getPhotoUrl(context) ?: return null
+            return ImagePart(url = base64EncodedImage)
         } catch (e: Exception) {
             log.error(e) { "Unable to get image description" }
             return null
@@ -88,7 +68,7 @@ class AiService(
         client.newCall(request).execute().use { response ->
             if (!response.isSuccessful) return null
             val imageBytes = response.body?.bytes() ?: return null
-            return Base64.encode(imageBytes)
+            return "data:image/jpeg;base64," + Base64.encode(imageBytes)
         }
     }
 

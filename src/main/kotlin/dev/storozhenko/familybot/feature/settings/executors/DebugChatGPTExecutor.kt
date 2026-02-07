@@ -17,7 +17,6 @@ import dev.storozhenko.familybot.feature.settings.models.ChatGPTReactionsCooldow
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTStyle
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTSummaryCooldown
 import dev.storozhenko.familybot.feature.settings.models.ChatGPTTokenUsageByChat
-import dev.storozhenko.familybot.feature.settings.models.RagContext
 import org.springframework.stereotype.Component
 
 @Component
@@ -35,7 +34,6 @@ class DebugChatGPTExecutor(private val easyKeyValueService: EasyKeyValueService)
             ChatGPTSummaryCooldown,
             ChatGPTReactionsCooldown,
             ChatGPT4Enabled,
-            RagContext,
         ).joinToString(separator = "\n") { key -> getDataByKey(context, key) }
 
         context.send(message, enableHtml = true, replyToUpdate = true)

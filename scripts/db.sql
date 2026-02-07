@@ -327,22 +327,3 @@ VALUES (1, '/stats_month'),
        (37, '/memory')
 
 ;
-CREATE EXTENSION IF NOT EXISTS vector;
-CREATE EXTENSION IF NOT EXISTS pg_trgm;
-CREATE TABLE IF NOT EXISTS rag_msg_index (
-  rag_id   BIGSERIAL PRIMARY KEY,
-  chat_id  BIGINT      NOT NULL,
-  msg_id   BIGINT      NOT NULL,
-  ts       TIMESTAMPTZ NOT NULL,
-  user_id  BIGINT      NOT NULL,
-  text     TEXT        NOT NULL,
-  embedding vector(1536),
-  tsv tsvector
-    GENERATED ALWAYS AS (to_tsvector('russian', coalesce(text,''))) STORED
-);
-
-CREATE INDEX IF NOT EXISTS rag_idx_chat_ts  ON rag_msg_index (chat_id, ts DESC);
-CREATE INDEX IF NOT EXISTS rag_idx_chat_msg ON rag_msg_index (chat_id, msg_id);
-CREATE INDEX IF NOT EXISTS rag_idx_ivf      ON rag_msg_index USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);
-CREATE INDEX IF NOT EXISTS rag_idx_tsv      ON rag_msg_index USING GIN (tsv);
-CREATE INDEX IF NOT EXISTS rag_idx_trgm     ON rag_msg_index USING GIN (text gin_trgm_ops);

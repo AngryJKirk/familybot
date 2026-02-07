@@ -25,17 +25,14 @@ import dev.storozhenko.familybot.feature.settings.models.CommandLimit
 import dev.storozhenko.familybot.feature.settings.models.FirstBotInteraction
 import dev.storozhenko.familybot.feature.settings.models.FirstTimeInChat
 import dev.storozhenko.familybot.feature.settings.models.MessageCounter
-import dev.storozhenko.familybot.feature.settings.models.RagContext
 import dev.storozhenko.familybot.feature.settings.repos.FunctionsConfigureRepository
 import dev.storozhenko.familybot.feature.talking.services.AdManager
 import dev.storozhenko.familybot.feature.talking.services.Dictionary
-import dev.storozhenko.familybot.feature.talking.services.rag.RagService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -58,7 +55,6 @@ class Router(
     private val dictionary: Dictionary,
     private val easyKeyValueService: EasyKeyValueService,
     private val adManager: AdManager,
-    private val ragService: RagService,
 ) {
 
     private val logger = KotlinLogging.logger { }
@@ -82,18 +78,6 @@ class Router(
             }
         }
         val context = update.context(botConfig, dictionary, client)
-        coroutineScope {
-            launch {
-                if (easyKeyValueService.get(
-                        RagContext,
-                        update.toChat().key(),
-                        false
-                    ) && botConfig.aiToken != null
-                ) {
-                    ragService.add(context)
-                }
-            }
-        }
         val executor = if (isGroup) {
             selectExecutor(context) ?: selectRandom(context)
         } else {
