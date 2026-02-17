@@ -212,6 +212,16 @@ class PidorExecutor(
                     3 -> Phrase.PIDOR_COUNT_THRICE
                     4 -> Phrase.PIDOR_COUNT_FOUR_TIMES
                     5 -> Phrase.PIDOR_COUNT_FIVE_TIMES
+                    6 -> Phrase.PIDOR_COUNT_SIX_TIMES
+                    7 -> Phrase.PIDOR_COUNT_SEVEN_TIMES
+                    8 -> Phrase.PIDOR_COUNT_EIGHT_TIMES
+                    9 -> Phrase.PIDOR_COUNT_NINE_TIMES
+                    10 -> Phrase.PIDOR_COUNT_TEN_TIMES
+                    11 -> Phrase.PIDOR_COUNT_ELEVEN_TIMES
+                    12 -> Phrase.PIDOR_COUNT_TWELVE_TIMES
+                    13 -> Phrase.PIDOR_COUNT_THIRTEEN_TIMES
+                    14 -> Phrase.PIDOR_COUNT_FOURTEEN_TIMES
+                    15 -> Phrase.PIDOR_COUNT_FIFTEEN_TIMES
                     else -> Phrase.PIDOR_COUNT_DOHUYA
                 }
             message = "$message (${dictionary.get(pidorCountPhrase, key)})"
